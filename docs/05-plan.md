@@ -3,6 +3,11 @@
 Order is strict: a milestone starts only when the previous DoD is met and
 logged. Each task produces evidence in `log/` and, where relevant, a commit.
 
+Exception (2026-11-01, owner): the phone is in daily use, so the host-only
+tasks **M1.1** (reproduce baseline 4.14 build) and **M1.2** (ACK 6.18 GKI
+build) may run before M0 is done. Every task that touches the phone still
+waits for M0's DoD.
+
 ## M0 — Baseline locked and measured
 Tasks
 1. Complete the baseline function checklist (`02-baseline.md` gaps): audio
