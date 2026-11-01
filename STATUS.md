@@ -4,7 +4,10 @@ Updated: 2026-11-01
 
 ## Current milestone: **M1.1 + M1.2 (host-only)**, M0 deferred by owner (`docs/05-plan.md` exception)
 
-Start here: M1.1 — reproduce the baseline kernel `Image` byte-identically from
+Start here: **`tasks/M1.1-reproduce-baseline-build.md`** (all inputs pinned in the ticket).
+Then `tasks/M1.2-ack-6.18-gki-build.md`.
+
+Summary: M1.1 — reproduce the baseline kernel `Image` byte-identically from
 `src/samsung-a50-4.14-aa17rf2` in a container (method: `sadatdaniel/a50-halium`
 `build/`). Then M1.2 — clone ACK `android17-6.18`, build `gki_defconfig` arm64
 with clang + Rust. Neither needs the phone.
@@ -16,6 +19,7 @@ VENDOR/SYSTEM/DTB/DTBO, TWRP 3.7.1, vbmeta flags=3. SSH as `phablet` over
 Wi-Fi (last IP 192.168.0.171).
 
 ## Done
+- Tickets for M0–M2 created in `tasks/` (12 tickets, index `tasks/README.md`).
 - Context created: goal, device facts, baseline, kernel contract, gap matrix,
   plan, workflow, risks, ADR-0001/0002 (`log/2026-11-01-context-setup.md`).
 

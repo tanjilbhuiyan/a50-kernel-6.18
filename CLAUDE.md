@@ -1,7 +1,7 @@
 # A50 kernel modernization: Samsung 4.14 → Android Common Kernel 6.18
 
-Read this file first in every session, then `STATUS.md`. Work only on the
-current milestone in `STATUS.md`; do not start the next one early.
+Read this file first in every session, then `STATUS.md`, then the ticket it
+names in `tasks/`. Work only on that ticket; do not start the next one early.
 
 ## Goal (one sentence)
 
@@ -24,6 +24,7 @@ unchanged. Full definition: `docs/00-goal.md`.
 | `docs/06-workflow.md` | build / flash / test / recover loop and rules |
 | `docs/07-risks.md` | known risks and mitigations |
 | `docs/decisions/` | ADRs (0001 base kernel, 0002 keep stock vendor, 0003 newer Halium — deferred); a decision changes only through a new ADR |
+| `tasks/` | tickets (one file per task) for the current + next milestone; index in `tasks/README.md` |
 | `log/` | one file per test session (what changed, what was flashed, result) |
 | `reference/` | evidence: live DT dump, gap matrix TSV, stock vendor extracts, measurements |
 | `tools/` | scripts used to produce the evidence (re-runnable) |

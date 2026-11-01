@@ -1,7 +1,7 @@
 # 05 — Plan: milestones, tasks, Definition of Done
 
 Order is strict: a milestone starts only when the previous DoD is met and
-logged. Each task produces evidence in `log/` and, where relevant, a commit.
+logged. Tickets for the current and next milestone live in `tasks/` (index: `tasks/README.md`). Each task produces evidence in `log/` and, where relevant, a commit.
 
 Exception (2026-11-01, owner): the phone is in daily use, so the host-only
 tasks **M1.1** (reproduce baseline 4.14 build) and **M1.2** (ACK 6.18 GKI
@@ -37,14 +37,12 @@ for mali, ion, fb/decon, abox, scsc, modem nodes; Image.gz answer logged;
 pstore readable after reboot.
 
 ## M2 — First light on 6.18
-Tasks
-1. New board DT `exynos9610-a50.dts` (6.18 bindings): cpus, psci, gic, timer,
-   memory, reserved-memory (incl. ramoops), simple-framebuffer @0xca000000,
-   fixed clocks, pinctrl (backported 9610 data), clocks (LKML series).
-2. Minimal defconfig (no modules needed yet), built-in cmdline.
-3. Pack boot.img (header v1, offsets from `01-device.md`) with a tiny
-   initramfs that draws to fb / writes pstore then reboots.
-4. Write DTB/DTBO from TWRP only after verifying stock DTB/DTBO backups.
+Tasks (tickets in `tasks/`)
+1. M2.1 A50 device tree for 6.18, first-light subset (cpus, psci, gic, timer,
+   memory, reserved-memory incl. ramoops, simple-framebuffer @0xca000000).
+2. M2.2 Minimal defconfig + tiny initramfs + boot.img (header v1, ≤ 57,671,680 B).
+3. M2.3 DTB/DTBO partition images in the stock dt_table format (tool round-trips stock images).
+4. M2.4 First light on the phone (back up + write DTB/DTBO via TWRP, flash BOOT, read pstore, restore).
 DoD: a 6.18 kernel prints to pstore (readable after reboot from TWRP or
 baseline) and shows text on the simple framebuffer. Baseline still restorable.
 
