@@ -23,7 +23,7 @@ unchanged. Full definition: `docs/00-goal.md`.
 | `docs/05-plan.md` | milestones M0–M13 with tasks and Definition of Done |
 | `docs/06-workflow.md` | build / flash / test / recover loop and rules |
 | `docs/07-risks.md` | known risks and mitigations |
-| `docs/decisions/` | ADRs; a decision changes only through a new ADR |
+| `docs/decisions/` | ADRs (0001 base kernel, 0002 keep stock vendor, 0003 newer Halium — deferred); a decision changes only through a new ADR |
 | `log/` | one file per test session (what changed, what was flashed, result) |
 | `reference/` | evidence: live DT dump, gap matrix TSV, stock vendor extracts, measurements |
 | `tools/` | scripts used to produce the evidence (re-runnable) |

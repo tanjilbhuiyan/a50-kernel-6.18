@@ -95,6 +95,12 @@ DoD: S5, S9; 10 suspend/resume cycles; charge state correct.
 ## M13 — Stretch: camera, MFC, sensors, GNSS, Waydroid
 DoD per item, optional.
 
+## Future candidates (not in project DoD; need an accepted ADR first)
+
+| ID | Candidate | Earliest start | ADR |
+|---|---|---|---|
+| F1 | Newer Halium GSI (13 → 14 → 16) on the 6.18 kernel with the stock Android 11 vendor | after M7 DoD | `decisions/ADR-0003-newer-halium-future.md` (Proposed, deferred) |
+
 ## Project done
 S1–S10 in `00-goal.md` met and logged; baseline vs. new checklist diff
 shows no regression.
