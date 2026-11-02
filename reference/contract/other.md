@@ -6,4 +6,8 @@ CAVEAT: hex values for NAMED requests come from the 64-bit 4.14 uapi headers. Pr
 
 | node | process | where | scenario | request | hex | decoded | calls | ret |
 |---|---|---|---|---|---|---|---|---|
+| /dev/null | lomiri | host | ui | TCGETS2 | 0x802c542a | dir=2 type=0x54 nr=42 size=44 | 3 | -1x3 |
+| /dev/null | lomiri | host | ui2 | TCGETS2 | 0x802c542a | dir=2 type=0x54 nr=42 size=44 | 3 | -1x3 |
 | /dev/urandom | wpa_supplicant | host | wifi | TCGETS2 | 0x802c542a | dir=2 type=0x54 nr=42 size=44 | 2 | -1x2 |
+| pipe:[224677] | lomiri | host | ui | TCGETS2 | 0x802c542a | dir=2 type=0x54 nr=42 size=44 | 2 | -1x2 |
+| pipe:[286416] | lomiri | host | ui2 | TCGETS2 | 0x802c542a | dir=2 type=0x54 nr=42 size=44 | 2 | -1x2 |

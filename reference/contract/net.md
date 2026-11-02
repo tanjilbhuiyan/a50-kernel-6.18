@@ -6,7 +6,24 @@ CAVEAT: hex values for NAMED requests come from the 64-bit 4.14 uapi headers. Pr
 
 | node | process | where | scenario | request | hex | decoded | calls | ret |
 |---|---|---|---|---|---|---|---|---|
+| socket:[291755] | lomiri | host | ui2 | FIONREAD | 0x0000541b | dir=0 type=0x54 nr=27 size=0 | 38 | 0x38 |
+| socket:[304205] | lomiri | host | ui2 | FIONREAD | 0x0000541b | dir=0 type=0x54 nr=27 size=0 | 46 | 0x46 |
 | socket:[34281] | wpa_supplicant | host | wifi | TIOCOUTQ | 0x00005411 | dir=0 type=0x54 nr=17 size=0 | 10 | 0x10 |
 | socket:[35238] | wpa_supplicant | host | wifi | TIOCOUTQ | 0x00005411 | dir=0 type=0x54 nr=17 size=0 | 36 | 0x36 |
 | socket:[471806] | wpa_supplicant | host | wifi | SIOCGIFINDEX | 0x00008933 | dir=0 type=0x89 nr=51 size=0 | 1 | 0x1 |
 | socket:[474249] | wpa_supplicant | host | wifi | SIOCGIFINDEX | 0x00008933 | dir=0 type=0x89 nr=51 size=0 | 1 | 0x1 |
+| socket:[81851] | lomiri | host | ui | FIONREAD | 0x0000541b | dir=0 type=0x54 nr=27 size=0 | 38 | 0x38 |
+| socket:[81851] | lomiri | host | ui2 | FIONREAD | 0x0000541b | dir=0 type=0x54 nr=27 size=0 | 42 | 0x42 |
+| socket:[86980] | lomiri-system-c | host | ui | FIONREAD | 0x0000541b | dir=0 type=0x54 nr=27 size=0 | 262 | 0x262 |
+| socket:[86980] | lomiri-system-c | host | ui2 | FIONREAD | 0x0000541b | dir=0 type=0x54 nr=27 size=0 | 467 | 0x467 |
+| socket:[89936] | lomiri | host | ui | FIONREAD | 0x0000541b | dir=0 type=0x54 nr=27 size=0 | 37 | 0x37 |
+| socket:[89936] | lomiri | host | ui2 | FIONREAD | 0x0000541b | dir=0 type=0x54 nr=27 size=0 | 43 | 0x43 |
+| socket:[89945] | lomiri | host | ui | FIONREAD | 0x0000541b | dir=0 type=0x54 nr=27 size=0 | 37 | 0x37 |
+| socket:[89945] | lomiri | host | ui2 | FIONREAD | 0x0000541b | dir=0 type=0x54 nr=27 size=0 | 40 | 0x40 |
+| socket:[89952] | lomiri | host | ui | FIONREAD | 0x0000541b | dir=0 type=0x54 nr=27 size=0 | 37 | 0x37 |
+| socket:[89952] | lomiri | host | ui2 | FIONREAD | 0x0000541b | dir=0 type=0x54 nr=27 size=0 | 42 | 0x42 |
+| socket:[89955] | lomiri | host | ui | FIONREAD | 0x0000541b | dir=0 type=0x54 nr=27 size=0 | 190 | 0x190 |
+| socket:[89955] | lomiri | host | ui2 | FIONREAD | 0x0000541b | dir=0 type=0x54 nr=27 size=0 | 334 | 0x334 |
+| socket:[90953] | lomiri | host | ui | TCGETS2 | 0x802c542a | dir=2 type=0x54 nr=42 size=44 | 2 | -1x2 |
+| socket:[90953] | lomiri | host | ui2 | TCGETS2 | 0x802c542a | dir=2 type=0x54 nr=42 size=44 | 2 | -1x2 |
+| socket:[91092] | lomiri | host | ui | FIONREAD | 0x0000541b | dir=0 type=0x54 nr=27 size=0 | 9 | 0x9 |

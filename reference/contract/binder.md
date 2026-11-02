@@ -6,4 +6,9 @@ CAVEAT: hex values for NAMED requests come from the 64-bit 4.14 uapi headers. Pr
 
 | node | process | where | scenario | request | hex | decoded | calls | ret |
 |---|---|---|---|---|---|---|---|---|
+| /dev/hwbinder | allocator@2.0-s | cont | ui2 | BINDER_WRITE_READ | 0xc0306201 | dir=3 type=0x62 nr=1 size=48 | 35 | 0x35 |
 | /dev/hwbinder | bluetooth@1.0-s | cont | bt | BINDER_WRITE_READ | 0xc0306201 | dir=3 type=0x62 nr=1 size=48 | 4 | 0x4 |
+| /dev/hwbinder | composer@2.1-se | cont | ui | BINDER_WRITE_READ | 0xc0306201 | dir=3 type=0x62 nr=1 size=48 | 3077 | 0x3077 |
+| /dev/hwbinder | composer@2.1-se | cont | ui2 | BINDER_WRITE_READ | 0xc0306201 | dir=3 type=0x62 nr=1 size=48 | 4411 | 0x4411 |
+| /dev/hwbinder | lomiri-system-c | host | ui | BINDER_WRITE_READ | 0xc0306201 | dir=3 type=0x62 nr=1 size=48 | 2116 | 0x2116 |
+| /dev/hwbinder | lomiri-system-c | host | ui2 | BINDER_WRITE_READ | 0xc0306201 | dir=3 type=0x62 nr=1 size=48 | 2657 | 0x2657 |
