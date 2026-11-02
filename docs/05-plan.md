@@ -14,7 +14,12 @@ Tasks
    playback/record, BT pairing, GPS fix, call + SMS, suspend counters.
 2. Install a root SSH key on the phone (owner runs one sudo command).
 3. Resolve or document the USB-C PD detection workaround as standard procedure.
-DoD: `log/` has a dated baseline checklist with ✅/❌ per S3–S9 item; root SSH works.
+4. (Added 2026-11-02, owner) Diagnose why baseline audio fails (kernel vs userspace)
+   before M1.3, because M0.2 found speaker/mic/call voice dead on the baseline and
+   M1.3 cannot capture the audio HAL's ioctls until we know why (`tasks/M0.4-…`).
+   Baseline suspend failure is recorded but not diagnosed here.
+DoD: `log/` has a dated baseline checklist with ✅/❌ per S3–S9 item; root SSH works;
+the baseline audio failure is classified as kernel, firmware, HAL or config.
 
 ## M1 — Reproducible build + contract capture
 Tasks

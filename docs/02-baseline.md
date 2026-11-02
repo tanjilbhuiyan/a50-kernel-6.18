@@ -23,22 +23,27 @@ with pinned `--rootfs-url/--rootfs-sha256`. Do not build rootfs images in a
 
 ## Measured behaviour on the baseline (the bar for S10)
 
-| Function | Result (2026-11-01) |
+Measured 2026-11-02 in `log/2026-11-02-M0-baseline-checklist.md` (evidence per row).
+
+| Function | Result |
 |---|---|
 | Boot to Lomiri, setup wizard | ✅ |
 | AppArmor | ✅ `Y` |
 | Android container | ✅ `sys.boot_completed=1`; `/run/a50-android` overrides generated |
-| Audio | ✅ pulseaudio running; sinks `primary-out`, `fast`; source `primary-in` (playback not yet listened to) |
-| Modem | ✅ LTE registered (GrameenPhone, SIM slot 2) |
-| Wi-Fi | ✅ connected, SSH over Wi-Fi |
-| Bluetooth | ✅ service active (pairing not tested) |
-| Location service | ✅ active (fix not tested) |
-| USB gadget | ⚠️ enumerates at boot (`04b9:0afe`, charging-only); replug re-enumerates; adb/RNDIS blocked by the PD issue below |
-| Sensors | ⚠️ no `sensorfw` unit in this image; not tested |
-| Failed units | `usb-tethering` only (consequence of the PD issue) |
+| Touch, power, volume keys (S3) | ✅ owner |
+| Wi-Fi (S4) | ✅ connected, SSH over Wi-Fi |
+| USB (S5) | ✅ RNDIS ssh to `10.15.19.82` with `-f` override (`docs/06-workflow.md`); adb not exposed |
+| Audio: speaker + microphone (S6) | ❌ pulseaudio sinks/sources exist, `paplay` returns 0, nothing audible; HAL opens no `/dev/snd`, all `ABOX * SPK` routes 0; `parecord` returns digital silence. Cause not isolated (userspace vs kernel/ABOX firmware) |
+| Modem (S7) | ✅ LTE registered (Grameenphone, SIM slot 2); outgoing call reaches `active`; SMS sent (`sent`) and received. Call voice audio ❌ (same fault as S6) |
+| Bluetooth (S8) | ✅ pairing + A2DP playback to a JBL speaker (owner heard it); BT audio works while internal audio does not |
+| Battery (S9) | ✅ upower reads state/percentage/voltage/temperature |
+| Suspend (S9) | ❌ system suspend never entered (12 min screen-off test, 0 suspends; Wi-Fi/modem/BT wake sources busy); cause not isolated |
+| Sensors | ✅ `sensorfwd.service` active (not exercised) |
+| Location service | ✅ active; GPS fix not tested |
+| Failed units | `usb-tethering` only (it ran at boot with no USB attached) |
 
-Gaps to fill before kernel work starts (M0): listen-test audio, BT pairing,
-GPS fix, one call/SMS, suspend counters. Record results in `log/`.
+Open baseline defects (must be understood before S6/S9 can be met on 6.18):
+audio output/input and suspend. Both are tracked in `STATUS.md`.
 
 ## Known issues
 
