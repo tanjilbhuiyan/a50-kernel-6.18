@@ -1,0 +1,1752 @@
+numid=61,iface=MIXER,name='Headphone Playback Volume'
+  ; type=INTEGER,access=rw---R--,values=2,min=0,max=15,step=0
+  : values=15,15
+  | dBscale-min=-22.50dB,step=1.50dB,mute=0
+numid=84,iface=MIXER,name='Mono ADC Boost Gain Volume'
+  ; type=INTEGER,access=rw---R--,values=2,min=0,max=3,step=0
+  : values=0,0
+  | dBscale-min=0.00dB,step=12.00dB,mute=0
+numid=79,iface=MIXER,name='Mono ADC Capture Switch'
+  ; type=BOOLEAN,access=rw------,values=2
+  : values=off,off
+numid=80,iface=MIXER,name='Mono ADC Capture Volume'
+  ; type=INTEGER,access=rw---R--,values=2,min=0,max=127,step=0
+  : values=47,47
+  | dBscale-min=-176.25dB,step=3.75dB,mute=0
+numid=228,iface=MIXER,name='Mono ADC L Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=4
+  ; Item #0 'ADC1 L'
+  ; Item #1 'ADC1 R'
+  ; Item #2 'ADC2 L'
+  ; Item #3 'ADC2 R'
+  : values=0
+numid=224,iface=MIXER,name='Mono ADC L1 Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'DD Mux'
+  ; Item #1 'ADC'
+  : values=0
+numid=222,iface=MIXER,name='Mono ADC L2 Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'DAC MIXL'
+  ; Item #1 'DMIC'
+  : values=0
+numid=75,iface=MIXER,name='Mono ADC Left Capture Volume'
+  ; type=INTEGER,access=rw---R--,values=1,min=0,max=127,step=0
+  : values=47
+  | dBscale-min=-176.25dB,step=3.75dB,mute=0
+numid=249,iface=MIXER,name='Mono ADC MIXL ADC1 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=250,iface=MIXER,name='Mono ADC MIXL ADC2 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=251,iface=MIXER,name='Mono ADC MIXR ADC1 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=252,iface=MIXER,name='Mono ADC MIXR ADC2 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=229,iface=MIXER,name='Mono ADC R Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=4
+  ; Item #0 'ADC1 L'
+  ; Item #1 'ADC1 R'
+  ; Item #2 'ADC2 L'
+  ; Item #3 'ADC2 R'
+  : values=0
+numid=225,iface=MIXER,name='Mono ADC R1 Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'DD Mux'
+  ; Item #1 'ADC'
+  : values=0
+numid=223,iface=MIXER,name='Mono ADC R2 Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'DAC MIXR'
+  ; Item #1 'DMIC'
+  : values=0
+numid=76,iface=MIXER,name='Mono ADC Right Capture Volume'
+  ; type=INTEGER,access=rw---R--,values=1,min=0,max=127,step=0
+  : values=47
+  | dBscale-min=-176.25dB,step=3.75dB,mute=0
+numid=307,iface=MIXER,name='Mono DAC MIXL DAC L1 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=309,iface=MIXER,name='Mono DAC MIXL DAC L2 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=on
+numid=308,iface=MIXER,name='Mono DAC MIXL DAC R1 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=310,iface=MIXER,name='Mono DAC MIXL DAC R2 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=311,iface=MIXER,name='Mono DAC MIXR DAC L1 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=313,iface=MIXER,name='Mono DAC MIXR DAC L2 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=312,iface=MIXER,name='Mono DAC MIXR DAC R1 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=314,iface=MIXER,name='Mono DAC MIXR DAC R2 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=230,iface=MIXER,name='Mono DD L Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'STO2 DAC'
+  ; Item #1 'MONO DAC'
+  : values=0
+numid=231,iface=MIXER,name='Mono DD R Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'STO2 DAC'
+  ; Item #1 'MONO DAC'
+  : values=0
+numid=226,iface=MIXER,name='Mono DMIC L Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'DMIC1 L'
+  ; Item #1 'DMIC2 L'
+  : values=0
+numid=227,iface=MIXER,name='Mono DMIC R Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'DMIC1 R'
+  ; Item #1 'DMIC2 R'
+  : values=0
+numid=335,iface=MIXER,name='Mono MIX DAC L2 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=on
+numid=336,iface=MIXER,name='Mono MIX MONOVOL Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=341,iface=MIXER,name='Mono Playback Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=on
+numid=62,iface=MIXER,name='Mono Playback Volume'
+  ; type=INTEGER,access=rw---R--,values=1,min=0,max=15,step=0
+  : values=15
+  | dBscale-min=-14.00dB,step=1.50dB,mute=0
+numid=48,iface=MIXER,name='ABOX Audio Mode'
+  ; type=ENUMERATED,access=rw------,values=1,items=5
+  ; Item #0 'NORMAL'
+  ; Item #1 'RINGTONE'
+  ; Item #2 'IN_CALL'
+  ; Item #3 'IN_COMMUNICATION'
+  ; Item #4 'IN_VIDEOCALL'
+  : values=2
+numid=41,iface=MIXER,name='ABOX Auto Config Inmux0'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=on
+numid=42,iface=MIXER,name='ABOX Auto Config Inmux1'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=on
+numid=43,iface=MIXER,name='ABOX Auto Config Inmux2'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=on
+numid=44,iface=MIXER,name='ABOX Auto Config Inmux3'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=on
+numid=45,iface=MIXER,name='ABOX Auto Config Inmux4'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=37,iface=MIXER,name='ABOX Auto Config Mixer'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=on
+numid=38,iface=MIXER,name='ABOX Auto Config Out1'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=39,iface=MIXER,name='ABOX Auto Config Out2'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=40,iface=MIXER,name='ABOX Auto Config Recp'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=14,iface=MIXER,name='ABOX Bit Width Inmux0'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=32,step=0
+  : values=16
+numid=32,iface=MIXER,name='ABOX Bit Width Inmux0 Min'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=32,step=0
+  : values=16
+numid=15,iface=MIXER,name='ABOX Bit Width Inmux1'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=32,step=0
+  : values=16
+numid=33,iface=MIXER,name='ABOX Bit Width Inmux1 Min'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=32,step=0
+  : values=16
+numid=16,iface=MIXER,name='ABOX Bit Width Inmux2'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=32,step=0
+  : values=16
+numid=34,iface=MIXER,name='ABOX Bit Width Inmux2 Min'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=32,step=0
+  : values=16
+numid=17,iface=MIXER,name='ABOX Bit Width Inmux3'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=32,step=0
+  : values=16
+numid=35,iface=MIXER,name='ABOX Bit Width Inmux3 Min'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=32,step=0
+  : values=16
+numid=18,iface=MIXER,name='ABOX Bit Width Inmux4'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=32,step=0
+  : values=16
+numid=36,iface=MIXER,name='ABOX Bit Width Inmux4 Min'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=32,step=0
+  : values=16
+numid=10,iface=MIXER,name='ABOX Bit Width Mixer'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=32,step=0
+  : values=16
+numid=28,iface=MIXER,name='ABOX Bit Width Mixer Min'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=32,step=0
+  : values=16
+numid=11,iface=MIXER,name='ABOX Bit Width Out1'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=32,step=0
+  : values=16
+numid=29,iface=MIXER,name='ABOX Bit Width Out1 Min'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=32,step=0
+  : values=16
+numid=12,iface=MIXER,name='ABOX Bit Width Out2'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=32,step=0
+  : values=16
+numid=30,iface=MIXER,name='ABOX Bit Width Out2 Min'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=32,step=0
+  : values=16
+numid=13,iface=MIXER,name='ABOX Bit Width Recp'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=32,step=0
+  : values=16
+numid=31,iface=MIXER,name='ABOX Bit Width Recp Min'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=32,step=0
+  : values=16
+numid=168,iface=MIXER,name='ABOX DSIF SPK'
+  ; type=ENUMERATED,access=rw------,values=1,items=4
+  ; Item #0 'RESERVED'
+  ; Item #1 'RESERVED'
+  ; Item #2 'SIFS1'
+  ; Item #3 'SIFS2'
+  : values=0
+numid=107,iface=MIXER,name='ABOX DSIF channel'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=8,step=0
+  : values=0
+numid=108,iface=MIXER,name='ABOX DSIF rate'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=384000,step=0
+  : values=0
+numid=106,iface=MIXER,name='ABOX DSIF width'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=32,step=0
+  : values=0
+numid=360,iface=MIXER,name='ABOX ERAP info Bypass On'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=1,step=0
+  : values=0
+numid=359,iface=MIXER,name='ABOX ERAP info DSM On'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=1,step=0
+  : values=0
+numid=362,iface=MIXER,name='ABOX ERAP info FM Radio On'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=1,step=0
+  : values=0
+numid=361,iface=MIXER,name='ABOX ERAP info Mute Primary'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=1,step=0
+  : values=0
+numid=365,iface=MIXER,name='ABOX ERAP info REF8CH On'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=1,step=0
+  : values=0
+numid=363,iface=MIXER,name='ABOX ERAP info USB Rx On'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=1,step=0
+  : values=0
+numid=364,iface=MIXER,name='ABOX ERAP info USB Tx On'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=1,step=0
+  : values=0
+numid=46,iface=MIXER,name='ABOX Echo Cancellation'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=2,step=0
+  : values=0
+numid=355,iface=MIXER,name='ABOX Forte Media AP Call BW'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=2147483647,step=0
+  : values=0
+numid=354,iface=MIXER,name='ABOX Forte Media AP Call type'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=85,step=0
+  : values=0
+numid=356,iface=MIXER,name='ABOX Forte Media Bargein type'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=12,step=0
+  : values=0
+numid=358,iface=MIXER,name='ABOX Forte Media Conference'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=2,step=0
+  : values=0
+numid=357,iface=MIXER,name='ABOX Forte Media Energyinfo'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=2147483647,step=0
+  : values=0
+numid=353,iface=MIXER,name='ABOX Forte Media FM Mode'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=4,step=0
+  : values=0
+numid=171,iface=MIXER,name='ABOX NSRC0'
+  ; type=ENUMERATED,access=rw------,values=1,items=16
+  ; Item #0 'RESERVED'
+  ; Item #1 'SIFS0'
+  ; Item #2 'SIFS1'
+  ; Item #3 'SIFS2'
+  ; Item #4 'RESERVED'
+  ; Item #5 'RESERVED'
+  ; Item #6 'RESERVED'
+  ; Item #7 'RESERVED'
+  ; Item #8 'UAIF0'
+  ; Item #9 'UAIF1'
+  ; Item #10 'UAIF2'
+  ; Item #11 'UAIF3'
+  ; Item #12 'UAIF4'
+  ; Item #13 'RESERVED'
+  ; Item #14 'RESERVED'
+  ; Item #15 'SPDY'
+  : values=0
+numid=172,iface=MIXER,name='ABOX NSRC1'
+  ; type=ENUMERATED,access=rw------,values=1,items=16
+  ; Item #0 'RESERVED'
+  ; Item #1 'SIFS0'
+  ; Item #2 'SIFS1'
+  ; Item #3 'SIFS2'
+  ; Item #4 'RESERVED'
+  ; Item #5 'RESERVED'
+  ; Item #6 'RESERVED'
+  ; Item #7 'RESERVED'
+  ; Item #8 'UAIF0'
+  ; Item #9 'UAIF1'
+  ; Item #10 'UAIF2'
+  ; Item #11 'UAIF3'
+  ; Item #12 'UAIF4'
+  ; Item #13 'RESERVED'
+  ; Item #14 'RESERVED'
+  ; Item #15 'SPDY'
+  : values=8
+numid=173,iface=MIXER,name='ABOX NSRC2'
+  ; type=ENUMERATED,access=rw------,values=1,items=16
+  ; Item #0 'RESERVED'
+  ; Item #1 'SIFS0'
+  ; Item #2 'SIFS1'
+  ; Item #3 'SIFS2'
+  ; Item #4 'RESERVED'
+  ; Item #5 'RESERVED'
+  ; Item #6 'RESERVED'
+  ; Item #7 'RESERVED'
+  ; Item #8 'UAIF0'
+  ; Item #9 'UAIF1'
+  ; Item #10 'UAIF2'
+  ; Item #11 'UAIF3'
+  ; Item #12 'UAIF4'
+  ; Item #13 'RESERVED'
+  ; Item #14 'RESERVED'
+  ; Item #15 'SPDY'
+  : values=12
+numid=174,iface=MIXER,name='ABOX NSRC3'
+  ; type=ENUMERATED,access=rw------,values=1,items=16
+  ; Item #0 'RESERVED'
+  ; Item #1 'SIFS0'
+  ; Item #2 'SIFS1'
+  ; Item #3 'SIFS2'
+  ; Item #4 'RESERVED'
+  ; Item #5 'RESERVED'
+  ; Item #6 'RESERVED'
+  ; Item #7 'RESERVED'
+  ; Item #8 'UAIF0'
+  ; Item #9 'UAIF1'
+  ; Item #10 'UAIF2'
+  ; Item #11 'UAIF3'
+  ; Item #12 'UAIF4'
+  ; Item #13 'RESERVED'
+  ; Item #14 'RESERVED'
+  ; Item #15 'SPDY'
+  : values=0
+numid=366,iface=MIXER,name='ABOX PCM ext APCALL BUFFTYPE'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=1,step=0
+  : values=0
+numid=367,iface=MIXER,name='ABOX PCM ext VPCMIN ON'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=1,step=0
+  : values=0
+numid=52,iface=MIXER,name='ABOX RDMA VOL FACTOR3'
+  ; type=INTEGER,access=rw---R--,values=1,min=0,max=16777215,step=0
+  : values=0
+  | dBlinear-min=0.00dB,max=167772.15dB
+numid=175,iface=MIXER,name='ABOX RECP PIFS0'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=176,iface=MIXER,name='ABOX RECP PIFS1'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=169,iface=MIXER,name='ABOX RSRC0'
+  ; type=ENUMERATED,access=rw------,values=1,items=12
+  ; Item #0 'RESERVED'
+  ; Item #1 'SIFS0'
+  ; Item #2 'SIFS1'
+  ; Item #3 'SIFS2'
+  ; Item #4 'RESERVED'
+  ; Item #5 'RESERVED'
+  ; Item #6 'RESERVED'
+  ; Item #7 'RESERVED'
+  ; Item #8 'NSRC0'
+  ; Item #9 'NSRC1'
+  ; Item #10 'NSRC2'
+  ; Item #11 'NSRC3'
+  : values=0
+numid=170,iface=MIXER,name='ABOX RSRC1'
+  ; type=ENUMERATED,access=rw------,values=1,items=12
+  ; Item #0 'RESERVED'
+  ; Item #1 'SIFS0'
+  ; Item #2 'SIFS1'
+  ; Item #3 'SIFS2'
+  ; Item #4 'RESERVED'
+  ; Item #5 'RESERVED'
+  ; Item #6 'RESERVED'
+  ; Item #7 'RESERVED'
+  ; Item #8 'NSRC0'
+  ; Item #9 'NSRC1'
+  ; Item #10 'NSRC2'
+  ; Item #11 'NSRC3'
+  : values=0
+numid=181,iface=MIXER,name='ABOX SIFM0'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'WDMA'
+  ; Item #1 'SIFMS'
+  : values=0
+numid=182,iface=MIXER,name='ABOX SIFM1'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'WDMA'
+  ; Item #1 'SIFMS'
+  : values=0
+numid=183,iface=MIXER,name='ABOX SIFM2'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'WDMA'
+  ; Item #1 'SIFMS'
+  : values=0
+numid=184,iface=MIXER,name='ABOX SIFM3'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'WDMA'
+  ; Item #1 'SIFMS'
+  : values=0
+numid=185,iface=MIXER,name='ABOX SIFMS'
+  ; type=ENUMERATED,access=rw------,values=1,items=5
+  ; Item #0 'RESERVED'
+  ; Item #1 'SIFM0'
+  ; Item #2 'SIFM1'
+  ; Item #3 'SIFM2'
+  ; Item #4 'SIFM3'
+  : values=0
+numid=161,iface=MIXER,name='ABOX SIFS1'
+  ; type=ENUMERATED,access=rw------,values=1,items=8
+  ; Item #0 'SPUS OUT0'
+  ; Item #1 'SPUS OUT1'
+  ; Item #2 'SPUS OUT2'
+  ; Item #3 'SPUS OUT3'
+  ; Item #4 'SPUS OUT4'
+  ; Item #5 'SPUS OUT5'
+  ; Item #6 'SPUS OUT6'
+  ; Item #7 'SPUS OUT7'
+  : values=0
+numid=162,iface=MIXER,name='ABOX SIFS2'
+  ; type=ENUMERATED,access=rw------,values=1,items=8
+  ; Item #0 'SPUS OUT0'
+  ; Item #1 'SPUS OUT1'
+  ; Item #2 'SPUS OUT2'
+  ; Item #3 'SPUS OUT3'
+  ; Item #4 'SPUS OUT4'
+  ; Item #5 'SPUS OUT5'
+  ; Item #6 'SPUS OUT6'
+  ; Item #7 'SPUS OUT7'
+  : values=0
+numid=136,iface=MIXER,name='ABOX SIFSM'
+  ; type=ENUMERATED,access=rw------,values=1,items=8
+  ; Item #0 'SPUS IN0'
+  ; Item #1 'SPUS IN1'
+  ; Item #2 'SPUS IN2'
+  ; Item #3 'SPUS IN3'
+  ; Item #4 'SPUS IN4'
+  ; Item #5 'SPUS IN5'
+  ; Item #6 'SPUS IN6'
+  ; Item #7 'SPUS IN7'
+  : values=0
+numid=110,iface=MIXER,name='ABOX SPDY channel'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=8,step=0
+  : values=2
+numid=111,iface=MIXER,name='ABOX SPDY rate'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=384000,step=0
+  : values=40000
+numid=109,iface=MIXER,name='ABOX SPDY width'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=32,step=0
+  : values=16
+numid=177,iface=MIXER,name='ABOX SPUM ASRC0'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'Off'
+  ; Item #1 'On'
+  : values=1
+numid=178,iface=MIXER,name='ABOX SPUM ASRC1'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'Off'
+  ; Item #1 'On'
+  : values=0
+numid=179,iface=MIXER,name='ABOX SPUM ASRC2'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'Off'
+  ; Item #1 'On'
+  : values=1
+numid=180,iface=MIXER,name='ABOX SPUM ASRC3'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'Off'
+  ; Item #1 'On'
+  : values=0
+numid=145,iface=MIXER,name='ABOX SPUS ASRC0'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'Off'
+  ; Item #1 'On'
+  : values=0
+numid=146,iface=MIXER,name='ABOX SPUS ASRC1'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'Off'
+  ; Item #1 'On'
+  : values=1
+numid=147,iface=MIXER,name='ABOX SPUS ASRC2'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'Off'
+  ; Item #1 'On'
+  : values=0
+numid=148,iface=MIXER,name='ABOX SPUS ASRC3'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'Off'
+  ; Item #1 'On'
+  : values=1
+numid=149,iface=MIXER,name='ABOX SPUS ASRC4'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'Off'
+  ; Item #1 'On'
+  : values=1
+numid=150,iface=MIXER,name='ABOX SPUS ASRC5'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'Off'
+  ; Item #1 'On'
+  : values=1
+numid=151,iface=MIXER,name='ABOX SPUS ASRC6'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'Off'
+  ; Item #1 'On'
+  : values=1
+numid=152,iface=MIXER,name='ABOX SPUS ASRC7'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'Off'
+  ; Item #1 'On'
+  : values=0
+numid=137,iface=MIXER,name='ABOX SPUS IN0'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'RDMA'
+  ; Item #1 'SIFSM'
+  : values=0
+numid=138,iface=MIXER,name='ABOX SPUS IN1'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'RDMA'
+  ; Item #1 'SIFSM'
+  : values=0
+numid=139,iface=MIXER,name='ABOX SPUS IN2'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'RDMA'
+  ; Item #1 'SIFSM'
+  : values=0
+numid=140,iface=MIXER,name='ABOX SPUS IN3'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'RDMA'
+  ; Item #1 'SIFSM'
+  : values=0
+numid=141,iface=MIXER,name='ABOX SPUS IN4'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'RDMA'
+  ; Item #1 'SIFSM'
+  : values=0
+numid=142,iface=MIXER,name='ABOX SPUS IN5'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'RDMA'
+  ; Item #1 'SIFSM'
+  : values=0
+numid=143,iface=MIXER,name='ABOX SPUS IN6'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'RDMA'
+  ; Item #1 'SIFSM'
+  : values=0
+numid=144,iface=MIXER,name='ABOX SPUS IN7'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'RDMA'
+  ; Item #1 'SIFSM'
+  : values=0
+numid=153,iface=MIXER,name='ABOX SPUS OUT0'
+  ; type=ENUMERATED,access=rw------,values=1,items=3
+  ; Item #0 'SIFS1'
+  ; Item #1 'SIFS0'
+  ; Item #2 'SIFS2'
+  : values=1
+numid=154,iface=MIXER,name='ABOX SPUS OUT1'
+  ; type=ENUMERATED,access=rw------,values=1,items=3
+  ; Item #0 'SIFS1'
+  ; Item #1 'SIFS0'
+  ; Item #2 'SIFS2'
+  : values=1
+numid=155,iface=MIXER,name='ABOX SPUS OUT2'
+  ; type=ENUMERATED,access=rw------,values=1,items=3
+  ; Item #0 'SIFS1'
+  ; Item #1 'SIFS0'
+  ; Item #2 'SIFS2'
+  : values=1
+numid=156,iface=MIXER,name='ABOX SPUS OUT3'
+  ; type=ENUMERATED,access=rw------,values=1,items=3
+  ; Item #0 'SIFS1'
+  ; Item #1 'SIFS0'
+  ; Item #2 'SIFS2'
+  : values=1
+numid=157,iface=MIXER,name='ABOX SPUS OUT4'
+  ; type=ENUMERATED,access=rw------,values=1,items=3
+  ; Item #0 'SIFS1'
+  ; Item #1 'SIFS0'
+  ; Item #2 'SIFS2'
+  : values=1
+numid=158,iface=MIXER,name='ABOX SPUS OUT5'
+  ; type=ENUMERATED,access=rw------,values=1,items=3
+  ; Item #0 'SIFS1'
+  ; Item #1 'SIFS0'
+  ; Item #2 'SIFS2'
+  : values=1
+numid=159,iface=MIXER,name='ABOX SPUS OUT6'
+  ; type=ENUMERATED,access=rw------,values=1,items=3
+  ; Item #0 'SIFS1'
+  ; Item #1 'SIFS0'
+  ; Item #2 'SIFS2'
+  : values=2
+numid=160,iface=MIXER,name='ABOX SPUS OUT7'
+  ; type=ENUMERATED,access=rw------,values=1,items=3
+  ; Item #0 'SIFS1'
+  ; Item #1 'SIFS0'
+  ; Item #2 'SIFS2'
+  : values=0
+numid=135,iface=MIXER,name='ABOX SPUSM'
+  ; type=ENUMERATED,access=rw------,values=1,items=16
+  ; Item #0 'RESERVED'
+  ; Item #1 'RESERVED'
+  ; Item #2 'RESERVED'
+  ; Item #3 'RESERVED'
+  ; Item #4 'RESERVED'
+  ; Item #5 'RESERVED'
+  ; Item #6 'RESERVED'
+  ; Item #7 'RESERVED'
+  ; Item #8 'UAIF0'
+  ; Item #9 'UAIF1'
+  ; Item #10 'UAIF2'
+  ; Item #11 'UAIF3'
+  ; Item #12 'UAIF4'
+  ; Item #13 'RESERVED'
+  ; Item #14 'RESERVED'
+  ; Item #15 'SPDY'
+  : values=0
+numid=5,iface=MIXER,name='ABOX Sampling Rate Inmux0'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=384000,step=0
+  : values=48000
+numid=23,iface=MIXER,name='ABOX Sampling Rate Inmux0 Min'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=384000,step=0
+  : values=8000
+numid=6,iface=MIXER,name='ABOX Sampling Rate Inmux1'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=384000,step=0
+  : values=48000
+numid=24,iface=MIXER,name='ABOX Sampling Rate Inmux1 Min'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=384000,step=0
+  : values=8000
+numid=7,iface=MIXER,name='ABOX Sampling Rate Inmux2'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=384000,step=0
+  : values=48000
+numid=25,iface=MIXER,name='ABOX Sampling Rate Inmux2 Min'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=384000,step=0
+  : values=8000
+numid=8,iface=MIXER,name='ABOX Sampling Rate Inmux3'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=384000,step=0
+  : values=48000
+numid=26,iface=MIXER,name='ABOX Sampling Rate Inmux3 Min'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=384000,step=0
+  : values=8000
+numid=9,iface=MIXER,name='ABOX Sampling Rate Inmux4'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=384000,step=0
+  : values=48000
+numid=27,iface=MIXER,name='ABOX Sampling Rate Inmux4 Min'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=384000,step=0
+  : values=8000
+numid=1,iface=MIXER,name='ABOX Sampling Rate Mixer'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=384000,step=0
+  : values=48000
+numid=19,iface=MIXER,name='ABOX Sampling Rate Mixer Min'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=384000,step=0
+  : values=48000
+numid=2,iface=MIXER,name='ABOX Sampling Rate Out1'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=384000,step=0
+  : values=48000
+numid=20,iface=MIXER,name='ABOX Sampling Rate Out1 Min'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=384000,step=0
+  : values=8000
+numid=3,iface=MIXER,name='ABOX Sampling Rate Out2'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=384000,step=0
+  : values=48000
+numid=21,iface=MIXER,name='ABOX Sampling Rate Out2 Min'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=384000,step=0
+  : values=8000
+numid=4,iface=MIXER,name='ABOX Sampling Rate Recp'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=384000,step=0
+  : values=48000
+numid=22,iface=MIXER,name='ABOX Sampling Rate Recp Min'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=384000,step=0
+  : values=8000
+numid=49,iface=MIXER,name='ABOX Sound Type'
+  ; type=ENUMERATED,access=rw------,values=1,items=5
+  ; Item #0 'VOICE'
+  ; Item #1 'SPEAKER'
+  ; Item #2 'HEADSET'
+  ; Item #3 'BTVOICE'
+  ; Item #4 'USB'
+  : values=0
+numid=50,iface=MIXER,name='ABOX Tickle'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=on
+numid=163,iface=MIXER,name='ABOX UAIF0 SPK'
+  ; type=ENUMERATED,access=rw------,values=1,items=13
+  ; Item #0 'RESERVED'
+  ; Item #1 'SIFS0'
+  ; Item #2 'SIFS1'
+  ; Item #3 'SIFS2'
+  ; Item #4 'RESERVED'
+  ; Item #5 'RESERVED'
+  ; Item #6 'RESERVED'
+  ; Item #7 'RESERVED'
+  ; Item #8 'RESERVED'
+  ; Item #9 'RESERVED'
+  ; Item #10 'RESERVED'
+  ; Item #11 'RESERVED'
+  ; Item #12 'SIFMS'
+  : values=1
+numid=59,iface=MIXER,name='ABOX UAIF0 channel'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=8,step=0
+  : values=2
+numid=60,iface=MIXER,name='ABOX UAIF0 rate'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=384000,step=0
+  : values=48000
+numid=58,iface=MIXER,name='ABOX UAIF0 width'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=32,step=0
+  : values=16
+numid=164,iface=MIXER,name='ABOX UAIF1 SPK'
+  ; type=ENUMERATED,access=rw------,values=1,items=13
+  ; Item #0 'RESERVED'
+  ; Item #1 'SIFS0'
+  ; Item #2 'SIFS1'
+  ; Item #3 'SIFS2'
+  ; Item #4 'RESERVED'
+  ; Item #5 'RESERVED'
+  ; Item #6 'RESERVED'
+  ; Item #7 'RESERVED'
+  ; Item #8 'RESERVED'
+  ; Item #9 'RESERVED'
+  ; Item #10 'RESERVED'
+  ; Item #11 'RESERVED'
+  ; Item #12 'SIFMS'
+  : values=0
+numid=98,iface=MIXER,name='ABOX UAIF1 channel'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=8,step=0
+  : values=2
+numid=99,iface=MIXER,name='ABOX UAIF1 rate'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=384000,step=0
+  : values=48000
+numid=97,iface=MIXER,name='ABOX UAIF1 width'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=32,step=0
+  : values=16
+numid=165,iface=MIXER,name='ABOX UAIF2 SPK'
+  ; type=ENUMERATED,access=rw------,values=1,items=13
+  ; Item #0 'RESERVED'
+  ; Item #1 'SIFS0'
+  ; Item #2 'SIFS1'
+  ; Item #3 'SIFS2'
+  ; Item #4 'RESERVED'
+  ; Item #5 'RESERVED'
+  ; Item #6 'RESERVED'
+  ; Item #7 'RESERVED'
+  ; Item #8 'RESERVED'
+  ; Item #9 'RESERVED'
+  ; Item #10 'RESERVED'
+  ; Item #11 'RESERVED'
+  ; Item #12 'SIFMS'
+  : values=0
+numid=101,iface=MIXER,name='ABOX UAIF2 channel'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=8,step=0
+  : values=2
+numid=102,iface=MIXER,name='ABOX UAIF2 rate'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=384000,step=0
+  : values=48000
+numid=100,iface=MIXER,name='ABOX UAIF2 width'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=32,step=0
+  : values=16
+numid=166,iface=MIXER,name='ABOX UAIF3 SPK'
+  ; type=ENUMERATED,access=rw------,values=1,items=13
+  ; Item #0 'RESERVED'
+  ; Item #1 'SIFS0'
+  ; Item #2 'SIFS1'
+  ; Item #3 'SIFS2'
+  ; Item #4 'RESERVED'
+  ; Item #5 'RESERVED'
+  ; Item #6 'RESERVED'
+  ; Item #7 'RESERVED'
+  ; Item #8 'RESERVED'
+  ; Item #9 'RESERVED'
+  ; Item #10 'RESERVED'
+  ; Item #11 'RESERVED'
+  ; Item #12 'SIFMS'
+  : values=0
+numid=167,iface=MIXER,name='ABOX UAIF4 SPK'
+  ; type=ENUMERATED,access=rw------,values=1,items=13
+  ; Item #0 'RESERVED'
+  ; Item #1 'SIFS0'
+  ; Item #2 'SIFS1'
+  ; Item #3 'SIFS2'
+  ; Item #4 'RESERVED'
+  ; Item #5 'RESERVED'
+  ; Item #6 'RESERVED'
+  ; Item #7 'RESERVED'
+  ; Item #8 'RESERVED'
+  ; Item #9 'RESERVED'
+  ; Item #10 'RESERVED'
+  ; Item #11 'RESERVED'
+  ; Item #12 'SIFMS'
+  : values=0
+numid=104,iface=MIXER,name='ABOX UAIF4 channel'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=8,step=0
+  : values=2
+numid=105,iface=MIXER,name='ABOX UAIF4 rate'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=384000,step=0
+  : values=48000
+numid=103,iface=MIXER,name='ABOX UAIF4 width'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=32,step=0
+  : values=16
+numid=47,iface=MIXER,name='ABOX VI Sensing'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=2,step=0
+  : values=0
+numid=132,iface=MIXER,name='ABOX VSS State'
+  ; type=ENUMERATED,access=rw------,values=1,items=5
+  ; Item #0 'NORMAL'
+  ; Item #1 'INIT FAIL'
+  ; Item #2 'SUSPENDED'
+  ; Item #3 'PCM OPEN FAIL'
+  ; Item #4 'ABOX STUCK'
+  : values=0
+numid=51,iface=MIXER,name='ABOX Wakelock'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=92,iface=MIXER,name='AD MONOL Clk Sel'
+  ; type=ENUMERATED,access=rw------,values=1,items=7
+  ; Item #0 'clk_sysy_div_out'
+  ; Item #1 'clk_i2s12_track'
+  ; Item #2 'clk_i2s34_track'
+  ; Item #3 'clk_i2s5_track'
+  ; Item #4 'clk_sys'
+  ; Item #5 'clk_sys2'
+  ; Item #6 'clk_sys3'
+  : values=0
+numid=93,iface=MIXER,name='AD MONOR Clk Sel'
+  ; type=ENUMERATED,access=rw------,values=1,items=7
+  ; Item #0 'clk_sysy_div_out'
+  ; Item #1 'clk_i2s12_track'
+  ; Item #2 'clk_i2s34_track'
+  ; Item #3 'clk_i2s5_track'
+  ; Item #4 'clk_sys'
+  ; Item #5 'clk_sys2'
+  ; Item #6 'clk_sys3'
+  : values=0
+numid=90,iface=MIXER,name='AD STO1 Clk Sel'
+  ; type=ENUMERATED,access=rw------,values=1,items=7
+  ; Item #0 'clk_sysy_div_out'
+  ; Item #1 'clk_i2s12_track'
+  ; Item #2 'clk_i2s34_track'
+  ; Item #3 'clk_i2s5_track'
+  ; Item #4 'clk_sys'
+  ; Item #5 'clk_sys2'
+  ; Item #6 'clk_sys3'
+  : values=0
+numid=91,iface=MIXER,name='AD STO2 Clk Sel'
+  ; type=ENUMERATED,access=rw------,values=1,items=7
+  ; Item #0 'clk_sysy_div_out'
+  ; Item #1 'clk_i2s12_track'
+  ; Item #2 'clk_i2s34_track'
+  ; Item #3 'clk_i2s5_track'
+  ; Item #4 'clk_sys'
+  ; Item #5 'clk_sys2'
+  ; Item #6 'clk_sys3'
+  : values=0
+numid=115,iface=MIXER,name='Audio DHA data'
+  ; type=INTEGER,access=rw------,values=14,min=0,max=100,step=0
+  : values=0,0,0,0,0,0,0,0,0,0,0,0,0,0
+numid=113,iface=MIXER,name='BT SCO MIC Enable'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=112,iface=MIXER,name='BT SCO SPK Enable'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=71,iface=MIXER,name='CBJ Boost Volume'
+  ; type=INTEGER,access=rw---R--,values=1,min=0,max=8,step=0
+  : values=0
+  | dBrange-
+    rangemin=0,,rangemax=0
+      | dBscale-min=0.00dB,step=0.00dB,mute=0
+    rangemin=1,,rangemax=1
+      | dBscale-min=20.00dB,step=0.00dB,mute=0
+    rangemin=2,,rangemax=2
+      | dBscale-min=24.00dB,step=0.00dB,mute=0
+    rangemin=3,,rangemax=5
+      | dBscale-min=30.00dB,step=5.00dB,mute=0
+    rangemin=6,,rangemax=6
+      | dBscale-min=44.00dB,step=0.00dB,mute=0
+    rangemin=7,,rangemax=7
+      | dBscale-min=50.00dB,step=0.00dB,mute=0
+    rangemin=8,,rangemax=8
+      | dBscale-min=52.00dB,step=0.00dB,mute=0
+
+numid=55,iface=MIXER,name='ComprTx0 Bit'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=255,step=0
+  : values=0
+numid=56,iface=MIXER,name='ComprTx0 Ch'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=15,step=0
+  : values=0
+numid=54,iface=MIXER,name='ComprTx0 Format'
+  ; type=ENUMERATED,access=rw------,values=1,items=4
+  ; Item #0 '48kHz 16bit'
+  ; Item #1 '192kHz 24bit'
+  ; Item #2 '48kHz 24bit'
+  ; Item #3 '384kHz 32bit'
+  : values=0
+numid=57,iface=MIXER,name='ComprTx0 Rate'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=1048575,step=0
+  : values=0
+numid=53,iface=MIXER,name='ComprTx0 Volume'
+  ; type=INTEGER,access=rw---R--,values=2,min=0,max=8192,step=0
+  : values=0,0
+  | dBlinear-min=0.00dB,max=81.92dB
+numid=88,iface=MIXER,name='DA MONOL Clk Sel'
+  ; type=ENUMERATED,access=rw------,values=1,items=7
+  ; Item #0 'clk_sysy_div_out'
+  ; Item #1 'clk_i2s12_track'
+  ; Item #2 'clk_i2s34_track'
+  ; Item #3 'clk_i2s5_track'
+  ; Item #4 'clk_sys'
+  ; Item #5 'clk_sys2'
+  ; Item #6 'clk_sys3'
+  : values=0
+numid=89,iface=MIXER,name='DA MONOR Clk Sel'
+  ; type=ENUMERATED,access=rw------,values=1,items=7
+  ; Item #0 'clk_sysy_div_out'
+  ; Item #1 'clk_i2s12_track'
+  ; Item #2 'clk_i2s34_track'
+  ; Item #3 'clk_i2s5_track'
+  ; Item #4 'clk_sys'
+  ; Item #5 'clk_sys2'
+  ; Item #6 'clk_sys3'
+  : values=0
+numid=86,iface=MIXER,name='DA STO1 Clk Sel'
+  ; type=ENUMERATED,access=rw------,values=1,items=7
+  ; Item #0 'clk_sysy_div_out'
+  ; Item #1 'clk_i2s12_track'
+  ; Item #2 'clk_i2s34_track'
+  ; Item #3 'clk_i2s5_track'
+  ; Item #4 'clk_sys'
+  ; Item #5 'clk_sys2'
+  ; Item #6 'clk_sys3'
+  : values=0
+numid=87,iface=MIXER,name='DA STO2 Clk Sel'
+  ; type=ENUMERATED,access=rw------,values=1,items=7
+  ; Item #0 'clk_sysy_div_out'
+  ; Item #1 'clk_i2s12_track'
+  ; Item #2 'clk_i2s34_track'
+  ; Item #3 'clk_i2s5_track'
+  ; Item #4 'clk_sys'
+  ; Item #5 'clk_sys2'
+  ; Item #6 'clk_sys3'
+  : values=0
+numid=283,iface=MIXER,name='DAC L1 Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=4
+  ; Item #0 'IF1 DAC1'
+  ; Item #1 'IF2_1 DAC'
+  ; Item #2 'IF2_2 DAC'
+  ; Item #3 'IF3 DAC'
+  : values=0
+numid=289,iface=MIXER,name='DAC L1 Source'
+  ; type=ENUMERATED,access=rw------,values=1,items=3
+  ; Item #0 'Stereo1 DAC Mixer'
+  ; Item #1 'DAC1'
+  ; Item #2 'DMIC1'
+  : values=0
+numid=285,iface=MIXER,name='DAC L2 Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=5
+  ; Item #0 'IF1 DAC2'
+  ; Item #1 'IF2_1 DAC'
+  ; Item #2 'IF2_2 DAC'
+  ; Item #3 'IF3 DAC'
+  ; Item #4 'Mono ADC MIX'
+  : values=0
+numid=291,iface=MIXER,name='DAC L2 Source'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'Mono DAC Mixer'
+  ; Item #1 'DAC2'
+  : values=0
+numid=287,iface=MIXER,name='DAC L3 Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=5
+  ; Item #0 'IF1 DAC2'
+  ; Item #1 'IF2_1 DAC'
+  ; Item #2 'IF2_2 DAC'
+  ; Item #3 'IF3 DAC'
+  ; Item #4 'STO2 ADC MIX'
+  : values=1
+numid=315,iface=MIXER,name='DAC MIXL'
+  ; type=ENUMERATED,access=rw------,values=1,items=3
+  ; Item #0 'Stereo1 DAC Mixer'
+  ; Item #1 'Stereo2 DAC Mixer'
+  ; Item #2 'Mono DAC Mixer'
+  : values=0
+numid=316,iface=MIXER,name='DAC MIXR'
+  ; type=ENUMERATED,access=rw------,values=1,items=3
+  ; Item #0 'Stereo1 DAC Mixer'
+  ; Item #1 'Stereo2 DAC Mixer'
+  ; Item #2 'Mono DAC Mixer'
+  : values=0
+numid=284,iface=MIXER,name='DAC R1 Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=4
+  ; Item #0 'IF1 DAC1'
+  ; Item #1 'IF2_1 DAC'
+  ; Item #2 'IF2_2 DAC'
+  ; Item #3 'IF3 DAC'
+  : values=0
+numid=290,iface=MIXER,name='DAC R1 Source'
+  ; type=ENUMERATED,access=rw------,values=1,items=3
+  ; Item #0 'Stereo1 DAC Mixer'
+  ; Item #1 'DAC1'
+  ; Item #2 'DMIC1'
+  : values=0
+numid=286,iface=MIXER,name='DAC R2 Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=5
+  ; Item #0 'IF1 DAC2'
+  ; Item #1 'IF2_1 DAC'
+  ; Item #2 'IF2_2 DAC'
+  ; Item #3 'IF3 DAC'
+  ; Item #4 'Mono ADC MIX'
+  : values=1
+numid=292,iface=MIXER,name='DAC R2 Source'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'Mono DAC Mixer'
+  ; Item #1 'DAC2'
+  : values=0
+numid=288,iface=MIXER,name='DAC R3 Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=5
+  ; Item #0 'IF1 DAC2'
+  ; Item #1 'IF2_1 DAC'
+  ; Item #2 'IF2_2 DAC'
+  ; Item #3 'IF3 DAC'
+  ; Item #4 'STO2 ADC MIX'
+  : values=1
+numid=280,iface=MIXER,name='DAC1 MIXL DAC1 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=on
+numid=279,iface=MIXER,name='DAC1 MIXL Stereo ADC Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=282,iface=MIXER,name='DAC1 MIXR DAC1 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=on
+numid=281,iface=MIXER,name='DAC1 MIXR Stereo ADC Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=64,iface=MIXER,name='DAC1 Playback Volume'
+  ; type=INTEGER,access=rw---R--,values=2,min=0,max=175,step=0
+  : values=0,0
+  | dBscale-min=-656.25dB,step=3.75dB,mute=0
+numid=66,iface=MIXER,name='DAC2 Playback Switch'
+  ; type=BOOLEAN,access=rw------,values=2
+  : values=on,on
+numid=65,iface=MIXER,name='DAC2 Playback Volume'
+  ; type=INTEGER,access=rw---R--,values=2,min=0,max=175,step=0
+  : values=175,175
+  | dBscale-min=-656.25dB,step=3.75dB,mute=0
+numid=134,iface=MIXER,name='Debug Buffer Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=on
+numid=94,iface=MIXER,name='Disable NG2'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=on
+numid=119,iface=MIXER,name='ESA BBoost data'
+  ; type=INTEGER,access=rw------,values=2,min=0,max=100,step=0
+  : values=0,0
+numid=120,iface=MIXER,name='ESA EQ data'
+  ; type=INTEGER,access=rw------,values=23,min=0,max=14000,step=0
+  : values=0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+numid=126,iface=MIXER,name='HEADPHONE Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=131,iface=MIXER,name='HEADSETMIC Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=on
+numid=342,iface=MIXER,name='HPO Playback Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=265,iface=MIXER,name='IF1_1 01 ADC Swap Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=4
+  ; Item #0 'L/R'
+  ; Item #1 'R/L'
+  ; Item #2 'L/L'
+  ; Item #3 'R/R'
+  : values=0
+numid=266,iface=MIXER,name='IF1_1 23 ADC Swap Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=4
+  ; Item #0 'L/R'
+  ; Item #1 'R/L'
+  ; Item #2 'L/L'
+  ; Item #3 'R/R'
+  : values=0
+numid=267,iface=MIXER,name='IF1_1 45 ADC Swap Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=4
+  ; Item #0 'L/R'
+  ; Item #1 'R/L'
+  ; Item #2 'L/L'
+  ; Item #3 'R/R'
+  : values=0
+numid=268,iface=MIXER,name='IF1_1 67 ADC Swap Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=4
+  ; Item #0 'L/R'
+  ; Item #1 'R/L'
+  ; Item #2 'L/L'
+  ; Item #3 'R/R'
+  : values=0
+numid=253,iface=MIXER,name='IF1_1_ADC1 Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'STO1 ADC'
+  ; Item #1 'IF2_1 DAC'
+  : values=0
+numid=254,iface=MIXER,name='IF1_1_ADC2 Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'STO2 ADC'
+  ; Item #1 'IF2_2 DAC'
+  : values=0
+numid=255,iface=MIXER,name='IF1_1_ADC3 Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'MONO ADC'
+  ; Item #1 'IF3 DAC'
+  : values=0
+numid=269,iface=MIXER,name='IF1_2 01 ADC Swap Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=4
+  ; Item #0 'L/R'
+  ; Item #1 'R/L'
+  ; Item #2 'L/L'
+  ; Item #3 'R/R'
+  : values=0
+numid=270,iface=MIXER,name='IF1_2 23 ADC Swap Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=4
+  ; Item #0 'L/R'
+  ; Item #1 'R/L'
+  ; Item #2 'L/L'
+  ; Item #3 'R/R'
+  : values=0
+numid=271,iface=MIXER,name='IF1_2 45 ADC Swap Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=4
+  ; Item #0 'L/R'
+  ; Item #1 'R/L'
+  ; Item #2 'L/L'
+  ; Item #3 'R/R'
+  : values=0
+numid=272,iface=MIXER,name='IF1_2 67 ADC Swap Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=4
+  ; Item #0 'L/R'
+  ; Item #1 'R/L'
+  ; Item #2 'L/L'
+  ; Item #3 'R/R'
+  : values=0
+numid=256,iface=MIXER,name='IF1_2_ADC1 Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'STO1 ADC'
+  ; Item #1 'IF1 DAC'
+  : values=0
+numid=257,iface=MIXER,name='IF1_2_ADC2 Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'STO2 ADC'
+  ; Item #1 'IF2_1 DAC'
+  : values=0
+numid=258,iface=MIXER,name='IF1_2_ADC3 Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'MONO ADC'
+  ; Item #1 'IF2_2 DAC'
+  : values=0
+numid=259,iface=MIXER,name='IF1_2_ADC4 Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'DAC1'
+  ; Item #1 'IF3 DAC'
+  : values=0
+numid=262,iface=MIXER,name='IF2_1 ADC Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=8
+  ; Item #0 'STO1 ADC'
+  ; Item #1 'STO2 ADC'
+  ; Item #2 'MONO ADC'
+  ; Item #3 'IF1 DAC1'
+  ; Item #4 'IF1 DAC2'
+  ; Item #5 'IF2_2 DAC'
+  ; Item #6 'IF3 DAC'
+  ; Item #7 'DAC1 MIX'
+  : values=0
+numid=274,iface=MIXER,name='IF2_1 ADC Swap Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=4
+  ; Item #0 'L/R'
+  ; Item #1 'R/L'
+  ; Item #2 'L/L'
+  ; Item #3 'R/R'
+  : values=0
+numid=273,iface=MIXER,name='IF2_1 DAC Swap Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=4
+  ; Item #0 'L/R'
+  ; Item #1 'R/L'
+  ; Item #2 'L/L'
+  ; Item #3 'R/R'
+  : values=0
+numid=263,iface=MIXER,name='IF2_2 ADC Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=8
+  ; Item #0 'STO1 ADC'
+  ; Item #1 'STO2 ADC'
+  ; Item #2 'MONO ADC'
+  ; Item #3 'IF1 DAC1'
+  ; Item #4 'IF1 DAC2'
+  ; Item #5 'IF2_1 DAC'
+  ; Item #6 'IF3 DAC'
+  ; Item #7 'DAC1 MIX'
+  : values=0
+numid=276,iface=MIXER,name='IF2_2 ADC Swap Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=4
+  ; Item #0 'L/R'
+  ; Item #1 'R/L'
+  ; Item #2 'L/L'
+  ; Item #3 'R/R'
+  : values=0
+numid=275,iface=MIXER,name='IF2_2 DAC Swap Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=4
+  ; Item #0 'L/R'
+  ; Item #1 'R/L'
+  ; Item #2 'L/L'
+  ; Item #3 'R/R'
+  : values=0
+numid=264,iface=MIXER,name='IF3 ADC Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=8
+  ; Item #0 'STO1 ADC'
+  ; Item #1 'STO2 ADC'
+  ; Item #2 'MONO ADC'
+  ; Item #3 'IF1 DAC1'
+  ; Item #4 'IF1 DAC2'
+  ; Item #5 'IF2_1 DAC'
+  ; Item #6 'IF2_2 DAC'
+  ; Item #7 'DAC1 MIX'
+  : values=0
+numid=278,iface=MIXER,name='IF3 ADC Swap Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=4
+  ; Item #0 'L/R'
+  ; Item #1 'R/L'
+  ; Item #2 'L/L'
+  ; Item #3 'R/R'
+  : values=0
+numid=277,iface=MIXER,name='IF3 DAC Swap Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=4
+  ; Item #0 'L/R'
+  ; Item #1 'R/L'
+  ; Item #2 'L/L'
+  ; Item #3 'R/R'
+  : values=0
+numid=72,iface=MIXER,name='IN Capture Volume'
+  ; type=INTEGER,access=rw---R--,values=2,min=0,max=31,step=0
+  : values=23,23
+  | dBscale-min=-34.50dB,step=1.50dB,mute=0
+numid=67,iface=MIXER,name='IN1 Boost Volume'
+  ; type=INTEGER,access=rw---R--,values=1,min=0,max=69,step=0
+  : values=0
+  | dBscale-min=-12.00dB,step=0.75dB,mute=0
+numid=68,iface=MIXER,name='IN2 Boost Volume'
+  ; type=INTEGER,access=rw---R--,values=1,min=0,max=69,step=0
+  : values=0
+  | dBscale-min=-12.00dB,step=0.75dB,mute=0
+numid=69,iface=MIXER,name='IN3 Boost Volume'
+  ; type=INTEGER,access=rw---R--,values=1,min=0,max=69,step=0
+  : values=41
+  | dBscale-min=-12.00dB,step=0.75dB,mute=0
+numid=70,iface=MIXER,name='IN4 Boost Volume'
+  ; type=INTEGER,access=rw---R--,values=1,min=0,max=69,step=0
+  : values=41
+  | dBscale-min=-12.00dB,step=0.75dB,mute=0
+numid=337,iface=MIXER,name='LOUT L MIX DAC L2 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=338,iface=MIXER,name='LOUT L MIX OUTVOL L Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=343,iface=MIXER,name='LOUT L Playback Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=339,iface=MIXER,name='LOUT R MIX DAC R2 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=340,iface=MIXER,name='LOUT R MIX OUTVOL R Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=344,iface=MIXER,name='LOUT R Playback Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=117,iface=MIXER,name='LRSM data'
+  ; type=INTEGER,access=rw------,values=3,min=4294967246,max=50,step=0
+  : values=0,0,0
+numid=129,iface=MIXER,name='MAINMIC Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=on
+numid=319,iface=MIXER,name='MONOVOL MIX BST1 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=320,iface=MIXER,name='MONOVOL MIX BST2 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=321,iface=MIXER,name='MONOVOL MIX BST3 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=317,iface=MIXER,name='MONOVOL MIX DAC L2 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=318,iface=MIXER,name='MONOVOL MIX RECMIX2L Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=332,iface=MIXER,name='MONOVOL Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=118,iface=MIXER,name='MSP data'
+  ; type=INTEGER,access=rw------,values=2,min=0,max=5,step=0
+  : values=0,0
+numid=121,iface=MIXER,name='NXP BDL data'
+  ; type=INTEGER,access=rw------,values=35,min=0,max=192000,step=0
+  : values=0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+numid=122,iface=MIXER,name='NXP RVB ctx data'
+  ; type=INTEGER,access=rw------,values=7,min=0,max=192000,step=0
+  : values=0,0,0,0,0,0,0
+numid=123,iface=MIXER,name='NXP RVB param data'
+  ; type=INTEGER,access=rw------,values=10,min=0,max=192000,step=0
+  : values=0,0,0,0,0,0,0,0,0,0
+numid=324,iface=MIXER,name='OUT MIXL BST1 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=325,iface=MIXER,name='OUT MIXL BST2 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=326,iface=MIXER,name='OUT MIXL BST3 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=322,iface=MIXER,name='OUT MIXL DAC L2 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=323,iface=MIXER,name='OUT MIXL INL Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=329,iface=MIXER,name='OUT MIXR BST2 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=330,iface=MIXER,name='OUT MIXR BST3 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=331,iface=MIXER,name='OUT MIXR BST4 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=327,iface=MIXER,name='OUT MIXR DAC R2 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=328,iface=MIXER,name='OUT MIXR INR Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=63,iface=MIXER,name='OUT Playback Volume'
+  ; type=INTEGER,access=rw---R--,values=2,min=0,max=39,step=0
+  : values=31,31
+  | dBscale-min=-46.50dB,step=1.50dB,mute=0
+numid=333,iface=MIXER,name='OUTVOL L Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=334,iface=MIXER,name='OUTVOL R Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=347,iface=MIXER,name='PDM L Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=3
+  ; Item #0 'Stereo1 DAC'
+  ; Item #1 'Stereo2 DAC'
+  ; Item #2 'Mono DAC'
+  : values=0
+numid=345,iface=MIXER,name='PDM L Playback Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=348,iface=MIXER,name='PDM R Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=3
+  ; Item #0 'Stereo1 DAC'
+  ; Item #1 'Stereo2 DAC'
+  ; Item #2 'Mono DAC'
+  : values=0
+numid=346,iface=MIXER,name='PDM R Playback Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=128,iface=MIXER,name='RECEIVER Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=on
+numid=192,iface=MIXER,name='RECMIX1L BST1 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=191,iface=MIXER,name='RECMIX1L BST2 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=190,iface=MIXER,name='RECMIX1L BST3 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=on
+numid=189,iface=MIXER,name='RECMIX1L BST4 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=186,iface=MIXER,name='RECMIX1L CBJ Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=187,iface=MIXER,name='RECMIX1L INL Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=188,iface=MIXER,name='RECMIX1L INR Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=198,iface=MIXER,name='RECMIX1R BST1 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=197,iface=MIXER,name='RECMIX1R BST2 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=196,iface=MIXER,name='RECMIX1R BST3 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=195,iface=MIXER,name='RECMIX1R BST4 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=on
+numid=194,iface=MIXER,name='RECMIX1R INR Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=193,iface=MIXER,name='RECMIX1R MONOVOL Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=205,iface=MIXER,name='RECMIX2L BST1 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=204,iface=MIXER,name='RECMIX2L BST2 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=203,iface=MIXER,name='RECMIX2L BST3 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=202,iface=MIXER,name='RECMIX2L BST4 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=201,iface=MIXER,name='RECMIX2L CBJ Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=199,iface=MIXER,name='RECMIX2L INL Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=200,iface=MIXER,name='RECMIX2L INR Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=212,iface=MIXER,name='RECMIX2R BST1 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=211,iface=MIXER,name='RECMIX2R BST2 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=210,iface=MIXER,name='RECMIX2R BST3 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=209,iface=MIXER,name='RECMIX2R BST4 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=207,iface=MIXER,name='RECMIX2R INL Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=208,iface=MIXER,name='RECMIX2R INR Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=206,iface=MIXER,name='RECMIX2R MONOVOL Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=114,iface=MIXER,name='SA data'
+  ; type=INTEGER,access=rw------,values=26,min=0,max=100,step=0
+  : values=0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+numid=124,iface=MIXER,name='SB rotation'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=3,step=0
+  : values=0
+numid=127,iface=MIXER,name='SPEAKER Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=on
+numid=83,iface=MIXER,name='STO1 ADC Boost Gain Volume'
+  ; type=INTEGER,access=rw---R--,values=2,min=0,max=3,step=0
+  : values=0,0
+  | dBscale-min=0.00dB,step=12.00dB,mute=0
+numid=77,iface=MIXER,name='STO1 ADC Capture Switch'
+  ; type=BOOLEAN,access=rw------,values=2
+  : values=on,on
+numid=78,iface=MIXER,name='STO1 ADC Capture Volume'
+  ; type=INTEGER,access=rw---R--,values=2,min=0,max=127,step=0
+  : values=47,47
+  | dBscale-min=-176.25dB,step=3.75dB,mute=0
+numid=73,iface=MIXER,name='STO1 ADC Left Capture Volume'
+  ; type=INTEGER,access=rw---R--,values=1,min=0,max=127,step=0
+  : values=47
+  | dBscale-min=-176.25dB,step=3.75dB,mute=0
+numid=74,iface=MIXER,name='STO1 ADC Right Capture Volume'
+  ; type=INTEGER,access=rw---R--,values=1,min=0,max=127,step=0
+  : values=47
+  | dBscale-min=-176.25dB,step=3.75dB,mute=0
+numid=85,iface=MIXER,name='STO2 ADC Boost Gain Volume'
+  ; type=INTEGER,access=rw---R--,values=2,min=0,max=3,step=0
+  : values=0,0
+  | dBscale-min=0.00dB,step=12.00dB,mute=0
+numid=81,iface=MIXER,name='STO2 ADC Capture Switch'
+  ; type=BOOLEAN,access=rw------,values=2
+  : values=off,off
+numid=82,iface=MIXER,name='STO2 ADC Capture Volume'
+  ; type=INTEGER,access=rw---R--,values=2,min=0,max=127,step=0
+  : values=47,47
+  | dBscale-min=-176.25dB,step=3.75dB,mute=0
+numid=130,iface=MIXER,name='SUBMIC Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=on
+numid=133,iface=MIXER,name='Sound Wakelock'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=218,iface=MIXER,name='Stereo1 ADC L Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=4
+  ; Item #0 'ADC1 L'
+  ; Item #1 'ADC1 R'
+  ; Item #2 'ADC2 L'
+  ; Item #3 'ADC2 R'
+  : values=0
+numid=214,iface=MIXER,name='Stereo1 ADC L1 Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'DD Mux'
+  ; Item #1 'ADC'
+  : values=1
+numid=216,iface=MIXER,name='Stereo1 ADC L2 Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'DAC MIX'
+  ; Item #1 'DMIC'
+  : values=0
+numid=241,iface=MIXER,name='Stereo1 ADC MIXL ADC1 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=on
+numid=242,iface=MIXER,name='Stereo1 ADC MIXL ADC2 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=243,iface=MIXER,name='Stereo1 ADC MIXR ADC1 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=on
+numid=244,iface=MIXER,name='Stereo1 ADC MIXR ADC2 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=219,iface=MIXER,name='Stereo1 ADC R Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=4
+  ; Item #0 'ADC1 L'
+  ; Item #1 'ADC1 R'
+  ; Item #2 'ADC2 L'
+  ; Item #3 'ADC2 R'
+  : values=1
+numid=215,iface=MIXER,name='Stereo1 ADC R1 Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'DD Mux'
+  ; Item #1 'ADC'
+  : values=1
+numid=217,iface=MIXER,name='Stereo1 ADC R2 Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'DAC MIX'
+  ; Item #1 'DMIC'
+  : values=0
+numid=293,iface=MIXER,name='Stereo1 DAC MIXL DAC L1 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=295,iface=MIXER,name='Stereo1 DAC MIXL DAC L2 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=294,iface=MIXER,name='Stereo1 DAC MIXL DAC R1 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=296,iface=MIXER,name='Stereo1 DAC MIXL DAC R2 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=297,iface=MIXER,name='Stereo1 DAC MIXR DAC L1 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=299,iface=MIXER,name='Stereo1 DAC MIXR DAC L2 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=298,iface=MIXER,name='Stereo1 DAC MIXR DAC R1 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=300,iface=MIXER,name='Stereo1 DAC MIXR DAC R2 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=220,iface=MIXER,name='Stereo1 DD L Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'STO2 DAC'
+  ; Item #1 'MONO DAC'
+  : values=0
+numid=221,iface=MIXER,name='Stereo1 DD R Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=3
+  ; Item #0 'STO2 DAC'
+  ; Item #1 'MONO DAC'
+  ; Item #2 'AEC REF'
+  : values=0
+numid=213,iface=MIXER,name='Stereo1 DMIC Source'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'DMIC1'
+  ; Item #1 'DMIC2'
+  : values=0
+numid=237,iface=MIXER,name='Stereo2 ADC L Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=3
+  ; Item #0 'ADC1 L'
+  ; Item #1 'ADC1 R'
+  ; Item #2 'ADC2 L'
+  : values=0
+numid=233,iface=MIXER,name='Stereo2 ADC L1 Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'DD Mux'
+  ; Item #1 'ADC'
+  : values=0
+numid=235,iface=MIXER,name='Stereo2 ADC L2 Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'DAC MIX'
+  ; Item #1 'DMIC'
+  : values=0
+numid=245,iface=MIXER,name='Stereo2 ADC MIXL ADC1 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=246,iface=MIXER,name='Stereo2 ADC MIXL ADC2 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=247,iface=MIXER,name='Stereo2 ADC MIXR ADC1 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=248,iface=MIXER,name='Stereo2 ADC MIXR ADC2 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=238,iface=MIXER,name='Stereo2 ADC R Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=3
+  ; Item #0 'ADC1 L'
+  ; Item #1 'ADC1 R'
+  ; Item #2 'ADC2 L'
+  : values=0
+numid=234,iface=MIXER,name='Stereo2 ADC R1 Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'DD Mux'
+  ; Item #1 'ADC'
+  : values=0
+numid=236,iface=MIXER,name='Stereo2 ADC R2 Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'DAC MIX'
+  ; Item #1 'DMIC'
+  : values=0
+numid=301,iface=MIXER,name='Stereo2 DAC MIXL DAC L1 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=302,iface=MIXER,name='Stereo2 DAC MIXL DAC L2 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=303,iface=MIXER,name='Stereo2 DAC MIXL DAC L3 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=304,iface=MIXER,name='Stereo2 DAC MIXR DAC R1 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=305,iface=MIXER,name='Stereo2 DAC MIXR DAC R2 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=306,iface=MIXER,name='Stereo2 DAC MIXR DAC R3 Switch'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=239,iface=MIXER,name='Stereo2 DD L Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'STO2 DAC'
+  ; Item #1 'MONO DAC'
+  : values=0
+numid=240,iface=MIXER,name='Stereo2 DD R Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'STO2 DAC'
+  ; Item #1 'MONO DAC'
+  : values=0
+numid=232,iface=MIXER,name='Stereo2 DMIC Source'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'DMIC1'
+  ; Item #1 'DMIC2'
+  : values=0
+numid=260,iface=MIXER,name='TDM1 Data Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=24
+  ; Item #0 '1234'
+  ; Item #1 '1243'
+  ; Item #2 '1324'
+  ; Item #3 '1342'
+  ; Item #4 '1432'
+  ; Item #5 '1423'
+  ; Item #6 '2134'
+  ; Item #7 '2143'
+  ; Item #8 '2314'
+  ; Item #9 '2341'
+  ; Item #10 '2431'
+  ; Item #11 '2413'
+  ; Item #12 '3124'
+  ; Item #13 '3142'
+  ; Item #14 '3214'
+  ; Item #15 '3241'
+  ; Item #16 '3412'
+  ; Item #17 '3421'
+  ; Item #18 '4123'
+  ; Item #19 '4132'
+  ; Item #20 '4213'
+  ; Item #21 '4231'
+  ; Item #22 '4312'
+  ; Item #23 '4321'
+  : values=0
+numid=261,iface=MIXER,name='TDM2 Data Mux'
+  ; type=ENUMERATED,access=rw------,values=1,items=24
+  ; Item #0 '1234'
+  ; Item #1 '1243'
+  ; Item #2 '1324'
+  ; Item #3 '1342'
+  ; Item #4 '1432'
+  ; Item #5 '1423'
+  ; Item #6 '2134'
+  ; Item #7 '2143'
+  ; Item #8 '2314'
+  ; Item #9 '2341'
+  ; Item #10 '2431'
+  ; Item #11 '2413'
+  ; Item #12 '3124'
+  ; Item #13 '3142'
+  ; Item #14 '3214'
+  ; Item #15 '3241'
+  ; Item #16 '3412'
+  ; Item #17 '3421'
+  ; Item #18 '4123'
+  ; Item #19 '4132'
+  ; Item #20 '4213'
+  ; Item #21 '4231'
+  ; Item #22 '4312'
+  ; Item #23 '4321'
+  : values=0
+numid=351,iface=MIXER,name='TFA Calibration'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=65535,step=0
+  : values=6886
+numid=349,iface=MIXER,name='TFA Profile'
+  ; type=ENUMERATED,access=rw------,values=1,items=1
+  ; Item #0 'music'
+  : values=0
+numid=352,iface=MIXER,name='TFA SaaM'
+  ; type=BOOLEAN,access=rw------,values=1
+  : values=off
+numid=350,iface=MIXER,name='TFA music Playback Volume'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=0,step=0
+  : values=0
+numid=125,iface=MIXER,name='UPSCALER'
+  ; type=INTEGER,access=rw------,values=1,min=0,max=2,step=0
+  : values=0
+numid=116,iface=MIXER,name='VSP data'
+  ; type=INTEGER,access=rw------,values=2,min=0,max=1000,step=0
+  : values=0,0
+numid=96,iface=MIXER,name='button type'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'Disable'
+  ; Item #1 'read'
+  : values=0
+numid=95,iface=MIXER,name='jack type'
+  ; type=ENUMERATED,access=rw------,values=1,items=2
+  ; Item #0 'Disable'
+  ; Item #1 'read'
+  : values=0
