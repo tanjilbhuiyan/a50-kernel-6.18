@@ -6,6 +6,8 @@
 #  - Android-container processes with the container's own /bin/strace via lxc-attach.
 # Output: /tmp/cap-NAME-<where>-<pid>-<comm>.txt (raw strace lines). Holds a wakelock.
 # The kernel has no CONFIG_FTRACE_SYSCALLS, so strace is the only ioctl tracer.
+# WARNING: attach-mode strace stops every syscall of the target. Tracing the Lomiri shell / maliit-server
+# makes the UI unusable (login and input fail) until it detaches; keep UI-process captures short.
 set -u
 NAME=$1; SECS=$2; shift 2
 echo m13 > /sys/power/wake_lock
