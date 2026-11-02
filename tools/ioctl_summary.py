@@ -70,6 +70,9 @@ VENDOR_HEADERS = [
     'drivers/gpu/exynos/g2d/g2d_uapi.h',
     'drivers/video/fbdev/exynos/dpu20/decon.h',
     'include/uapi/linux/fb.h',
+    'drivers/misc/modem_v1/modem_prj.h',
+    'include/uapi/sound/asound.h',
+    'fs/f2fs/f2fs.h',
 ]
 DEFINE = re.compile(r"#define\s+(\w+)\s*(?:\\\n)?\s*_IO(?:WR|R|W)?\(\s*([^,\s]+)\s*,\s*(0x[0-9a-fA-F]+|\d+)")
 TYPEDEF = re.compile(r"#define\s+(\w+)\s+(0x[0-9a-fA-F]+|'.'|\d+)\s*$", re.M)
@@ -108,7 +111,7 @@ def resolve_names(names, tree):
            '-I', f'{tree}/drivers/staging/android/uapi']
     heads = ['linux/ioctl.h', 'sound/asound.h', 'linux/android/binder.h', 'linux/fb.h',
              'linux/videodev2.h', 'linux/input.h', 'linux/sockios.h', 'linux/wireless.h',
-             'asm/termbits.h', 'asm/ioctls.h', 'linux/sync_file.h', 'linux/dma-buf.h', 'ion.h']
+             'asm/termbits.h', 'asm/ioctls.h', 'linux/sync_file.h', 'linux/dma-buf.h', 'ion.h', 'linux/fs.h']
     pre = ['#include <sys/types.h>', '#include <stdio.h>']
     pre += [f'#if __has_include(<{h}>)\n#include <{h}>\n#endif' for h in heads]
     vals, errs = {}, []
@@ -187,6 +190,12 @@ def main():
             for r in rs:
                 f.write('| {} | {} | {} | {} | {} | {} | {} | {} | {} |\n'.format(
                     r[1], r[2], r[3], r[4], r[5].replace('|', '+'), r[6], r[7], r[8], r[9].replace('|', '+')))
+    # always emit the subsystems the contract needs, even when nothing was observed
+    for ss in ('mali', 'ion', 'display', 'audio', 'wifi_bt', 'modem'):
+        if ss not in by:
+            with open(os.path.join(outd, f'{ss}.md'), 'w') as f:
+                f.write(f'# Observed ioctls: {ss}\n\nNo ioctls were observed on this subsystem\'s device nodes in the captured scenarios '
+                        '(this means "not observed", not "not needed"; see README.md).\n')
     print('rows', len(rows), 'subsystems', sorted(by), '| names', len(names), 'resolved', len(vals),
           'unresolved', sorted(names - set(vals)))
     if err:

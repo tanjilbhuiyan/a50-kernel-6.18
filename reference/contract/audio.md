@@ -6,29 +6,57 @@ CAVEAT: hex values for NAMED requests come from the 64-bit 4.14 uapi headers. Pr
 
 | node | process | where | scenario | request | hex | decoded | calls | ret |
 |---|---|---|---|---|---|---|---|---|
-| /dev/snd/controlC0 | audio.service | cont | audio | _IOC(_IOC_READ+_IOC_WRITE, 0x55, 0x12, 0x2c8) | 0xc2c85512 | dir=3 type=0x55 nr=18 size=712 | 8 | 0x8 |
-| /dev/snd/controlC0 | audio.service | cont | audio | _IOC(_IOC_READ+_IOC_WRITE, 0x55, 0x13, 0x2c8) | 0xc2c85513 | dir=3 type=0x55 nr=19 size=712 | 9 | 0x9 |
+| /dev/snd/controlC0 | audio.service | cont | audio | SNDRV_CTL_IOCTL_ELEM_READ | 0xc2c85512 | dir=3 type=0x55 nr=18 size=712 | 8 | 0x8 |
+| /dev/snd/controlC0 | audio.service | cont | audio | SNDRV_CTL_IOCTL_ELEM_WRITE | 0xc2c85513 | dir=3 type=0x55 nr=19 size=712 | 9 | 0x9 |
+| /dev/snd/controlC0 | audio.service | cont | call | SNDRV_CTL_IOCTL_ELEM_READ | 0xc2c85512 | dir=3 type=0x55 nr=18 size=712 | 22 | 0x22 |
+| /dev/snd/controlC0 | audio.service | cont | call | SNDRV_CTL_IOCTL_ELEM_WRITE | 0xc2c85513 | dir=3 type=0x55 nr=19 size=712 | 36 | 0x36 |
+| /dev/snd/pcmC0D0p | audio.service | cont | call | SNDRV_PCM_IOCTL_HW_PARAMS | 0xc2604111 | dir=3 type=0x41 nr=17 size=608 | 1 | 0x1 |
+| /dev/snd/pcmC0D0p | audio.service | cont | call | SNDRV_PCM_IOCTL_INFO | 0x81204101 | dir=2 type=0x41 nr=1 size=288 | 1 | 0x1 |
+| /dev/snd/pcmC0D0p | audio.service | cont | call | SNDRV_PCM_IOCTL_PREPARE | 0x00004140 | dir=0 type=0x41 nr=64 size=0 | 1 | 0x1 |
+| /dev/snd/pcmC0D0p | audio.service | cont | call | SNDRV_PCM_IOCTL_SW_PARAMS | 0xc0884113 | dir=3 type=0x41 nr=19 size=136 | 1 | 0x1 |
+| /dev/snd/pcmC0D0p | audio.service | cont | call | SNDRV_PCM_IOCTL_SYNC_PTR | 0xc0884123 | dir=3 type=0x41 nr=35 size=136 | 1 | 0x1 |
+| /dev/snd/pcmC0D0p | audio.service | cont | call | SNDRV_PCM_IOCTL_WRITEI_FRAMES | 0x40184150 | dir=1 type=0x41 nr=80 size=24 | 188 | 0x188 |
 | /dev/snd/pcmC0D11c | audio.service | cont | audio | SNDRV_PCM_IOCTL_HW_PARAMS | 0xc2604111 | dir=3 type=0x41 nr=17 size=608 | 1 | 0x1 |
 | /dev/snd/pcmC0D11c | audio.service | cont | audio | SNDRV_PCM_IOCTL_INFO | 0x81204101 | dir=2 type=0x41 nr=1 size=288 | 1 | 0x1 |
 | /dev/snd/pcmC0D11c | audio.service | cont | audio | SNDRV_PCM_IOCTL_PREPARE | 0x00004140 | dir=0 type=0x41 nr=64 size=0 | 1 | 0x1 |
 | /dev/snd/pcmC0D11c | audio.service | cont | audio | SNDRV_PCM_IOCTL_START | 0x00004142 | dir=0 type=0x41 nr=66 size=0 | 1 | 0x1 |
 | /dev/snd/pcmC0D11c | audio.service | cont | audio | SNDRV_PCM_IOCTL_SW_PARAMS | 0xc0884113 | dir=3 type=0x41 nr=19 size=136 | 1 | 0x1 |
 | /dev/snd/pcmC0D11c | audio.service | cont | audio | SNDRV_PCM_IOCTL_SYNC_PTR | 0xc0884123 | dir=3 type=0x41 nr=35 size=136 | 1 | 0x1 |
+| /dev/snd/pcmC0D11c | audio.service | cont | call | SNDRV_PCM_IOCTL_DROP | 0x00004143 | dir=0 type=0x41 nr=67 size=0 | 1 | 0x1 |
+| /dev/snd/pcmC0D11c | audio.service | cont | call | SNDRV_PCM_IOCTL_HW_PARAMS | 0xc2604111 | dir=3 type=0x41 nr=17 size=608 | 1 | 0x1 |
+| /dev/snd/pcmC0D11c | audio.service | cont | call | SNDRV_PCM_IOCTL_INFO | 0x81204101 | dir=2 type=0x41 nr=1 size=288 | 1 | 0x1 |
+| /dev/snd/pcmC0D11c | audio.service | cont | call | SNDRV_PCM_IOCTL_PREPARE | 0x00004140 | dir=0 type=0x41 nr=64 size=0 | 1 | 0x1 |
+| /dev/snd/pcmC0D11c | audio.service | cont | call | SNDRV_PCM_IOCTL_START | 0x00004142 | dir=0 type=0x41 nr=66 size=0 | 1 | 0x1 |
+| /dev/snd/pcmC0D11c | audio.service | cont | call | SNDRV_PCM_IOCTL_SW_PARAMS | 0xc0884113 | dir=3 type=0x41 nr=19 size=136 | 1 | 0x1 |
+| /dev/snd/pcmC0D11c | audio.service | cont | call | SNDRV_PCM_IOCTL_SYNC_PTR | 0xc0884123 | dir=3 type=0x41 nr=35 size=136 | 1 | 0x1 |
 | /dev/snd/pcmC0D12c | audio.service | cont | audio | SNDRV_PCM_IOCTL_HW_PARAMS | 0xc2604111 | dir=3 type=0x41 nr=17 size=608 | 1 | 0x1 |
 | /dev/snd/pcmC0D12c | audio.service | cont | audio | SNDRV_PCM_IOCTL_INFO | 0x81204101 | dir=2 type=0x41 nr=1 size=288 | 1 | 0x1 |
 | /dev/snd/pcmC0D12c | audio.service | cont | audio | SNDRV_PCM_IOCTL_PREPARE | 0x00004140 | dir=0 type=0x41 nr=64 size=0 | 1 | 0x1 |
 | /dev/snd/pcmC0D12c | audio.service | cont | audio | SNDRV_PCM_IOCTL_START | 0x00004142 | dir=0 type=0x41 nr=66 size=0 | 1 | 0x1 |
 | /dev/snd/pcmC0D12c | audio.service | cont | audio | SNDRV_PCM_IOCTL_SW_PARAMS | 0xc0884113 | dir=3 type=0x41 nr=19 size=136 | 1 | 0x1 |
 | /dev/snd/pcmC0D12c | audio.service | cont | audio | SNDRV_PCM_IOCTL_SYNC_PTR | 0xc0884123 | dir=3 type=0x41 nr=35 size=136 | 1 | 0x1 |
+| /dev/snd/pcmC0D12c | audio.service | cont | call | SNDRV_PCM_IOCTL_HW_PARAMS | 0xc2604111 | dir=3 type=0x41 nr=17 size=608 | 1 | 0x1 |
+| /dev/snd/pcmC0D12c | audio.service | cont | call | SNDRV_PCM_IOCTL_INFO | 0x81204101 | dir=2 type=0x41 nr=1 size=288 | 1 | 0x1 |
+| /dev/snd/pcmC0D12c | audio.service | cont | call | SNDRV_PCM_IOCTL_PREPARE | 0x00004140 | dir=0 type=0x41 nr=64 size=0 | 1 | 0x1 |
+| /dev/snd/pcmC0D12c | audio.service | cont | call | SNDRV_PCM_IOCTL_START | 0x00004142 | dir=0 type=0x41 nr=66 size=0 | 1 | 0x1 |
+| /dev/snd/pcmC0D12c | audio.service | cont | call | SNDRV_PCM_IOCTL_SW_PARAMS | 0xc0884113 | dir=3 type=0x41 nr=19 size=136 | 1 | 0x1 |
+| /dev/snd/pcmC0D12c | audio.service | cont | call | SNDRV_PCM_IOCTL_SYNC_PTR | 0xc0884123 | dir=3 type=0x41 nr=35 size=136 | 1 | 0x1 |
 | /dev/snd/pcmC0D2p | audio.service | cont | audio | SNDRV_PCM_IOCTL_HW_PARAMS | 0xc2604111 | dir=3 type=0x41 nr=17 size=608 | 1 | 0x1 |
 | /dev/snd/pcmC0D2p | audio.service | cont | audio | SNDRV_PCM_IOCTL_INFO | 0x81204101 | dir=2 type=0x41 nr=1 size=288 | 1 | 0x1 |
 | /dev/snd/pcmC0D2p | audio.service | cont | audio | SNDRV_PCM_IOCTL_PREPARE | 0x00004140 | dir=0 type=0x41 nr=64 size=0 | 1 | 0x1 |
 | /dev/snd/pcmC0D2p | audio.service | cont | audio | SNDRV_PCM_IOCTL_SW_PARAMS | 0xc0884113 | dir=3 type=0x41 nr=19 size=136 | 1 | 0x1 |
 | /dev/snd/pcmC0D2p | audio.service | cont | audio | SNDRV_PCM_IOCTL_SYNC_PTR | 0xc0884123 | dir=3 type=0x41 nr=35 size=136 | 1 | 0x1 |
 | /dev/snd/pcmC0D2p | audio.service | cont | audio | SNDRV_PCM_IOCTL_WRITEI_FRAMES | 0x40184150 | dir=1 type=0x41 nr=80 size=24 | 1816 | 0x1816 |
+| /dev/snd/pcmC0D4p | audio.service | cont | call | SNDRV_PCM_IOCTL_DROP | 0x00004143 | dir=0 type=0x41 nr=67 size=0 | 1 | 0x1 |
 | /dev/snd/pcmC0D7p | audio.service | cont | audio | SNDRV_PCM_IOCTL_HW_PARAMS | 0xc2604111 | dir=3 type=0x41 nr=17 size=608 | 1 | 0x1 |
 | /dev/snd/pcmC0D7p | audio.service | cont | audio | SNDRV_PCM_IOCTL_INFO | 0x81204101 | dir=2 type=0x41 nr=1 size=288 | 1 | 0x1 |
 | /dev/snd/pcmC0D7p | audio.service | cont | audio | SNDRV_PCM_IOCTL_PREPARE | 0x00004140 | dir=0 type=0x41 nr=64 size=0 | 1 | 0x1 |
 | /dev/snd/pcmC0D7p | audio.service | cont | audio | SNDRV_PCM_IOCTL_START | 0x00004142 | dir=0 type=0x41 nr=66 size=0 | 1 | 0x1 |
 | /dev/snd/pcmC0D7p | audio.service | cont | audio | SNDRV_PCM_IOCTL_SW_PARAMS | 0xc0884113 | dir=3 type=0x41 nr=19 size=136 | 1 | 0x1 |
 | /dev/snd/pcmC0D7p | audio.service | cont | audio | SNDRV_PCM_IOCTL_SYNC_PTR | 0xc0884123 | dir=3 type=0x41 nr=35 size=136 | 1 | 0x1 |
+| /dev/snd/pcmC0D7p | audio.service | cont | call | SNDRV_PCM_IOCTL_HW_PARAMS | 0xc2604111 | dir=3 type=0x41 nr=17 size=608 | 1 | 0x1 |
+| /dev/snd/pcmC0D7p | audio.service | cont | call | SNDRV_PCM_IOCTL_INFO | 0x81204101 | dir=2 type=0x41 nr=1 size=288 | 1 | 0x1 |
+| /dev/snd/pcmC0D7p | audio.service | cont | call | SNDRV_PCM_IOCTL_PREPARE | 0x00004140 | dir=0 type=0x41 nr=64 size=0 | 1 | 0x1 |
+| /dev/snd/pcmC0D7p | audio.service | cont | call | SNDRV_PCM_IOCTL_START | 0x00004142 | dir=0 type=0x41 nr=66 size=0 | 1 | 0x1 |
+| /dev/snd/pcmC0D7p | audio.service | cont | call | SNDRV_PCM_IOCTL_SW_PARAMS | 0xc0884113 | dir=3 type=0x41 nr=19 size=136 | 1 | 0x1 |
+| /dev/snd/pcmC0D7p | audio.service | cont | call | SNDRV_PCM_IOCTL_SYNC_PTR | 0xc0884123 | dir=3 type=0x41 nr=35 size=136 | 1 | 0x1 |

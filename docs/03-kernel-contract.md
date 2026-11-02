@@ -52,6 +52,13 @@ node and which ioctl numbers it issues (M1 task "contract capture").
 | `/dev/tzdev`, `/dev/mobicore*` | TEE | keymaster, gatekeeper, TLC services | out of scope unless a DoD item needs it |
 | `/sys/class/power_supply/*` (battery, usb, ac, otg) | sec_battery, sm5713 | health HAL, usb-moded, upower | S5, S9 |
 
+**Measured on the baseline (M1.3, `reference/contract/README.md`):**
+Mali kbase r26p0 ioctls (JOB_SUBMIT, MEM_*, FENCE_VALIDATE) from the host-side GL clients; ION only via `ION_IOC_ALLOC` + `ION_IOC_HEAP_QUERY`
+on `/dev/ion` (gralloc), then **Samsung-only `DMA_BUF_IOCTL_TRACK/UNTRACK`** on `dmabuf_ion` fds and `SYNC_IOC_MERGE`; display through
+`S3CFB_WIN_CONFIG` (1040 B), `S3CFB_POWER_MODE`, `S3CFB_SET_VSYNC_INT`, `FBIOBLANK` on `/dev/graphics/fb0`; audio through standard ALSA
+PCM/CTL ioctls from a **32-bit** HAL (compat ioctls required); modem through `IOCTL_MODEM_STATUS` on `/dev/umts_ipc0/1`; Bluetooth through
+`/dev/scsc_h4_0` with no ioctls observed. Observed is not the same as needed: open-time ioctls were not captured.
+
 ### 2c. Firmware (loaded by drivers from `/vendor/firmware` or `/vendor/etc/wifi`)
 
 33 files in `reference/stock-vendor/firmware-list.txt`: ABOX (`AP_AUDIO_SLSI.bin`,

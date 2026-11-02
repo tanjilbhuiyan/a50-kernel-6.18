@@ -2,9 +2,9 @@
 
 Updated: 2026-11-02 (evening)
 
-## Current milestone: **M0 closed (M0.4 done, mic split to M0.5)**; call-voice check, then M1.3
+## Current milestone: **M1 (M1.1-M1.3 done)**; next M1.4 (compressed Image) and M1.5 (ramoops), both flash BOOT with the owner present
 
-M1.1 and M1.2 done. M2.1 and M2.3 done (fb pixel format accepted as a risk, resolve in M2.4). M0.1-M0.3 complete. Call-voice check done (downlink ✅, uplink ❌ = M0.5). Start here: **`tasks/M1.3-contract-capture.md`** (needs the phone; hold a wakelock: `echo m13 > /sys/power/wake_lock`, release with `wake_unlock`). No host-only tickets remain.
+M1.1 and M1.2 done. M2.1 and M2.3 done (fb pixel format accepted as a risk, resolve in M2.4). M0.1-M0.3 complete. M1.3 contract capture done (`reference/contract/`). Start here: **`tasks/M1.4-sboot-compressed-image.md`** (needs the phone and a BOOT flash with the owner present; baseline boot.img `7d5855ef…` is the fallback).
 
 Summary: M2.1 DT is committed on branch `a50-dt` in `src/ack-6.18/common` (`4fd044c7c`). Open: fb format (resolve in M2.4), RAM bank count, ramoops (M1.5).
 
@@ -15,6 +15,7 @@ VENDOR/SYSTEM/DTB/DTBO, TWRP 3.7.1, vbmeta flags=3. SSH as `phablet` over
 Wi-Fi (last IP 192.168.0.171).
 
 ## Done
+- M1.3: vendor ioctl contract captured and decoded for mali, ion, display, audio, wifi/bt, modem (`reference/contract/README.md`). Notable: Samsung-only dma-buf TRACK/UNTRACK, ION ALLOC/HEAP_QUERY, S3CFB_WIN_CONFIG, IOCTL_MODEM_STATUS; audio HAL is 32-bit.
 - M0.2: baseline checklist (`log/2026-11-02-M0-baseline-checklist.md`, `docs/02-baseline.md`): pass S3/S4/S5/S7/S8/battery; fail S6 audio, S9 suspend; GPS skipped.
 - M0.3: RNDIS ssh to 10.15.19.82 works over USB-C<->USB-C with the usb-moded `-f` override; adb not exposed (`log/2026-11-02-M0.3-usb-access.md`, `docs/06-workflow.md`).
 - M0.1: root SSH works (`ssh root@192.168.0.171 id -u` -> 0), `log/2026-11-02-M0.1-root-ssh.md`.

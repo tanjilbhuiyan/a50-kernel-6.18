@@ -6,6 +6,12 @@ CAVEAT: hex values for NAMED requests come from the 64-bit 4.14 uapi headers. Pr
 
 | node | process | where | scenario | request | hex | decoded | calls | ret |
 |---|---|---|---|---|---|---|---|---|
+| /data/vendor/log/err/csdiag_callfail_count.dat | rild | cont | call | FS_IOC_GETFLAGS | 0x80086601 | dir=2 type=0x66 nr=1 size=8 | 1 | 0x1 |
+| /data/vendor/log/err/csdiag_callfail_count.dat | rild | cont | call | FS_IOC_SETFLAGS | 0x40086602 | dir=1 type=0x66 nr=2 size=8 | 1 | -1x1 |
+| /data/vendor/log/err/csdiag_mute_Info.dat | rild | cont | call | FS_IOC_GETFLAGS | 0x80086601 | dir=2 type=0x66 nr=1 size=8 | 1 | 0x1 |
+| /data/vendor/log/err/csdiag_mute_Info.dat | rild | cont | call | FS_IOC_SETFLAGS | 0x40086602 | dir=1 type=0x66 nr=2 size=8 | 1 | -1x1 |
+| /data/vendor/secradio/opname.db | rild | cont | call | F2FS_IOC_GET_FEATURES | 0x8004f50c | dir=2 type=0xf5 nr=12 size=4 | 2 | -1x2 |
+| /data/vendor/secradio/sem_database_1.db | rild | cont | call | F2FS_IOC_GET_FEATURES | 0x8004f50c | dir=2 type=0xf5 nr=12 size=4 | 1 | -1x1 |
 | /dev/null | lomiri | host | ui | TCGETS2 | 0x802c542a | dir=2 type=0x54 nr=42 size=44 | 3 | -1x3 |
 | /dev/null | lomiri | host | ui2 | TCGETS2 | 0x802c542a | dir=2 type=0x54 nr=42 size=44 | 3 | -1x3 |
 | /dev/urandom | wpa_supplicant | host | wifi | TCGETS2 | 0x802c542a | dir=2 type=0x54 nr=42 size=44 | 2 | -1x2 |
