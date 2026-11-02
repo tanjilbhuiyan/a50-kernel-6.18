@@ -1,0 +1,14 @@
+/dts-v1/;
+
+/*
+ * No-op replacement for stock DTBO entry 5 (hw_rev 6..0xff, the entry
+ * androidboot.dtbo_idx=5 selects). Keeps only the selection properties and
+ * compatible string of the stock overlay (reference/stock-dt/dtbo.5.dts
+ * lines 3-6); drops all fragments, whose phandle targets (0xffffffff
+ * placeholders) can only resolve against the Samsung 4.14 base tree.
+ */
+/ {
+	compatible = "samsung, A50 SWA OPEN 06\0samsung,EXYNOS9610";
+	dtbo-hw_rev = <0x06>;
+	dtbo-hw_rev_end = <0xff>;
+};

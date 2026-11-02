@@ -1,0 +1,343 @@
+From 4fd044c7cd1dffe9b1c3244822bb6bdc4dc1882f Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <a50@localhost>
+Date: Sun, 1 Nov 2026 18:38:14 +0600
+Subject: [PATCH 1/2] arm64: dts: exynos: add Samsung Galaxy A50 (exynos9610)
+ first-light DT
+
+SoC subset (CPUs, PSCI, GICv2, arch timer, oscillator) plus board DT with
+memory, bootloader-reserved regions, ramoops window and a simple-framebuffer
+at 0xca000000. Sources are cited per node. Framebuffer pixel format and the
+ramoops persistence are unverified until M2.4/M1.5.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+Change-Id: I8c4081e027dbab689b5c9fa71454bc7bc6b4ef9e
+---
+ .../bindings/arm/samsung/samsung-boards.yaml  |   6 +
+ arch/arm64/boot/dts/exynos/Makefile           |   1 +
+ arch/arm64/boot/dts/exynos/exynos9610-a50.dts | 128 +++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos9610.dtsi    | 149 ++++++++++++++++++
+ 4 files changed, 284 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos9610-a50.dts
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos9610.dtsi
+
+diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+index f8e20e602..f68413b12 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
++++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+@@ -238,6 +238,12 @@ properties:
+               - samsung,dreamlte                # Samsung Galaxy S8 (SM-G950F)
+           - const: samsung,exynos8895
+ 
++      - description: Exynos9610 based boards
++        items:
++          - enum:
++              - samsung,a50                     # Samsung Galaxy A50 (SM-A505F)
++          - const: samsung,exynos9610
++
+       - description: Exynos9810 based boards
+         items:
+           - enum:
+diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
+index bcca63136..1b136f96a 100644
+--- a/arch/arm64/boot/dts/exynos/Makefile
++++ b/arch/arm64/boot/dts/exynos/Makefile
+@@ -13,6 +13,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
+ 	exynos7885-jackpotlte.dtb	\
+ 	exynos850-e850-96.dtb		\
+ 	exynos8895-dreamlte.dtb		\
++	exynos9610-a50.dtb		\
+ 	exynos9810-starlte.dtb		\
+ 	exynos990-c1s.dtb		\
+ 	exynos990-r8s.dtb               \
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610-a50.dts b/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
+new file mode 100644
+index 000000000..a3c4dd9f1
+--- /dev/null
++++ b/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
+@@ -0,0 +1,128 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Samsung Galaxy A50 (SM-A505F) device tree - first-light subset
++ *
++ * Source key: S = 4.14 exynos9610.dts, D = reference/stock-dt/dt.dtb.0.dts
++ * (decompiled stock dt.img), O = reference/stock-dt/dtbo.5.dts (stock DTBO
++ * idx 5, which is what the phone boots with: androidboot.dtbo_idx=5).
++ */
++
++/dts-v1/;
++
++#include "exynos9610.dtsi"
++
++/ {
++	model = "Samsung Galaxy A50 (SM-A505F)";
++	compatible = "samsung,a50", "samsung,exynos9610";
++
++	chosen {
++		#address-cells = <2>;
++		#size-cells = <1>;
++		ranges;
++
++		/*
++		 * Bootloader framebuffer, address from the kernel cmdline
++		 * s3cfb.bootloaderfb=0xca000000. Panel is 1080x2340 (O: ea8076
++		 * resolution = <0x438 0x924>). 4 bytes/pixel is ASSUMED:
++		 * neither the 4.14 source nor the stock DT records the
++		 * bootloader's pixel format (UNVERIFIED, resolve in M2.4; the
++		 * only open question is a8r8g8b8 vs a8b8g8r8).
++		 * size = 1080 * 4 * 2340 = 0x9a3f80.
++		 */
++		framebuffer@ca000000 {
++			compatible = "simple-framebuffer";
++			reg = <0x0 0xca000000 0x9a3f80>;
++			width = <1080>;
++			height = <2340>;
++			stride = <(1080 * 4)>;
++			format = "a8r8g8b8";
++		};
++	};
++
++	/*
++	 * RAM: device is 4 GB (docs/01-device.md, MemTotal 3,690,784 kB).
++	 * D lists three 2 GB banks (0x80000000, 0x880000000, 0x900000000 = 6 GB);
++	 * the 4 GB cmdline (androidboot.dram_info=01,06,01,4G) suggests S-Boot
++	 * rewrites them - UNVERIFIED. Declaring only the first two banks is safe
++	 * on a 4 GB device either way.
++	 */
++	memory@80000000 {
++		device_type = "memory";
++		reg = <0x0 0x80000000 0x80000000>,
++		      <0x8 0x80000000 0x80000000>;
++	};
++
++	/*
++	 * Fixed regions from D /reserved-memory (stock bootloader/firmware
++	 * carve-outs). Dynamic pools (ion_*, wifibt_if) are omitted.
++	 */
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <1>;
++		ranges;
++
++		sec_debug_magic@80000000 {
++			reg = <0x0 0x80000000 0x1000>;
++			no-map;
++		};
++		vipx_fw@b8000000 {
++			reg = <0x0 0xb8000000 0x500000>;
++			no-map;
++		};
++		seclog@c0000000 {
++			reg = <0x0 0xc0000000 0x80000>;
++			no-map;
++		};
++		/* The bootloader framebuffer (see chosen) - not in D, added so
++		 * the kernel never allocates over the splash/console.
++		 */
++		fb_reserved@ca000000 {
++			reg = <0x0 0xca000000 0xa00000>;
++			no-map;
++		};
++		abox@e9400000 {
++			reg = <0x0 0xe9400000 0x2800000>;
++			no-map;
++		};
++		modem_if@ed000000 {
++			reg = <0x0 0xed000000 0x8a00000>;
++			no-map;
++		};
++		cp_ram_logging@f5a00000 {
++			reg = <0x0 0xf5a00000 0x1e00000>;
++			no-map;
++		};
++
++		/* debug_snapshot block, D: 0xf9000000..0xfa710000. Kept whole
++		 * except the 2 MiB log_pstore window, which becomes ramoops.
++		 */
++		debug_snapshot_a@f9000000 {
++			reg = <0x0 0xf9000000 0xd10000>;
++			no-map;
++		};
++		/* D log_pstore: 0xf9d10000 size 0x200000. Whether the
++		 * bootloader preserves it across reboot is exactly M1.5.
++		 * UNVERIFIED until M1.5 passes.
++		 */
++		ramoops@f9d10000 {
++			compatible = "ramoops";
++			reg = <0x0 0xf9d10000 0x200000>;
++			no-map;
++			record-size = <0x20000>;
++			console-size = <0x100000>;
++			pmsg-size = <0x20000>;
++		};
++		debug_snapshot_b@f9f10000 {
++			reg = <0x0 0xf9f10000 0x800000>;
++			no-map;
++		};
++		gnss_if@fb000000 {
++			reg = <0x0 0xfb000000 0x800000>;
++			no-map;
++		};
++		chub@fd000000 {
++			reg = <0x0 0xfd000000 0x80000>;
++			no-map;
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610.dtsi b/arch/arm64/boot/dts/exynos/exynos9610.dtsi
+new file mode 100644
+index 000000000..2050afe40
+--- /dev/null
++++ b/arch/arm64/boot/dts/exynos/exynos9610.dtsi
+@@ -0,0 +1,149 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Samsung Exynos9610 SoC - first-light subset
++ *
++ * Only what is needed to boot to a framebuffer and pstore: CPUs, PSCI, GIC,
++ * arch timer, oscillator. Every node cites its source:
++ *   S = samsung-a50-4.14-aa17rf2/arch/arm64/boot/dts/exynos/exynos9610.dts
++ *   D = reference/stock-dt/dt.dtb.0.dts (decompiled stock dt.img)
++ */
++
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++
++/ {
++	compatible = "samsung,exynos9610";
++	#address-cells = <2>;
++	#size-cells = <1>;
++
++	interrupt-parent = <&gic>;
++
++	/* S:131-135 - bootloader fills bootargs/initrd at boot */
++	chosen { };
++
++	/* S:178-281 - 4x Cortex-A53 (MPIDR 0x0-0x3), 4x Cortex-A73 (MPIDR 0x100-0x103),
++	 * enable-method psci. The 4.14 DT labels the A73s cpu4..cpu7.
++	 */
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu-map {
++			cluster0 {
++				core0 { cpu = <&cpu0>; };
++				core1 { cpu = <&cpu1>; };
++				core2 { cpu = <&cpu2>; };
++				core3 { cpu = <&cpu3>; };
++			};
++			cluster1 {
++				core0 { cpu = <&cpu4>; };
++				core1 { cpu = <&cpu5>; };
++				core2 { cpu = <&cpu6>; };
++				core3 { cpu = <&cpu7>; };
++			};
++		};
++
++		cpu0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x0>;
++			enable-method = "psci";
++		};
++		cpu1: cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x1>;
++			enable-method = "psci";
++		};
++		cpu2: cpu@2 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x2>;
++			enable-method = "psci";
++		};
++		cpu3: cpu@3 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x3>;
++			enable-method = "psci";
++		};
++		cpu4: cpu@100 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a73";
++			reg = <0x100>;
++			enable-method = "psci";
++		};
++		cpu5: cpu@101 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a73";
++			reg = <0x101>;
++			enable-method = "psci";
++		};
++		cpu6: cpu@102 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a73";
++			reg = <0x102>;
++			enable-method = "psci";
++		};
++		cpu7: cpu@103 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a73";
++			reg = <0x103>;
++			enable-method = "psci";
++		};
++	};
++
++	/* S:387-392 - SMC conduit, explicit SMC64 function IDs (PSCI version
++	 * not verified, so not claiming arm,psci-0.2).
++	 */
++	psci {
++		compatible = "arm,psci";
++		method = "smc";
++		cpu_suspend = <0xc4000001>;
++		cpu_off = <0x84000002>;
++		cpu_on = <0xc4000003>;
++	};
++
++	/* S:605-614 - four architected timer PPIs (13,14,11,10), level low;
++	 * 26 MHz also what S sets as clock-frequency.
++	 */
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
++		clock-frequency = <26000000>;
++	};
++
++	/* 26 MHz oscillator: frequency taken from the timer node above (S:614);
++	 * not independently verified against the clock controller.
++	 */
++	oscclk: clock {
++		compatible = "fixed-clock";
++		clock-frequency = <26000000>;
++		clock-output-names = "oscclk";
++		#clock-cells = <0>;
++	};
++
++	soc: soc@0 {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x0 0x0 0x0 0x20000000>;
++
++		/* S:592-602 - GICv2: dist 0x12301000, cpu 0x12302000,
++		 * hyp 0x12304000, vcpu 0x12306000; maintenance PPI 9.
++		 */
++		gic: interrupt-controller@12301000 {
++			compatible = "arm,cortex-a15-gic";
++			#interrupt-cells = <3>;
++			#address-cells = <0>;
++			interrupt-controller;
++			reg = <0x12301000 0x1000>,
++			      <0x12302000 0x1000>,
++			      <0x12304000 0x2000>,
++			      <0x12306000 0x2000>;
++			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
++		};
++	};
++};
+-- 
+2.56.0
+

@@ -1,0 +1,9 @@
+ACK common commit:  d9a614feddce2e8e68767df1d3421305d26a965b (Makefile 6.18.33, branch android17-6.18)
+Manifest revision:  46a1a5274ff0b40419952c861a8958bba5f28cfc (kernel/manifest common-android17-6.18)
+clang:  "Android (15323222, +pgo, +bolt, +lto, +mlgo, based on r584948c) clang version 22.0.1 (https://android.googlesource.com/toolchain/llvm-project 2d65e4108033380e6fe8e08b1f1826cd2bfb0c99)"  [prebuilts/clang/host/linux-x86/clang-r584948c]
+rustc:  "rustc 1.91.1-dev (ed61e7d7e 2025-11-07) (Android Rust Toolchain version 15551131-linux-x86)"
+bindgen: "bindgen 0.72.1" [prebuilts/clang-tools/linux-x86/bin/bindgen]
+Build: tools/bazel run //common:kernel_aarch64_dist -- --destdir=src/ack-dist ; host Arch Linux, Kleaf hermetic toolchains
+Elapsed: 435.5 s (bazel, cold cache, 1380 actions, 16 cores)
+Disk: src/ack-6.18 29G (+ ~8G bazel output_base in src/ack-6.18/out), src/ack-dist 798M
+Plain make build: reference/ack-build/make-gki.sh (LLVM=1, same clang-r584948c/rust 1.91.1.p3/bindgen prebuilts; host bc missing -> prebuilt gavinhoward-bc symlinked as bc). 288 s, -j16. Image 43989504 B (sha256 18ffe66e…), Image.gz 17577809 B. Differs from Kleaf only by TRIM_UNUSED_KSYMS/ABI list, MODULE_SIG_PROTECT, pahole 127 vs 131 (config-diff-kleaf-vs-make.txt). Not compared byte-for-byte.

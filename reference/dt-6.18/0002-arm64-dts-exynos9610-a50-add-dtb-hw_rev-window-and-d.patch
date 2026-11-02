@@ -1,0 +1,61 @@
+From 42664a3c51a26e8acd2731faaf4d85298da59f69 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <a50@localhost>
+Date: Mon, 2 Nov 2026 12:36:36 +0600
+Subject: [PATCH 2/2] arm64: dts: exynos9610-a50: add dtb-hw_rev window and
+ document it
+
+The stock DTB root carries dtb-hw_rev/dtb-hw_rev_end (0x00..0xff), which the
+Samsung bootloader uses to select a DTB from the dt_table. Keep them
+identical so selection is unchanged, and describe them in samsung-boards.yaml.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+Change-Id: Ibcfccc0e14f5bd9db9d40c5b66f1ab507a48af2a
+---
+ .../bindings/arm/samsung/samsung-boards.yaml          | 11 +++++++++++
+ arch/arm64/boot/dts/exynos/exynos9610-a50.dts         |  8 ++++++++
+ 2 files changed, 19 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+index f68413b12..8074d3c81 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
++++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+@@ -271,6 +271,17 @@ properties:
+               - samsung,exynosautov920-sadk   # Samsung Exynos Auto v920 SADK
+           - const: samsung,exynosautov920
+ 
++  dtb-hw_rev:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Lowest board revision this DTB applies to. Read by the Samsung
++      bootloader to select an entry from the DTB partition.
++
++  dtb-hw_rev_end:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Highest board revision this DTB applies to (inclusive).
++
+ required:
+   - compatible
+ 
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610-a50.dts b/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
+index a3c4dd9f1..0d1ea12fb 100644
+--- a/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
++++ b/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
+@@ -15,6 +15,14 @@ / {
+ 	model = "Samsung Galaxy A50 (SM-A505F)";
+ 	compatible = "samsung,a50", "samsung,exynos9610";
+ 
++	/*
++	 * Board-revision window S-Boot uses to pick this DTB from the dt_table
++	 * (D root: dtb-hw_rev = <0x00>, dtb-hw_rev_end = <0xff>, i.e. all
++	 * revisions). Kept identical to stock so selection is unchanged.
++	 */
++	dtb-hw_rev = <0x00>;
++	dtb-hw_rev_end = <0xff>;
++
+ 	chosen {
+ 		#address-cells = <2>;
+ 		#size-cells = <1>;
+-- 
+2.56.0
+

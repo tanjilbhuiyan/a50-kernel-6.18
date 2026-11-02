@@ -1,0 +1,249 @@
+/dts-v1/;
+
+/ {
+	compatible = "samsung,a50\0samsung,exynos9610";
+	#address-cells = <0x02>;
+	#size-cells = <0x01>;
+	interrupt-parent = <0x01>;
+	model = "Samsung Galaxy A50 (SM-A505F)";
+	dtb-hw_rev = <0x00>;
+	dtb-hw_rev_end = <0xff>;
+
+	chosen {
+		#address-cells = <0x02>;
+		#size-cells = <0x01>;
+		ranges;
+
+		framebuffer@ca000000 {
+			compatible = "simple-framebuffer";
+			reg = <0x00 0xca000000 0x9a3f80>;
+			width = <0x438>;
+			height = <0x924>;
+			stride = <0x10e0>;
+			format = "a8r8g8b8";
+		};
+	};
+
+	cpus {
+		#address-cells = <0x01>;
+		#size-cells = <0x00>;
+
+		cpu-map {
+
+			cluster0 {
+
+				core0 {
+					cpu = <0x02>;
+				};
+
+				core1 {
+					cpu = <0x03>;
+				};
+
+				core2 {
+					cpu = <0x04>;
+				};
+
+				core3 {
+					cpu = <0x05>;
+				};
+			};
+
+			cluster1 {
+
+				core0 {
+					cpu = <0x06>;
+				};
+
+				core1 {
+					cpu = <0x07>;
+				};
+
+				core2 {
+					cpu = <0x08>;
+				};
+
+				core3 {
+					cpu = <0x09>;
+				};
+			};
+		};
+
+		cpu@0 {
+			device_type = "cpu";
+			compatible = "arm,cortex-a53";
+			reg = <0x00>;
+			enable-method = "psci";
+			phandle = <0x02>;
+		};
+
+		cpu@1 {
+			device_type = "cpu";
+			compatible = "arm,cortex-a53";
+			reg = <0x01>;
+			enable-method = "psci";
+			phandle = <0x03>;
+		};
+
+		cpu@2 {
+			device_type = "cpu";
+			compatible = "arm,cortex-a53";
+			reg = <0x02>;
+			enable-method = "psci";
+			phandle = <0x04>;
+		};
+
+		cpu@3 {
+			device_type = "cpu";
+			compatible = "arm,cortex-a53";
+			reg = <0x03>;
+			enable-method = "psci";
+			phandle = <0x05>;
+		};
+
+		cpu@100 {
+			device_type = "cpu";
+			compatible = "arm,cortex-a73";
+			reg = <0x100>;
+			enable-method = "psci";
+			phandle = <0x06>;
+		};
+
+		cpu@101 {
+			device_type = "cpu";
+			compatible = "arm,cortex-a73";
+			reg = <0x101>;
+			enable-method = "psci";
+			phandle = <0x07>;
+		};
+
+		cpu@102 {
+			device_type = "cpu";
+			compatible = "arm,cortex-a73";
+			reg = <0x102>;
+			enable-method = "psci";
+			phandle = <0x08>;
+		};
+
+		cpu@103 {
+			device_type = "cpu";
+			compatible = "arm,cortex-a73";
+			reg = <0x103>;
+			enable-method = "psci";
+			phandle = <0x09>;
+		};
+	};
+
+	psci {
+		compatible = "arm,psci";
+		method = "smc";
+		cpu_suspend = <0xc4000001>;
+		cpu_off = <0x84000002>;
+		cpu_on = <0xc4000003>;
+	};
+
+	timer {
+		compatible = "arm,armv8-timer";
+		interrupts = <0x01 0x0d 0xff08 0x01 0x0e 0xff08 0x01 0x0b 0xff08 0x01 0x0a 0xff08>;
+		clock-frequency = <0x18cba80>;
+	};
+
+	clock {
+		compatible = "fixed-clock";
+		clock-frequency = <0x18cba80>;
+		clock-output-names = "oscclk";
+		#clock-cells = <0x00>;
+	};
+
+	soc@0 {
+		compatible = "simple-bus";
+		#address-cells = <0x01>;
+		#size-cells = <0x01>;
+		ranges = <0x00 0x00 0x00 0x20000000>;
+
+		interrupt-controller@12301000 {
+			compatible = "arm,cortex-a15-gic";
+			#interrupt-cells = <0x03>;
+			#address-cells = <0x00>;
+			interrupt-controller;
+			reg = <0x12301000 0x1000 0x12302000 0x1000 0x12304000 0x2000 0x12306000 0x2000>;
+			interrupts = <0x01 0x09 0xff04>;
+			phandle = <0x01>;
+		};
+	};
+
+	memory@80000000 {
+		device_type = "memory";
+		reg = <0x00 0x80000000 0x80000000 0x08 0x80000000 0x80000000>;
+	};
+
+	reserved-memory {
+		#address-cells = <0x02>;
+		#size-cells = <0x01>;
+		ranges;
+
+		sec_debug_magic@80000000 {
+			reg = <0x00 0x80000000 0x1000>;
+			no-map;
+		};
+
+		vipx_fw@b8000000 {
+			reg = <0x00 0xb8000000 0x500000>;
+			no-map;
+		};
+
+		seclog@c0000000 {
+			reg = <0x00 0xc0000000 0x80000>;
+			no-map;
+		};
+
+		fb_reserved@ca000000 {
+			reg = <0x00 0xca000000 0xa00000>;
+			no-map;
+		};
+
+		abox@e9400000 {
+			reg = <0x00 0xe9400000 0x2800000>;
+			no-map;
+		};
+
+		modem_if@ed000000 {
+			reg = <0x00 0xed000000 0x8a00000>;
+			no-map;
+		};
+
+		cp_ram_logging@f5a00000 {
+			reg = <0x00 0xf5a00000 0x1e00000>;
+			no-map;
+		};
+
+		debug_snapshot_a@f9000000 {
+			reg = <0x00 0xf9000000 0xd10000>;
+			no-map;
+		};
+
+		ramoops@f9d10000 {
+			compatible = "ramoops";
+			reg = <0x00 0xf9d10000 0x200000>;
+			no-map;
+			record-size = <0x20000>;
+			console-size = <0x100000>;
+			pmsg-size = <0x20000>;
+		};
+
+		debug_snapshot_b@f9f10000 {
+			reg = <0x00 0xf9f10000 0x800000>;
+			no-map;
+		};
+
+		gnss_if@fb000000 {
+			reg = <0x00 0xfb000000 0x800000>;
+			no-map;
+		};
+
+		chub@fd000000 {
+			reg = <0x00 0xfd000000 0x80000>;
+			no-map;
+		};
+	};
+};

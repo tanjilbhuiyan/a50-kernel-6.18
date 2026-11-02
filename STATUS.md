@@ -1,16 +1,12 @@
 # STATUS
 
-Updated: 2026-11-01
+Updated: 2026-11-02
 
 ## Current milestone: **M1.1 + M1.2 (host-only)**, M0 deferred by owner (`docs/05-plan.md` exception)
 
-Start here: **`tasks/M1.1-reproduce-baseline-build.md`** (all inputs pinned in the ticket).
-Then `tasks/M1.2-ack-6.18-gki-build.md`.
+M1.1 and M1.2 done. M2.1 in progress: DT written and validated, framebuffer pixel format unverified. M2.3 done. No host-only tickets remain except closing M2.1; everything else needs the phone (M0 first).
 
-Summary: M1.1 — reproduce the baseline kernel `Image` byte-identically from
-`src/samsung-a50-4.14-aa17rf2` in a container (method: `sadatdaniel/a50-halium`
-`build/`). Then M1.2 — clone ACK `android17-6.18`, build `gki_defconfig` arm64
-with clang + Rust. Neither needs the phone.
+Summary: M2.1 DT is committed on branch `a50-dt` in `src/ack-6.18/common` (`4fd044c7c`). Open: fb format (resolve in M2.4), RAM bank count, ramoops (M1.5).
 
 ## State of the phone
 Baseline installed and booting Ubuntu Touch 26.04 (`docs/02-baseline.md`):
@@ -19,6 +15,10 @@ VENDOR/SYSTEM/DTB/DTBO, TWRP 3.7.1, vbmeta flags=3. SSH as `phablet` over
 Wi-Fi (last IP 192.168.0.171).
 
 ## Done
+- M2.3: `tools/dt_table.py` round-trips stock dt.img/dtbo.img byte-identically; our dt.img/dtbo.img built with stock selection fields (`log/2026-11-02-M2.3-dt-images.md`). Stock images carry a Samsung signature + AVB footer, carried over stale; S-Boot acceptance unverified.
+- M2.1 (partial): `exynos9610-a50.dtb` builds + dt-validate clean (`log/2026-11-01-M2.1-dt.md`, `reference/dt-6.18/`).
+- M1.2: ACK `d9a614fe` GKI built (Kleaf 435 s; plain make 288 s). Image 43,670,016 B = 75.7% of BOOT budget (`log/2026-11-01-M1.2-ack-build.md`, `reference/ack-build/`).
+- M1.1: baseline `Image` (`6d000a98…`) and boot.img (`7d5855ef…`) reproduced byte-identically on the host (`log/2026-11-01-M1.1-reproduce-baseline.md`, `reference/baseline-build/`). Needed an `nproc`=4 shim; `-j16` untested.
 - Tickets for M0–M2 created in `tasks/` (12 tickets, index `tasks/README.md`).
 - Context created: goal, device facts, baseline, kernel contract, gap matrix,
   plan, workflow, risks, ADR-0001/0002 (`log/2026-11-01-context-setup.md`).
