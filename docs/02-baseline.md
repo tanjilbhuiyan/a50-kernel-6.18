@@ -47,8 +47,11 @@ GPS fix, one call/SMS, suspend counters. Record results in `log/`.
    logs `requested while not connected to pc`, mode stays `undefined`.
    Workaround until reboot (root):
    `echo "USB_MODED_ARGS=-f" > /run/usb-moded/90-force-pc.conf && systemctl restart usb-moded`.
-   A USB-A port/cable likely avoids PD negotiation (untested).
-2. Root over SSH needs the owner's sudo password (no root key installed).
+   Update 2026-11-02 (M0.3): not constant. On a USB-C<->USB-C cable the phone
+   reported `Cable(USB) rp(1)` (works without help) on one attach and
+   `Cable(PDIC) rp(3)` on later ones; the `-f` override then gives a working
+   RNDIS link (`docs/06-workflow.md` "USB link to the phone"). USB-A untested.
+2. Root over SSH: key installed 2026-11-02 (M0.1, `log/2026-11-02-M0.1-root-ssh.md`).
 
 ## Restore the baseline (any state → baseline)
 

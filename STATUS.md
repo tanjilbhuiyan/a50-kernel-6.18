@@ -2,9 +2,9 @@
 
 Updated: 2026-11-02
 
-## Current milestone: **M1.1 + M1.2 (host-only)**, M0 deferred by owner (`docs/05-plan.md` exception)
+## Current milestone: **M0 (baseline locked and measured)**, M0.1 and M0.3 done; M0.2 needs the owner at the phone
 
-M1.1 and M1.2 done. M2.1 and M2.3 done (fb pixel format accepted as a risk, resolve in M2.4). No host-only tickets remain; everything else needs the phone, starting with M0.1.
+M1.1 and M1.2 done. M2.1 and M2.3 done (fb pixel format accepted as a risk, resolve in M2.4). No host-only tickets remain; everything else needs the phone, M0.2 next.
 
 Summary: M2.1 DT is committed on branch `a50-dt` in `src/ack-6.18/common` (`4fd044c7c`). Open: fb format (resolve in M2.4), RAM bank count, ramoops (M1.5).
 
@@ -15,6 +15,8 @@ VENDOR/SYSTEM/DTB/DTBO, TWRP 3.7.1, vbmeta flags=3. SSH as `phablet` over
 Wi-Fi (last IP 192.168.0.171).
 
 ## Done
+- M0.3: RNDIS ssh to 10.15.19.82 works over USB-C<->USB-C with the usb-moded `-f` override; adb not exposed (`log/2026-11-02-M0.3-usb-access.md`, `docs/06-workflow.md`).
+- M0.1: root SSH works (`ssh root@192.168.0.171 id -u` -> 0), `log/2026-11-02-M0.1-root-ssh.md`.
 - M2.3: `tools/dt_table.py` round-trips stock dt.img/dtbo.img byte-identically; our dt.img/dtbo.img built with stock selection fields (`log/2026-11-02-M2.3-dt-images.md`). Stock images carry a Samsung signature + AVB footer, carried over stale; S-Boot acceptance unverified.
 - M2.1: `exynos9610-a50.dtb` builds + dt-validate clean (`log/2026-11-01-M2.1-dt.md`, `reference/dt-6.18/`).
 - M1.2: ACK `d9a614fe` GKI built (Kleaf 435 s; plain make 288 s). Image 43,670,016 B = 75.7% of BOOT budget (`log/2026-11-01-M1.2-ack-build.md`, `reference/ack-build/`).
@@ -24,9 +26,7 @@ Wi-Fi (last IP 192.168.0.171).
   plan, workflow, risks, ADR-0001/0002 (`log/2026-11-01-context-setup.md`).
 
 ## Deferred (M0, when the owner is ready to use the phone for tests)
-1. Owner: install root SSH key on the phone (one sudo command in Terminal).
-2. Baseline checklist: speaker/mic, BT pairing, GPS fix, call + SMS, suspend.
-3. Decide USB access method for the PD issue (USB-A cable or `-f` override).
+1. Baseline checklist: speaker/mic, BT pairing, GPS fix, call + SMS, suspend.
 
 ## Open questions
 - Does S-Boot boot `Image.gz`? (M1.4)

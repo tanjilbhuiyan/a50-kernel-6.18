@@ -47,6 +47,29 @@ rootfs/chroot step needs it.
 - Live DT dump (re-generate `reference/live-dt-compatibles.tsv`): `tools/dump_live_dt.sh <phone-ip>`.
 - Gap matrix: `python3 -I tools/gap_matrix.py reference/live-dt-compatibles.tsv src/samsung-a50-4.14-aa17rf2 <target-tree>`.
 
+## USB link to the phone (Ubuntu Touch baseline; verified 2026-11-02, M0.3)
+
+Needs Wi-Fi root SSH once (M0.1). Cable used: USB-C <-> USB-C on the laptop's
+USB-C ports. USB-A cable: untested.
+
+1. Plug in. Phone's view varies: sometimes `usb/online=1`, `Cable(USB)`, `rp(1)`
+   (gadget comes up by itself); sometimes `usb/online=0`, `ac/online=1`,
+   `Cable(PDIC)`, `rp(3)` (usb-moded refuses: "requested while not connected to pc").
+2. In the PDIC state force the gadget (root, via Wi-Fi; lives in /run, gone after reboot):
+   `ssh root@<wifi-ip> 'echo "USB_MODED_ARGS=-f" > /run/usb-moded/90-force-pc.conf && systemctl restart usb-moded'`
+   Without this the link is dead in that state (tested: removing the file kills RNDIS
+   with the cable untouched).
+3. If `/sys/class/udc/*/state` says `not attached` (session dropped), replug the
+   cable first, then step 2.
+4. Laptop gets an `enp*u*` interface with `10.15.19.9/24`; the phone is
+   `10.15.19.82`: `ssh root@10.15.19.82` / `ssh phablet@10.15.19.82`
+   (host key SHA256:aHBdcZCSVr0dXofEX2Yb/DH8yd+TC7oPOYFYgI4aZqE, verified over Wi-Fi).
+5. adb is NOT exposed in `developer_mode` (gadget functions: mass_storage, mtp,
+   rndis). adb exists only in TWRP (flashing path unchanged).
+
+Limits: the override needs a working Wi-Fi/other root path to the phone first, and
+does not survive a reboot; a Wi-Fi-free method will be needed from M3 (initramfs telnet).
+
 ## Test log template (`log/YYYY-MM-DD-Mx-topic.md`)
 
 ```
