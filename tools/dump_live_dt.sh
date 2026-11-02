@@ -6,7 +6,7 @@ set -e
 ssh -o BatchMode=yes "phablet@${1:?phone ip}" '
 echo "# model: $(tr -d "\0" < /proc/device-tree/model)"
 echo "# root-compatible: $(tr "\0" "|" < /proc/device-tree/compatible)"
-echo "# cmdline: $(cat /proc/cmdline)"
+echo "# cmdline: $(sed -E "s/((serialno|ap_serial|em\.did)=)[^ ]+/\1REDACTED/g" /proc/cmdline)"
 echo "# kernel: $(uname -r)"
 cd /proc/device-tree && find . -name compatible | sort | while read f; do
   d=$(dirname "$f"); s=okay
