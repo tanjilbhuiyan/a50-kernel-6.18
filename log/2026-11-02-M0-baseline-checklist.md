@@ -26,3 +26,13 @@ Summary (2026-11-02): ✅ S3 touch/keys, S4 Wi-Fi, S5 USB (RNDIS ssh, M0.3), S7 
 Result: M0.2 closed. Two baseline defects (audio, suspend) are recorded as the bar for S10 and need diagnosis before M10 / S9 can be met.
 Restore performed: n/a (nothing changed on the phone except runtime state: Bluetooth enabled and JBL paired, USB override file in /run/usb-moded)
 Next: M0 DoD reached; M1.3 contract capture (phone, root over RNDIS or Wi-Fi). Open decision: add baseline audio and suspend diagnosis to docs/05-plan.md.
+
+## Addendum 2026-11-02 evening: re-run after the userspace fix
+The baseline changed after this checklist (UT-image session fixed 4 systemd symlinks, see `log/2026-11-02-M0.4-audio-diagnosis.md`). Rows above that say ❌ for speaker, call voice and suspend describe the baseline BEFORE the fix. Re-measured:
+| Row | Result after fix |
+|---|---|
+| S6 speaker | ✅ owner heard a loud tone clearly (16:42:20); first attempts after idle failed (paplay hung), cause unknown |
+| S6 microphone | ❌ captures hiss/clicks, no voice (spectral analysis), handoff's "PASS" was only non-zero samples |
+| S7 call voice | downlink ✅ uplink ❌ | Call active 17:21:48-17:22:18 (>= 30 s, read-only watcher, no state changed). Routing identical in 3 snapshots: RUNNING pcm4p (playback), pcm10c + pcm11c (capture), HAL 5 /dev/snd fds, `UAIF0 SPK`=1, `MAINMIC Switch` on, `RECMIX1L BST3` on. Owner: heard the other party, the other party could NOT hear the owner (same cause as the microphone defect, M0.5). Before the fix the same call had no PCM, 0 fds, all routes 0. |
+| S9 suspend | ✅ works: suspend_stats success 214 / fail 52; phone suspends within seconds of screen-off |
+| GPS | handoff: HAL runs, NMEA every 1 s, no fix after 10 min at a window; open-sky test pending |

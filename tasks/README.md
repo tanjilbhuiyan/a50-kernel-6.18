@@ -19,10 +19,11 @@ later milestones get tickets when we reach them (evidence first, Rule 1).
 | M0.1 | Root SSH key on the phone | yes | — | done (log/2026-11-02-M0.1-root-ssh.md) |
 | M0.2 | Baseline function checklist | yes | M0.1 | done (log/2026-11-02-M0-baseline-checklist.md) |
 | M0.3 | USB access despite PD detection | yes | M0.1 | done (log/2026-11-02-M0.3-usb-access.md) |
-| M0.4 | Diagnose baseline audio failure (kernel vs userspace) | yes | M0.2 | **todo — start here** |
+| M0.4 | Diagnose baseline audio failure (kernel vs userspace) | yes | M0.2 | done (log/2026-11-02-M0.4-audio-diagnosis.md): userspace config |
+| M0.5 | Microphone captures no voice (tracked defect) | yes | M0.4 | deferred: UT-image session |
 | M1.1 | Reproduce baseline 4.14 kernel byte-identically | no | — | done (log/2026-11-01-M1.1-reproduce-baseline.md) |
 | M1.2 | Build ACK android17-6.18 GKI for arm64 | no | — | done (log/2026-11-01-M1.2-ack-build.md) |
-| M1.3 | Capture the vendor kernel ABI (contract capture) | yes | M0, M0.4 | todo |
+| M1.3 | Capture the vendor kernel ABI (contract capture) | yes | M0, M0.4 | in-progress (openers + audio/wifi/gnss/sensors captured) |
 | M1.4 | Does S-Boot boot a compressed Image? | yes | M0, M1.1 | todo |
 | M1.5 | Working ramoops/pstore crash log | yes | M0, M1.1 | todo |
 | M2.1 | A50 device tree for 6.18 (first-light subset) | no | M1.2 | done (log/2026-11-01-M2.1-dt.md; fb format risk accepted) |

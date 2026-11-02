@@ -18,8 +18,13 @@ Tasks
    before M1.3, because M0.2 found speaker/mic/call voice dead on the baseline and
    M1.3 cannot capture the audio HAL's ioctls until we know why (`tasks/M0.4-…`).
    Baseline suspend failure is recorded but not diagnosed here.
+   Outcome 2026-11-02: playback = userspace config (fixed upstream-side, see restore
+   step 5 in `docs/02-baseline.md`); suspend started working with the same fix.
+5. (Tracking only, added 2026-11-02, owner) Microphone captures no voice on the
+   baseline: `tasks/M0.5-mic-capture-defect.md`, handled by the UT-image session, does
+   not block M1.3.
 DoD: `log/` has a dated baseline checklist with ✅/❌ per S3–S9 item; root SSH works;
-the baseline audio failure is classified as kernel, firmware, HAL or config.
+the baseline audio failure is classified as kernel, firmware, HAL or config (done: userspace config).
 
 ## M1 — Reproducible build + contract capture
 Tasks

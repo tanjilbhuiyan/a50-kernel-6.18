@@ -33,17 +33,19 @@ Measured 2026-11-02 in `log/2026-11-02-M0-baseline-checklist.md` (evidence per r
 | Touch, power, volume keys (S3) | ✅ owner |
 | Wi-Fi (S4) | ✅ connected, SSH over Wi-Fi |
 | USB (S5) | ✅ RNDIS ssh to `10.15.19.82` with `-f` override (`docs/06-workflow.md`); adb not exposed |
-| Audio: speaker + microphone (S6) | ❌ pulseaudio sinks/sources exist, `paplay` returns 0, nothing audible; HAL opens no `/dev/snd`, all `ABOX * SPK` routes 0; `parecord` returns digital silence. Cause not isolated (userspace vs kernel/ABOX firmware) |
-| Modem (S7) | ✅ LTE registered (Grameenphone, SIM slot 2); outgoing call reaches `active`; SMS sent (`sent`) and received. Call voice audio ❌ (same fault as S6) |
+| Audio: speaker (S6) | ✅ after the 2026-11-02 userspace fix (4 systemd symlinks, see Restore step 5): owner heard it; first playback after idle can hang, cause unknown |
+| Audio: microphone (S6) | ❌ capture delivers hiss and clicks, no voice (analysed); kernel/HAL mic path looks active, cause unknown. See `log/2026-11-02-M0.4-audio-diagnosis.md` |
+| Modem (S7) | ✅ LTE registered (Grameenphone, SIM slot 2); outgoing call reaches `active`; SMS sent (`sent`) and received. Call voice: you hear the other party (✅ after the fix), they do not hear you (❌, microphone defect M0.5) |
 | Bluetooth (S8) | ✅ pairing + A2DP playback to a JBL speaker (owner heard it); BT audio works while internal audio does not |
 | Battery (S9) | ✅ upower reads state/percentage/voltage/temperature |
-| Suspend (S9) | ❌ system suspend never entered (12 min screen-off test, 0 suspends; Wi-Fi/modem/BT wake sources busy); cause not isolated |
+| Suspend (S9) | ✅ after the same fix (`a50-enable-autosuspend`): suspend_stats success 214 / fail 52 (~20% fail, undiagnosed). Warning: with the screen off the phone suspends within seconds and freezes SSH/audio tests unless a wakelock is held |
 | Sensors | ✅ `sensorfwd.service` active (not exercised) |
 | Location service | ✅ active; GPS fix not tested |
 | Failed units | `usb-tethering` only (it ran at boot with no USB attached) |
 
-Open baseline defects (must be understood before S6/S9 can be met on 6.18):
-audio output/input and suspend. Both are tracked in `STATUS.md`.
+Open baseline defects: microphone captures no voice; ~20% of suspend attempts fail; call voice and GPS fix untested. Tracked in `STATUS.md`.
+
+Note: the baseline phone is NOT identical to the images in `baseline/`: `/data/system-data` carries the symlink fix. `ubuntu.img` and `boot.img` hashes are unchanged.
 
 ## Known issues
 
@@ -65,6 +67,8 @@ audio output/input and suspend. Both are tracked in `STATUS.md`.
 3. `adb push baseline/…/ubuntu.img /data/ubuntu.img`; verify sha256 on phone;
    `adb shell touch /data/.force-ssh`.
 4. Reboot → System. Setup wizard; add SSH key (`docs/06-workflow.md`).
+5. **Re-apply the systemd symlink fix** (Format Data wipes it; the image ships four `.wants` entries as plain text files, upstream commit 3f95df93): `scp tools/a50-fix-wants-links.sh phablet@<ip>:`, then in the phone Terminal (or ssh) `sudo sh a50-fix-wants-links.sh`, then reboot. Without it audio and autosuspend never start. Verify: `systemctl is-enabled a50-audio-hidl-compat a50-audio-route a50-gnss-unblock a50-enable-autosuspend` prints four `enabled`.
+6. Re-install the root SSH key if needed (M0.1) and, for PC access, the USB override (`docs/06-workflow.md`).
 
 Full stock Android restore: BL+AP+CP+CSC from the firmware zip. VENDOR/SYSTEM
 must be written from TWRP with `dd` (Heimdall fails on large images here).

@@ -1,10 +1,10 @@
 # STATUS
 
-Updated: 2026-11-02
+Updated: 2026-11-02 (evening)
 
-## Current milestone: **M0.4 (diagnose baseline audio)**, then M1.3-M1.5; M0.1-M0.3 done
+## Current milestone: **M0 closed (M0.4 done, mic split to M0.5)**; call-voice check, then M1.3
 
-M1.1 and M1.2 done. M2.1 and M2.3 done (fb pixel format accepted as a risk, resolve in M2.4). M0.1-M0.3 complete. Start here: **`tasks/M0.4-diagnose-baseline-audio.md`** (needs the phone, reboot with owner present). No host-only tickets remain.
+M1.1 and M1.2 done. M2.1 and M2.3 done (fb pixel format accepted as a risk, resolve in M2.4). M0.1-M0.3 complete. Call-voice check done (downlink ✅, uplink ❌ = M0.5). Start here: **`tasks/M1.3-contract-capture.md`** (needs the phone; hold a wakelock: `echo m13 > /sys/power/wake_lock`, release with `wake_unlock`). No host-only tickets remain.
 
 Summary: M2.1 DT is committed on branch `a50-dt` in `src/ack-6.18/common` (`4fd044c7c`). Open: fb format (resolve in M2.4), RAM bank count, ramoops (M1.5).
 
@@ -27,10 +27,10 @@ Wi-Fi (last IP 192.168.0.171).
   plan, workflow, risks, ADR-0001/0002 (`log/2026-11-01-context-setup.md`).
 
 ## Open baseline defects (found in M0.2)
-1. **Audio**: speaker/mic/call voice do nothing; BT audio works. Not yet diagnosed (userspace HAL vs kernel/ABOX firmware).
-2. **Suspend**: never entered in a 12 min screen-off test.
-3. GPS fix not tested.
-Decision (owner, 2026-11-02): audio diagnosis is plan item M0.4 and runs before M1.3 (`tasks/M0.4-diagnose-baseline-audio.md`). Suspend defect stays recorded, no ticket yet.
+1. **Audio**: speaker FIXED by the UT-image session (userspace config, symlinks; restore step 5 in `docs/02-baseline.md`). **Microphone still captures no voice** (hiss/clicks); call uplink fails the same way (downlink works). First-playback hangs and a PulseAudio capture stall seen, cause unknown.
+2. **Suspend**: works after the same fix; ~20% of attempts fail (214 ok / 52 fail).
+3. GPS: HAL runs, no fix yet (open-sky test pending).
+Decision (owner, 2026-11-02): M0.4 closed (playback = userspace config); microphone is tracked in `tasks/M0.5-mic-capture-defect.md` and handled by the UT-image session. Do not change mixer/PulseAudio state on the phone for mic work from this repo.
 
 ## Open questions
 - Does S-Boot boot `Image.gz`? (M1.4)
