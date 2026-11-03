@@ -75,6 +75,9 @@ baseline (aa17rf2) proves ABOX/TFA load at runtime without built-in blobs.
 - DTB/DTBO come from their partitions (stock today). A new kernel will need
   our own DTB/DTBO (6.18 bindings differ) written to DTB/DTBO partitions;
   the stock ones stay in `reference/stock-images/` for rollback.
+- Measured entry state of the baseline kernel (M2.4 control experiment, `log/2026-11-04-M2.4-diag-build.md`): S-Boot
+  loads the Image at physical **0x80140000** (not 2 MiB-aligned), enters at EL1 with the MMU off, x0 = DTB
+  0x8a000000, **x1 = 0x80000000, x2 = 0x140000, x3 = 0x80140000** (non-standard: arm64 normally wants x1-x3 = 0).
 - S-Boot does **not** boot a gzip-compressed kernel (M1.4: bootloop at the Samsung logo); lz4 untested. Use an uncompressed `Image`; kernel size budget <= 46,876,672 B with the current ramdisk (`docs/07-risks.md` R1).
 
 ## 4. Debug contract
