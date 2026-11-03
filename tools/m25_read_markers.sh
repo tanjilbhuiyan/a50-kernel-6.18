@@ -21,7 +21,8 @@ if i>=0:
     found=True
     pc,dtb,el=struct.unpack('<QQQ',d[i+8:i+32])
     print("stage 0 (head.S, MMU off): reached. offset %#x in dump"%i)
-    print("   kernel ran at physical address %#x  (2MiB-aligned: %s)"%(pc, pc%0x200000==0))
+    base=pc-0x3ce0a0     # diag v2 build: the adr in primary_entry is 0x3ce0a0 bytes into the Image (System.map: _text .. primary_entry+0x18)
+    print("   stage-0 PC (physical, MMU off) %#x => Image loaded at physical %#x (2 MiB-aligned: %s)"%(pc, base, base%0x200000==0))
     print("   DTB pointer from the bootloader %#x"%dtb)
     print("   CurrentEL raw %#x -> EL%d"%(el,(el>>2)&3))
 for tag,txt in ((b"A50DIAG6","stage 0b: markers stored, framebuffer paint loop STARTED"),(b"A50DIAG7","stage 0c: framebuffer paint loop FINISHED (the framebuffer is writable from the kernel)")):
