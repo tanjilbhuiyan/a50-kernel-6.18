@@ -1,0 +1,24 @@
+# /proc/last_kmsg excerpt after a controlled panic (baseline 4.14.194, 2026-11-04). Marker written to /dev/kmsg: M15-MARKER-20261104022648
+# --- marker lines
+<12>[  193.172892]  [2:           bash: 6247] M15-MARKER-20261104022648 panic test, pre-sync
+<12>[  193.238598]  [2:           bash: 6247] M15-MARKER-20261104022648 about to trigger panic
+# --- crash trace tail
+<0>[  195.512533]  [4:             sh: 6252] [<ffffff800821b054>] el1_da+0x24/0x84
+<0>[  195.512551]  [4:             sh: 6252] [<ffffff8008b69518>] sysrq_handle_crash+0x98/0xb0
+<0>[  195.512567]  [4:             sh: 6252] [<ffffff8008b6a688>] write_sysrq_trigger+0x108/0x1a0
+<0>[  195.512585]  [4:             sh: 6252] [<ffffff800865c650>] proc_reg_write+0x60/0xc0
+<0>[  195.512603]  [4:             sh: 6252] [<ffffff800857b400>] vfs_write+0x150/0x390
+<0>[  195.512619]  [4:             sh: 6252] [<ffffff800857b9ec>] SyS_write+0x6c/0xd0
+<0>[  195.512635]  [4:             sh: 6252] [<ffffff800821ba98>] __sys_trace_return+0x0/0x4
+<6>[  195.512648]  [4:             sh: 6252] 
+<6>[  195.512665]  [4:             sh: 6252]     6254  3333333  3333333     194039143259 S(1)   1  ffffff8008619f18       7fb2dd8464  ffffffc811529080 *    (udev-worker) [SyS_epoll_wait]
+<6>[  195.512680]  [4:             sh: 6252]  ----------------------------------------------------------------------------------------------------------------------------
+<0>[  195.512697]  [4:             sh: 6252] linux_banner: Linux version 4.14.194 - Mint-user 1763150940 (a50-halium@reproducible) (Proton clang version 13.0.0 (https://github.com/llvm/llvm-project b4fd512c36ca
+<0>[  195.512697]  [4:             sh: 6252] 
+<0>[  195.512716]  [4:             sh: 6252] sec_debug: sec_debug_panic_handler
+<0>[  195.513040]  [4:             sh: 6252] sec_debug: set magic code (0x66262564)
+<0>[  195.915803]  [4:             sh: 6252] sec_debug: Linux version 4.14.194 - Mint-user 1763150940 (a50-halium@reproducible) (Proton clang version 13.0.0 (https://github.com/llvm/llvm-project b4fd512c36ca344
+<0>[  195.915803]  [4:             sh: 6252] 
+<0>[  195.915821]  [4:             sh: 6252] sec_debug: rebooting...
+<0>[  195.916123]  [4:             sh: 6252] sec_reboot (0, panic)
+<0>[  195.916438]  [4:             sh: 6252] sec_debug: set magic code (0x0)

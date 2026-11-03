@@ -2,9 +2,9 @@
 
 Updated: 2026-11-02 (evening)
 
-## Current milestone: **M1 (M1.1-M1.4 done)**; next M1.5 (ramoops); then M2.2 and M2.4
+## Current milestone: **M1 done (M1.1-M1.5)**; next M2.2 (minimal 6.18 defconfig + boot.img), then M2.4 first light
 
-M1.1 and M1.2 done. M2.1 and M2.3 done (fb pixel format accepted as a risk, resolve in M2.4). M0.1-M0.3 complete. M1.3 done (`reference/contract/`). M1.4 done: S-Boot does NOT boot a gzip kernel (bootloop); use uncompressed `Image`, budget <= 46,876,672 B. Start here: **`tasks/M1.5-ramoops.md`** (phone, root; a controlled panic with the owner present).
+M1.1 and M1.2 done. M2.1 and M2.3 done (fb pixel format accepted as a risk, resolve in M2.4). M0.1-M0.3 complete. M1.3 done (`reference/contract/`). M1.4: S-Boot does NOT boot a gzip kernel; use uncompressed `Image`, kernel <= 46,876,672 B. M1.5: after a panic the baseline keeps the log in `/proc/last_kmsg` (sec_debug region 0x91388000); pstore/ramoops at 0xf9d10000 stayed empty. Start here: **`tasks/M2.2-minimal-defconfig-bootimg.md`** (host-only). Before M2.4: change the DT ramoops node to 0x91388000 (text in `log/2026-11-04-M1.5-ramoops.md`) and rebuild dt.img.
 
 Summary: M2.1 DT is committed on branch `a50-dt` in `src/ack-6.18/common` (`4fd044c7c`). Open: fb format (resolve in M2.4), RAM bank count, ramoops (M1.5).
 
@@ -15,6 +15,7 @@ VENDOR/SYSTEM/DTB/DTBO, TWRP 3.7.1, vbmeta flags=3. SSH as `phablet` over
 Wi-Fi (last IP 192.168.0.171).
 
 ## Done
+- M1.5: controlled panic on the baseline; /proc/last_kmsg holds the crash log, pstore empty; 6.18 ramoops region proposed (`log/2026-11-04-M1.5-ramoops.md`).
 - M1.4: gzip kernel bootloops S-Boot; baseline restored and verified (BOOT sha256 7d5855ef…). R1 budget in `docs/07-risks.md`.
 - M1.3: vendor ioctl contract captured and decoded for mali, ion, display, audio, wifi/bt, modem (`reference/contract/README.md`). Notable: Samsung-only dma-buf TRACK/UNTRACK, ION ALLOC/HEAP_QUERY, S3CFB_WIN_CONFIG, IOCTL_MODEM_STATUS; audio HAL is 32-bit.
 - M0.2: baseline checklist (`log/2026-11-02-M0-baseline-checklist.md`, `docs/02-baseline.md`): pass S3/S4/S5/S7/S8/battery; fail S6 audio, S9 suspend; GPS skipped.

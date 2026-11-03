@@ -79,7 +79,9 @@ baseline (aa17rf2) proves ABOX/TFA load at runtime without built-in blobs.
 
 ## 4. Debug contract
 
-- ramoops: reuse the bootloader-preserved region `log_pstore` at
-  **0xf9d10000, size 0x200000** (from live DT `reserved-memory/debug_snapshot`).
-  Kernel log region `log_kernel` 0xf9010000/0x200000, header 0xf9000000/0x10000.
+- Crash log across a reboot (M1.5, `log/2026-11-04-M1.5-ramoops.md`): on the baseline a panic reboot leaves
+  `/proc/last_kmsg` (Samsung sec_debug buffer, S-Boot region `sec_debug_next=0x800000@0x91388000`) readable with the
+  full crash trace. pstore/ramoops at `log_pstore` 0xf9d10000/0x200000 (the module defaults) stayed EMPTY after the
+  panic (cause unverified). For 6.18 use ramoops at 0x91388000/0x800000 (DT text in the M1.5 log; unverified on 6.18
+  until M2.4); other S-Boot regions: `log_kernel` 0xf9010000/0x200000, header 0xf9000000/0x10000.
 - simple-framebuffer at `0xca000000`, 1080×2340 (format/stride unverified; M2).
