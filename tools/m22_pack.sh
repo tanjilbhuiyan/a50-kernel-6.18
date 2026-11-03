@@ -6,7 +6,7 @@
 set -euo pipefail
 IMAGE=${1:?usage: m22_pack.sh IMAGE OUT_IMG}; OUT=${2:?}
 REPO=$(cd "$(dirname "$0")/.." && pwd)
-DONOR=$(ls "$REPO"/baseline/*/boot.img)
+DONOR="$REPO/baseline/ut-26.04-2026-10-19-aa17rf2/boot.img"   # pinned: baseline/ also holds the pre-flash snapshot
 T=$(mktemp -d); trap 'rm -rf "$T"' EXIT
 echo "a50-firstlight ramdisk marker" > "$T/a50-marker"; touch -d @1793750400 "$T/a50-marker"
 (cd "$T" && echo a50-marker | cpio -o -H newc --reproducible --quiet | gzip -9 -n > ramdisk.cpio.gz)

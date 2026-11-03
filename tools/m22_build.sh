@@ -19,6 +19,8 @@ rm -rf "$OUT"; cd "$ACK/common"
 M="make -j16 ARCH=arm64 LLVM=1 O=$OUT"
 $M a50_firstlight_defconfig >/dev/null
 ./scripts/config --file "$OUT/.config" --set-str INITRAMFS_SOURCE "$LIST"
+# A50_DIAG=1 (branch a50-diag only): enable the first-light diagnostic stages and tag the version string
+if [ "${A50_DIAG:-0}" = 1 ]; then ./scripts/config --file "$OUT/.config" -e A50_DIAG --set-str LOCALVERSION "-a50-diag"; fi
 $M olddefconfig >/dev/null
 $M Image 2>&1 | tail -3
 sha256sum "$OUT/arch/arm64/boot/Image"; stat -c '%s bytes' "$OUT/arch/arm64/boot/Image"

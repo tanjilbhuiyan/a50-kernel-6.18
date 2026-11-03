@@ -1,0 +1,242 @@
+From c32f1f2bc892f746296dc7e43aed7865d8a3000c Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <a50@localhost>
+Date: Wed, 4 Nov 2026 03:29:34 +0600
+Subject: [PATCH] arm64: A50 first-light diagnostics (CONFIG_A50_DIAG), do not
+ merge
+
+Debug aid for bringing up the Galaxy A50 without a console: stage 0 in head.S
+(MMU off), stage 1 in setup_arch, stages 2 and 3 as initcalls. Each stage paints
+a band into the bootloader framebuffer and writes a marker into DRAM at
+0xf9030000 (readable from the baseline kernel via /proc/last_kmsg); stage 3
+then blinks a heartbeat band for 15 s and tries a PSCI SYSTEM_RESET.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+Change-Id: Ib2879626173231ca598266b836ba9f5ab497113e
+---
+ arch/arm64/Kconfig.debug     |   8 +++
+ arch/arm64/kernel/Makefile   |   1 +
+ arch/arm64/kernel/a50_diag.c | 128 +++++++++++++++++++++++++++++++++++
+ arch/arm64/kernel/head.S     |  27 ++++++++
+ arch/arm64/kernel/setup.c    |   7 ++
+ 5 files changed, 171 insertions(+)
+ create mode 100644 arch/arm64/kernel/a50_diag.c
+
+diff --git a/arch/arm64/Kconfig.debug b/arch/arm64/Kconfig.debug
+index 265c44610..da77f83f5 100644
+--- a/arch/arm64/Kconfig.debug
++++ b/arch/arm64/Kconfig.debug
+@@ -20,4 +20,12 @@ config ARM64_RELOC_TEST
+ 	depends on m
+ 	tristate "Relocation testing module"
+ 
++config A50_DIAG
++	bool "Galaxy A50 first-light diagnostics (paints framebuffer bands, writes DRAM markers)"
++	help
++	  Debug aid for bringing up the Samsung Galaxy A50 without a serial
++	  console: paints coloured bands into the bootloader framebuffer and
++	  writes stage markers into DRAM at several points of the boot, then
++	  tries a PSCI SYSTEM_RESET. Never enable on anything else.
++
+ source "drivers/hwtracing/coresight/Kconfig"
+diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
+index 76f32e424..9822eb9b8 100644
+--- a/arch/arm64/kernel/Makefile
++++ b/arch/arm64/kernel/Makefile
+@@ -85,3 +85,4 @@ endif
+ 
+ # for cleaning
+ subdir- += vdso vdso32
++obj-$(CONFIG_A50_DIAG)			+= a50_diag.o
+diff --git a/arch/arm64/kernel/a50_diag.c b/arch/arm64/kernel/a50_diag.c
+new file mode 100644
+index 000000000..0225dc7c6
+--- /dev/null
++++ b/arch/arm64/kernel/a50_diag.c
+@@ -0,0 +1,128 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Galaxy A50 first-light diagnostics (CONFIG_A50_DIAG). No console exists on
++ * this phone, so each boot stage paints a band into the bootloader
++ * framebuffer (0xca000000, 1080x2340, 4320 bytes/row assumed ARGB8888) AND
++ * writes a marker into DRAM at 0xf9030000 (inside the debug-snapshot
++ * log_kernel buffer, which the baseline kernel exposes as /proc/last_kmsg
++ * after a reboot). Stage 0 lives in head.S. Band rows: S0 0-49 red, S1 60-109
++ * green, S2 120-169 blue, S3 180-229 white, heartbeat 240-289 blinking.
++ */
++#include <linux/init.h>
++#include <linux/io.h>
++#include <linux/delay.h>
++#include <linux/string.h>
++#include <linux/arm-smccc.h>
++#include <asm/early_ioremap.h>
++#include <asm/cacheflush.h>
++
++#define FB_PHYS		0xca000000UL
++#define ROW_BYTES	4320UL
++#define BAND_BYTES	(50UL * ROW_BYTES)	/* 216000, below the 256 KiB early_ioremap slot */
++#define MARK_PHYS	0xf9030000UL
++
++#define ARGB_RED	0xffff0000u
++#define ARGB_GREEN	0xff00ff00u
++#define ARGB_BLUE	0xff0000ffu
++#define ARGB_WHITE	0xffffffffu
++#define ARGB_BLACK	0xff000000u
++
++static void __init a50_fill(void __iomem *p, size_t bytes, u32 argb)
++{
++	size_t i;
++
++	for (i = 0; i < bytes; i += 4)
++		writel_relaxed(argb, p + i);
++}
++
++/* Stage 1: setup_arch(), only early_ioremap() exists yet. */
++void __init a50_diag_stage1(void)
++{
++	void __iomem *p;
++	static const char msg[] = "A50DIAG1 setup_arch\n";
++
++	p = early_ioremap(FB_PHYS + 60 * ROW_BYTES, BAND_BYTES);
++	if (p) {
++		a50_fill(p, BAND_BYTES, ARGB_GREEN);
++		early_iounmap(p, BAND_BYTES);
++	}
++	p = early_ioremap(MARK_PHYS, 0x1000);
++	if (p) {
++		memcpy_toio(p + 0x100, msg, sizeof(msg));
++		early_iounmap(p, 0x1000);
++	}
++}
++
++/* Map a physical range for writing: device mapping if possible, else the linear map (RAM). */
++static void *a50_map(unsigned long phys, size_t size, bool *linear)
++{
++	void *v = (void __force *)ioremap_wc(phys, size);
++
++	*linear = false;
++	if (v)
++		return v;
++	*linear = true;
++	return memremap(phys, size, MEMREMAP_WB);
++}
++
++static void a50_unmap(void *v, size_t size, bool linear)
++{
++	if (!v)
++		return;
++	if (linear) {
++		dcache_clean_inval_poc((unsigned long)v, (unsigned long)v + size);
++		memunmap(v);
++	} else {
++		iounmap((void __iomem *)v);
++	}
++}
++
++static void a50_band(unsigned long row, u32 argb)
++{
++	bool lin;
++	void *v = a50_map(FB_PHYS + row * ROW_BYTES, BAND_BYTES, &lin);
++	size_t i;
++
++	if (!v)
++		return;
++	for (i = 0; i < BAND_BYTES; i += 4)
++		*(volatile u32 *)((char *)v + i) = argb;
++	a50_unmap(v, BAND_BYTES, lin);
++}
++
++static void a50_mark(unsigned long off, const char *s)
++{
++	bool lin;
++	void *v = a50_map(MARK_PHYS, 0x1000, &lin);
++
++	if (!v)
++		return;
++	memcpy((char *)v + off, s, strlen(s) + 1);
++	a50_unmap(v, 0x1000, lin);
++}
++
++static int __init a50_diag_stage2(void)
++{
++	a50_band(120, ARGB_BLUE);
++	a50_mark(0x200, "A50DIAG2 arch_initcall\n");
++	return 0;
++}
++arch_initcall(a50_diag_stage2);
++
++static int __init a50_diag_stage3(void)
++{
++	struct arm_smccc_res res;
++	int i;
++
++	a50_band(180, ARGB_WHITE);
++	a50_mark(0x300, "A50DIAG3 late_initcall\n");
++	for (i = 0; i < 15; i++) {			/* heartbeat, 15 s */
++		a50_band(240, (i & 1) ? ARGB_BLACK : ARGB_WHITE);
++		mdelay(1000);
++	}
++	a50_mark(0x400, "A50DIAG4 trying PSCI SYSTEM_RESET\n");
++	arm_smccc_smc(0x84000009, 0, 0, 0, 0, 0, 0, 0, &res);	/* PSCI_0_2_FN_SYSTEM_RESET */
++	a50_mark(0x500, "A50DIAG5 SYSTEM_RESET returned\n");
++	return 0;
++}
++late_initcall_sync(a50_diag_stage3);
+diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
+index 87a822e5c..ffcc81868 100644
+--- a/arch/arm64/kernel/head.S
++++ b/arch/arm64/kernel/head.S
+@@ -83,6 +83,33 @@
+ 	 *  x21        primary_entry() .. start_kernel()        FDT pointer passed at boot in x0
+ 	 */
+ SYM_CODE_START(primary_entry)
++#ifdef CONFIG_A50_DIAG
++	/*
++	 * A50 DIAG stage 0: first instructions of the kernel, MMU off, only
++	 * x9-x15 touched (x0-x3 hold the boot arguments).
++	 * Paint rows 0-49 of the bootloader framebuffer (0xca000000, 4320
++	 * bytes per row, ARGB red) and leave markers at 0xf9030000.
++	 */
++	movz	x9, #0xca00, lsl #16
++	mov	x10, #27000			/* 216000 bytes / 8 */
++	movz	x11, #0x0000
++	movk	x11, #0xffff, lsl #16
++	movk	x11, #0xffff, lsl #48		/* 0xffff0000ffff0000 */
++0:	str	x11, [x9], #8
++	subs	x10, x10, #1
++	b.ne	0b
++	movz	x9, #0xf903, lsl #16
++	movz	x12, #0x3541			/* "A50DIAG0" little endian */
++	movk	x12, #0x4430, lsl #16
++	movk	x12, #0x4149, lsl #32
++	movk	x12, #0x3047, lsl #48
++	str	x12, [x9]
++	adr	x13, .				/* physical address we are running at */
++	str	x13, [x9, #8]
++	str	x0, [x9, #16]			/* DTB pointer from the bootloader */
++	mrs	x14, CurrentEL
++	str	x14, [x9, #24]
++#endif
+ 	bl	record_mmu_state
+ 	bl	preserve_boot_args
+ 
+diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
+index 56e69b249..c3724aaa5 100644
+--- a/arch/arm64/kernel/setup.c
++++ b/arch/arm64/kernel/setup.c
+@@ -289,6 +289,13 @@ void __init __no_sanitize_address setup_arch(char **cmdline_p)
+ 
+ 	early_fixmap_init();
+ 	early_ioremap_init();
++#ifdef CONFIG_A50_DIAG
++	{
++		extern void a50_diag_stage1(void);
++
++		a50_diag_stage1();
++	}
++#endif
+ 
+ 	setup_machine_fdt(__fdt_pointer);
+ 
+-- 
+2.56.0
+

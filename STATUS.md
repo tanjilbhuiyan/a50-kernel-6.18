@@ -2,7 +2,7 @@
 
 Updated: 2026-11-02 (evening)
 
-## Current milestone: **M2.4 first light: attempt 1 FAILED (no output), baseline restored and verified**; diagnostic kernel proposed
+## Current milestone: **M2.4 first light: attempt 1 failed; diagnostic kernel built (not yet flashed)**
 
 M1.1 and M1.2 done. M2.1 and M2.3 done (fb pixel format accepted as a risk, resolve in M2.4). M0.1-M0.3 complete. M1.3 done (`reference/contract/`). NOTE: the M1.5 region choice was corrected on 2026-11-04 (last_kmsg = debug-snapshot log_kernel 0xf9010000; the baseline zeroes log_pstore), see the M1.5 log. M1.4: S-Boot does NOT boot a gzip kernel; use uncompressed `Image`, kernel <= 46,876,672 B. M1.5: after a panic the baseline keeps the log in `/proc/last_kmsg` (sec_debug region 0x91388000); pstore/ramoops at 0xf9d10000 stayed empty. M2.2 done: first-light `Image` 7,170,056 B (reproducible) and `boot-firstlight.img` (`src/m22/artifacts/`). M2.4 preparation done (DT ramoops moved to 0x91388000, new dt.img, `log/2026-11-04-M2.4-prep-dt-ramoops.md`). Start here: **`tasks/M2.4-first-light.md`** (needs the phone and the owner: DTB/DTBO via TWRP, BOOT via Heimdall, baseline fallback ready). Before M2.4: change the DT ramoops node to 0x91388000 (text in `log/2026-11-04-M1.5-ramoops.md`) and rebuild dt.img.
 
@@ -15,6 +15,7 @@ VENDOR/SYSTEM/DTB/DTBO, TWRP 3.7.1, vbmeta flags=3. SSH as `phablet` over
 Wi-Fi (last IP 192.168.0.171).
 
 ## Done
+- M2.4 diagnostic kernel (branch a50-diag, boot-diag-A/B images, marker reader): built and verified on the host, test plan in `log/2026-11-04-M2.4-diag-build.md`. Not flashed yet; the phone is on the stock DT and baseline BOOT.
 - M2.4 attempt 1 (negative): flashed DTB+DTBO+BOOT with Heimdall (method A), phone sat on the Samsung warning screen, no text, no pstore; rolled back and verified (`log/2026-11-04-M2.4-first-light.md`). Lessons: do not run `heimdall print-pit` before a flash; S-Boot checks DT partition signatures; last_kmsg has no log of the attempt.
 - M2.4 prep: DT ramoops moved to the proven sec_debug_next region (kernel commit 1a9a67e46), dt.img rebuilt (`reference/dt-6.18/images/`). Host-only.
 - M2.2: `a50_firstlight_defconfig` (kernel commit f7accc40b), reproducible 7.2 MB Image, boot-firstlight.img 7,176,192 B, header equal to baseline except sizes (`log/2026-11-04-M2.2-firstlight-build.md`). Not tested on hardware.
