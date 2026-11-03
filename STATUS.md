@@ -2,9 +2,9 @@
 
 Updated: 2026-11-02 (evening)
 
-## Current milestone: **M1 (M1.1-M1.3 done)**; next M1.4 (compressed Image) and M1.5 (ramoops), both flash BOOT with the owner present
+## Current milestone: **M1 (M1.1-M1.4 done)**; next M1.5 (ramoops); then M2.2 and M2.4
 
-M1.1 and M1.2 done. M2.1 and M2.3 done (fb pixel format accepted as a risk, resolve in M2.4). M0.1-M0.3 complete. M1.3 contract capture done (`reference/contract/`). Start here: **`tasks/M1.4-sboot-compressed-image.md`** (needs the phone and a BOOT flash with the owner present; baseline boot.img `7d5855ef…` is the fallback).
+M1.1 and M1.2 done. M2.1 and M2.3 done (fb pixel format accepted as a risk, resolve in M2.4). M0.1-M0.3 complete. M1.3 done (`reference/contract/`). M1.4 done: S-Boot does NOT boot a gzip kernel (bootloop); use uncompressed `Image`, budget <= 46,876,672 B. Start here: **`tasks/M1.5-ramoops.md`** (phone, root; a controlled panic with the owner present).
 
 Summary: M2.1 DT is committed on branch `a50-dt` in `src/ack-6.18/common` (`4fd044c7c`). Open: fb format (resolve in M2.4), RAM bank count, ramoops (M1.5).
 
@@ -15,6 +15,7 @@ VENDOR/SYSTEM/DTB/DTBO, TWRP 3.7.1, vbmeta flags=3. SSH as `phablet` over
 Wi-Fi (last IP 192.168.0.171).
 
 ## Done
+- M1.4: gzip kernel bootloops S-Boot; baseline restored and verified (BOOT sha256 7d5855ef…). R1 budget in `docs/07-risks.md`.
 - M1.3: vendor ioctl contract captured and decoded for mali, ion, display, audio, wifi/bt, modem (`reference/contract/README.md`). Notable: Samsung-only dma-buf TRACK/UNTRACK, ION ALLOC/HEAP_QUERY, S3CFB_WIN_CONFIG, IOCTL_MODEM_STATUS; audio HAL is 32-bit.
 - M0.2: baseline checklist (`log/2026-11-02-M0-baseline-checklist.md`, `docs/02-baseline.md`): pass S3/S4/S5/S7/S8/battery; fail S6 audio, S9 suspend; GPS skipped.
 - M0.3: RNDIS ssh to 10.15.19.82 works over USB-C<->USB-C with the usb-moded `-f` override; adb not exposed (`log/2026-11-02-M0.3-usb-access.md`, `docs/06-workflow.md`).

@@ -4,7 +4,7 @@ Ranked by impact on the goal. Review at every milestone boundary.
 
 | # | Risk | Evidence | Impact | Mitigation / exit |
 |---|---|---|---|---|
-| R1 | **BOOT partition too small** for a 6.18 Image + Halium ramdisk | limit 57,671,680 B; baseline already 53.6 MB with uncompressed Image | blocks M2 | Verify `Image.gz` support (M1.4); minimal config; modules in ramdisk only if needed |
+| R1 | **BOOT partition too small** for a 6.18 Image + Halium ramdisk | limit 57,671,680 B; baseline 53,624,832 B with an uncompressed Image | blocks M2 | **M1.4 (2026-11-04): a gzip-compressed kernel does NOT boot (bootloop); lz4 untested, assume uncompressed `Image`.** Budget: with the current 10,792,361 B ramdisk the Image must be <= 46,876,672 B (page-aligned); ACK GKI Image is 43,670,016 B (headroom ~3.2 MB). Levers: minimal config (drop unused built-ins), drivers as modules only if they live outside BOOT, a smaller/better-compressed ramdisk. Track the Image size at every milestone against 46.8 MB |
 | R2 | **Mali kbase r26p0 on 6.18**: vendor libGLES requires this exact DDK ABI; r26p0 targets older kernels | `CONFIG_MALI_BIFROST_R26P0_R`; ARM DDK out-of-tree | blocks S2 | Port r26p0 with compat shims; fallback: Panfrost (G72 supported in 6.18) + non-vendor graphics — would violate ADR-0002, requires new ADR |
 | R3 | **ION ABI shim** correctness (Samsung heap IDs, `ion_fdt_exynos`, `ionfd2phys`) | ION removed upstream; vendor gralloc uses it | blocks M6/M7 | Port 4.14 ION + exynos heaps as staging driver; replay captured ioctls (M1.3) |
 | R4 | **No early console** (no practical UART) | phone hardware | slows M2–M4 debugging | ramoops at 0xf9d10000 + simplefb @0xca000000 first (M1.5/M2) |
