@@ -24,6 +24,8 @@ if i>=0:
     print("   kernel ran at physical address %#x  (2MiB-aligned: %s)"%(pc, pc%0x200000==0))
     print("   DTB pointer from the bootloader %#x"%dtb)
     print("   CurrentEL raw %#x -> EL%d"%(el,(el>>2)&3))
+for tag,txt in ((b"A50DIAG6","stage 0b: markers stored, framebuffer paint loop STARTED"),(b"A50DIAG7","stage 0c: framebuffer paint loop FINISHED (the framebuffer is writable from the kernel)")):
+    if d.find(tag)>=0: found=True; print(txt)
 for k,v in names.items():
     j=d.find(k)
     if j>=0: found=True; print(v+": reached (offset %#x)"%j)

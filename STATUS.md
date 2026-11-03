@@ -15,6 +15,7 @@ VENDOR/SYSTEM/DTB/DTBO, TWRP 3.7.1, vbmeta flags=3. SSH as `phablet` over
 Wi-Fi (last IP 192.168.0.171).
 
 ## Done
+- M2.4 Test 1 (diag v1, image B, stock DT): static screen and NO markers; v1 had a design flaw (marker after the framebuffer paint), fixed in v2 (built, not flashed; `log/2026-11-04-M2.4-diag-build.md`).
 - M2.4 diagnostic kernel (branch a50-diag, boot-diag-A/B images, marker reader): built and verified on the host, test plan in `log/2026-11-04-M2.4-diag-build.md`. Not flashed yet; the phone is on the stock DT and baseline BOOT.
 - M2.4 attempt 1 (negative): flashed DTB+DTBO+BOOT with Heimdall (method A), phone sat on the Samsung warning screen, no text, no pstore; rolled back and verified (`log/2026-11-04-M2.4-first-light.md`). Lessons: do not run `heimdall print-pit` before a flash; S-Boot checks DT partition signatures; last_kmsg has no log of the attempt.
 - M2.4 prep: DT ramoops moved to the proven sec_debug_next region (kernel commit 1a9a67e46), dt.img rebuilt (`reference/dt-6.18/images/`). Host-only.

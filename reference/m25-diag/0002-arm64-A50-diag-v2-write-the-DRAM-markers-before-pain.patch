@@ -1,0 +1,71 @@
+From e701ba948dd676d4ebaa28e74d09f97b150fdcbd Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <a50@localhost>
+Date: Wed, 4 Nov 2026 03:48:56 +0600
+Subject: [PATCH 2/2] arm64: A50 diag v2: write the DRAM markers before
+ painting the framebuffer
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+Change-Id: I6bb873342662cc373591749ee437ae3e8ff4c58d
+---
+ arch/arm64/kernel/head.S | 37 +++++++++++++++++++++++++------------
+ 1 file changed, 25 insertions(+), 12 deletions(-)
+
+diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
+index ffcc81868..441708537 100644
+--- a/arch/arm64/kernel/head.S
++++ b/arch/arm64/kernel/head.S
+@@ -85,19 +85,13 @@
+ SYM_CODE_START(primary_entry)
+ #ifdef CONFIG_A50_DIAG
+ 	/*
+-	 * A50 DIAG stage 0: first instructions of the kernel, MMU off, only
+-	 * x9-x15 touched (x0-x3 hold the boot arguments).
+-	 * Paint rows 0-49 of the bootloader framebuffer (0xca000000, 4320
+-	 * bytes per row, ARGB red) and leave markers at 0xf9030000.
++	 * A50 DIAG stage 0 (v2): first instructions of the kernel, MMU off, only
++	 * x9-x15 touched (x0-x3 hold the boot arguments). The markers at
++	 * 0xf9030000 come FIRST so that they do not depend on the framebuffer
++	 * being writable; then rows 0-49 of the bootloader framebuffer
++	 * (0xca000000, 4320 bytes per row, ARGB red) are painted, and a second
++	 * marker records that the paint loop completed.
+ 	 */
+-	movz	x9, #0xca00, lsl #16
+-	mov	x10, #27000			/* 216000 bytes / 8 */
+-	movz	x11, #0x0000
+-	movk	x11, #0xffff, lsl #16
+-	movk	x11, #0xffff, lsl #48		/* 0xffff0000ffff0000 */
+-0:	str	x11, [x9], #8
+-	subs	x10, x10, #1
+-	b.ne	0b
+ 	movz	x9, #0xf903, lsl #16
+ 	movz	x12, #0x3541			/* "A50DIAG0" little endian */
+ 	movk	x12, #0x4430, lsl #16
+@@ -109,6 +103,25 @@ SYM_CODE_START(primary_entry)
+ 	str	x0, [x9, #16]			/* DTB pointer from the bootloader */
+ 	mrs	x14, CurrentEL
+ 	str	x14, [x9, #24]
++	movz	x10, #0x3541			/* "A50DIAG6" = markers stored, paint starts */
++	movk	x10, #0x4430, lsl #16
++	movk	x10, #0x4149, lsl #32
++	movk	x10, #0x3647, lsl #48
++	str	x10, [x9, #32]
++	movz	x9, #0xca00, lsl #16
++	mov	x10, #27000			/* 216000 bytes / 8 */
++	movz	x11, #0x0000
++	movk	x11, #0xffff, lsl #16
++	movk	x11, #0xffff, lsl #48		/* 0xffff0000ffff0000 */
++0:	str	x11, [x9], #8
++	subs	x10, x10, #1
++	b.ne	0b
++	movz	x9, #0xf903, lsl #16
++	movz	x10, #0x3541			/* "A50DIAG7" = paint loop finished */
++	movk	x10, #0x4430, lsl #16
++	movk	x10, #0x4149, lsl #32
++	movk	x10, #0x3747, lsl #48
++	str	x10, [x9, #40]
+ #endif
+ 	bl	record_mmu_state
+ 	bl	preserve_boot_args
+-- 
+2.56.0
+
