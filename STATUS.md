@@ -2,19 +2,21 @@
 
 Updated: 2026-11-02 (evening)
 
-## Current milestone: **M2.4 first light: attempt 1 failed; diagnostic kernel built (not yet flashed)**
+## Current milestone: **M2.4 first light: BLOCKED on S-Boot refusing 6.18 images; next = Test 5 (Samsung header magic 0xecefecef)**
 
-M1.1 and M1.2 done. M2.1 and M2.3 done (fb pixel format accepted as a risk, resolve in M2.4). M0.1-M0.3 complete. M1.3 done (`reference/contract/`). NOTE: the M1.5 region choice was corrected on 2026-11-04 (last_kmsg = debug-snapshot log_kernel 0xf9010000; the baseline zeroes log_pstore), see the M1.5 log. M1.4: S-Boot does NOT boot a gzip kernel; use uncompressed `Image`, kernel <= 46,876,672 B. M1.5: after a panic the baseline keeps the log in `/proc/last_kmsg` (sec_debug region 0x91388000); pstore/ramoops at 0xf9d10000 stayed empty. M2.2 done: first-light `Image` 7,170,056 B (reproducible) and `boot-firstlight.img` (`src/m22/artifacts/`). M2.4 preparation done (DT ramoops moved to 0x91388000, new dt.img, `log/2026-11-04-M2.4-prep-dt-ramoops.md`). Start here: **`tasks/M2.4-first-light.md`** (needs the phone and the owner: DTB/DTBO via TWRP, BOOT via Heimdall, baseline fallback ready). Before M2.4: change the DT ramoops node to 0x91388000 (text in `log/2026-11-04-M1.5-ramoops.md`) and rebuild dt.img.
+M1.1 and M1.2 done. M2.1 and M2.3 done (fb pixel format accepted as a risk, resolve in M2.4). M0.1-M0.3 complete. M1.3 done (`reference/contract/`). NOTE: the M1.5 region choice was corrected on 2026-11-04 (last_kmsg = debug-snapshot log_kernel 0xf9010000; the baseline zeroes log_pstore), see the M1.5 log. M1.4: S-Boot does NOT boot a gzip kernel; use uncompressed `Image`, kernel <= 46,876,672 B. M1.5: after a panic the baseline keeps the log in `/proc/last_kmsg` (sec_debug region 0x91388000); pstore/ramoops at 0xf9d10000 stayed empty. M2.2 done: first-light `Image` 7,170,056 B (reproducible) and `boot-firstlight.img` (`src/m22/artifacts/`). M2.4 is in a diagnostic phase (see below). RESUME HERE: flash `src/m22/artifacts-diag4/boot-diag-D.img` (Test 5: diag v2 image A + the Samsung header magic 0xecefecef at Image offset 0x28; DT stays stock), wait 2 min, roll back BOOT with `heimdall flash --BOOT baseline/ut-26.04-2026-10-19-aa17rf2/boot.img`, boot UT, then `tools/m25_read_markers.sh <ip>`. Marker present = magic was the cause. Details: `log/2026-11-04-M2.4-diag-build.md`.
 
 Summary: M2.1 DT is committed on branch `a50-dt` in `src/ack-6.18/common` (`4fd044c7c`). Open: fb format (resolve in M2.4), RAM bank count, ramoops (M1.5).
 
 ## State of the phone
+Phone BOOT is the baseline (7d5855ef…), DTB/DTBO stock (verified by `tools/m24_preflight.sh <ip>`); last seen at 192.168.0.171. Kernel tree `src/ack-6.18/common` is on branch `a50-dt` (diag work is on branch `a50-diag`, do not merge).
 Baseline installed and booting Ubuntu Touch 26.04 (`docs/02-baseline.md`):
 BOOT `aa17rf2` (`7d5855ef…`), `/data/ubuntu.img` (`0d33d65d…`), stock
 VENDOR/SYSTEM/DTB/DTBO, TWRP 3.7.1, vbmeta flags=3. SSH as `phablet` over
 Wi-Fi (last IP 192.168.0.171).
 
 ## Done
+- M2.4 Tests 1-4 (6.18 diagnostic images, various headers/sizes/ramdisk): all silent; control (baseline kernel + marker cave) booted and proved the marker channel and the S-Boot hand-off (0x80140000, EL1, MMU off, x0=DTB, x1-x3 non-zero). Leading hypothesis: S-Boot needs the Samsung Image header magic 0xecefecef at offset 0x28 (Test 5, built, not yet flashed).
 - M2.4 control experiment (baseline Image + marker code cave): booted UT, marker found; S-Boot loads the Image at 0x80140000, EL1, MMU off, x0=DTB 0x8a000000, x1-x3 = 0x80000000/0x140000/0x80140000; the marker channel is validated, so the 6.18 diag negatives are real. Untested: diag v2 image B (`log/2026-11-04-M2.4-diag-build.md`).
 - M2.4 Test 1 (diag v1, image B, stock DT): static screen and NO markers; v1 had a design flaw (marker after the framebuffer paint), fixed in v2 (built, not flashed; `log/2026-11-04-M2.4-diag-build.md`).
 - M2.4 diagnostic kernel (branch a50-diag, boot-diag-A/B images, marker reader): built and verified on the host, test plan in `log/2026-11-04-M2.4-diag-build.md`. Not flashed yet; the phone is on the stock DT and baseline BOOT.
