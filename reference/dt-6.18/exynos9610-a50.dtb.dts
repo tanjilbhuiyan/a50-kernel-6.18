@@ -217,23 +217,23 @@
 			no-map;
 		};
 
-		debug_snapshot_a@f9000000 {
-			reg = <0x00 0xf9000000 0xd10000>;
+		debug_snapshot@f9000000 {
+			reg = <0x00 0xf9000000 0x1710000>;
 			no-map;
 		};
 
-		ramoops@f9d10000 {
+		sec_debug_bufs@91202000 {
+			reg = <0x00 0x91202000 0x186000>;
+			no-map;
+		};
+
+		ramoops@91388000 {
 			compatible = "ramoops";
-			reg = <0x00 0xf9d10000 0x200000>;
+			reg = <0x00 0x91388000 0x800000>;
 			no-map;
-			record-size = <0x20000>;
-			console-size = <0x100000>;
+			console-size = <0x200000>;
+			record-size = <0x80000>;
 			pmsg-size = <0x20000>;
-		};
-
-		debug_snapshot_b@f9f10000 {
-			reg = <0x00 0xf9f10000 0x800000>;
-			no-map;
 		};
 
 		gnss_if@fb000000 {

@@ -1,0 +1,87 @@
+From 1a9a67e46bb6a234ca4af4bf1848d1c13bf61d5d Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <a50@localhost>
+Date: Wed, 4 Nov 2026 02:44:18 +0600
+Subject: [PATCH] arm64: dts: exynos9610-a50: move ramoops to the S-Boot
+ sec_debug_next region
+
+On the baseline a controlled panic left pstore/ramoops at 0xf9d10000 empty,
+while the previous boot's log survived in Samsung's sec_debug buffer, which
+S-Boot passes as sec_debug_next=0x800000@0x91388000. Put ramoops there
+(2 MiB console, 512 KiB records, 128 KiB pmsg), reserve the neighbouring
+S-Boot debug buffers (0x91202000..0x91388000), and merge the debug_snapshot
+pieces back into one reserved block now that the log_pstore window is no
+longer special. Unverified with mainline ramoops until first light.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+Change-Id: I2570e7f5fbbf25d3cdc0f06548aeca3b9a1ff0bf
+---
+ arch/arm64/boot/dts/exynos/exynos9610-a50.dts | 45 ++++++++++++-------
+ 1 file changed, 30 insertions(+), 15 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610-a50.dts b/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
+index 0d1ea12fb..c3c810c04 100644
+--- a/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
++++ b/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
+@@ -101,29 +101,44 @@ cp_ram_logging@f5a00000 {
+ 			no-map;
+ 		};
+ 
+-		/* debug_snapshot block, D: 0xf9000000..0xfa710000. Kept whole
+-		 * except the 2 MiB log_pstore window, which becomes ramoops.
++		/* debug_snapshot block, D: 0xf9000000..0xfa710000 (header, log_kernel,
++		 * log_platform, log_sfr, log_cachedump, log_bcm, log_pstore, log_kevents),
++		 * reserved whole. The log_pstore window (0xf9d10000) is NOT used for
++		 * ramoops: it stayed empty after a controlled panic on the baseline (M1.5).
+ 		 */
+-		debug_snapshot_a@f9000000 {
+-			reg = <0x0 0xf9000000 0xd10000>;
++		debug_snapshot@f9000000 {
++			reg = <0x0 0xf9000000 0x1710000>;
+ 			no-map;
+ 		};
+-		/* D log_pstore: 0xf9d10000 size 0x200000. Whether the
+-		 * bootloader preserves it across reboot is exactly M1.5.
+-		 * UNVERIFIED until M1.5 passes.
++
++		/* S-Boot debug buffers passed on the command line (baseline /proc/cmdline):
++		 * sec_avc_log=0x40000@0x91202000, sec_tsp_log=0x40000@0x91244000,
++		 * sec_disp_log=0x100000@0x91286000. Reserved as one block together with
++		 * the 8 KiB gaps between them (0x91202000..0x91388000).
+ 		 */
+-		ramoops@f9d10000 {
+-			compatible = "ramoops";
+-			reg = <0x0 0xf9d10000 0x200000>;
++		sec_debug_bufs@91202000 {
++			reg = <0x0 0x91202000 0x186000>;
+ 			no-map;
+-			record-size = <0x20000>;
+-			console-size = <0x100000>;
+-			pmsg-size = <0x20000>;
+ 		};
+-		debug_snapshot_b@f9f10000 {
+-			reg = <0x0 0xf9f10000 0x800000>;
++
++		/* Crash log across a reboot (M1.5): S-Boot passes
++		 * sec_debug_next=0x800000@0x91388000 and on the baseline a panic reboot
++		 * left the previous boot's kernel log readable there (/proc/last_kmsg
++		 * held the test marker), so this is the region proven to survive a warm
++		 * reset. Re-check the address against the 6.18 boot's /proc/cmdline.
++		 * UNVERIFIED with mainline ramoops until first light (M2.4); the initramfs
++		 * shows the previous boot's records, so it needs two boots.
++		 * Sizes: console 2 MiB, 512 KiB per crash record, 128 KiB pmsg.
++		 */
++		ramoops@91388000 {
++			compatible = "ramoops";
++			reg = <0x0 0x91388000 0x800000>;
+ 			no-map;
++			console-size = <0x200000>;
++			record-size = <0x80000>;
++			pmsg-size = <0x20000>;
+ 		};
++
+ 		gnss_if@fb000000 {
+ 			reg = <0x0 0xfb000000 0x800000>;
+ 			no-map;
+-- 
+2.56.0
+
