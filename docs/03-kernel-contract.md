@@ -79,9 +79,10 @@ baseline (aa17rf2) proves ABOX/TFA load at runtime without built-in blobs.
 
 ## 4. Debug contract
 
-- Crash log across a reboot (M1.5, `log/2026-11-04-M1.5-ramoops.md`): on the baseline a panic reboot leaves
-  `/proc/last_kmsg` (Samsung sec_debug buffer, S-Boot region `sec_debug_next=0x800000@0x91388000`) readable with the
-  full crash trace. pstore/ramoops at `log_pstore` 0xf9d10000/0x200000 (the module defaults) stayed EMPTY after the
-  panic (cause unverified). For 6.18 use ramoops at 0x91388000/0x800000 (DT text in the M1.5 log; unverified on 6.18
-  until M2.4; the 6.18 DT already carries this node, see `log/2026-11-04-M2.4-prep-dt-ramoops.md`); other S-Boot regions: `log_kernel` 0xf9010000/0x200000, header 0xf9000000/0x10000.
+- Crash log across a reboot (M1.5 + correction, `log/2026-11-04-M1.5-ramoops.md`): on the baseline a panic reboot leaves
+  `/proc/last_kmsg` readable with the full crash trace. It is the debug-snapshot `log_kernel` region
+  0xf9010000/0x200000 (S-Boot writes its own boot log into its head). The baseline kernel zeroes the `log_pstore`
+  region 0xf9d10000 at every boot, which is why pstore/ramoops there was empty (not evidence about S-Boot).
+  Region proven to survive reset: `log_kernel`. Planned for 6.18: ramoops at 0xf9050000/0x1c0000 inside it
+  (unverified until first light; the DT in the repo still carries an older, unproven 0x91388000 node).
 - simple-framebuffer at `0xca000000`, 1080×2340 (format/stride unverified; M2).
