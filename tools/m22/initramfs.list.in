@@ -1,0 +1,10 @@
+# gen_init_cpio list; @REPO@ is replaced by the build script.
+dir /dev 0755 0 0
+dir /proc 0755 0 0
+dir /sys 0755 0 0
+dir /bin 0755 0 0
+dir /tmp 0755 0 0
+nod /dev/console 0600 0 0 c 5 1
+nod /dev/null 0666 0 0 c 1 3
+file /bin/busybox @REPO@/src/m22/busybox 0755 0 0
+file /init @REPO@/tools/m22/init 0755 0 0

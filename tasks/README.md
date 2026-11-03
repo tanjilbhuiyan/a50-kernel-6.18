@@ -27,6 +27,6 @@ later milestones get tickets when we reach them (evidence first, Rule 1).
 | M1.4 | Does S-Boot boot a compressed Image? | yes | M0, M1.1 | done (log/2026-11-04-M1.4-compressed-image.md): gzip FAIL, lz4 untested |
 | M1.5 | Working ramoops/pstore crash log | yes | M0, M1.1 | done (log/2026-11-04-M1.5-ramoops.md): last_kmsg works, ramoops@0xf9d10000 empty |
 | M2.1 | A50 device tree for 6.18 (first-light subset) | no | M1.2 | done (log/2026-11-01-M2.1-dt.md; fb format risk accepted) |
-| M2.2 | Minimal 6.18 defconfig + boot.img within 57.67 MB | no | M1.2, M1.4 | todo |
+| M2.2 | Minimal 6.18 defconfig + boot.img within budget | no | M1.2, M1.4 | done (log/2026-11-04-M2.2-firstlight-build.md) |
 | M2.3 | DTB/DTBO partition images in stock dt_table format | no | M2.1 | done (log/2026-11-02-M2.3-dt-images.md) |
 | M2.4 | First light on the phone | yes | M2.1–M2.3, M1.5 | todo |

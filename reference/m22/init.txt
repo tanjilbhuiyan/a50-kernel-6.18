@@ -1,0 +1,33 @@
+#!/bin/busybox sh
+# A50 first-light init (M2.2). Static busybox only. Prints to the framebuffer console (tty0)
+# and to /dev/kmsg (so the log reaches pstore/ramoops), shows the previous boot's pstore
+# contents, then waits and deliberately panics so the NEXT boot has something to show.
+export PATH=/bin
+/bin/busybox --install -s /bin
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+mount -t devtmpfs devtmpfs /dev
+[ -c /dev/tty0 ] && exec >/dev/tty0 2>&1 || exec >/dev/console 2>&1
+say() { echo "$*"; echo "<6>a50-firstlight: $*" > /dev/kmsg; }
+say "=================================================="
+say " A50 FIRST LIGHT  Linux $(uname -r)  M2.2 initramfs"
+say "=================================================="
+say "uptime $(cut -d' ' -f1 /proc/uptime) s, cpus online: $(grep -c '^processor' /proc/cpuinfo)"
+say "cmdline: $(cat /proc/cmdline)"
+say "DT model: $(tr -d '\000' < /sys/firmware/devicetree/base/model 2>/dev/null)"
+say "memory: $(grep -E 'MemTotal|MemFree' /proc/meminfo | tr -s ' ' | tr '\n' ' ')"
+say "rootfs (a50-marker present = the boot.img ramdisk was passed by S-Boot): $(ls / | tr '\n' ' ')"
+mount -t pstore pstore /sys/fs/pstore 2>/dev/null
+say "--- pstore (records from the PREVIOUS boot) ---"
+n=0; for f in /sys/fs/pstore/*; do [ -f "$f" ] || continue; n=$((n+1)); say "pstore file: $f ($(wc -c < "$f") bytes)"; head -n 25 "$f"; done
+[ "$n" = 0 ] && say "pstore: no records"
+say "--- kernel messages of interest ---"
+dmesg | grep -i -E 'psci|ramoops|pstore|simple-framebuffer|simplefb|framebuffer|fb0|arch_timer|GIC|CPU:|Machine model' | head -n 20
+say "--- iomem (first 25) ---"
+head -n 25 /proc/iomem
+say "--- countdown, then deliberate panic (sysrq c) ---"
+i=45; while [ $i -gt 0 ]; do say "T-$i"; sleep 1; i=$((i-1)); done
+say "triggering panic now"
+echo c > /proc/sysrq-trigger
+sleep 5; say "panic did not happen, trying reboot -f"; reboot -f
+while :; do sleep 60; done
