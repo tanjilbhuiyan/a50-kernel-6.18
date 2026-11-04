@@ -2,7 +2,7 @@
 
 Updated: 2026-11-02 (evening)
 
-## Current milestone: **M2.4 first light: BLOCKED on S-Boot refusing 6.18 images; next = Test 5 (Samsung header magic 0xecefecef)**
+## Current milestone: **M2.4 first light: BLOCKED. S-Boot refuses any image whose existing Image bytes were changed (Tests 5-7); next = Test 8 (one byte flipped)**
 
 M1.1 and M1.2 done. M2.1 and M2.3 done (fb pixel format accepted as a risk, resolve in M2.4). M0.1-M0.3 complete. M1.3 done (`reference/contract/`). NOTE: the M1.5 region choice was corrected on 2026-11-04 (last_kmsg = debug-snapshot log_kernel 0xf9010000; the baseline zeroes log_pstore), see the M1.5 log. M1.4: S-Boot does NOT boot a gzip kernel; use uncompressed `Image`, kernel <= 46,876,672 B. M1.5: after a panic the baseline keeps the log in `/proc/last_kmsg` (sec_debug region 0x91388000); pstore/ramoops at 0xf9d10000 stayed empty. M2.2 done: first-light `Image` 7,170,056 B (reproducible) and `boot-firstlight.img` (`src/m22/artifacts/`). M2.4 is in a diagnostic phase (see below). RESUME HERE: flash `src/m22/artifacts-diag4/boot-diag-D.img` (Test 5: diag v2 image A + the Samsung header magic 0xecefecef at Image offset 0x28; DT stays stock), wait 2 min, roll back BOOT with `heimdall flash --BOOT baseline/ut-26.04-2026-10-19-aa17rf2/boot.img`, boot UT, then `tools/m25_read_markers.sh <ip>`. Marker present = magic was the cause. Details: `log/2026-11-04-M2.4-diag-build.md`.
 
@@ -46,3 +46,13 @@ Decision (owner, 2026-11-02): M0.4 closed (playback = userspace config); microph
 ## Open questions
 - Does S-Boot boot `Image.gz`? (M1.4)
 - Exact ioctl sets used by vendor HALs on mali/ion/decon/abox/scsc/modem (M1.3)
+
+
+## RESUME HERE (2026-11-05)
+Tests 5 (header magic), 6 (chain loader) and 7 (control + 6.3 MB overwritten in place) were all negative; see
+`log/2026-11-04-M2.4-diag-build.md`. Only the control (baseline Image, code0 edited, 60 bytes APPENDED) has ever run.
+Next: Test 8. Flash `src/m22/artifacts-ctl3/boot-control-flip.img` (sha256 0c77f3f7..., control + one byte flipped at 0x1000000),
+Download mode (wait for the "Downloading" screen, not the Warning screen), `heimdall flash --BOOT ... --no-reboot`, no print-pit.
+Restart, wait 2 min, roll back with `heimdall flash --BOOT baseline/ut-26.04-2026-10-19-aa17rf2/boot.img --no-reboot`, boot UT,
+then `tools/m25_read_control.sh <ip>`. Marker = small changes OK, bisect size; no marker = append the payload instead.
+Phone: baseline BOOT 7d5855ef..., stock DTB/DTBO, verified after Test 7 rollback; IP 192.168.0.171 (asleep phones drop off Wi-Fi: press Power).
