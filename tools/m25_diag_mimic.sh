@@ -4,7 +4,7 @@
 #  - header text_offset = 0x80000 and image_size = 53,616,640 (the baseline's values),
 #  - code0 = a direct `b primary_entry` (the baseline's code0 is `b stext`),
 #  - the baseline's own ramdisk (10,792,361 B) instead of the tiny one.
-#   tools/m25_diag_mimic.sh DIAG_BUILD_DIR OUT_IMG     (DIAG_BUILD_DIR = src/ack-6.18/out/m25-diag2)
+#   [MAGIC=1] [CODE1ZERO=1] tools/m25_diag_mimic.sh DIAG_BUILD_DIR OUT_IMG     (DIAG_BUILD_DIR = src/ack-6.18/out/m25-diag2)
 set -euo pipefail
 B=${1:?usage: m25_diag_mimic.sh DIAG_BUILD_DIR OUT_IMG}; OUT=${2:?}
 REPO=$(cd "$(dirname "$0")/.." && pwd)
@@ -21,6 +21,11 @@ b_prim=0x14000000|((entry//4)&0x3ffffff)
 base_isz=struct.unpack('<Q',ref[16:24])[0]; base_toff=struct.unpack('<Q',ref[8:16])[0]
 assert len(img)<=rsz
 img[0:4]=struct.pack('<I',b_prim)
+import os
+if os.environ.get('MAGIC')=='1':
+    img[0x28:0x30]=struct.pack('<Q',0xecefecef)      # Samsung "proca ta" header magic (res3)
+if os.environ.get('CODE1ZERO')=='1':
+    img[4:8]=bytes(4)                                  # the baseline's code1 is 0
 img[8:16]=struct.pack('<Q',base_toff)
 img[16:24]=struct.pack('<Q',base_isz)
 img+=bytes(rsz-len(img))
