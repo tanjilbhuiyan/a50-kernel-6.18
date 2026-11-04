@@ -30,15 +30,18 @@ echo "== tools"
 for t in heimdall adb; do command -v $t >/dev/null && echo "ok    $t: $($t version 2>&1 | head -1)" || { echo "FAIL  $t not installed"; fail=1; }; done
 if [ -n "${1:-}" ]; then
   echo "== live phone $1 (read-only)"
-  ssh -o BatchMode=yes -o ConnectTimeout=15 root@"$1" '
+  LIVE=$(ssh -o BatchMode=yes -o ConnectTimeout=15 root@"$1" '
     echo "kernel $(uname -r), up since $(uptime -s), battery $(cat /sys/class/power_supply/battery/capacity)% $(cat /sys/class/power_supply/battery/status)"
     for p in dtb dtbo; do echo "$p $(sha256sum /dev/disk/by-partlabel/$p | cut -c1-64)"; done
-    echo "boot $(head -c 53624832 /dev/disk/by-partlabel/boot | sha256sum | cut -c1-64)"' 2>&1 | while read -r a b c d; do
+    echo "boot $(head -c 53624832 /dev/disk/by-partlabel/boot | sha256sum | cut -c1-64)"' 2>&1) || { echo "FAIL  live phone $1 not readable over ssh: $(echo "$LIVE" | tail -1)"; fail=1; LIVE=""; }
+  echo "$LIVE" | while read -r a b c d; do
       case "$a" in
         kernel) echo "      $a $b $c $d";;
         dtb)  [ "$b" = 59209aa52dc3b35e2c7cc025c465ed1cdb48dadaa13cf5d1f50324b3bf503547 ] && echo "ok    live DTB == stock" || echo "FAIL  live DTB differs";;
         dtbo) [ "$b" = 40e47ed1477a8ffb6cbb34e5cb59a1af786c2552544f3b556373f3c553d40d21 ] && echo "ok    live DTBO == stock" || echo "FAIL  live DTBO differs";;
         boot) [ "$b" = 7d5855efd34e01f09659c7d47ecb0773c30f2acc7443ee87181a0536804086c5 ] && echo "ok    live BOOT == baseline boot.img" || echo "FAIL  live BOOT differs";;
-      esac; done
+      esac; done > /tmp/m24-live.out
+  cat /tmp/m24-live.out; grep -q '^FAIL' /tmp/m24-live.out && fail=1
+  [ -n "$LIVE" ] && [ "$(grep -c '^ok' /tmp/m24-live.out)" -lt 3 ] && { echo "FAIL  fewer than 3 live partition checks passed"; fail=1; }
 fi
 [ $fail = 0 ] && echo "PRE-FLIGHT: ALL CHECKS PASSED" || { echo "PRE-FLIGHT: FAILED (see above)"; exit 1; }
