@@ -1,0 +1,55 @@
+    2 [0:       0.100] Samsung S-Boot 4.0 for SM-A505F (Jan 18 2023 - 20:00:23 61463234)
+   87 [0:       0.881] pit_check_signature (PIT) valid.
+   89 [0:       0.884] initialize_ddi_data: usable! (67:0x30f), warranty reason : (0x0e03)
+  360 [0:       1.235] s5p_check_reboot_mode: PINFORM = 0 ... skip
+  366 [0:       1.236] [SECD] sec_debug_init_buffer: this is PIN RESET, clear all
+  516 [0:       2.318] f_load_hypervisor: loading uH image from 173056..
+  517 [0:       2.318] [uH] uh page size = 0x45000
+  518 [0:       2.318] [uH] uh total load size = 0x45598
+  520 [0:       2.321] pit_check_signature (UH) valid.
+  521 [0:       2.323] [uH] load hypervisor
+  523 [0:       2.371] load_kernel: loading boot image from 218112..
+  524 [0:       2.372] kernel size = 0x28d8800, ramdisk size = 0xa4b000
+  529 [0:       2.372] device_locked : 0
+  532 [0:       2.372] verified_boot_state : 2
+  536 [0:       2.372] avbops functions are set successfully
+  538 [0:       2.372] avb_slot_verify.c:966: DEBUG: Loading vbmeta struct from partition 'vbmeta'.
+  539 avb_vbmeta_image.c:212: ERROR: Hash does not match!
+  540 avb_slot_verify.c:1027: ERROR: vbmeta: Error verifying vbmeta image: HASH_MISMATCH
+  541 avb_slot_verify.c:1192: DEBUG: vbmeta: VERIFICATION_DISABLED bit is set.
+  542 avb_slot_verify.c:788: DEBUG: bootloader: Loading entire partition.
+  545 [0:       2.392] avb_slot_verify.c:788: DEBUG: cm: Loading entire partition.
+  547 [0:       2.409] avb_slot_verify.c:788: DEBUG: dtb: Loading entire partition.
+  549 [0:       2.428] avb_slot_verify.c:788: DEBUG: dtbo: Loading entire partition.
+  551 [0:       2.447] avb_slot_verify.c:788: DEBUG: boot: Loading entire partition.
+  553 [0:       2.591] avb_slot_verify.c:788: DEBUG: keystorage: Loading entire partition.
+  555 [0:       2.593] avb_main : Check Samsung Secure Info
+  559 [0:       2.595] pit_check_signature (VBMETA) invalid.
+  562 [0:       2.595] make_security_decisions : (VBMETA)
+  573 [0:       2.596] [EFUSE] warranty bit is already set.
+  575 [0:       2.599] pit_check_signature (DTB) valid.
+  577 [0:       2.602] update_image_status_info: DTB image status has been updated to 0x 2
+  578 [0:       2.602] update_image_status_auth: Status for DTB image is already official
+  581 [0:       2.602] KERNEL RB count: DEVICE:9, BINARY:9 (DTB)
+  583 [0:       2.608] pit_check_signature (DTBO) valid.
+  585 [0:       2.610] update_image_status_info: DTBO image status has been updated to 0x 2
+  586 [0:       2.610] update_image_status_auth: Status for DTBO image is already official
+  589 [0:       2.610] KERNEL RB count: DEVICE:9, BINARY:9 (DTBO)
+  590 [0:       2.610] avb_footer.c:41: ERROR: Footer magic is incorrect.
+  591 check_samsung_secure_info : Error validating footer (boot)
+  592 [0:       2.742] footer is abnormal: 6
+  593 [0:       2.742] update_image_status_auth: Status for BOOT image is already custom
+  596 [0:       2.742] make_security_decisions : (BOOT)
+  607 [0:       2.743] [EFUSE] warranty bit is already set.
+  608 [0:       2.743] avb_main : vbmeta type : 3
+  611 [0:       2.743] [AVB 2.0 ERR] authentication fail [ret: 0x3] (orange)
+  612 avb_cmdline : root=PARTUUID=52444E41-494F-2044-7379-7374656D0000 androidboot.verifiedbootstate=orange
+  613 [0:       2.858] [TIMA trusted boot]: SEAndroid MAGIC failure (boot.img)
+  616 [0:       2.858] [UFDT] BOOT IMG HDR V1.. FINDING DTB ENTRY
+  617 [0:       2.858] [UFDT] Little Find DTB Entry[0]: Rev:(S:0, E:255, X:0, D:6)
+  618 [0:       2.859] [UFDT] FINDING DTBO ENTRY
+  619 [0:       2.861] [UFDT] Little Find DTBO Entry[5]: Rev:(S:6, E:255, X:0, D:6)
+  620 [0:       2.886] [UFDT] DT Overlay Complete!
+  622 [0:       2.886] Do SMC to set data for TIMA (0xc9b7a910)
+  666 [0:       2.892] [DCOM] sec_debug_rooting_info: ddi set and warranty set
+  705 [0:       3.780] Starting kernel...
