@@ -2,7 +2,7 @@
 
 Updated: 2026-11-02 (evening)
 
-## Current milestone: **M2.4 first light: 6.18 BOOTS on the A50 (first dmesg read back 2026-11-07). DoD decision pending (log via DSS, not pstore; no framebuffer text)**
+## Current milestone: **M2 DONE (2026-11-07, DoD amended: 6.18 boot log read back via DSS). Next: M3 (tickets to be written)**
 
 M1.1 and M1.2 done. M2.1 and M2.3 done (fb pixel format accepted as a risk, resolve in M2.4). M0.1-M0.3 complete. M1.3 done (`reference/contract/`). NOTE: the M1.5 region choice was corrected on 2026-11-04 (last_kmsg = debug-snapshot log_kernel 0xf9010000; the baseline zeroes log_pstore), see the M1.5 log. M1.4: S-Boot does NOT boot a gzip kernel; use uncompressed `Image`, kernel <= 46,876,672 B. M1.5: after a panic the baseline keeps the log in `/proc/last_kmsg` (sec_debug region 0x91388000); pstore/ramoops at 0xf9d10000 stayed empty. M2.2 done: first-light `Image` 7,170,056 B (reproducible) and `boot-firstlight.img` (`src/m22/artifacts/`). M2.4 is in a diagnostic phase (see below). RESUME HERE: flash `src/m22/artifacts-diag4/boot-diag-D.img` (Test 5: diag v2 image A + the Samsung header magic 0xecefecef at Image offset 0x28; DT stays stock), wait 2 min, roll back BOOT with `heimdall flash --BOOT baseline/ut-26.04-2026-10-19-aa17rf2/boot.img`, boot UT, then `tools/m25_read_markers.sh <ip>`. Marker present = magic was the cause. Details: `log/2026-11-04-M2.4-diag-build.md`.
 
@@ -58,7 +58,7 @@ How (all in log/2026-11-04-M2.4-diag-build.md, Tests 10-19):
   Download mode by itself -> heimdall flash baseline WITH reboot -> /proc/last_kmsg. Button-free.
 Kernel: branch a50-diag (diag v3-v6, patches in reference/m25-diag/), build `A50_DIAG=1 A50_DIAG_SKIP_MCT=1 A50_DIAG_DUMP_DSS=1
 tools/m22_build.sh OUT`, pack `tools/m22_pack.sh`.
-Open decision for the owner: close M2.4 with the DSS-log readout (no framebuffer text), or keep it open.
+Owner decision 2026-11-07: M2.4 closed with the DSS-log readout; M2 DoD amended in docs/05-plan.md.
 Next technical steps (proposal): fix ramoops/DT plan given the DSS findings; boot with OUR DT (no MCT node); then M3.
 Phone: baseline BOOT 7d5855ef..., stock DTB/DTBO, UT up; IP 192.168.0.171.
 

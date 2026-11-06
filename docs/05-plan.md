@@ -52,9 +52,18 @@ Tasks (tickets in `tasks/`)
    memory, reserved-memory incl. ramoops, simple-framebuffer @0xca000000).
 2. M2.2 Minimal defconfig + tiny initramfs + boot.img (header v1, ≤ 57,671,680 B).
 3. M2.3 DTB/DTBO partition images in the stock dt_table format (tool round-trips stock images).
-4. M2.4 First light on the phone (back up + write DTB/DTBO via TWRP, flash BOOT, read pstore, restore).
-DoD: a 6.18 kernel prints to pstore (readable after reboot from TWRP or
-baseline) and shows text on the simple framebuffer. Baseline still restorable.
+4. M2.4 First light on the phone (flash BOOT, read the 6.18 log back after reboot, restore).
+DoD (amended 2026-11-07, owner decision): a 6.18 kernel runs on the A50 and its
+boot log (containing `Linux version 6.18`) is read back after a reboot from the
+baseline (via the debug-snapshot log_kernel buffer / `/proc/last_kmsg`). Baseline
+still restorable.
+Why amended: the original DoD asked for pstore and framebuffer text. pstore was
+replaced by the DSS buffer, the only readout that survives this phone's reboot
+paths (log/2026-11-04-M2.4-diag-build.md, Tests 9-19). Framebuffer text is not
+achievable before a display driver exists: the panel is command-mode and never
+shows framebuffer writes (accepted M2.1 risk; moves to M7). M2.4 ran with the
+STOCK DTB/DTBO and a diag kernel (MCT init skipped); booting with our own DT is
+carried forward as open work.
 
 ## M3 — Storage + USB access
 Tasks: UFS (ufs-exynos 9610 data + PHY), USB DRD + PHY 9610 data, sm5713
