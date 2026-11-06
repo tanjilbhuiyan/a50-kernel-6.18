@@ -1,0 +1,18 @@
+#!/bin/busybox sh
+# M3.2 readout test init. Static busybox only. Everything goes to /dev/kmsg, so the DSS dump
+# (a50_diag.dump_after=N or the panic dumper) carries it out. Counts down, then EXITS: the kernel
+# panics with "Attempted to kill init!", which exercises the panic dumper (no CONFIG_MAGIC_SYSRQ needed).
+export PATH=/bin
+/bin/busybox --install -s /bin
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+mount -t devtmpfs devtmpfs /dev
+say() { echo "<6>a50-m32: $*" > /dev/kmsg; }
+say "init started, Linux $(uname -r), uptime $(cut -d' ' -f1 /proc/uptime) s"
+say "cmdline: $(cat /proc/cmdline | cut -c1-160)"
+say "DT model: $(tr -d '\000' < /sys/firmware/devicetree/base/model 2>/dev/null)"
+say "dump_after: $(cat /sys/module/a50_diag/parameters/dump_after 2>/dev/null)"
+i=${A50_COUNT:-40}
+while [ $i -gt 0 ]; do say "T-$i uptime $(cut -d' ' -f1 /proc/uptime)"; sleep 1; i=$((i-1)); done
+say "countdown done: exiting init now (expect: Kernel panic - Attempted to kill init)"
+exit 1

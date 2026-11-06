@@ -1,0 +1,168 @@
+From d5328459e0e218695a0d918595f91c296b5bd611 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Sat, 7 Nov 2026 02:37:53 +0600
+Subject: [PATCH] A50 diag v7: DSS readout at any time (pre-mapped, panic kmsg
+ dumper, a50_diag.dump_after=N)
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: Ibb2231275dc1b8012f9fdaccc9c388abb53278d1
+---
+ arch/arm64/Kconfig.debug     |   7 +++
+ arch/arm64/kernel/a50_diag.c | 102 ++++++++++++++++++++++++++---------
+ 2 files changed, 83 insertions(+), 26 deletions(-)
+
+diff --git a/arch/arm64/Kconfig.debug b/arch/arm64/Kconfig.debug
+index c224f4760..36ee00405 100644
+--- a/arch/arm64/Kconfig.debug
++++ b/arch/arm64/Kconfig.debug
+@@ -56,4 +56,11 @@ config A50_DIAG_DUMP_DSS
+ 	  the bootloader's end pointer, then reboots to Download mode by
+ 	  software. The baseline kernel's /proc/last_kmsg then shows it.
+ 
++config A50_DIAG_DUMP_AFTER
++	int "A50 diag: when to dump (0 = late_initcall, N = after N s, -1 = only on panic)"
++	depends on A50_DIAG_DUMP_DSS
++	default 0
++	help
++	  Default for the a50_diag.dump_after= parameter. A panic always dumps.
++
+ source "drivers/hwtracing/coresight/Kconfig"
+diff --git a/arch/arm64/kernel/a50_diag.c b/arch/arm64/kernel/a50_diag.c
+index 918c88755..b01c4f134 100644
+--- a/arch/arm64/kernel/a50_diag.c
++++ b/arch/arm64/kernel/a50_diag.c
+@@ -18,6 +18,9 @@
+ #include <linux/slab.h>
+ #include <linux/vmalloc.h>
+ #include <linux/kmsg_dump.h>
++#include <linux/moduleparam.h>
++#include <linux/workqueue.h>
++#include <linux/atomic.h>
+ 
+ #define FB_PHYS		0xca000000UL
+ #define ROW_BYTES	4320UL
+@@ -168,40 +171,86 @@ static size_t a50_put(char *log, size_t off, const char *src, size_t len, bool *
+ 	return off;
+ }
+ 
+-static void __init a50_dump_to_dss(void)
++/*
++ * M3.2: the dump must work at any time, including from panic context, so
++ * everything it needs is mapped and allocated in advance (a50_dss_prepare).
++ */
++static char *a50_buf;			/* printk text, 1 MiB, vmalloc'ed at init */
++static char *a50_log;			/* log_kernel mapping */
++static u32 *a50_hdr;			/* DSS header mapping */
++static void __iomem *a50_pmu;		/* PMU mapping */
++static bool a50_hdr_lin, a50_log_lin;	/* true = cached linear map (stock DT): clean before reset */
++static atomic_t a50_dumping = ATOMIC_INIT(0);
++
++static void a50_dss_dump(const char *why)
+ {
+-	static const char begin[] = "\n===== A50 6.18 DMESG BEGIN =====\n";
+ 	static const char end[] = "===== A50 6.18 DMESG END =====\n";
++	char begin[96];
+ 	struct kmsg_dump_iter iter;
+-	bool lh, ll, wrapped = false;
++	bool wrapped = false;
+ 	size_t len = 0, off;
+-	char *buf, *log;
+-	u32 *hdr, ptr;
+-	void __iomem *pmu;
+-
+-	pr_info("A50DIAG: dumping printk log to DSS log_kernel, then reboot to download\n");
+-	buf = vmalloc(SZ_1M);
+-	hdr = a50_map(DSS_HDR_PHYS, 0x1000, &lh);
+-	log = a50_map(LOGK_PHYS, LOGK_SIZE, &ll);
+-	if (buf && hdr && log) {
++	u32 ptr;
++
++	if (atomic_xchg(&a50_dumping, 1))
++		return;				/* one dump per boot */
++	if (a50_buf && a50_hdr && a50_log) {
++		snprintf(begin, sizeof(begin), "\n===== A50 6.18 DMESG BEGIN (%s) =====\n", why);
+ 		kmsg_dump_rewind(&iter);
+-		kmsg_dump_get_buffer(&iter, false, buf, SZ_1M, &len);
+-		ptr = READ_ONCE(hdr[DSS_LAST_LOGBUF / 4]);
++		kmsg_dump_get_buffer(&iter, false, a50_buf, SZ_1M, &len);
++		ptr = READ_ONCE(a50_hdr[DSS_LAST_LOGBUF / 4]);
+ 		off = (ptr >= LOGK_PHYS && ptr < LOGK_PHYS + LOGK_SIZE) ? ptr - LOGK_PHYS : 0;
+-		off = a50_put(log, off, begin, sizeof(begin) - 1, &wrapped);
+-		off = a50_put(log, off, buf, len, &wrapped);
+-		off = a50_put(log, off, end, sizeof(end) - 1, &wrapped);
++		off = a50_put(a50_log, off, begin, strlen(begin), &wrapped);
++		off = a50_put(a50_log, off, a50_buf, len, &wrapped);
++		off = a50_put(a50_log, off, end, sizeof(end) - 1, &wrapped);
+ 		if (wrapped)
+-			*(u64 *)(log + LOGK_SIZE - 8) = LKMSG_MAGIC;
+-		WRITE_ONCE(hdr[DSS_LAST_LOGBUF / 4], (u32)(LOGK_PHYS + off));
++			*(u64 *)(a50_log + LOGK_SIZE - 8) = LKMSG_MAGIC;
++		WRITE_ONCE(a50_hdr[DSS_LAST_LOGBUF / 4], (u32)(LOGK_PHYS + off));
++		if (a50_log_lin)
++			dcache_clean_inval_poc((unsigned long)a50_log, (unsigned long)a50_log + LOGK_SIZE);
++		if (a50_hdr_lin)
++			dcache_clean_inval_poc((unsigned long)a50_hdr, (unsigned long)a50_hdr + 0x1000);
++		dsb(sy);	/* our DT: no-map -> ioremap_wc (Normal-NC); drain before the reset */
+ 	}
+-	a50_unmap(log, LOGK_SIZE, ll);
+-	a50_unmap(hdr, 0x1000, lh);
+-	pmu = ioremap(PMU_PHYS, 0x1000);
+-	if (pmu)
+-		writel(SEC_RESET_DOWNLOAD, pmu + PMU_INFORM3);
+-	a50_reset_now(pmu);
++	if (a50_pmu)
++		writel(SEC_RESET_DOWNLOAD, a50_pmu + PMU_INFORM3);
++	a50_reset_now(a50_pmu);
++}
++
++/* dump on panic: kmsg_dump(KMSG_DUMP_PANIC) runs after the panic text is in the log */
++static void a50_kmsg_dump(struct kmsg_dumper *d, struct kmsg_dump_detail *detail)
++{
++	if (detail->reason == KMSG_DUMP_PANIC)
++		a50_dss_dump("panic");
++}
++static struct kmsg_dumper a50_dumper = { .dump = a50_kmsg_dump };
++
++/* a50_diag.dump_after=N: 0 = at late_initcall_sync, N > 0 = after N s, < 0 = only on panic */
++static int dump_after = CONFIG_A50_DIAG_DUMP_AFTER;
++module_param(dump_after, int, 0444);
++
++static void a50_dump_work_fn(struct work_struct *w)
++{
++	char why[32];
++
++	snprintf(why, sizeof(why), "dump_after=%d", dump_after);
++	a50_dss_dump(why);
++}
++static DECLARE_DELAYED_WORK(a50_dump_work, a50_dump_work_fn);
++
++static int __init a50_dss_prepare(void)
++{
++	a50_buf = vmalloc(SZ_1M);
++	a50_hdr = a50_map(DSS_HDR_PHYS, 0x1000, &a50_hdr_lin);
++	a50_log = a50_map(LOGK_PHYS, LOGK_SIZE, &a50_log_lin);
++	a50_pmu = ioremap(PMU_PHYS, 0x1000);
++	pr_info("A50DIAG: DSS readout armed (buf %d hdr %d log %d%s pmu %d), dump_after=%d\n",
++		!!a50_buf, !!a50_hdr, !!a50_log, a50_log_lin ? " linear" : "", !!a50_pmu, dump_after);
++	kmsg_dump_register(&a50_dumper);
++	if (dump_after > 0)
++		schedule_delayed_work(&a50_dump_work, dump_after * HZ);
++	return 0;
+ }
++core_initcall(a50_dss_prepare);
+ #endif
+ 
+ static int __init a50_diag_stage2(void)
+@@ -222,7 +271,8 @@ static int __init a50_diag_stage3(void)
+ 	if (CONFIG_A50_DIAG_RESET_STAGE == 3)
+ 		a50_reset_now(ioremap(PMU_PHYS, 0x1000));
+ #ifdef CONFIG_A50_DIAG_DUMP_DSS
+-	a50_dump_to_dss();
++	if (dump_after == 0)
++		a50_dss_dump("late_initcall");
+ #endif
+ 	a50_band(180, ARGB_WHITE);
+ 	a50_mark(0x300, "A50DIAG3 late_initcall\n");
+-- 
+2.56.0
+

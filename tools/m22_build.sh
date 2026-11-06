@@ -13,8 +13,10 @@ export PATH=$SHIM:$ACK/prebuilts/clang/host/linux-x86/clang-r584948c/bin:$ACK/pr
 # fixed identity so two builds are byte-identical
 export KBUILD_BUILD_TIMESTAMP='Wed Nov  4 00:00:00 UTC 2026' KBUILD_BUILD_USER=a50 KBUILD_BUILD_HOST=firstlight SOURCE_DATE_EPOCH=1793750400
 LIST=$REPO/src/m22/initramfs.list
-sed "s#@REPO@#$REPO#g" "$REPO/tools/m22/initramfs.list.in" > "$LIST"
-touch -d @1793750400 "$REPO/src/m22/busybox" "$REPO/tools/m22/init" "$LIST"
+# A50_INIT=path: use another init in the initramfs (default tools/m22/init; M3.2 uses tools/m32/init)
+INIT=$(realpath "${A50_INIT:-$REPO/tools/m22/init}")
+sed -e "s#@REPO@#$REPO#g" -e "s#$REPO/tools/m22/init#$INIT#" "$REPO/tools/m22/initramfs.list.in" > "$LIST"
+touch -d @1793750400 "$REPO/src/m22/busybox" "$INIT" "$LIST"
 rm -rf "$OUT"; cd "$ACK/common"
 M="make -j16 ARCH=arm64 LLVM=1 O=$OUT"
 $M a50_firstlight_defconfig >/dev/null
@@ -27,6 +29,8 @@ if [ -n "${A50_DIAG_RESET_STAGE:-}" ]; then ./scripts/config --file "$OUT/.confi
 if [ "${A50_DIAG_SKIP_MCT:-0}" = 1 ]; then ./scripts/config --file "$OUT/.config" -e A50_DIAG_SKIP_MCT; fi
 # A50_DIAG_DUMP_DSS=1 (with A50_DIAG=1): at late_initcall dump printk to the DSS log buffer and reboot to Download mode
 if [ "${A50_DIAG_DUMP_DSS:-0}" = 1 ]; then ./scripts/config --file "$OUT/.config" -e A50_DIAG_DUMP_DSS; fi
+# A50_DIAG_DUMP_AFTER=N (with A50_DIAG_DUMP_DSS=1): 0 = late_initcall, N = after N s, -1 = only on panic
+if [ -n "${A50_DIAG_DUMP_AFTER:-}" ]; then ./scripts/config --file "$OUT/.config" --set-val A50_DIAG_DUMP_AFTER "$A50_DIAG_DUMP_AFTER"; fi
 $M olddefconfig >/dev/null
 $M Image 2>&1 | tail -3
 sha256sum "$OUT/arch/arm64/boot/Image"; stat -c '%s bytes' "$OUT/arch/arm64/boot/Image"
