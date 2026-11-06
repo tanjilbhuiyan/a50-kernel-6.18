@@ -23,6 +23,8 @@ $M a50_firstlight_defconfig >/dev/null
 if [ "${A50_DIAG:-0}" = 1 ]; then ./scripts/config --file "$OUT/.config" -e A50_DIAG --set-str LOCALVERSION "-a50-diag"; fi
 # A50_DIAG_RESET_STAGE=N (with A50_DIAG=1): the diag kernel resets the SoC (PMU SWRESET) at the start of stage N
 if [ -n "${A50_DIAG_RESET_STAGE:-}" ]; then ./scripts/config --file "$OUT/.config" --set-val A50_DIAG_RESET_STAGE "$A50_DIAG_RESET_STAGE"; fi
+# A50_DIAG_SKIP_MCT=1 (with A50_DIAG=1): skip the Exynos MCT init (stock DT clocks have no 6.18 provider)
+if [ "${A50_DIAG_SKIP_MCT:-0}" = 1 ]; then ./scripts/config --file "$OUT/.config" -e A50_DIAG_SKIP_MCT; fi
 $M olddefconfig >/dev/null
 $M Image 2>&1 | tail -3
 sha256sum "$OUT/arch/arm64/boot/Image"; stat -c '%s bytes' "$OUT/arch/arm64/boot/Image"

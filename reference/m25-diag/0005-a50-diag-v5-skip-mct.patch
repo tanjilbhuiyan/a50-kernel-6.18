@@ -1,0 +1,49 @@
+From 9270837322515a830bdfd1f8c0b3592ef5fd069d Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Sat, 7 Nov 2026 01:52:23 +0600
+Subject: [PATCH] A50 diag v5: A50_DIAG_SKIP_MCT (stock DT MCT clocks have no
+ 6.18 provider -> panic)
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: Id8355216703b9c3e1ec0dfc3db657ba429ec0ea8
+---
+ arch/arm64/Kconfig.debug         | 8 ++++++++
+ drivers/clocksource/exynos_mct.c | 5 +++++
+ 2 files changed, 13 insertions(+)
+
+diff --git a/arch/arm64/Kconfig.debug b/arch/arm64/Kconfig.debug
+index 2fa160e40..4756658e2 100644
+--- a/arch/arm64/Kconfig.debug
++++ b/arch/arm64/Kconfig.debug
+@@ -40,4 +40,12 @@ config A50_DIAG_RESET_STAGE
+ 	  10..16: bisection points in start_kernel()/kernel_init_freeable(),
+ 	  see A50_POINT() in init/main.c.
+ 
++config A50_DIAG_SKIP_MCT
++	bool "A50 diag: skip the Exynos MCT timer init"
++	depends on A50_DIAG && CLKSRC_EXYNOS_MCT
++	help
++	  The stock A50 DT has an exynos4210-mct node whose clocks come from
++	  samsung,exynos9610-clock, which has no 6.18 driver; mct_init_dt()
++	  then panics. Diagnostic switch only.
++
+ source "drivers/hwtracing/coresight/Kconfig"
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index da09f467a..76e1ca779 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -644,6 +644,11 @@ static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
+ 	u32 local_idx[MCT_NR_LOCAL] = {0};
+ 	int nr_local;
+ 	int ret;
++#ifdef CONFIG_A50_DIAG_SKIP_MCT
++	/* A50 diag: the stock DT MCT clocks (exynos9610-clock) have no 6.18 provider. */
++	pr_info("%s: skipped (CONFIG_A50_DIAG_SKIP_MCT)\n", __func__);
++	return 0;
++#endif
+ 
+ 	nr_local = of_property_count_u32_elems(np, "samsung,local-timers");
+ 	if (nr_local == 0)
+-- 
+2.56.0
+
