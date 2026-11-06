@@ -83,3 +83,10 @@ Result: PASS / FAIL / INCONCLUSIVE
 Restore performed: yes/no (how)
 Next: <one action>
 ```
+
+## Interrupted flash (observed 2026-11-07, log/2026-11-07-M3.3-clocks.md)
+If Heimdall fails mid-transfer (USB re-enumeration), partitions may be half-written and the phone may show Samsung's
+"An error has occurred while updating the device software" screen. It is a Download-type mode: `heimdall detect` sees it.
+Re-flash the stock set in one session: `heimdall flash --DTB reference/stock-images/dt.img --DTBO reference/stock-images/dtbo.img
+--BOOT baseline/ut-26.04-2026-10-19-aa17rf2/boot.img --no-reboot`, then restart and run tools/m24_preflight.sh.
+If the session is stuck ("Protocol initialisation failed"), re-enter Download mode with the key combo first.

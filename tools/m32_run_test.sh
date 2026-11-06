@@ -16,7 +16,10 @@ tools/m24_preflight.sh "$IP" 2>&1 | tail -1 | grep -q "ALL CHECKS PASSED" || { e
 timeout 20 ssh -o BatchMode=yes root@"$IP" "sync; setsid nohup sh -c 'sleep 2; systemctl reboot --reboot-argument=download' >/dev/null 2>&1 < /dev/null &" || true
 waitdl 90 || { echo "phone did not reach Download mode by software, stop"; exit 1; }
 sleep 3; echo "[$(date +%T)] Download mode; flashing our DT + test BOOT with reboot"
-heimdall flash --DTB "$DT" --DTBO "$DTBO" --BOOT "$IMG" 2>&1 | grep -E "upload successful|ERROR|failed"
+if ! heimdall flash --DTB "$DT" --DTBO "$DTBO" --BOOT "$IMG" 2>&1 | grep -E "upload successful|ERROR|failed"; then
+  echo "[$(date +%T)] TEST FLASH FAILED (partitions may be half-written). The phone may show Samsung's 'An error has occurred"
+  echo "  while updating the device software' screen: that is a Download-type mode. Re-enter Download mode if needed and run:"
+  echo "  heimdall flash --DTB $SDT --DTBO $SDTBO --BOOT $BASE --no-reboot   (then restart, run the pre-flight)"; exit 3; fi
 sleep 8
 if waitdl "$WAIT"; then echo "[$(date +%T)] 6.18 sent the phone back to Download mode by itself"; else
   echo "[$(date +%T)] NO Download mode within ${WAIT}s: 6.18 did not dump. Manual recovery: Vol Down+Power until black, then"
