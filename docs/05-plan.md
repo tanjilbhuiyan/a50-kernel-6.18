@@ -66,8 +66,18 @@ STOCK DTB/DTBO and a diag kernel (MCT init skipped); booting with our own DT is
 carried forward as open work.
 
 ## M3 — Storage + USB access
-Tasks: UFS (ufs-exynos 9610 data + PHY), USB DRD + PHY 9610 data, sm5713
-VBUS/role detection minimal, configfs gadget RNDIS + ACM.
+Tasks (tickets in `tasks/`; list changed 2026-11-07, see "Why" below)
+1. M3.1 Boot with our own DTB/DTBO (reserve the debug-snapshot region, drop the unproven ramoops placement).
+2. M3.2 Readout at any time (dump + reboot to Download mode on panic or after a delay).
+3. M3.3 Exynos 9610 clock driver, only the CMUs that UFS and USB need.
+4. M3.4 Exynos 9610 pinctrl data (backport).
+5. M3.5 UFS storage, read-only (ufs-exynos 9610 data + PHY).
+6. M3.6 USB device mode (DRD + PHY 9610 data, configfs gadget RNDIS + ACM; sm5713 role/VBUS minimal or bypassed).
+7. M3.7 Halium initramfs on 6.18: mount `/data`, telnet over USB (the M3 DoD).
+Why changed (2026-11-07): M2 closed without our DT and without clocks/pinctrl
+(the gap matrix had listed clocks and pinctrl under M2, but first light did not
+need them). UFS and USB cannot work without them, and every later test needs a
+readout that works after init. M3.1-M3.4 are those prerequisites.
 DoD: Halium initramfs on 6.18 mounts `/data` and exposes telnet
 `192.168.2.15` over USB from the laptop.
 
