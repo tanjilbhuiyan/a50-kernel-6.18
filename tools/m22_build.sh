@@ -31,6 +31,10 @@ if [ "${A50_DIAG_SKIP_MCT:-0}" = 1 ]; then ./scripts/config --file "$OUT/.config
 if [ "${A50_DIAG_DUMP_DSS:-0}" = 1 ]; then ./scripts/config --file "$OUT/.config" -e A50_DIAG_DUMP_DSS; fi
 # A50_DIAG_DUMP_AFTER=N (with A50_DIAG_DUMP_DSS=1): 0 = late_initcall, N = after N s, -1 = only on panic
 if [ -n "${A50_DIAG_DUMP_AFTER:-}" ]; then ./scripts/config --file "$OUT/.config" --set-val A50_DIAG_DUMP_AFTER "$A50_DIAG_DUMP_AFTER"; fi
+# A50_CMDLINE_APPEND="..." : append to CONFIG_CMDLINE (S-Boot drops the boot.img cmdline; CONFIG_CMDLINE_EXTEND=y)
+if [ -n "${A50_CMDLINE_APPEND:-}" ]; then ./scripts/config --file "$OUT/.config" --set-str CMDLINE "$(sed -n 's/^CONFIG_CMDLINE="\(.*\)"$/\1/p' "$OUT/.config") $A50_CMDLINE_APPEND"; fi
+# A50_CONFIG="-e FOO -d BAR ..." : extra scripts/config arguments (diagnostic builds)
+if [ -n "${A50_CONFIG:-}" ]; then ./scripts/config --file "$OUT/.config" $A50_CONFIG; fi
 $M olddefconfig >/dev/null
 $M Image 2>&1 | tail -3
 sha256sum "$OUT/arch/arm64/boot/Image"; stat -c '%s bytes' "$OUT/arch/arm64/boot/Image"

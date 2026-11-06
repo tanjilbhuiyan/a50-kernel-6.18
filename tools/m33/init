@@ -1,0 +1,19 @@
+#!/bin/busybox sh
+# M3.3 clock test init: report whether the Exynos9610 CMUs (TOP, FSYS, USB) registered and what the clock tree looks
+# like for UFS/USB, into /dev/kmsg (read back by the DSS dump; build with dump_after so the dump happens after this).
+export PATH=/bin
+/bin/busybox --install -s /bin
+mount -t proc proc /proc; mount -t sysfs sysfs /sys; mount -t devtmpfs devtmpfs /dev
+mount -t debugfs debugfs /sys/kernel/debug 2>/dev/null
+say() { echo "<6>a50-m33: $*" > /dev/kmsg; }
+say "init started, Linux $(uname -r), uptime $(cut -d' ' -f1 /proc/uptime) s"
+say "cmdline: $(cut -c1-90 /proc/cmdline)"
+for d in /sys/bus/platform/devices/*clock-controller*; do
+  [ -e "$d" ] || continue; drv=$(basename "$(readlink "$d/driver" 2>/dev/null)" 2>/dev/null)
+  say "device $(basename "$d") driver=${drv:-NONE}"; done
+say "deferred: $(cat /sys/kernel/debug/devices_deferred 2>/dev/null | tr '\n' ';')"
+n=$(wc -l < /sys/kernel/debug/clk/clk_summary 2>/dev/null); say "clk_summary lines: ${n:-unreadable}"
+head -n 3 /sys/kernel/debug/clk/clk_summary 2>/dev/null | while IFS= read -r l; do say "S| $l"; done
+grep -i -E "ufs|usb|fsys|oscclk|pll" /sys/kernel/debug/clk/clk_summary 2>/dev/null | head -n 120 | while IFS= read -r l; do say "S| $l"; done
+say "report done; waiting for the delayed dump"
+while :; do sleep 60; done

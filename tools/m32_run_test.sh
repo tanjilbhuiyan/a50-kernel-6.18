@@ -7,7 +7,7 @@
 set -euo pipefail
 IMG=${1:?usage: m32_run_test.sh TEST_BOOT_IMG OUT_DUMP_FILE [PHONE_IP] [WAIT_S]}; OUTF=${2:?}; IP=${3:-192.168.0.171}; WAIT=${4:-120}
 R=$(cd "$(dirname "$0")/.." && pwd); cd "$R"
-DT=src/m31/dt.img; DTBO=reference/dt-6.18/images/dtbo.img
+DT=${DT_IMG:-src/m31/dt.img}; DTBO=reference/dt-6.18/images/dtbo.img
 SDT=reference/stock-images/dt.img; SDTBO=reference/stock-images/dtbo.img; BASE=baseline/ut-26.04-2026-10-19-aa17rf2/boot.img
 dl() { lsusb | grep -q "04e8:685d"; }
 waitdl() { local t=$1 s=$(date +%s); while [ $(( $(date +%s)-s )) -lt "$t" ]; do dl && return 0; sleep 2; done; return 1; }

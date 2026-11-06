@@ -1,0 +1,44 @@
+From dc52df35782c16149e8181ccd9ea1a271c70d75f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>
+Date: Fri, 9 Jan 2026 17:27:23 +0000
+Subject: [PATCH 2/8] clk: samsung: avoid warning message on legacy Exynos
+ (auto clock gating)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+We currently print a warning message that the IO memory size is not
+compatible with automatic clock gating for many Exynos-based boards,
+including legacy ones, even if not requested to enable automatic clock
+gating in the first place.
+
+Change the test in question to avoid that warning.
+
+Fixes: 298fac4f4b96 ("clk: samsung: Implement automatic clock gating mode for CMUs")
+Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Closes: https://lore.kernel.org/all/8b2c412d-3e1e-4be0-a9d5-ef67f6f0d409@samsung.com/
+Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+Link: https://patch.msgid.link/20260109-clk-samsung-autoclk-updates-v1-1-2394dcf242a9@linaro.org
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/clk/samsung/clk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+index 83de52634..90ea1d298 100644
+--- a/drivers/clk/samsung/clk.c
++++ b/drivers/clk/samsung/clk.c
+@@ -458,7 +458,7 @@ void __init samsung_cmu_register_clocks(struct samsung_clk_provider *ctx,
+ 					const struct samsung_cmu_info *cmu,
+ 					struct device_node *np)
+ {
+-	if (samsung_is_auto_capable(np) && cmu->auto_clock_gate)
++	if (cmu->auto_clock_gate && samsung_is_auto_capable(np))
+ 		ctx->auto_clock_gate = cmu->auto_clock_gate;
+ 
+ 	ctx->gate_dbg_offset = cmu->gate_dbg_offset;
+-- 
+2.56.0
+

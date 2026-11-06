@@ -1,0 +1,184 @@
+From bdbb5066f97e0883c583f0950cc883bdb81a41c6 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>
+Date: Fri, 9 Jan 2026 17:27:24 +0000
+Subject: [PATCH 3/8] clk: samsung: fix sysreg save/restore when PM is enabled
+ for CMU
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Currently, sysreg registers of a CMU that has PM and automatic clock
+gating enabled are not saved / restored during runtime PM (RPM) or
+s2idle. During normal suspend, they are accessed too late, after the
+CMU (and potentially power domain) have been shut down, causing an
+SError.
+
+The reason is that these registers are registered to be saved/restored
+via a syscore suspend handler which doesn't run during RPM or s2idle.
+During normal suspend, this handler runs after the CMU has been shut
+down. This registration happens as part of
+samsung_clk_extended_sleep_init() via samsung_en_dyn_root_clk_gating().
+
+When PM is enabled for a CMU, registers must be saved/restored via
+exynos_arm64_cmu_suspend() / exynos_arm64_cmu_resume() respectively
+instead. These use their own data structures and are unrelated to
+anything that samsung_clk_extended_sleep_init() does. Calling it
+unconditionally from samsung_en_dyn_root_clk_gating() therefore isn't
+useful.
+
+Update the code to prepare sysreg save / restore in a similar way to
+how it handles other clock registers in the PM case already.
+exynos_arm64_cmu_suspend() / exynos_arm64_cmu_resume() already handle
+sysreg save/restore, just the setup was incorrect.
+
+Fixes: 298fac4f4b96 ("clk: samsung: Implement automatic clock gating mode for CMUs")
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+Link: https://patch.msgid.link/20260109-clk-samsung-autoclk-updates-v1-2-2394dcf242a9@linaro.org
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/clk/samsung/clk-exynos-arm64.c | 32 +++++++++++++++++++++-----
+ drivers/clk/samsung/clk.c              | 19 ++++++++++-----
+ drivers/clk/samsung/clk.h              |  3 ++-
+ 3 files changed, 41 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos-arm64.c b/drivers/clk/samsung/clk-exynos-arm64.c
+index 11e4d49f2..35d4de233 100644
+--- a/drivers/clk/samsung/clk-exynos-arm64.c
++++ b/drivers/clk/samsung/clk-exynos-arm64.c
+@@ -174,7 +174,7 @@ static int __init exynos_arm64_cmu_prepare_pm(struct device *dev,
+ 		const struct samsung_cmu_info *cmu)
+ {
+ 	struct exynos_arm64_cmu_data *data = dev_get_drvdata(dev);
+-	int i;
++	int i, ret;
+ 
+ 	data->clk_save = samsung_clk_alloc_reg_dump(cmu->clk_regs,
+ 						    cmu->nr_clk_regs);
+@@ -182,8 +182,22 @@ static int __init exynos_arm64_cmu_prepare_pm(struct device *dev,
+ 		return -ENOMEM;
+ 
+ 	data->nr_clk_save = cmu->nr_clk_regs;
++
++	if (cmu->nr_sysreg_clk_regs) {
++		data->clk_sysreg_save =
++			samsung_clk_alloc_reg_dump(cmu->sysreg_clk_regs,
++						   cmu->nr_sysreg_clk_regs);
++		if (!data->clk_sysreg_save) {
++			ret = -ENOMEM;
++			goto free_clk_save;
++		}
++
++		data->nr_clk_sysreg = cmu->nr_sysreg_clk_regs;
++	}
++
+ 	data->clk_suspend = cmu->suspend_regs;
+ 	data->nr_clk_suspend = cmu->nr_suspend_regs;
++
+ 	data->nr_pclks = of_clk_get_parent_count(dev->of_node);
+ 	if (!data->nr_pclks)
+ 		return 0;
+@@ -191,23 +205,29 @@ static int __init exynos_arm64_cmu_prepare_pm(struct device *dev,
+ 	data->pclks = devm_kcalloc(dev, sizeof(struct clk *), data->nr_pclks,
+ 				   GFP_KERNEL);
+ 	if (!data->pclks) {
+-		kfree(data->clk_save);
+-		return -ENOMEM;
++		ret = -ENOMEM;
++		goto free_sysreg_save;
+ 	}
+ 
+ 	for (i = 0; i < data->nr_pclks; i++) {
+ 		struct clk *clk = of_clk_get(dev->of_node, i);
+ 
+ 		if (IS_ERR(clk)) {
+-			kfree(data->clk_save);
+ 			while (--i >= 0)
+ 				clk_put(data->pclks[i]);
+-			return PTR_ERR(clk);
++			ret = PTR_ERR(clk);
++			goto free_sysreg_save;
+ 		}
+ 		data->pclks[i] = clk;
+ 	}
+ 
+ 	return 0;
++
++free_sysreg_save:
++	kfree(data->clk_sysreg_save);
++free_clk_save:
++	kfree(data->clk_save);
++	return ret;
+ }
+ 
+ /**
+@@ -305,7 +325,7 @@ int __init exynos_arm64_register_cmu_pm(struct platform_device *pdev,
+ 	samsung_cmu_register_clocks(data->ctx, cmu, np);
+ 	samsung_clk_of_add_provider(dev->of_node, data->ctx);
+ 	/* sysreg DT nodes reference a clock in this CMU */
+-	samsung_en_dyn_root_clk_gating(np, data->ctx, cmu);
++	samsung_en_dyn_root_clk_gating(np, data->ctx, cmu, true);
+ 	pm_runtime_put_sync(dev);
+ 
+ 	return 0;
+diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+index 90ea1d298..db0e9dc74 100644
+--- a/drivers/clk/samsung/clk.c
++++ b/drivers/clk/samsung/clk.c
+@@ -492,7 +492,8 @@ void __init samsung_cmu_register_clocks(struct samsung_clk_provider *ctx,
+ /* Enable Dynamic Root Clock Gating (DRCG) of bus components */
+ void samsung_en_dyn_root_clk_gating(struct device_node *np,
+ 				    struct samsung_clk_provider *ctx,
+-				    const struct samsung_cmu_info *cmu)
++				    const struct samsung_cmu_info *cmu,
++				    bool cmu_has_pm)
+ {
+ 	if (!ctx->auto_clock_gate)
+ 		return;
+@@ -509,10 +510,16 @@ void samsung_en_dyn_root_clk_gating(struct device_node *np,
+ 			regmap_write_bits(ctx->sysreg, ctx->memclk_offset,
+ 					  MEMCLK_EN, 0x0);
+ 
+-		samsung_clk_extended_sleep_init(NULL, ctx->sysreg,
+-						cmu->sysreg_clk_regs,
+-						cmu->nr_sysreg_clk_regs,
+-						NULL, 0);
++		if (!cmu_has_pm)
++			/*
++			 * When a CMU has PM support, clocks are saved/restored
++			 * via its PM handlers, so only register them with the
++			 * syscore suspend / resume paths if PM is not in use.
++			 */
++			samsung_clk_extended_sleep_init(NULL, ctx->sysreg,
++							cmu->sysreg_clk_regs,
++							cmu->nr_sysreg_clk_regs,
++							NULL, 0);
+ 	}
+ }
+ 
+@@ -544,7 +551,7 @@ struct samsung_clk_provider * __init samsung_cmu_register_one(
+ 	samsung_clk_of_add_provider(np, ctx);
+ 
+ 	/* sysreg DT nodes reference a clock in this CMU */
+-	samsung_en_dyn_root_clk_gating(np, ctx, cmu);
++	samsung_en_dyn_root_clk_gating(np, ctx, cmu, false);
+ 
+ 	return ctx;
+ }
+diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+index a56aa3be5..b1192ca03 100644
+--- a/drivers/clk/samsung/clk.h
++++ b/drivers/clk/samsung/clk.h
+@@ -476,7 +476,8 @@ struct samsung_clk_reg_dump *samsung_clk_alloc_reg_dump(
+ 
+ void samsung_en_dyn_root_clk_gating(struct device_node *np,
+ 				struct samsung_clk_provider *ctx,
+-				const struct samsung_cmu_info *cmu);
++				const struct samsung_cmu_info *cmu,
++				bool cmu_has_pm);
+ 
+ struct clk_hw *samsung_register_auto_gate(struct device *dev,
+ 		struct device_node *np, const char *name,
+-- 
+2.56.0
+

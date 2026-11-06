@@ -1,0 +1,90 @@
+From 84432e20fe138efbe5a3830127e810bb8ac499a4 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Sat, 7 Nov 2026 03:00:11 +0600
+Subject: [PATCH 8/8] arm64: dts: exynos9610: add CMU TOP, FSYS and USB nodes
+
+Only the CMUs UFS and USB need. Addresses from Samsung's 4.14
+cal-if/exynos9610/cmucal-sfr.c; wiring per the v3 binding. reg size
+0x8000 keeps the CMUs in manual gating mode for the first boot.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: Idd939fadc33b897149edc6c37f49889f7bf3422c
+---
+ arch/arm64/boot/dts/exynos/exynos9610.dtsi | 48 ++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610.dtsi b/arch/arm64/boot/dts/exynos/exynos9610.dtsi
+index 2050afe40..70efb4ebc 100644
+--- a/arch/arm64/boot/dts/exynos/exynos9610.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos9610.dtsi
+@@ -8,6 +8,7 @@
+  *   D = reference/stock-dt/dt.dtb.0.dts (decompiled stock dt.img)
+  */
+ 
++#include <dt-bindings/clock/samsung,exynos9610-cmu.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+ / {
+@@ -134,6 +135,23 @@ soc: soc@0 {
+ 		/* S:592-602 - GICv2: dist 0x12301000, cpu 0x12302000,
+ 		 * hyp 0x12304000, vcpu 0x12306000; maintenance PPI 9.
+ 		 */
++		/*
++		 * M3.3: only the CMUs that UFS (FSYS) and USB need, plus their parent
++		 * TOP. Addresses: Samsung 4.14 cal-if/exynos9610/cmucal-sfr.c:11,16,25
++		 * (TOP 0x12100000, FSYS 0x13400000, USB 0x13030000, 0x8000 each).
++		 * reg size 0x8000 on purpose: the HWACG core enables automatic clock
++		 * gating only for a 0x10000 window (clk.c samsung_is_auto_capable), so
++		 * these CMUs stay in manual mode for the first boot. Wiring per the
++		 * v3 binding samsung,exynos9610-cmu.yaml.
++		 */
++		cmu_top: clock-controller@12100000 {
++			compatible = "samsung,exynos9610-cmu-top";
++			reg = <0x12100000 0x8000>;
++			#clock-cells = <1>;
++			clocks = <&oscclk>;
++			clock-names = "oscclk";
++		};
++
+ 		gic: interrupt-controller@12301000 {
+ 			compatible = "arm,cortex-a15-gic";
+ 			#interrupt-cells = <3>;
+@@ -145,5 +163,35 @@ gic: interrupt-controller@12301000 {
+ 			      <0x12306000 0x2000>;
+ 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
+ 		};
++
++		cmu_usb: clock-controller@13030000 {
++			compatible = "samsung,exynos9610-cmu-usb";
++			reg = <0x13030000 0x8000>;
++			#clock-cells = <1>;
++			clocks = <&oscclk>,
++				 <&cmu_top CLK_DOUT_CMU_USB_BUS>,
++				 <&cmu_top CLK_DOUT_CMU_USB_DPGTC>,
++				 <&cmu_top CLK_DOUT_CMU_USB_USB30DRD>;
++			clock-names = "oscclk",
++				      "dout_cmu_usb_bus",
++				      "dout_cmu_usb_dpgtc",
++				      "dout_cmu_usb_usb30drd";
++		};
++
++		cmu_fsys: clock-controller@13400000 {
++			compatible = "samsung,exynos9610-cmu-fsys";
++			reg = <0x13400000 0x8000>;
++			#clock-cells = <1>;
++			clocks = <&oscclk>,
++				 <&cmu_top CLK_DOUT_CMU_FSYS_BUS>,
++				 <&cmu_top CLK_DOUT_CMU_FSYS_MMC_CARD>,
++				 <&cmu_top CLK_DOUT_CMU_FSYS_MMC_EMBD>,
++				 <&cmu_top CLK_DOUT_CMU_FSYS_UFS_EMBD>;
++			clock-names = "oscclk",
++				      "dout_cmu_fsys_bus",
++				      "dout_cmu_fsys_mmc_card",
++				      "dout_cmu_fsys_mmc_embd",
++				      "dout_cmu_fsys_ufs_embd";
++		};
+ 	};
+ };
+-- 
+2.56.0
+
