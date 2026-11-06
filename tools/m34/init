@@ -1,0 +1,19 @@
+#!/bin/busybox sh
+# M3.4 pinctrl test init: report the Exynos9610 pin controllers, GPIO chips and pinctrl/EINT messages into /dev/kmsg
+# (read back by the DSS dump; build with dump_after so it happens after this).
+export PATH=/bin
+/bin/busybox --install -s /bin
+mount -t proc proc /proc; mount -t sysfs sysfs /sys; mount -t devtmpfs devtmpfs /dev
+mount -t debugfs debugfs /sys/kernel/debug 2>/dev/null
+say() { echo "<6>a50-m34: $*" > /dev/kmsg; }
+say "init started, Linux $(uname -r), uptime $(cut -d' ' -f1 /proc/uptime) s"
+for d in /sys/bus/platform/devices/*pinctrl*; do [ -e "$d" ] || continue
+  say "device $(basename "$d") driver=$(basename "$(readlink "$d/driver" 2>/dev/null)" 2>/dev/null)"; done
+n=0; for c in /sys/bus/gpio/devices/gpiochip*; do [ -e "$c" ] || continue; n=$((n+1)); done; say "gpiochips: $n"
+cat /sys/kernel/debug/gpio 2>/dev/null | grep -E "^gpiochip" | while IFS= read -r l; do say "G| $l"; done
+cat /sys/kernel/debug/pinctrl/pinctrl-devices 2>/dev/null | while IFS= read -r l; do say "P| $l"; done
+say "deferred: $(cat /sys/kernel/debug/devices_deferred 2>/dev/null | tr '\n' ';')"
+say "interrupts with pinctrl/eint names: $(grep -i -E 'eint|gp[a-z][0-9]|exynos' /proc/interrupts | wc -l)"
+grep -i -E "eint|exynos|gpio" /proc/interrupts | head -n 20 | while IFS= read -r l; do say "I| $l"; done
+say "report done; waiting for the delayed dump"
+while :; do sleep 60; done
