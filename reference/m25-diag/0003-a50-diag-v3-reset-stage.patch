@@ -1,0 +1,91 @@
+From 325b639130dc5a8ae99b4665973ea79f8b9a6adb Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Sat, 7 Nov 2026 01:18:34 +0600
+Subject: [PATCH] arm64: A50 diag v3: A50_DIAG_RESET_STAGE resets the SoC via
+ PMU SWRESET at stage N
+
+The reset (boot loop) is the only signal validated on the phone (Tests 10, 11).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I97ae458bb519ce1207b29fb064a14584ddf8cb26
+---
+ arch/arm64/Kconfig.debug     | 10 ++++++++++
+ arch/arm64/kernel/a50_diag.c | 22 ++++++++++++++++++++++
+ 2 files changed, 32 insertions(+)
+
+diff --git a/arch/arm64/Kconfig.debug b/arch/arm64/Kconfig.debug
+index da77f83f5..f57b196f5 100644
+--- a/arch/arm64/Kconfig.debug
++++ b/arch/arm64/Kconfig.debug
+@@ -28,4 +28,14 @@ config A50_DIAG
+ 	  writes stage markers into DRAM at several points of the boot, then
+ 	  tries a PSCI SYSTEM_RESET. Never enable on anything else.
+ 
++config A50_DIAG_RESET_STAGE
++	int "A50 diag: reset the SoC on reaching stage N (0 = never)"
++	depends on A50_DIAG
++	range 0 3
++	default 0
++	help
++	  Writes 1 to the Exynos9610 PMU SWRESET register at the start of
++	  diagnostic stage N (1 setup_arch, 2 arch_initcall, 3 late_initcall).
++	  The resulting boot loop is the only observable signal on the phone.
++
+ source "drivers/hwtracing/coresight/Kconfig"
+diff --git a/arch/arm64/kernel/a50_diag.c b/arch/arm64/kernel/a50_diag.c
+index 0225dc7c6..6b60fd34e 100644
+--- a/arch/arm64/kernel/a50_diag.c
++++ b/arch/arm64/kernel/a50_diag.c
+@@ -20,6 +20,21 @@
+ #define ROW_BYTES	4320UL
+ #define BAND_BYTES	(50UL * ROW_BYTES)	/* 216000, below the 256 KiB early_ioremap slot */
+ #define MARK_PHYS	0xf9030000UL
++#define PMU_PHYS	0x11860000UL	/* stock DT: reboot { pmu_base = <0x11860000>; } */
++#define PMU_SWRESET	0x400		/* drivers/soc/samsung/exynos-reboot.c (4.14): writel(1, SWRESET) */
++
++/*
++ * CONFIG_A50_DIAG_RESET_STAGE=N: reset the SoC at the START of stage N. A boot loop
++ * then proves stage N was reached (no console and no readable log exist; the
++ * reset is the only channel validated on the phone, Tests 10/11).
++ */
++static void __noreturn a50_reset_now(void __iomem *pmu)
++{
++	if (pmu)
++		writel(1, pmu + PMU_SWRESET);
++	for (;;)
++		cpu_relax();
++}
+ 
+ #define ARGB_RED	0xffff0000u
+ #define ARGB_GREEN	0xff00ff00u
+@@ -41,6 +56,9 @@ void __init a50_diag_stage1(void)
+ 	void __iomem *p;
+ 	static const char msg[] = "A50DIAG1 setup_arch\n";
+ 
++	if (CONFIG_A50_DIAG_RESET_STAGE == 1)
++		a50_reset_now(early_ioremap(PMU_PHYS, 0x1000));
++
+ 	p = early_ioremap(FB_PHYS + 60 * ROW_BYTES, BAND_BYTES);
+ 	if (p) {
+ 		a50_fill(p, BAND_BYTES, ARGB_GREEN);
+@@ -103,6 +121,8 @@ static void a50_mark(unsigned long off, const char *s)
+ 
+ static int __init a50_diag_stage2(void)
+ {
++	if (CONFIG_A50_DIAG_RESET_STAGE == 2)
++		a50_reset_now(ioremap(PMU_PHYS, 0x1000));
+ 	a50_band(120, ARGB_BLUE);
+ 	a50_mark(0x200, "A50DIAG2 arch_initcall\n");
+ 	return 0;
+@@ -114,6 +134,8 @@ static int __init a50_diag_stage3(void)
+ 	struct arm_smccc_res res;
+ 	int i;
+ 
++	if (CONFIG_A50_DIAG_RESET_STAGE == 3)
++		a50_reset_now(ioremap(PMU_PHYS, 0x1000));
+ 	a50_band(180, ARGB_WHITE);
+ 	a50_mark(0x300, "A50DIAG3 late_initcall\n");
+ 	for (i = 0; i < 15; i++) {			/* heartbeat, 15 s */
+-- 
+2.56.0
+

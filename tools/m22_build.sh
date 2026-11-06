@@ -21,6 +21,8 @@ $M a50_firstlight_defconfig >/dev/null
 ./scripts/config --file "$OUT/.config" --set-str INITRAMFS_SOURCE "$LIST"
 # A50_DIAG=1 (branch a50-diag only): enable the first-light diagnostic stages and tag the version string
 if [ "${A50_DIAG:-0}" = 1 ]; then ./scripts/config --file "$OUT/.config" -e A50_DIAG --set-str LOCALVERSION "-a50-diag"; fi
+# A50_DIAG_RESET_STAGE=N (with A50_DIAG=1): the diag kernel resets the SoC (PMU SWRESET) at the start of stage N
+if [ -n "${A50_DIAG_RESET_STAGE:-}" ]; then ./scripts/config --file "$OUT/.config" --set-val A50_DIAG_RESET_STAGE "$A50_DIAG_RESET_STAGE"; fi
 $M olddefconfig >/dev/null
 $M Image 2>&1 | tail -3
 sha256sum "$OUT/arch/arm64/boot/Image"; stat -c '%s bytes' "$OUT/arch/arm64/boot/Image"
