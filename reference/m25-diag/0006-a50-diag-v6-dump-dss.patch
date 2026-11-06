@@ -1,0 +1,132 @@
+From 2d3c22c2ed84de3e796cf93adb121f718e778242 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Sat, 7 Nov 2026 02:18:13 +0600
+Subject: [PATCH] A50 diag v6: A50_DIAG_DUMP_DSS - printk log to the DSS
+ buffer, then software reboot to Download mode
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I41bf9184d73833d32407b0559e1511ca42fdb507
+---
+ arch/arm64/Kconfig.debug     |  8 ++++
+ arch/arm64/kernel/a50_diag.c | 74 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 82 insertions(+)
+
+diff --git a/arch/arm64/Kconfig.debug b/arch/arm64/Kconfig.debug
+index 4756658e2..c224f4760 100644
+--- a/arch/arm64/Kconfig.debug
++++ b/arch/arm64/Kconfig.debug
+@@ -48,4 +48,12 @@ config A50_DIAG_SKIP_MCT
+ 	  samsung,exynos9610-clock, which has no 6.18 driver; mct_init_dt()
+ 	  then panics. Diagnostic switch only.
+ 
++config A50_DIAG_DUMP_DSS
++	bool "A50 diag: at late_initcall, dump the printk log to the DSS buffer and reboot to Download mode"
++	depends on A50_DIAG
++	help
++	  Appends the printk log to the debug-snapshot log_kernel buffer at
++	  the bootloader's end pointer, then reboots to Download mode by
++	  software. The baseline kernel's /proc/last_kmsg then shows it.
++
+ source "drivers/hwtracing/coresight/Kconfig"
+diff --git a/arch/arm64/kernel/a50_diag.c b/arch/arm64/kernel/a50_diag.c
+index 990d7f43f..918c88755 100644
+--- a/arch/arm64/kernel/a50_diag.c
++++ b/arch/arm64/kernel/a50_diag.c
+@@ -16,6 +16,8 @@
+ #include <asm/early_ioremap.h>
+ #include <asm/cacheflush.h>
+ #include <linux/slab.h>
++#include <linux/vmalloc.h>
++#include <linux/kmsg_dump.h>
+ 
+ #define FB_PHYS		0xca000000UL
+ #define ROW_BYTES	4320UL
+@@ -133,6 +135,75 @@ static void a50_mark(unsigned long off, const char *s)
+ 	a50_unmap(v, 0x1000, lin);
+ }
+ 
++#ifdef CONFIG_A50_DIAG_DUMP_DSS
++/*
++ * Readout (validated with the baseline on 2026-11-07): append the whole printk
++ * log to the debug-snapshot log_kernel buffer at the end pointer the bootloader
++ * keeps in the DSS header (0xf9000000 + 0x200, 4.14 lib/debug-snapshot-log.h),
++ * update the pointer, then reboot to Download mode by software (PMU INFORM3 =
++ * 0x12345671, 4.14 drivers/samsung/sec_reboot.c; then SWRESET). S-Boot appends
++ * after the pointer on a software reset, and the baseline's /proc/last_kmsg
++ * shows it after "heimdall flash" with reboot.
++ */
++#define DSS_HDR_PHYS		0xf9000000UL
++#define DSS_LAST_LOGBUF		0x200
++#define LOGK_PHYS		0xf9010000UL
++#define LOGK_SIZE		0x200000UL
++#define LKMSG_MAGIC		0x0000000a6c6c7546ULL	/* "Full\n", 4.14 sec_debug.h */
++#define PMU_INFORM3		0x080c
++#define SEC_RESET_DOWNLOAD	0x12345671
++
++static size_t a50_put(char *log, size_t off, const char *src, size_t len, bool *wrapped)
++{
++	while (len) {
++		size_t n = min(len, (size_t)LOGK_SIZE - off);
++
++		memcpy(log + off, src, n);
++		off += n; src += n; len -= n;
++		if (off == LOGK_SIZE) {
++			off = 0;
++			*wrapped = true;
++		}
++	}
++	return off;
++}
++
++static void __init a50_dump_to_dss(void)
++{
++	static const char begin[] = "\n===== A50 6.18 DMESG BEGIN =====\n";
++	static const char end[] = "===== A50 6.18 DMESG END =====\n";
++	struct kmsg_dump_iter iter;
++	bool lh, ll, wrapped = false;
++	size_t len = 0, off;
++	char *buf, *log;
++	u32 *hdr, ptr;
++	void __iomem *pmu;
++
++	pr_info("A50DIAG: dumping printk log to DSS log_kernel, then reboot to download\n");
++	buf = vmalloc(SZ_1M);
++	hdr = a50_map(DSS_HDR_PHYS, 0x1000, &lh);
++	log = a50_map(LOGK_PHYS, LOGK_SIZE, &ll);
++	if (buf && hdr && log) {
++		kmsg_dump_rewind(&iter);
++		kmsg_dump_get_buffer(&iter, false, buf, SZ_1M, &len);
++		ptr = READ_ONCE(hdr[DSS_LAST_LOGBUF / 4]);
++		off = (ptr >= LOGK_PHYS && ptr < LOGK_PHYS + LOGK_SIZE) ? ptr - LOGK_PHYS : 0;
++		off = a50_put(log, off, begin, sizeof(begin) - 1, &wrapped);
++		off = a50_put(log, off, buf, len, &wrapped);
++		off = a50_put(log, off, end, sizeof(end) - 1, &wrapped);
++		if (wrapped)
++			*(u64 *)(log + LOGK_SIZE - 8) = LKMSG_MAGIC;
++		WRITE_ONCE(hdr[DSS_LAST_LOGBUF / 4], (u32)(LOGK_PHYS + off));
++	}
++	a50_unmap(log, LOGK_SIZE, ll);
++	a50_unmap(hdr, 0x1000, lh);
++	pmu = ioremap(PMU_PHYS, 0x1000);
++	if (pmu)
++		writel(SEC_RESET_DOWNLOAD, pmu + PMU_INFORM3);
++	a50_reset_now(pmu);
++}
++#endif
++
+ static int __init a50_diag_stage2(void)
+ {
+ 	if (CONFIG_A50_DIAG_RESET_STAGE == 2)
+@@ -150,6 +221,9 @@ static int __init a50_diag_stage3(void)
+ 
+ 	if (CONFIG_A50_DIAG_RESET_STAGE == 3)
+ 		a50_reset_now(ioremap(PMU_PHYS, 0x1000));
++#ifdef CONFIG_A50_DIAG_DUMP_DSS
++	a50_dump_to_dss();
++#endif
+ 	a50_band(180, ARGB_WHITE);
+ 	a50_mark(0x300, "A50DIAG3 late_initcall\n");
+ 	for (i = 0; i < 15; i++) {			/* heartbeat, 15 s */
+-- 
+2.56.0
+

@@ -25,6 +25,8 @@ if [ "${A50_DIAG:-0}" = 1 ]; then ./scripts/config --file "$OUT/.config" -e A50_
 if [ -n "${A50_DIAG_RESET_STAGE:-}" ]; then ./scripts/config --file "$OUT/.config" --set-val A50_DIAG_RESET_STAGE "$A50_DIAG_RESET_STAGE"; fi
 # A50_DIAG_SKIP_MCT=1 (with A50_DIAG=1): skip the Exynos MCT init (stock DT clocks have no 6.18 provider)
 if [ "${A50_DIAG_SKIP_MCT:-0}" = 1 ]; then ./scripts/config --file "$OUT/.config" -e A50_DIAG_SKIP_MCT; fi
+# A50_DIAG_DUMP_DSS=1 (with A50_DIAG=1): at late_initcall dump printk to the DSS log buffer and reboot to Download mode
+if [ "${A50_DIAG_DUMP_DSS:-0}" = 1 ]; then ./scripts/config --file "$OUT/.config" -e A50_DIAG_DUMP_DSS; fi
 $M olddefconfig >/dev/null
 $M Image 2>&1 | tail -3
 sha256sum "$OUT/arch/arm64/boot/Image"; stat -c '%s bytes' "$OUT/arch/arm64/boot/Image"
