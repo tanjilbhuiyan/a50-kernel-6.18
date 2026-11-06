@@ -31,7 +31,7 @@ later milestones get tickets when we reach them (evidence first, Rule 1).
 | M2.3 | DTB/DTBO partition images in stock dt_table format | no | M2.1 | done (log/2026-11-02-M2.3-dt-images.md) |
 | M2.4 | First light on the phone | yes | M2.1–M2.3, M1.5 | done (log/2026-11-04-M2.4-diag-build.md, Test 19; DoD amended) |
 | M3.1 | Boot 6.18 with our own DTB/DTBO | yes | M2.3, M2.4 | done (log/2026-11-07-M3.1-our-dt.md) |
-| M3.2 | Readout at any time (panic hook + delayed dump) | yes | M3.1 | todo |
+| M3.2 | Readout at any time (panic hook + delayed dump) | yes | M3.1 | done (log/2026-11-07-M3.2-readout.md) |
 | M3.3 | Exynos 9610 clock driver (CMUs for UFS and USB) | build no / test yes | M3.1, M3.2 | todo |
 | M3.4 | Exynos 9610 pinctrl data (backport) | build no / test yes | M3.1 | todo |
 | M3.5 | UFS storage, read-only | yes | M3.3, M3.4 | todo |

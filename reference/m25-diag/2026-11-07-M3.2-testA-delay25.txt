@@ -1,0 +1,159 @@
+# 6.18 dump read back from /proc/last_kmsg (identifiers redacted: 3)
+===== A50 6.18 DMESG BEGIN (dump_after=25) =====
+[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x410fd034]
+[    0.000000] Linux version 6.18.33-a50-diag+ (a50@firstlight) (Android (15323222, +pgo, +bolt, +lto, +mlgo, based on r584948c) clang version 22.0.1 (https://android.googlesource.com/toolchain/llvm-project 2d65e4108033380e6fe8e08b1f1826cd2bfb0c99), LLD 22.0.1 (/mnt/disks/build-disk/src/googleplex-android/llvm-r584948-release/out/llvm-project/llvm 2d65e4108033380e6fe8e08b1f1826cd2bfb0c99)) #1 SMP Wed Nov  4 00:00:00 UTC 2026
+[    0.000000] Machine model: Samsung Galaxy A50 (SM-A505F)
+[    0.000000] printk: debug: ignoring loglevel setting.
+[    0.000000] [Firmware Bug]: Kernel image misaligned at boot, please fix your bootloader!
+[    0.000000] OF: reserved mem: 0x0000000080000000..0x0000000080000fff (4 KiB) nomap non-reusable sec_debug_magic@80000000
+[    0.000000] OF: reserved mem: 0x00000000b8000000..0x00000000b84fffff (5120 KiB) nomap non-reusable vipx_fw@b8000000
+[    0.000000] OF: reserved mem: 0x00000000c0000000..0x00000000c007ffff (512 KiB) nomap non-reusable seclog@c0000000
+[    0.000000] OF: reserved mem: 0x00000000ca000000..0x00000000ca9fffff (10240 KiB) nomap non-reusable fb_reserved@ca000000
+[    0.000000] OF: reserved mem: 0x00000000e9400000..0x00000000ebbfffff (40960 KiB) nomap non-reusable abox@e9400000
+[    0.000000] OF: reserved mem: 0x00000000ed000000..0x00000000f59fffff (141312 KiB) nomap non-reusable modem_if@ed000000
+[    0.000000] OF: reserved mem: 0x00000000f5a00000..0x00000000f77fffff (30720 KiB) nomap non-reusable cp_ram_logging@f5a00000
+[    0.000000] OF: reserved mem: 0x00000000f9000000..0x00000000fa70ffff (23616 KiB) nomap non-reusable debug_snapshot@f9000000
+[    0.000000] OF: reserved mem: 0x0000000091202000..0x0000000091387fff (1560 KiB) nomap non-reusable sec_debug_bufs@91202000
+[    0.000000] OF: reserved mem: 0x0000000091388000..0x0000000091b87fff (8192 KiB) nomap non-reusable sec_debug_next@91388000
+[    0.000000] OF: reserved mem: 0x00000000fb000000..0x00000000fb7fffff (8192 KiB) nomap non-reusable gnss_if@fb000000
+[    0.000000] OF: reserved mem: 0x00000000fd000000..0x00000000fd07ffff (512 KiB) nomap non-reusable chub@fd000000
+[    0.000000] OF: reserved mem: 0x0000000087000000..0x00000000871fffff (2048 KiB) map non-reusable el2_code
+[    0.000000] OF: reserved mem: 0x00000008fe600000..0x00000008ffffffff (26624 KiB) map non-reusable el2_earlymem
+[    0.000000] OF: reserved mem: 0x0000000080001000..0x0000000080001fff (4 KiB) map non-reusable kaslr
+[    0.000000] Zone ranges:
+[    0.000000]   DMA      [mem 0x0000000080000000-0x00000000ffffffff]
+[    0.000000]   DMA32    empty
+[    0.000000]   Normal   [mem 0x0000000100000000-0x00000008ffffffff]
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000080000000-0x0000000080000fff]
+[    0.000000]   node   0: [mem 0x0000000080001000-0x0000000091201fff]
+[    0.000000]   node   0: [mem 0x0000000091202000-0x0000000091b87fff]
+[    0.000000]   node   0: [mem 0x0000000091b88000-0x00000000b7ffffff]
+[    0.000000]   node   0: [mem 0x00000000b8000000-0x00000000b84fffff]
+[    0.000000]   node   0: [mem 0x00000000b8500000-0x00000000baafffff]
+[    0.000000]   node   0: [mem 0x00000000c0000000-0x00000000c007ffff]
+[    0.000000]   node   0: [mem 0x00000000c0080000-0x00000000c9ffffff]
+[    0.000000]   node   0: [mem 0x00000000ca000000-0x00000000ca9fffff]
+[    0.000000]   node   0: [mem 0x00000000caa00000-0x00000000dfffffff]
+[    0.000000]   node   0: [mem 0x00000000e1900000-0x00000000e93fffff]
+[    0.000000]   node   0: [mem 0x00000000e9400000-0x00000000ebbfffff]
+[    0.000000]   node   0: [mem 0x00000000ebc00000-0x00000000ecffffff]
+[    0.000000]   node   0: [mem 0x00000000ed000000-0x00000000f77fffff]
+[    0.000000]   node   0: [mem 0x00000000f7800000-0x00000000f8ffffff]
+[    0.000000]   node   0: [mem 0x00000000f9000000-0x00000000fa70ffff]
+[    0.000000]   node   0: [mem 0x00000000fa710000-0x00000000faffffff]
+[    0.000000]   node   0: [mem 0x00000000fb000000-0x00000000fb7fffff]
+[    0.000000]   node   0: [mem 0x00000000fb800000-0x00000000fcffffff]
+[    0.000000]   node   0: [mem 0x00000000fd000000-0x00000000fd07ffff]
+[    0.000000]   node   0: [mem 0x00000000fd080000-0x00000000ffffffff]
+[    0.000000]   node   0: [mem 0x0000000880000000-0x00000008ffffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000080000000-0x00000008ffffffff]
+[    0.000000] On node 0, zone DMA: 21760 pages in unavailable ranges
+[    0.000000] On node 0, zone DMA: 6400 pages in unavailable ranges
+[    0.000000] psci: probing for conduit method from DT.
+[    0.000000] psci: Using PSCI v0.1 Function IDs from DT
+[    0.000000] WARNING: x1-x3 nonzero in violation of boot protocol:
+[    0.000000] 	x1: 0000000080000000
+[    0.000000] 	x2: 00000000000b0000
+[    0.000000] 	x3: 00000000800b0000
+[    0.000000] This indicates a broken bootloader or old kernel
+[    0.000000] percpu: Embedded 14 pages/cpu s25504 r0 d31840 u57344
+[    0.000000] pcpu-alloc: s25504 r0 d31840 u57344 alloc=14*4096
+[    0.000000] pcpu-alloc: [0] 0 [0] 1 [0] 2 [0] 3 [0] 4 [0] 5 [0] 6 [0] 7 
+[    0.000000] Detected VIPT I-cache on CPU0
+[    0.000000] alternatives: applying boot alternatives
+[    0.000000] Kernel command line: console=tty0 loglevel=7 ignore_loglevel maxcpus=1 console=ram loglevel=4 sec_debug.pcb_offset=7346944 sec_debug.smd_offset=7348992 sec_debug.lpddr4_size=4 sec_debug.dram_info=01,06,01,4G sec_debug.pwrsrc_rs=0x0001000820000000 sec_debug.reset_reason=7 sec_reset.reset_reason=7 sec_debug.reset_rwc=1 sec_debug.level=0 sec_watchdog.sec_pet=5 androidboot.debug_level=0x4f4c androidboot.force_upload=0x0 softdog.soft_margin=100 softdog.soft_panic=1 sec_debug.dump_sink=0x0 sec_debug.upload_count=0 androidboot.dram_info=01,06,01,4G androidboot.fmm_lock=0 sec_debug.fmm_lock_offset=7340600 sec_debug.sjl=1 androidboot.sn.param.offset=7343024 androidboot.prototype.param.offset=7351040 androidboot.recovery_offset=7355136 printk.devkmsg=on ess_setup=0xf9000000 sec_avc_log=0x40000@0x91202000 sec_tsp_log=0x40000@0x91244000 sec_disp_log=0x100000@0x91286000 sec_debug_next=0x800000@0x91388000 charging_mode=0x3000 s3cfb.bootloaderfb=0xca000000 lcdtype=9453571 androidboot.carrierid.param.offset=7340608 \
+[    0.000000] Kernel command line: androidboot.carrierid=BKD consoleblank=0 ehci_hcd.park=3 oops=panic pmic_info=27 ccic_info=1 fg_reset=0 androidboot.emmc_checksum=3 androidboot.sales.param.offset=7340572 sales_code=BKD androidboot.odin_download=1 androidboot.bootloader=A505FDDS9CWA2 androidboot.selinux=enforcing androidboot.product.model=SM-A505F androidboot.ucs_mode=0 androidboot.revision=6 androidboot.hardware=exynos9610 androidboot.warranty_bit=1 androidboot.wb.hs=0e03 androidboot.rp=9 androidboot.wb.snapQB=CUSTOM sec_debug.bin=A androidboot.hmac_mismatch=0 androidboot.sec_atd.tty=/dev/ttySAC0 androidboot.serialno=<redacted> androidboot.ap_serial=<redacted> snd_soc_core.pmdown_time=1000 androidboot.cp_reserved_mem=off skip_initramfs rootwait ro init=/init root=/dev/sda25 androidboot.dtbo_idx=5 androidboot.fmp_config=0 androidboot.em.did=<redacted> androidboot.em.model=SM-A505F androidboot.em.status=0x0 androidboot.sb.debug0=0x0 androidboot.verifiedbootstate=orange androidboot.svb.ver=SVB1.0 \
+[    0.000000] Kernel command line: bcm_setup=0xffffff80f8e00000 reserve-fimc=0xffffff80f9fe0000 firmw
+[    0.000000] Unknown kernel command line parameters "firmw ess_setup=0xf9000000 sec_avc_log=0x40000@0x91202000 sec_tsp_log=0x40000@0x91244000 sec_disp_log=0x100000@0x91286000 sec_debug_next=0x800000@0x91388000 charging_mode=0x3000 lcdtype=9453571 pmic_info=27 ccic_info=1 fg_reset=0 sales_code=BKD bcm_setup=0xffffff80f8e00000 reserve-fimc=0xffffff80f9fe0000", will be passed to user space.
+[    0.000000] printk: log buffer data + meta data: 131072 + 458752 = 589824 bytes
+[    0.000000] Dentry cache hash table entries: 524288 (order: 10, 4194304 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 262144 (order: 9, 2097152 bytes, linear)
+[    0.000000] software IO TLB: area num 8.
+[    0.000000] software IO TLB: mapped [mem 0x00000000e5400000-0x00000000e9400000] (64MB)
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 1020416
+[    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=8, Nodes=1
+[    0.000000] rcu: Hierarchical RCU implementation.
+[    0.000000] rcu: 	RCU restricting CPUs from NR_CPUS=512 to nr_cpu_ids=8.
+[    0.000000] rcu: RCU calculated value of scheduler-enlistment delay is 25 jiffies.
+[    0.000000] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=8
+[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000] Root IRQ handler: gic_handle_irq
+[    0.000000] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.000000] arch_timer: cp15 timer running at 26.00MHz (virt).
+[    0.000000] clocksource: arch_sys_counter: mask: 0xffffffffffffff max_cycles: 0x5ff13d5a9, max_idle_ns: 440795202370 ns
+[    0.000000] sched_clock: 56 bits at 26MHz, resolution 38ns, wraps every 4398046511088ns
+[    0.000085] Console: colour dummy device 80x25
+[    0.000094] printk: legacy console [tty0] enabled
+[    0.000845] Calibrating delay loop (skipped), value calculated using timer frequency.. 52.00 BogoMIPS (lpj=104000)
+[    0.000869] pid_max: default: 32768 minimum: 301
+[    0.000970] Mount-cache hash table entries: 8192 (order: 4, 65536 bytes, linear)
+[    0.001001] Mountpoint-cache hash table entries: 8192 (order: 4, 65536 bytes, linear)
+[    0.001836] cacheinfo: Unable to detect cache hierarchy for CPU 0
+[    0.002506] rcu: Hierarchical SRCU implementation.
+[    0.002528] rcu: 	Max phase no-delay instances is 1000.
+[    0.003020] smp: Bringing up secondary CPUs ...
+[    0.003041] smp: Brought up 1 node, 1 CPU
+[    0.003052] SMP: Total of 1 processors activated.
+[    0.003062] CPU: All CPU(s) started at EL1
+[    0.003073] CPU features: detected: 32-bit EL0 Support
+[    0.003085] CPU features: detected: CRC32 instructions
+[    0.003123] alternatives: applying system-wide alternatives
+[    0.003476] Memory: 3624764K/4081664K available (3008K kernel code, 666K rwdata, 808K rodata, 2368K init, 397K bss, 453144K reserved, 0K cma-reserved)
+[    0.003971] devtmpfs: initialized
+[    0.005794] A50DIAG: DSS readout armed (buf 1 hdr 1 log 1 pmu 1), dump_after=25
+[    0.005890] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+[    0.005928] posixtimers hash table entries: 4096 (order: 4, 65536 bytes, linear)
+[    0.006017] futex hash table entries: 2048 (131072 bytes on 1 NUMA nodes, total 128 KiB, linear).
+[    0.006060] pinctrl core: initialized pinctrl subsystem
+[    0.006800] DMA: preallocated 512 KiB GFP_KERNEL pool for atomic allocations
+[    0.006907] DMA: preallocated 512 KiB GFP_KERNEL|GFP_DMA pool for atomic allocations
+[    0.007446] ASID allocator initialised with 65536 entries
+[    0.007933] /soc@0/interrupt-controller@12301000: Fixed dependency cycle(s) with /soc@0/interrupt-controller@12301000
+[    0.009113] clocksource: Switched to clocksource arch_sys_counter
+[    0.018044] workingset: timestamp_bits=62 max_order=20 bucket_order=0
+[    0.018490] simple-framebuffer ca000000.framebuffer: framebuffer at 0xca000000, 0x9a3f80 bytes
+[    0.018517] simple-framebuffer ca000000.framebuffer: format=a8r8g8b8, mode=1080x2340x32, linelength=4320
+[    0.018801] Console: switching to colour frame buffer device 67x73
+[    0.033412] simple-framebuffer ca000000.framebuffer: fb0: simplefb registered!
+[    1.072709] Unpacking initramfs...
+[   15.076662] clk: Disabling unused clocks
+[   15.077578] Freeing unused kernel memory: 2368K
+[   15.077853] Run /init as init process
+[   15.077936]   with arguments:
+[   15.078000]     /init
+[   15.078052]     firmw
+[   15.078103]   with environment:
+[   15.078171]     HOME=/
+[   15.078226]     TERM=linux
+[   15.078285]     ess_setup=0xf9000000
+[   15.078361]     sec_avc_log=0x40000@0x91202000
+[   15.078454]     sec_tsp_log=0x40000@0x91244000
+[   15.078546]     sec_disp_log=0x100000@0x91286000
+[   15.078641]     sec_debug_next=0x800000@0x91388000
+[   15.078739]     charging_mode=0x3000
+[   15.078814]     lcdtype=9453571
+[   15.078883]     pmic_info=27
+[   15.078945]     ccic_info=1
+[   15.079006]     fg_reset=0
+[   15.079066]     sales_code=BKD
+[   15.079132]     bcm_setup=0xffffff80f8e00000
+[   15.079220]     reserve-fimc=0xffffff80f9fe0000
+[   15.092821] a50-m32: init started, Linux 6.18.33-a50-diag+, uptime 15.09 s
+[   15.096385] a50-m32: cmdline: console=tty0 loglevel=7 ignore_loglevel maxcpus=1 console=ram loglevel=4 sec_debug.pcb_offset=7346944 sec_debug.smd_offset=7348992 sec_debug.lpddr4_size=4 sec_d
+[   15.098881] a50-m32: DT model: Samsung Galaxy A50 (SM-A505F)
+[   15.100979] a50-m32: dump_after: 25
+[   15.102470] a50-m32: T-40 uptime 15.10
+[   16.106513] a50-m32: T-39 uptime 16.10
+[   17.110491] a50-m32: T-38 uptime 17.10
+[   18.114492] a50-m32: T-37 uptime 18.11
+[   19.118486] a50-m32: T-36 uptime 19.11
+[   20.122498] a50-m32: T-35 uptime 20.12
+[   21.126485] a50-m32: T-34 uptime 21.12
+[   22.130489] a50-m32: T-33 uptime 22.12
+[   23.134495] a50-m32: T-32 uptime 23.13
+[   24.138487] a50-m32: T-31 uptime 24.13
+[   25.142494] a50-m32: T-30 uptime 25.14
+===== A50 6.18 DMESG END =====
