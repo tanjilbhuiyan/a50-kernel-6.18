@@ -1,0 +1,142 @@
+From 5bd219921a85a70ed65ab54b32ec231c408febc4 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Sat, 7 Nov 2026 01:32:44 +0600
+Subject: [PATCH] arm64: A50 diag v4: reset bisection points 10-16 in
+ start_kernel/kernel_init_freeable
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I7b7bf7a72d4515401bdd028ed4077bf963ee81ff
+---
+ arch/arm64/Kconfig.debug     |  4 +++-
+ arch/arm64/kernel/a50_diag.c | 14 ++++++++++++++
+ init/main.c                  | 14 ++++++++++++++
+ 3 files changed, 31 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/Kconfig.debug b/arch/arm64/Kconfig.debug
+index f57b196f5..2fa160e40 100644
+--- a/arch/arm64/Kconfig.debug
++++ b/arch/arm64/Kconfig.debug
+@@ -31,11 +31,13 @@ config A50_DIAG
+ config A50_DIAG_RESET_STAGE
+ 	int "A50 diag: reset the SoC on reaching stage N (0 = never)"
+ 	depends on A50_DIAG
+-	range 0 3
++	range 0 16
+ 	default 0
+ 	help
+ 	  Writes 1 to the Exynos9610 PMU SWRESET register at the start of
+ 	  diagnostic stage N (1 setup_arch, 2 arch_initcall, 3 late_initcall).
+ 	  The resulting boot loop is the only observable signal on the phone.
++	  10..16: bisection points in start_kernel()/kernel_init_freeable(),
++	  see A50_POINT() in init/main.c.
+ 
+ source "drivers/hwtracing/coresight/Kconfig"
+diff --git a/arch/arm64/kernel/a50_diag.c b/arch/arm64/kernel/a50_diag.c
+index 6b60fd34e..990d7f43f 100644
+--- a/arch/arm64/kernel/a50_diag.c
++++ b/arch/arm64/kernel/a50_diag.c
+@@ -15,6 +15,7 @@
+ #include <linux/arm-smccc.h>
+ #include <asm/early_ioremap.h>
+ #include <asm/cacheflush.h>
++#include <linux/slab.h>
+ 
+ #define FB_PHYS		0xca000000UL
+ #define ROW_BYTES	4320UL
+@@ -50,6 +51,19 @@ static void __init a50_fill(void __iomem *p, size_t bytes, u32 argb)
+ 		writel_relaxed(argb, p + i);
+ }
+ 
++/*
++ * Bisection points (CONFIG_A50_DIAG_RESET_STAGE = 10..16): reset the SoC when
++ * point n is reached. early_ioremap() before the slab allocator, ioremap() after.
++ */
++void __init a50_diag_point(int n)
++{
++	if (n != CONFIG_A50_DIAG_RESET_STAGE)
++		return;
++	if (slab_is_available())
++		a50_reset_now(ioremap(PMU_PHYS, 0x1000));
++	a50_reset_now(early_ioremap(PMU_PHYS, 0x1000));
++}
++
+ /* Stage 1: setup_arch(), only early_ioremap() exists yet. */
+ void __init a50_diag_stage1(void)
+ {
+diff --git a/init/main.c b/init/main.c
+index 3e5287361..437dd20e9 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -116,6 +116,13 @@
+ 
+ #include <kunit/test.h>
+ 
++#ifdef CONFIG_A50_DIAG
++void __init a50_diag_point(int n);
++#define A50_POINT(n) a50_diag_point(n)
++#else
++#define A50_POINT(n) do { } while (0)
++#endif
++
+ static int kernel_init(void *);
+ 
+ /*
+@@ -1053,6 +1060,7 @@ void start_kernel(void)
+ 	setup_arch_task_struct_size();
+ #endif
+ 	setup_arch(&command_line);
++	A50_POINT(10);
+ 	/* Static keys and static calls are needed by LSMs */
+ 	jump_label_init();
+ 	static_call_init();
+@@ -1092,6 +1100,7 @@ void start_kernel(void)
+ 	sort_main_extable();
+ 	trap_init();
+ 	mm_core_init();
++	A50_POINT(11);
+ 	maple_tree_init();
+ 	poking_init();
+ 	ftrace_init();
+@@ -1145,6 +1154,7 @@ void start_kernel(void)
+ 	softirq_init();
+ 	timekeeping_init();
+ 	time_init();
++	A50_POINT(12);
+ 
+ 	/* This must be after timekeeping is initialized */
+ 	random_init();
+@@ -1160,6 +1170,7 @@ void start_kernel(void)
+ 
+ 	early_boot_irqs_disabled = false;
+ 	local_irq_enable();
++	A50_POINT(13);
+ 
+ 	kmem_cache_init_late();
+ 
+@@ -1198,6 +1209,7 @@ void start_kernel(void)
+ 		late_time_init();
+ 	sched_clock_init();
+ 	calibrate_delay();
++	A50_POINT(14);
+ 
+ 	arch_cpu_finalize_init();
+ 
+@@ -1231,6 +1243,7 @@ void start_kernel(void)
+ 	kcsan_init();
+ 
+ 	/* Do the rest non-__init'ed, we're now alive */
++	A50_POINT(15);
+ 	rest_init();
+ 
+ 	/*
+@@ -1713,6 +1726,7 @@ static noinline void __init kernel_init_freeable(void)
+ 	padata_init();
+ 	page_alloc_init_late();
+ 
++	A50_POINT(16);
+ 	do_basic_setup();
+ 
+ 	kunit_run_all_tests();
+-- 
+2.56.0
+
