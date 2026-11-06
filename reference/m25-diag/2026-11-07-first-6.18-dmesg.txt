@@ -1,0 +1,235 @@
+# First Linux 6.18 boot log from the Galaxy A50 (2026-11-07, Test 19). Read back via the debug-snapshot
+# log_kernel buffer and the baseline's /proc/last_kmsg. Device identifiers redacted (3).
+===== A50 6.18 DMESG BEGIN =====
+[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x410fd034]
+[    0.000000] Linux version 6.18.33-a50-diag+ (a50@firstlight) (Android (15323222, +pgo, +bolt, +lto, +mlgo, based on r584948c) clang version 22.0.1 (https://android.googlesource.com/toolchain/llvm-project 2d65e4108033380e6fe8e08b1f1826cd2bfb0c99), LLD 22.0.1 (/mnt/disks/build-disk/src/googleplex-android/llvm-r584948-release/out/llvm-project/llvm 2d65e4108033380e6fe8e08b1f1826cd2bfb0c99)) #1 SMP Wed Nov  4 00:00:00 UTC 2026
+[    0.000000] Machine model: Samsung A50 SWA OPEN rev04 board based on Exynos9610
+[    0.000000] printk: debug: ignoring loglevel setting.
+[    0.000000] [Firmware Bug]: Kernel image misaligned at boot, please fix your bootloader!
+[    0.000000] OF: reserved mem: 0x00000000e4c00000..0x00000000e93fffff (73728 KiB) map non-reusable ion_video_stream
+[    0.000000] OF: reserved mem: 0x00000008fcc00000..0x00000008fe3fffff (24576 KiB) map non-reusable ion_crypto
+[    0.000000] OF: reserved mem: 0x00000008fbc00000..0x00000008fcbfffff (16384 KiB) map non-reusable wifibt_if
+[    0.000000] OF: reserved mem: 0x00000000c0000000..0x00000000c007ffff (512 KiB) map non-reusable seclog_mem
+[    0.000000] OF: reserved mem: 0x00000000e9400000..0x00000000ebbfffff (40960 KiB) map non-reusable abox_rmem@0xE9400000
+[    0.000000] OF: reserved mem: 0x0000000080000000..0x0000000080000fff (4 KiB) map non-reusable sec_debug_magic
+[    0.000000] OF: reserved mem: 0x00000000ed000000..0x00000000f59fffff (141312 KiB) map non-reusable modem_if
+[    0.000000] OF: reserved mem: 0x00000000f5a00000..0x00000000f77fffff (30720 KiB) map non-reusable cp_ram_logging
+[    0.000000] OF: reserved mem: 0x00000000fd000000..0x00000000fd07ffff (512 KiB) map non-reusable chub_rmem
+[    0.000000] OF: reserved mem: 0x00000000fb000000..0x00000000fb7fffff (8192 KiB) map non-reusable gnss_if
+[    0.000000] OF: reserved mem: 0x00000000b8000000..0x00000000b84fffff (5120 KiB) map non-reusable vipx_fw_rmem@0xB8000000
+[    0.000000] OF: reserved mem: 0x0000000087000000..0x00000000871fffff (2048 KiB) map non-reusable el2_code
+[    0.000000] OF: reserved mem: 0x00000008fe600000..0x00000008ffffffff (26624 KiB) map non-reusable el2_earlymem
+[    0.000000] OF: reserved mem: 0x0000000080001000..0x0000000080001fff (4 KiB) map non-reusable kaslr
+[    0.000000] Zone ranges:
+[    0.000000]   DMA      [mem 0x0000000080000000-0x00000000ffffffff]
+[    0.000000]   DMA32    empty
+[    0.000000]   Normal   [mem 0x0000000100000000-0x00000008ffffffff]
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000080000000-0x00000000baafffff]
+[    0.000000]   node   0: [mem 0x00000000c0000000-0x00000000dfffffff]
+[    0.000000]   node   0: [mem 0x00000000e1900000-0x00000000ffffffff]
+[    0.000000]   node   0: [mem 0x0000000880000000-0x00000008ffffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000080000000-0x00000008ffffffff]
+[    0.000000] On node 0, zone DMA: 21760 pages in unavailable ranges
+[    0.000000] On node 0, zone DMA: 6400 pages in unavailable ranges
+[    0.000000] psci: probing for conduit method from DT.
+[    0.000000] psci: Using PSCI v0.1 Function IDs from DT
+[    0.000000] WARNING: x1-x3 nonzero in violation of boot protocol:
+[    0.000000] 	x1: 0000000080000000
+[    0.000000] 	x2: 0000000000080000
+[    0.000000] 	x3: 0000000080080000
+[    0.000000] This indicates a broken bootloader or old kernel
+[    0.000000] percpu: Embedded 14 pages/cpu s25120 r0 d32224 u57344
+[    0.000000] pcpu-alloc: s25120 r0 d32224 u57344 alloc=14*4096
+[    0.000000] pcpu-alloc: [0] 0 [0] 1 [0] 2 [0] 3 [0] 4 [0] 5 [0] 6 [0] 7 
+[    0.000000] Detected VIPT I-cache on CPU0
+[    0.000000] alternatives: applying boot alternatives
+[    0.000000] Kernel command line: console=tty0 loglevel=7 ignore_loglevel maxcpus=1  console=ram loglevel=4 sec_debug.pcb_offset=7346944 sec_debug.smd_offset=7348992 sec_debug.lpddr4_size=4 sec_debug.dram_info=01,06,01,4G sec_debug.pwrsrc_rs=0x0001000820000000 sec_debug.reset_reason=7 sec_reset.reset_reason=7 sec_debug.reset_rwc=1 sec_debug.level=0 sec_watchdog.sec_pet=5 androidboot.debug_level=0x4f4c androidboot.force_upload=0x0 softdog.soft_margin=100 softdog.soft_panic=1 sec_debug.dump_sink=0x0 sec_debug.upload_count=0 androidboot.dram_info=01,06,01,4G androidboot.fmm_lock=0 sec_debug.fmm_lock_offset=7340600 sec_debug.sjl=1 androidboot.sn.param.offset=7343024 androidboot.prototype.param.offset=7351040 androidboot.recovery_offset=7355136 printk.devkmsg=on ess_setup=0xf9000000 sec_avc_log=0x40000@0x91202000 sec_tsp_log=0x40000@0x91244000 sec_disp_log=0x100000@0x91286000 sec_debug_next=0x800000@0x91388000 charging_mode=0x3000 s3cfb.bootloaderfb=0xca000000 lcdtype=9453571 androidboot.carrierid.param.offset=7340608 \
+[    0.000000] Kernel command line: androidboot.carrierid=BKD consoleblank=0 ehci_hcd.park=3 oops=panic pmic_info=27 ccic_info=1 fg_reset=0 androidboot.emmc_checksum=3 androidboot.sales.param.offset=7340572 sales_code=BKD androidboot.odin_download=1 androidboot.bootloader=A505FDDS9CWA2 androidboot.selinux=enforcing androidboot.product.model=SM-A505F androidboot.ucs_mode=0 androidboot.revision=6 androidboot.hardware=exynos9610 androidboot.warranty_bit=1 androidboot.wb.hs=0e03 androidboot.rp=9 androidboot.wb.snapQB=CUSTOM sec_debug.bin=A androidboot.hmac_mismatch=0 androidboot.sec_atd.tty=/dev/ttySAC0 androidboot.serialno=<redacted> androidboot.ap_serial=<redacted> snd_soc_core.pmdown_time=1000 androidboot.cp_reserved_mem=off skip_initramfs rootwait ro init=/init root=/dev/sda25 androidboot.dtbo_idx=5 androidboot.fmp_config=0 androidboot.em.did=<redacted> androidboot.em.model=SM-A505F androidboot.em.status=0x0 androidboot.sb.debug0=0x0 androidboot.verifiedbootstate=orange androidboot.svb.ver=SVB1.0 \
+[    0.000000] Kernel command line: bcm_setup=0xffffff80f8e00000 reserve-fimc=0xffffff80f9fe0000 firm
+[    0.000000] Unknown kernel command line parameters "firm ess_setup=0xf9000000 sec_avc_log=0x40000@0x91202000 sec_tsp_log=0x40000@0x91244000 sec_disp_log=0x100000@0x91286000 sec_debug_next=0x800000@0x91388000 charging_mode=0x3000 lcdtype=9453571 pmic_info=27 ccic_info=1 fg_reset=0 sales_code=BKD bcm_setup=0xffffff80f8e00000 reserve-fimc=0xffffff80f9fe0000", will be passed to user space.
+[    0.000000] printk: log buffer data + meta data: 131072 + 458752 = 589824 bytes
+[    0.000000] Dentry cache hash table entries: 524288 (order: 10, 4194304 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 262144 (order: 9, 2097152 bytes, linear)
+[    0.000000] software IO TLB: area num 8.
+[    0.000000] software IO TLB: mapped [mem 0x00000000dc000000-0x00000000e0000000] (64MB)
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 1020416
+[    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=8, Nodes=1
+[    0.000000] rcu: Hierarchical RCU implementation.
+[    0.000000] rcu: 	RCU restricting CPUs from NR_CPUS=512 to nr_cpu_ids=8.
+[    0.000000] rcu: RCU calculated value of scheduler-enlistment delay is 25 jiffies.
+[    0.000000] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=8
+[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000] Root IRQ handler: gic_handle_irq
+[    0.000000] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.000000] arch_timer: cp15 timer running at 26.00MHz (virt).
+[    0.000000] clocksource: arch_sys_counter: mask: 0xffffffffffffff max_cycles: 0x5ff13d5a9, max_idle_ns: 440795202370 ns
+[    0.000000] sched_clock: 56 bits at 26MHz, resolution 38ns, wraps every 4398046511088ns
+[    0.000015] mct_init_dt: skipped (CONFIG_A50_DIAG_SKIP_MCT)
+[    0.000977] Console: colour dummy device 80x25
+[    0.000992] printk: legacy console [tty0] enabled
+[    0.001640] Calibrating delay loop (skipped), value calculated using timer frequency.. 52.00 BogoMIPS (lpj=104000)
+[    0.001664] pid_max: default: 32768 minimum: 301
+[    0.001769] Mount-cache hash table entries: 8192 (order: 4, 65536 bytes, linear)
+[    0.001801] Mountpoint-cache hash table entries: 8192 (order: 4, 65536 bytes, linear)
+[    0.002430] /cpus/cpu-map/cluster0: empty cluster
+[    0.002465] /cpus/cpu-map/cluster1: empty cluster
+[    0.002629] cacheinfo: Unable to detect cache hierarchy for CPU 0
+[    0.003278] rcu: Hierarchical SRCU implementation.
+[    0.003299] rcu: 	Max phase no-delay instances is 1000.
+[    0.003803] smp: Bringing up secondary CPUs ...
+[    0.003824] smp: Brought up 1 node, 1 CPU
+[    0.003836] SMP: Total of 1 processors activated.
+[    0.003845] CPU: All CPU(s) started at EL1
+[    0.003856] CPU features: detected: 32-bit EL0 Support
+[    0.003868] CPU features: detected: CRC32 instructions
+[    0.003908] alternatives: applying system-wide alternatives
+[    0.004282] Memory: 3551884K/4081664K available (3008K kernel code, 666K rwdata, 808K rodata, 2368K init, 397K bss, 526032K reserved, 0K cma-reserved)
+[    0.004777] devtmpfs: initialized
+[    0.028043] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+[    0.028107] posixtimers hash table entries: 4096 (order: 4, 65536 bytes, linear)
+[    0.028227] futex hash table entries: 2048 (131072 bytes on 1 NUMA nodes, total 128 KiB, linear).
+[    0.028279] pinctrl core: initialized pinctrl subsystem
+[    0.029038] DMA: preallocated 512 KiB GFP_KERNEL pool for atomic allocations
+[    0.029144] DMA: preallocated 512 KiB GFP_KERNEL|GFP_DMA pool for atomic allocations
+[    0.029561] ------------[ cut here ]------------
+[    0.029572] WARNING: CPU: 0 PID: 1 at arch/arm64/mm/ioremap.c:27 __ioremap_prot+0x88/0xb8
+[    0.029601] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.18.33-a50-diag+ #1 NONE 
+[    0.029620] Hardware name: Samsung A50 SWA OPEN rev04 board based on Exynos9610 (DT)
+[    0.029634] pstate: 40000005 (nZcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[    0.029650] pc : __ioremap_prot+0x88/0xb8
+[    0.029663] lr : __ioremap_prot+0x54/0xb8
+[    0.029676] sp : ffff800080043d30
+[    0.029686] x29: ffff800080043d30 x28: 0000000000000000 x27: 0000000000000000
+[    0.029709] x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000034bc0
+[    0.029730] x23: 0000000000000300 x22: 006800000000040b x21: 006800000000070b
+[    0.029752] x20: 00000000ca07e900 x19: 0000000000034bc0 x18: 0000000014ecdbd7
+[    0.029772] x17: 00000000eeaea64a x16: 00000000bcfa15e1 x15: 000000009d4ac250
+[    0.029794] x14: 00000000c0000000 x13: ffff800080785ba8 x12: 0000000000000001
+[    0.029814] x11: 00000000e0000000 x10: 0000000000000002 x9 : 0000000000000018
+[    0.029835] x8 : 0000000000000000 x7 : 0000000015b20123 x6 : 0000000015b20123
+[    0.029854] x5 : ffff800080745d20 x4 : ffff800080043d70 x3 : 0000000005d061da
+[    0.029875] x2 : 006800000000070b x1 : 0000000000034bc0 x0 : 0000000000000000
+[    0.029898] Call trace:
+[    0.029907]  __ioremap_prot+0x88/0xb8 (P)
+[    0.029924]  a50_diag_stage2+0x58/0x164
+[    0.029940]  do_one_initcall+0x64/0x12c
+[    0.029956]  do_initcall_level+0x9c/0xcc
+[    0.029970]  do_initcalls+0x50/0x8c
+[    0.029984]  do_basic_setup+0x14/0x1c
+[    0.029998]  kernel_init_freeable+0x88/0xe4
+[    0.030014]  kernel_init+0x1c/0x118
+[    0.030030]  ret_from_fork+0x10/0x20
+[    0.030048] ---[ end trace 0000000000000000 ]---
+[    0.030247] ------------[ cut here ]------------
+[    0.030256] WARNING: CPU: 0 PID: 1 at arch/arm64/mm/ioremap.c:27 __ioremap_prot+0x88/0xb8
+[    0.030278] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Tainted: G        W           6.18.33-a50-diag+ #1 NONE 
+[    0.030298] Tainted: [W]=WARN
+[    0.030306] Hardware name: Samsung A50 SWA OPEN rev04 board based on Exynos9610 (DT)
+[    0.030318] pstate: 40000005 (nZcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[    0.030333] pc : __ioremap_prot+0x88/0xb8
+[    0.030346] lr : __ioremap_prot+0x54/0xb8
+[    0.030361] sp : ffff800080043d30
+[    0.030369] x29: ffff800080043d30 x28: 0000000000000000 x27: 0000000000000000
+[    0.030390] x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000034bc0
+[    0.030412] x23: 0000000000000300 x22: 006800000000040b x21: 006800000000070b
+[    0.030433] x20: 00000000f9030000 x19: 0000000000001000 x18: 0000000014ecdbd7
+[    0.030453] x17: 00000000eeaea64a x16: 00000000bcfa15e1 x15: 000000009d4ac250
+[    0.030475] x14: 00000000e1900000 x13: ffff800080785bc0 x12: 0000000000000002
+[    0.030496] x11: 0000000100000000 x10: 0000000000000004 x9 : 0000000000000018
+[    0.030519] x8 : 0000000000000000 x7 : 0000000015b20123 x6 : 0000000015b20123
+[    0.030538] x5 : ffff800080745d20 x4 : ffff800080043d70 x3 : 000000000000003f
+[    0.030560] x2 : 006800000000070b x1 : 0000000000001000 x0 : 0000000000000000
+[    0.030580] Call trace:
+[    0.030589]  __ioremap_prot+0x88/0xb8 (P)
+[    0.030604]  a50_diag_stage2+0xe0/0x164
+[    0.030618]  do_one_initcall+0x64/0x12c
+[    0.030632]  do_initcall_level+0x9c/0xcc
+[    0.030648]  do_initcalls+0x50/0x8c
+[    0.030662]  do_basic_setup+0x14/0x1c
+[    0.030677]  kernel_init_freeable+0x88/0xe4
+[    0.030692]  kernel_init+0x1c/0x118
+[    0.030707]  ret_from_fork+0x10/0x20
+[    0.030724] ---[ end trace 0000000000000000 ]---
+[    0.030738] ASID allocator initialised with 65536 entries
+[    0.033957] /pinctrl@11850000: Fixed dependency cycle(s) with /pinctrl@11850000/initial-state
+[    0.035728] /pinctrl@11C20000: Fixed dependency cycle(s) with /pinctrl@11C20000/sleep-state
+[    0.035757] /pinctrl@11C20000: Fixed dependency cycle(s) with /pinctrl@11C20000/initial-state
+[    0.036258] /pinctrl@14A60000: Fixed dependency cycle(s) with /pinctrl@14A60000/sleep-state
+[    0.037099] /pinctrl@13490000: Fixed dependency cycle(s) with /pinctrl@13490000/sleep-state
+[    0.037124] /pinctrl@13490000: Fixed dependency cycle(s) with /pinctrl@13490000/initial-state
+[    0.039251] /pinctrl@139B0000: Fixed dependency cycle(s) with /pinctrl@139B0000/sleep-state
+[    0.039277] /pinctrl@139B0000: Fixed dependency cycle(s) with /pinctrl@139B0000/initial-state
+[    0.058479] exynos-pmu exynos-pmu: error -22: invalid resource (null)
+[    0.058514] exynos-pmu exynos-pmu: probe with driver exynos-pmu failed with error -22
+[    0.072030] OF: /i2c@20/tc3xxk@20: could not find phandle 1953658213
+[    0.074409] clocksource: Switched to clocksource arch_sys_counter
+[    0.083528] workingset: timestamp_bits=62 max_order=20 bucket_order=0
+[    0.107397] A50DIAG: dumping printk log to DSS log_kernel, then reboot to download
+[    0.107501] ------------[ cut here ]------------
+[    0.107512] WARNING: CPU: 0 PID: 1 at arch/arm64/mm/ioremap.c:27 __ioremap_prot+0x88/0xb8
+[    0.107544] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Tainted: G        W           6.18.33-a50-diag+ #1 NONE 
+[    0.107565] Tainted: [W]=WARN
+[    0.107574] Hardware name: Samsung A50 SWA OPEN rev04 board based on Exynos9610 (DT)
+[    0.107589] pstate: 40000005 (nZcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[    0.107604] pc : __ioremap_prot+0x88/0xb8
+[    0.107618] lr : __ioremap_prot+0x54/0xb8
+[    0.107631] sp : ffff800080043cb0
+[    0.107640] x29: ffff800080043cb0 x28: 0000000000000000 x27: 0000000000000000
+[    0.107664] x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
+[    0.107685] x23: 0000000000000000 x22: 0000000000000000 x21: 006800000000070b
+[    0.107706] x20: 00000000f9000000 x19: 0000000000001000 x18: 0000000000200000
+[    0.107727] x17: 0000000002000000 x16: ffffc1ffc0000000 x15: 0040000000000000
+[    0.107748] x14: 00000000e1900000 x13: ffff800080785bc0 x12: 0000000000000002
+[    0.107768] x11: 0000000100000000 x10: 0000000000000004 x9 : 0000000000000018
+[    0.107790] x8 : 0000000000000000 x7 : ffff800080a9d000 x6 : ffff80008078b000
+[    0.107810] x5 : 0000000040000000 x4 : 0000000000002000 x3 : ffff0008000df800
+[    0.107831] x2 : 006800000000070b x1 : 0000000000001000 x0 : 0000000000000000
+[    0.107854] Call trace:
+[    0.107863]  __ioremap_prot+0x88/0xb8 (P)
+[    0.107880]  a50_map+0x48/0x78
+[    0.107894]  a50_dump_to_dss+0x50/0x22c
+[    0.107910]  a50_dump_to_dss+0x0/0x22c
+[    0.107925]  do_one_initcall+0x64/0x12c
+[    0.107941]  do_initcall_level+0x9c/0xcc
+[    0.107956]  do_initcalls+0x50/0x8c
+[    0.107973]  do_basic_setup+0x14/0x1c
+[    0.107987]  kernel_init_freeable+0x88/0xe4
+[    0.108004]  kernel_init+0x1c/0x118
+[    0.108020]  ret_from_fork+0x10/0x20
+[    0.108041] ---[ end trace 0000000000000000 ]---
+[    0.108057] ------------[ cut here ]------------
+[    0.108065] WARNING: CPU: 0 PID: 1 at arch/arm64/mm/ioremap.c:27 __ioremap_prot+0x88/0xb8
+[    0.108087] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Tainted: G        W           6.18.33-a50-diag+ #1 NONE 
+[    0.108106] Tainted: [W]=WARN
+[    0.108115] Hardware name: Samsung A50 SWA OPEN rev04 board based on Exynos9610 (DT)
+[    0.108127] pstate: 40000005 (nZcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[    0.108142] pc : __ioremap_prot+0x88/0xb8
+[    0.108156] lr : __ioremap_prot+0x54/0xb8
+[    0.108169] sp : ffff800080043cb0
+[    0.108178] x29: ffff800080043cb0 x28: 0000000000000000 x27: 0000000000000000
+[    0.108198] x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
+[    0.108220] x23: 0000000000000000 x22: 0000000000000000 x21: 006800000000070b
+[    0.108241] x20: 00000000f9010000 x19: 0000000000200000 x18: 0000000000200000
+[    0.108262] x17: 0000000002000000 x16: ffffc1ffc0000000 x15: 0040000000000000
+[    0.108283] x14: 00000000e1900000 x13: ffff800080785bc0 x12: 0000000000000002
+[    0.108304] x11: 0000000100000000 x10: 0000000000000004 x9 : 0000000000000018
+[    0.108325] x8 : 0000000000000000 x7 : ffff800080a9d000 x6 : ffff80008078b000
+[    0.108346] x5 : 0000000040000000 x4 : 0000000000002000 x3 : 0000000000000000
+[    0.108366] x2 : 006800000000070b x1 : 0000000000200000 x0 : 0000000000000000
+[    0.108388] Call trace:
+[    0.108396]  __ioremap_prot+0x88/0xb8 (P)
+[    0.108411]  a50_map+0x48/0x78
+[    0.108424]  a50_dump_to_dss+0x64/0x22c
+[    0.108438]  a50_dump_to_dss+0x0/0x22c
+[    0.108451]  do_one_initcall+0x64/0x12c
+[    0.108466]  do_initcall_level+0x9c/0xcc
+[    0.108480]  do_initcalls+0x50/0x8c
+[    0.108496]  do_basic_setup+0x14/0x1c
+[    0.108511]  kernel_init_freeable+0x88/0xe4
+[    0.108526]  kernel_init+0x1c/0x118
+[    0.108541]  ret_from_fork+0x10/0x20
+[    0.108558] ---[ end trace 0000000000000000 ]---
+===== A50 6.18 DMESG END =====
