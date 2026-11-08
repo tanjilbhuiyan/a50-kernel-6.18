@@ -15,9 +15,12 @@ settle() { local t=$1 s=$(date +%s) a b; while [ $(( $(date +%s)-s )) -lt "$t" ]
 dl() { lsusb | grep -q "04e8:685d"; }
 waitdl() { local t=$1 s=$(date +%s); while [ $(( $(date +%s)-s )) -lt "$t" ]; do dl && return 0; sleep 2; done; return 1; }
 echo "[$(date +%T)] test image $IMG $(sha256sum "$IMG" | cut -c1-16)"
+# START_IN_DL=1: the phone is already in Download mode, on the baseline (pre-flight passed recently, nothing flashed since).
+if [ -z "${START_IN_DL:-}" ]; then
 tools/m24_preflight.sh "$IP" 2>&1 | tail -1 | grep -q "ALL CHECKS PASSED" || { echo "pre-flight FAILED, stop"; exit 1; }
 timeout 20 ssh -o BatchMode=yes root@"$IP" "sync; setsid nohup sh -c 'sleep 2; systemctl reboot --reboot-argument=download' >/dev/null 2>&1 < /dev/null &" || true
 waitdl 90 || { echo "phone did not reach Download mode by software, stop"; exit 1; }
+else settle 60 || { echo "START_IN_DL: phone not steadily in Download mode, stop (nothing flashed)"; exit 1; }; echo "[$(date +%T)] START_IN_DL: already in Download mode, no pre-flight or software reboot"; fi
 sleep 3; echo "[$(date +%T)] Download mode; flashing our DT + test BOOT with reboot"
 if ! heimdall flash --DTB "$DT" --DTBO "$DTBO" --BOOT "$IMG" 2>&1 | grep -E "upload successful|ERROR|failed"; then
   echo "[$(date +%T)] TEST FLASH FAILED (partitions may be half-written). The phone may show Samsung's 'An error has occurred"
