@@ -17,6 +17,18 @@ if [ -n "$udc" ]; then
   echo 0x1d6b > $g/idVendor; echo 0x0104 > $g/idProduct; echo 0x0200 > $g/bcdUSB
   echo "a50-test" > $g/strings/0x409/serialnumber; echo "A50 6.18" > $g/strings/0x409/manufacturer; echo "A50 ACM test" > $g/strings/0x409/product
   echo "acm" > $g/configs/c.1/strings/0x409/configuration; ln -s $g/functions/acm.GS0 $g/configs/c.1/
+  # sm5713 MUIC (0x25): connect D+/D- to the SoC, the writes Samsung's com_to_usb() does. Gated on the chip's ID.
+  bus=""; for a in /sys/class/i2c-adapter/i2c-*; do case "$(cat $a/name 2>/dev/null)" in *i2c-gpio*|*sm5713*) bus=${a##*i2c-};; esac; done; [ -z "$bus" ] && bus=0
+  say "i2c adapters: $(for a in /sys/class/i2c-adapter/i2c-*; do echo -n "${a##*/}=$(cat $a/name) "; done) using bus $bus"
+  rd() { i2cget -y $bus 0x25 $1 b 2>&1; }
+  id=$(rd 0x00); ms=$(rd 0x06); cfg=$(rd 0x68)
+  say "MUIC before: id=$id cntl=$(rd 0x05) manual_sw=$ms devtype1=$(rd 0x07) devtype2=$(rd 0x08) cfg1=$cfg"
+  if [ "$id" = "0x01" ] && echo "$cfg" | grep -q '^0x[0-9a-f][0-9a-f]$'; then
+    i2cset -y $bus 0x25 0x06 0x09 b; r1=$?
+    new=$(printf '0x%02x' $(( cfg | 0x04 ))); i2cset -y $bus 0x25 0x68 $new b; r2=$?
+    say "MUIC writes: manual_sw=0x09 rc=$r1, cfg1=$new rc=$r2"
+    say "MUIC after: manual_sw=$(rd 0x06) cfg1=$(rd 0x68) cntl=$(rd 0x05)"
+  else say "MUIC id not 0x01 or cfg1 unreadable: NO WRITES"; fi
   echo "$udc" > $g/UDC; say "gadget bound rc=$?"
   ( while :; do [ -c /dev/ttyGS0 ] && setsid sh -c 'exec sh -i </dev/ttyGS0 >/dev/ttyGS0 2>&1'; sleep 1; done ) &
   D=/sys/kernel/debug/usb/13200000.usb
