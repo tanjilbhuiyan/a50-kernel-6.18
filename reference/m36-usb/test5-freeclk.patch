@@ -1,0 +1,35 @@
+diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+index 89963cd77..ba64592da 100644
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -2783,6 +2783,30 @@ static int dwc3_gadget_soft_connect(struct dwc3 *dwc)
+ 	if (ret)
+ 		return ret;
+ 
++	/*
++	 * TEST ONLY (M3.6): 4.14 applies the PHY setup after the core soft
++	 * reset; here the setup runs before it. Clear U2_FREECLK_EXISTS again,
++	 * and log the PHY state at the moment the controller starts.
++	 */
++	{
++		void __iomem *phy = ioremap(0x131d0000, 0x100);
++		u32 before, after;
++
++		before = dwc3_readl(dwc, DWC3_GUSB2PHYCFG(0));
++		if (dwc->dis_u2_freeclk_exists_quirk)
++			dwc3_writel(dwc, DWC3_GUSB2PHYCFG(0),
++				    before & ~DWC3_GUSB2PHYCFG_U2_FREECLK_EXISTS);
++		after = dwc3_readl(dwc, DWC3_GUSB2PHYCFG(0));
++		dev_info(dwc->dev, "A50 CONNECT: GUSB2PHYCFG %08x -> %08x GUCTL %08x\n",
++			 before, after, dwc3_readl(dwc, DWC3_GUCTL));
++		if (phy) {
++			dev_info(dwc->dev, "A50 CONNECT: PHY LINKCTRL %08x CLKRST %08x UTMI %08x HSP %08x HSP_TEST %08x\n",
++				 readl(phy + 0x04), readl(phy + 0x20), readl(phy + 0x50),
++				 readl(phy + 0x54), readl(phy + 0x5c));
++			iounmap(phy);
++		}
++	}
++
+ 	dwc3_event_buffers_setup(dwc);
+ 	__dwc3_gadget_start(dwc);
+ 	return dwc3_gadget_run_stop(dwc, true);
