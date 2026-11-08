@@ -39,6 +39,15 @@ if [ -n "$boot" ]; then
   say "guard test: fsync on the read-only device (SYNCHRONIZE_CACHE if the disk has a write cache)"
   sync "/dev/$boot"; say "sync returned $?"
 fi
+vb=""
+for u in /sys/block/sd*/sd*/uevent; do [ -e "$u" ] || continue
+  if grep -q '^PARTNAME=vbmeta$' "$u"; then vb=$(grep '^DEVNAME=' "$u" | cut -d= -f2); fi
+done
+say "vbmeta partition: ${vb:-NOT FOUND}"
+if [ -n "$vb" ]; then
+  say "vbmeta ro=$(cat /sys/class/block/$vb/ro) bytes=$(blockdev --getsize64 /dev/$vb)"
+  say "VBMETA-FULL $(sha256sum /dev/$vb | cut -d' ' -f1)"
+fi
 grep -i -E "ufs" /sys/kernel/debug/clk/clk_summary 2>/dev/null | head -n 12 | while IFS= read -r l; do say "C| $l"; done
 say "report done; exiting (panic = dump)"
 exit 1
