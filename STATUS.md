@@ -2,7 +2,7 @@
 
 Updated: 2026-11-02 (evening)
 
-## Current milestone: **M3 Storage + USB: M3.1-M3.4 done; M3.5 (UFS read-only): guard + port written and building, NOT booted; first-boot test next**
+## Current milestone: **M3 Storage + USB: M3.1-M3.4 done; M3.5 (UFS read-only): guard + self-test + port built, test image ready (src/m35/boot-m35-test.img b238ed12...), NOT flashed; owner go needed**
 
 M1.1 and M1.2 done. M2.1 and M2.3 done (fb pixel format accepted as a risk, resolve in M2.4). M0.1-M0.3 complete. M1.3 done (`reference/contract/`). NOTE: the M1.5 region choice was corrected on 2026-11-04 (last_kmsg = debug-snapshot log_kernel 0xf9010000; the baseline zeroes log_pstore), see the M1.5 log. M1.4: S-Boot does NOT boot a gzip kernel; use uncompressed `Image`, kernel <= 46,876,672 B. M1.5: after a panic the baseline keeps the log in `/proc/last_kmsg` (sec_debug region 0x91388000); pstore/ramoops at 0xf9d10000 stayed empty. M2.2 done: first-light `Image` 7,170,056 B (reproducible) and `boot-firstlight.img` (`src/m22/artifacts/`). M2.4 is in a diagnostic phase (see below). RESUME HERE: flash `src/m22/artifacts-diag4/boot-diag-D.img` (Test 5: diag v2 image A + the Samsung header magic 0xecefecef at Image offset 0x28; DT stays stock), wait 2 min, roll back BOOT with `heimdall flash --BOOT baseline/ut-26.04-2026-10-19-aa17rf2/boot.img`, boot UT, then `tools/m25_read_markers.sh <ip>`. Marker present = magic was the cause. Details: `log/2026-11-04-M2.4-diag-build.md`.
 

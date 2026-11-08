@@ -1,0 +1,157 @@
+From e32c342cacdf4f6e6a84554dde5c008e7be1bebd Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Sun, 8 Nov 2026 15:15:29 +0600
+Subject: [PATCH] scsi: ufs: core: A50_UFS_SAFE: exhaustive self-test before
+ any UFS traffic
+
+ufshcd_init() refuses to start if the guard's decisions differ from an
+independent numeric list, over all SCSI opcodes and query opcode/idn pairs.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: Id5f42192eb860a178aa87370700f5b682a8d84de
+---
+ drivers/ufs/core/ufshcd.c | 92 +++++++++++++++++++++++++++++++++------
+ 1 file changed, 78 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 3e881a2ec..459c9997a 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -3063,9 +3063,10 @@ static void ufshcd_init_lrb(struct ufs_hba *hba, struct ufshcd_lrb *lrb, int i)
+  * only the SCSI opcodes and query operations listed here reach the device.
+  * set_disk_ro() is not enough, bio_check_ro() only warns.
+  */
+-static bool a50_ufs_scsi_allowed(const struct scsi_cmnd *cmd)
++/* A50-GUARD-BEGIN: pure decisions, no device access (also unit-tested on the host) */
++static noinline bool a50_ufs_scsi_allowed(const u8 *cdb)
+ {
+-	switch (cmd->cmnd[0]) {
++	switch (cdb[0]) {
+ 	case TEST_UNIT_READY:
+ 	case REQUEST_SENSE:
+ 	case READ_6:
+@@ -3079,31 +3080,84 @@ static bool a50_ufs_scsi_allowed(const struct scsi_cmnd *cmd)
+ 	case REPORT_LUNS:
+ 		return true;
+ 	case SERVICE_ACTION_IN_16:
+-		return (cmd->cmnd[1] & 0x1f) == SAI_READ_CAPACITY_16;
++		return (cdb[1] & 0x1f) == SAI_READ_CAPACITY_16;
+ 	default:
+ 		return false;
+ 	}
+ }
+ 
+-/* Only reads and the fDeviceInit handshake pass; a blocked write reports success. */
+-static bool a50_ufs_query_blocked(struct ufs_hba *hba, enum query_opcode opcode,
+-				  u8 idn)
++static noinline bool a50_ufs_query_allowed(int opcode, u8 idn)
+ {
+ 	switch (opcode) {
+ 	case UPIU_QUERY_OPCODE_READ_DESC:
+ 	case UPIU_QUERY_OPCODE_READ_ATTR:
+ 	case UPIU_QUERY_OPCODE_READ_FLAG:
+-		return false;
++		return true;
+ 	case UPIU_QUERY_OPCODE_SET_FLAG:
+-		if (idn == QUERY_FLAG_IDN_FDEVICEINIT)
+-			return false;
+-		fallthrough;
++		return idn == QUERY_FLAG_IDN_FDEVICEINIT;
+ 	default:
+-		dev_warn(hba->dev, "A50_UFS_SAFE: blocked query opcode 0x%x idn 0x%x\n",
+-			 opcode, idn);
+-		return true;
++		return false;
+ 	}
+ }
++
++/*
++ * Exhaustive check of the two decisions above against an independent list of
++ * numeric values (deliberately not the symbolic names used above). Returns the
++ * number of wrong decisions.
++ */
++static noinline int a50_ufs_guard_selftest(void)
++{
++	static const u8 scsi_ok[] = {
++		0x00, 0x03, 0x08, 0x12, 0x1a, 0x1b, 0x25, 0x28, 0x5a, 0x88, 0xa0,
++	};
++	u8 cdb[2] = { 0, 0 };
++	int op, idn, sa, i, errors = 0;
++
++	for (op = 0; op < 256; op++) {
++		bool expect = false;
++
++		if (op == 0x9e)
++			continue;	/* depends on the service action, below */
++		for (i = 0; i < sizeof(scsi_ok); i++)
++			if (scsi_ok[i] == op)
++				expect = true;
++		cdb[0] = op;
++		if (a50_ufs_scsi_allowed(cdb) != expect)
++			errors++;
++	}
++
++	cdb[0] = 0x9e;
++	for (sa = 0; sa < 32; sa++) {
++		cdb[1] = sa;
++		if (a50_ufs_scsi_allowed(cdb) != (sa == 0x10))
++			errors++;
++	}
++
++	for (op = 0; op < 256; op++) {
++		for (idn = 0; idn < 256; idn++) {
++			bool expect = op == 0x01 || op == 0x03 || op == 0x05 ||
++				      (op == 0x06 && idn == 0x01);
++
++			if (a50_ufs_query_allowed(op, idn) != expect)
++				errors++;
++		}
++	}
++
++	return errors;
++}
++/* A50-GUARD-END */
++
++/* A blocked write reports success without reaching the device */
++static noinline bool a50_ufs_query_blocked(struct ufs_hba *hba,
++					   enum query_opcode opcode, u8 idn)
++{
++	if (a50_ufs_query_allowed(opcode, idn))
++		return false;
++
++	dev_warn(hba->dev, "A50_UFS_SAFE: blocked query opcode 0x%x idn 0x%x\n",
++		 opcode, idn);
++	return true;
++}
+ #define A50_UFS_QUERY_GUARD(hba, opcode, idn)				\
+ 	do {								\
+ 		if (a50_ufs_query_blocked(hba, opcode, idn))		\
+@@ -3129,7 +3183,7 @@ static int ufshcd_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
+ 	struct ufs_hw_queue *hwq = NULL;
+ 
+ #ifdef CONFIG_A50_UFS_SAFE
+-	if (!a50_ufs_scsi_allowed(cmd)) {
++	if (!a50_ufs_scsi_allowed(cmd->cmnd)) {
+ 		dev_warn_ratelimited(hba->dev, "A50_UFS_SAFE: blocked SCSI opcode 0x%02x\n",
+ 				     cmd->cmnd[0]);
+ 		scsi_build_sense(cmd, 0, ILLEGAL_REQUEST, 0x20, 0);
+@@ -11095,6 +11149,16 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
+ 	struct Scsi_Host *host = hba->host;
+ 	struct device *dev = hba->dev;
+ 
++#ifdef CONFIG_A50_UFS_SAFE
++	err = a50_ufs_guard_selftest();
++	if (err) {
++		dev_err(hba->dev, "A50_UFS_SAFE: SELF-TEST FAILED (%d wrong decisions), refusing to start UFS\n",
++			err);
++		return -EPERM;
++	}
++	dev_info(hba->dev, "A50_UFS_SAFE: self-test passed, write guard active\n");
++#endif
++
+ 	/*
+ 	 * dev_set_drvdata() must be called before any callbacks are registered
+ 	 * that use dev_get_drvdata() (frequency scaling, clock scaling, hwmon,
+-- 
+2.56.0
+
