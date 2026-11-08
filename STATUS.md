@@ -4,7 +4,7 @@ Updated: 2026-11-02 (evening)
 
 ## Current milestone: **M3 Storage + USB: M3.1-M3.5 done (6.18 reads UFS, writes still blocked by A50_UFS_SAFE); next ticket = M3.6 (USB device mode)**
 
-M1.1 and M1.2 done. M2.1 and M2.3 done (fb pixel format accepted as a risk, resolve in M2.4). M0.1-M0.3 complete. M1.3 done (`reference/contract/`). NOTE: the M1.5 region choice was corrected on 2026-11-04 (last_kmsg = debug-snapshot log_kernel 0xf9010000; the baseline zeroes log_pstore), see the M1.5 log. M1.4: S-Boot does NOT boot a gzip kernel; use uncompressed `Image`, kernel <= 46,876,672 B. M1.5: after a panic the baseline keeps the log in `/proc/last_kmsg` (sec_debug region 0x91388000); pstore/ramoops at 0xf9d10000 stayed empty. M2.2 done: first-light `Image` 7,170,056 B (reproducible) and `boot-firstlight.img` (`src/m22/artifacts/`). M2.4 is in a diagnostic phase (see below). RESUME HERE: flash `src/m22/artifacts-diag4/boot-diag-D.img` (Test 5: diag v2 image A + the Samsung header magic 0xecefecef at Image offset 0x28; DT stays stock), wait 2 min, roll back BOOT with `heimdall flash --BOOT baseline/ut-26.04-2026-10-19-aa17rf2/boot.img`, boot UT, then `tools/m25_read_markers.sh <ip>`. Marker present = magic was the cause. Details: `log/2026-11-04-M2.4-diag-build.md`.
+M1.1 and M1.2 done. M2.1 and M2.3 done (fb pixel format accepted as a risk, resolve in M2.4). M0.1-M0.3 complete. M1.3 done (`reference/contract/`). NOTE: the M1.5 region choice was corrected on 2026-11-04 (last_kmsg = debug-snapshot log_kernel 0xf9010000; the baseline zeroes log_pstore), see the M1.5 log. M1.4: S-Boot does NOT boot a gzip kernel; use uncompressed `Image`, kernel <= 46,876,672 B. M1.5: after a panic the baseline keeps the log in `/proc/last_kmsg` (sec_debug region 0x91388000); pstore/ramoops at 0xf9d10000 stayed empty. M2.2 done: first-light `Image` 7,170,056 B (reproducible) and `boot-firstlight.img` (`src/m22/artifacts/`). M2.4 closed 2026-11-07 (log/2026-11-04-M2.4-diag-build.md).
 
 Summary: M2.1 DT is committed on branch `a50-dt` in `src/ack-6.18/common` (`4fd044c7c`). Open: fb format (resolve in M2.4), RAM bank count, ramoops (M1.5).
 
@@ -55,25 +55,3 @@ Test loop: DT_IMG=<dt.img> tools/m32_run_test.sh IMG OUT IP WAIT; builds tools/m
 On BOOT during a test: the test image, then zeros (Download mode zero-fills). USB can drop in Download mode: reseat the cable; recovery in docs/06-workflow.md.
 Phone: baseline BOOT 7d5855ef..., stock DTB/DTBO, verified 2026-11-08 15:28; IP 192.168.0.171.
 
-## RESUME HERE (2026-11-07)
-6.18 runs on the phone and its boot log was read back: reference/m25-diag/2026-11-07-first-6.18-dmesg.txt.
-How (all in log/2026-11-04-M2.4-diag-build.md, Tests 10-19):
-- Tests 1-9 were blind: the marker channel was overwritten by the hard-reset recovery chain, not refusals by S-Boot.
-- Visible channel: PMU SWRESET (0x11860000+0x400) = boot loop. Bisection found the hang: exynos_mct panics in time_init
-  (stock DT MCT clocks have no 6.18 provider); with A50_DIAG_SKIP_MCT the kernel reaches late_initcall_sync.
-- Readout: 6.18 appends its printk log at the DSS pointer 0xf9000200, writes PMU INFORM3 = 0x12345671, SWRESET ->
-  Download mode by itself -> heimdall flash baseline WITH reboot -> /proc/last_kmsg. Button-free.
-Kernel: branch a50-diag (diag v3-v6, patches in reference/m25-diag/), build `A50_DIAG=1 A50_DIAG_SKIP_MCT=1 A50_DIAG_DUMP_DSS=1
-tools/m22_build.sh OUT`, pack `tools/m22_pack.sh`.
-Owner decision 2026-11-07: M2.4 closed with the DSS-log readout; M2 DoD amended in docs/05-plan.md.
-M3 planned 2026-11-07 (tickets M3.1-M3.7). M3.1 done 2026-11-07: S-Boot boots our DT despite "invalid" signature; log reference/m25-diag/2026-11-07-M3.1-ourdt-dmesg.txt. M3.2 done 2026-11-07: readout on panic and after N s (tools/m32_run_test.sh runs a whole button-free test). M3.3 done 2026-11-07: 9610 clock driver on 6.18 (branch a50-clk; UFS UniPro 166.56 MHz after our divider fix). M3.4 done 2026-11-07: 9610 pinctrl on 6.18 (branch a50-pinctrl, 6 controllers, 50 gpiochips). Next: tasks/M3.5-ufs-read-only.md (safety rules first).
-Phone: baseline BOOT 7d5855ef..., stock DTB/DTBO, UT up; IP 192.168.0.171.
-
-## RESUME HERE (2026-11-05)
-Tests 5 (header magic), 6 (chain loader) and 7 (control + 6.3 MB overwritten in place) were all negative; see
-`log/2026-11-04-M2.4-diag-build.md`. Only the control (baseline Image, code0 edited, 60 bytes APPENDED) has ever run.
-Next: Test 8. Flash `src/m22/artifacts-ctl3/boot-control-flip.img` (sha256 0c77f3f7..., control + one byte flipped at 0x1000000),
-Download mode (wait for the "Downloading" screen, not the Warning screen), `heimdall flash --BOOT ... --no-reboot`, no print-pit.
-Restart, wait 2 min, roll back with `heimdall flash --BOOT baseline/ut-26.04-2026-10-19-aa17rf2/boot.img --no-reboot`, boot UT,
-then `tools/m25_read_control.sh <ip>`. Marker = small changes OK, bisect size; no marker = append the payload instead.
-Phone: baseline BOOT 7d5855ef..., stock DTB/DTBO, verified after Test 7 rollback; IP 192.168.0.171 (asleep phones drop off Wi-Fi: press Power).
