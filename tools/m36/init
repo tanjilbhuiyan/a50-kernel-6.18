@@ -21,7 +21,7 @@ if [ -n "$udc" ]; then
   ( while :; do [ -c /dev/ttyGS0 ] && setsid sh -c 'exec sh -i </dev/ttyGS0 >/dev/ttyGS0 2>&1'; sleep 1; done ) &
   D=/sys/kernel/debug/usb/13200000.usb
   snap() { say "SNAP $1 uptime=$(cut -d' ' -f1 /proc/uptime) mode=$(cat $D/mode 2>/dev/null) link=$(cat $D/link_state 2>/dev/null) state=$(cat /sys/class/udc/$udc/state 2>/dev/null)"
-    grep -E "^(GSNPSID|GCTL|GSTS|GUSB2PHYCFG\(0\)|GUSB2I2CCTL|DCFG|DCTL|DSTS|DEVTEN|GEVNTCOUNT\(0\)|GDBGLTSSM)" $D/regdump 2>/dev/null | tr '\n' ' ' | while IFS= read -r l; do say "REG $l"; done; }
+    grep -E "^(GSNPSID|GCTL|GSTS|GUSB2PHYCFG\(0\)|GUSB2I2CCTL|DCFG|DCTL|DSTS|DEVTEN|GEVNTCOUNT\(0\)|GDBGLTSSM)" $D/regdump 2>/dev/null | while IFS= read -r l; do say "REG $l"; done; }
   sleep 2; snap after-bind
   ( sleep 25; snap t+27; sleep 60; snap t+87; sleep 60; snap t+147 ) &
   j=0; last=""; while [ $j -lt 215 ]; do s=$(cat /sys/class/udc/$udc/state 2>/dev/null); sp=$(cat /sys/class/udc/$udc/current_speed 2>/dev/null)
