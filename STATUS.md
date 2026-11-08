@@ -2,7 +2,7 @@
 
 Updated: 2026-11-02 (evening)
 
-## Current milestone: **M3 Storage + USB: M3.1-M3.4 done; M3.5 (UFS read-only) in progress: safety audit done, implementation next**
+## Current milestone: **M3 Storage + USB: M3.1-M3.4 done; M3.5 (UFS read-only): write guard done (host only), UFS PHY/variant port next**
 
 M1.1 and M1.2 done. M2.1 and M2.3 done (fb pixel format accepted as a risk, resolve in M2.4). M0.1-M0.3 complete. M1.3 done (`reference/contract/`). NOTE: the M1.5 region choice was corrected on 2026-11-04 (last_kmsg = debug-snapshot log_kernel 0xf9010000; the baseline zeroes log_pstore), see the M1.5 log. M1.4: S-Boot does NOT boot a gzip kernel; use uncompressed `Image`, kernel <= 46,876,672 B. M1.5: after a panic the baseline keeps the log in `/proc/last_kmsg` (sec_debug region 0x91388000); pstore/ramoops at 0xf9d10000 stayed empty. M2.2 done: first-light `Image` 7,170,056 B (reproducible) and `boot-firstlight.img` (`src/m22/artifacts/`). M2.4 is in a diagnostic phase (see below). RESUME HERE: flash `src/m22/artifacts-diag4/boot-diag-D.img` (Test 5: diag v2 image A + the Samsung header magic 0xecefecef at Image offset 0x28; DT stays stock), wait 2 min, roll back BOOT with `heimdall flash --BOOT baseline/ut-26.04-2026-10-19-aa17rf2/boot.img`, boot UT, then `tools/m25_read_markers.sh <ip>`. Marker present = magic was the cause. Details: `log/2026-11-04-M2.4-diag-build.md`.
 
@@ -51,10 +51,9 @@ Decision (owner, 2026-11-02): M0.4 closed (playback = userspace config); microph
 ## RESUME HERE (2026-11-07, end of day)
 M3.5 UFS read-only: Part 1 (write-safety audit) and Part 2 (port scope) are in log/2026-11-07-M3.5-ufs.md. Nothing UFS flashed.
 Next, in this order (nothing boots with UFS before 1 and 2 are done and reviewed):
-1. Safety switch (diag Kconfig A50_UFS_SAFE): sd set_disk_ro on every disk; ufshcd skips bActiveICCLevel, fBackgroundOpsEn,
-   WriteBooster, RTT, RTC/timestamp, bRefClkFreq writes (logged). Build with CONFIG_SCSI_UFS_CRYPTO=n.
+1. DONE 2026-11-08: A50_UFS_SAFE default-deny guard in the UFS core (branch a50-ufs, log Part 3; set_disk_ro alone is NOT a barrier). Not yet proven on hardware.
 2. Port: phy-exynos9610-ufs.c from Samsung ufs-cal-9610.c tables; 9610 drv_data in ufs-exynos.c (template exynos7);
-   DT ufs + ufs-phy nodes (no ref_clk, no ref-clk-freq, no regulators); new branch on top of a50-pinctrl.
+   DT ufs + ufs-phy nodes (no ref_clk, no ref-clk-freq, no regulators); on branch a50-ufs (on top of a50-pinctrl).
 3. Test init: blockdev --setro first; read BOOT partition, sha256 of first 53,624,832 B must be 7d5855ef...
 Kernel branches (src/ack-6.18/common): a50-dt (DT base), a50-clk (clocks, on a50-dt), a50-pinctrl (pinctrl, on a50-clk),
 a50-diag (diag/readout, do not merge), a50-m3x-test (test merges, do not push).

@@ -36,5 +36,10 @@ if [ -n "${A50_CMDLINE_APPEND:-}" ]; then ./scripts/config --file "$OUT/.config"
 # A50_CONFIG="-e FOO -d BAR ..." : extra scripts/config arguments (diagnostic builds)
 if [ -n "${A50_CONFIG:-}" ]; then ./scripts/config --file "$OUT/.config" $A50_CONFIG; fi
 $M olddefconfig >/dev/null
+# Safety (M3.5): a kernel that can reach the phone's UFS must carry the write guard and no inline crypto (no SMC to the secure world)
+if grep -q '^CONFIG_SCSI_UFSHCD=y' "$OUT/.config"; then
+  grep -q '^CONFIG_A50_UFS_SAFE=y' "$OUT/.config" || { echo "REFUSED: UFS enabled without CONFIG_A50_UFS_SAFE=y" >&2; exit 3; }
+  ! grep -q -E '^CONFIG_(SCSI_UFS_CRYPTO|SCSI_UFS_BSG)=y' "$OUT/.config" || { echo "REFUSED: UFS crypto/BSG must be off" >&2; exit 3; }
+fi
 $M Image 2>&1 | tail -3
 sha256sum "$OUT/arch/arm64/boot/Image"; stat -c '%s bytes' "$OUT/arch/arm64/boot/Image"
