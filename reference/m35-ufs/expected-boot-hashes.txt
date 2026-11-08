@@ -1,3 +1,5 @@
-# baseline/ut-26.04-2026-10-19-aa17rf2/boot.img (the phone's BOOT partition on the baseline)
-BOOT-1MiB b0b4fd9fd4eee21e08e8dc3ac261951501ac36ee2fa7266311879740b5b6b078
-BOOT-FULL 7d5855efd34e01f09659c7d47ecb0773c30f2acc7443ee87181a0536804086c5
+# What 6.18 reads from BOOT during tools/m32_run_test.sh is the TEST image just flashed, then zeros (Download mode zero-fills the rest).
+# Test 1 (boot-m35-test.img b238ed12...): first 1 MiB of the image; image + zeros to 53,624,832 B
+BOOT-1MiB 76187fe71d3c9484a43a385fe335ec2ee791996c08474c2df969a9df1187b996
+BOOT-FULL 1ad0b5b97e876eddaa7232273888664f5b5e75a3ab0b6757a56e88b1fe75771d
+# The baseline boot.img hashes (NOT readable in this test, BOOT is overwritten first): 7d5855ef... full

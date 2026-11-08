@@ -17,6 +17,6 @@ Ranked by impact on the goal. Review at every milestone boundary.
 | R11 | **Effort/time** — multi-month; single developer + AI | 90 Samsung driver files in C category | schedule | Strict milestone order; stretch items excluded from DoD |
 | R12 | Upstream drift: ACK android17-6.18 moves (6.18.33 today) | ACK branch | rebases | Pin ACK commit per milestone; rebase only at milestone boundaries |
 
-## Observation 2026-11-07 (for M4): very slow CPU on 6.18
+## Observation 2026-11-07, RETRACTED 2026-11-08: "very slow CPU on 6.18" (UFS read + sha256 of 53.6 MB took 4.3 s; the ~15 s before init has another, unverified cause)
 Unpacking a 2 MB gzip initramfs took ~14 s on 6.18 (log/2026-11-07-M3.2-readout.md). Cause UNVERIFIED; candidate: CPUs at a
 low bootloader clock with no cpufreq driver (M4). Effect: every boot test costs ~15 s extra; keep initramfs small until M4.
