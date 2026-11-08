@@ -1,0 +1,44 @@
+#!/bin/busybox sh
+# M3.5 first UFS boot: READ-ONLY. Never mounts anything, never opens a disk for writing.
+# Everything goes to /dev/kmsg; exiting at the end panics the kernel, which triggers the DSS dump
+# (dump_after is only a watchdog for a hang). The A50_UFS_SAFE guard in the UFS core is the real barrier.
+export PATH=/bin
+/bin/busybox --install -s /bin
+mount -t proc proc /proc; mount -t sysfs sysfs /sys; mount -t devtmpfs devtmpfs /dev
+mount -t debugfs debugfs /sys/kernel/debug 2>/dev/null
+say() { echo "<6>a50-m35: $*" > /dev/kmsg; }
+setro() { for d in /sys/block/sd*; do [ -e "$d" ] || continue; n=${d##*/}
+            [ -b "/dev/$n" ] && blockdev --setro "/dev/$n"
+            for p in "$d/$n"*; do [ -e "$p" ] || continue; q=${p##*/}; [ -b "/dev/$q" ] && blockdev --setro "/dev/$q"; done
+          done; }
+say "init started, Linux $(uname -r), uptime $(cut -d' ' -f1 /proc/uptime) s"
+d=/sys/bus/platform/devices/13520000.ufs
+say "ufs driver=$(basename "$(readlink "$d/driver" 2>/dev/null)" 2>/dev/null) phy driver=$(basename "$(readlink /sys/bus/platform/devices/13524000.phy/driver 2>/dev/null)" 2>/dev/null)"
+say "deferred: $(cat /sys/kernel/debug/devices_deferred 2>/dev/null | tr '\n' ';')"
+i=0; while [ $i -lt 60 ]; do setro; ls /sys/block/sd* >/dev/null 2>&1 && break; sleep 1; i=$((i+1)); done
+sleep 3; setro
+say "after ${i}s wait; block devices: $(ls /sys/block | tr '\n' ' ')"
+if ! ls /sys/block/sd* >/dev/null 2>&1; then say "NO UFS DISKS APPEARED; exiting (panic = dump)"; exit 1; fi
+for d in /sys/block/sd*; do n=${d##*/}
+  say "$n: size=$(cat "$d/size") ro=$(cat "$d/ro") model=$(cat "$d/device/model" 2>/dev/null) rev=$(cat "$d/device/rev" 2>/dev/null) write_cache=$(cat "$d/queue/write_cache" 2>/dev/null)"
+done
+cat /proc/partitions | while IFS= read -r l; do say "P| $l"; done
+boot=""
+for u in /sys/block/sd*/sd*/uevent; do [ -e "$u" ] || continue
+  if grep -q '^PARTNAME=boot$' "$u"; then boot=$(grep '^DEVNAME=' "$u" | cut -d= -f2); fi
+done
+say "partition names: $(cat /sys/block/sd*/sd*/uevent 2>/dev/null | grep '^PARTNAME=' | cut -d= -f2 | tr '\n' ' ')"
+say "boot partition: ${boot:-NOT FOUND}"
+if [ -n "$boot" ]; then
+  say "boot ro=$(cat /sys/class/block/$boot/ro 2>/dev/null) size=$(cat /sys/class/block/$boot/size)"
+  say "t=$(cut -d' ' -f1 /proc/uptime) hashing first 1 MiB"
+  say "BOOT-1MiB $(head -c 1048576 /dev/$boot | sha256sum | cut -d' ' -f1)"
+  say "t=$(cut -d' ' -f1 /proc/uptime) hashing 53624832 B"
+  say "BOOT-FULL $(head -c 53624832 /dev/$boot | sha256sum | cut -d' ' -f1)"
+  say "t=$(cut -d' ' -f1 /proc/uptime) hash done"
+  say "guard test: fsync on the read-only device (SYNCHRONIZE_CACHE if the disk has a write cache)"
+  sync "/dev/$boot"; say "sync returned $?"
+fi
+grep -i -E "ufs" /sys/kernel/debug/clk/clk_summary 2>/dev/null | head -n 12 | while IFS= read -r l; do say "C| $l"; done
+say "report done; exiting (panic = dump)"
+exit 1
