@@ -72,12 +72,13 @@ Tasks (tickets in `tasks/`; list changed 2026-11-07, see "Why" below)
 3. M3.3 Exynos 9610 clock driver, only the CMUs that UFS and USB need.
 4. M3.4 Exynos 9610 pinctrl data (backport).
 5. M3.5 UFS storage, read-only (ufs-exynos 9610 data + PHY).
-6. M3.6 USB device mode (DRD + PHY 9610 data, configfs gadget RNDIS + ACM; sm5713 role/VBUS minimal or bypassed).
+6. M3.6 USB device mode (DRD + PHY 9610 data, configfs gadget RNDIS + ACM; sm5713 role/VBUS minimal or bypassed; if the USB LDOs turn out to be the blocker, the minimum to read and then enable LDO12-14 through ACPM IPC, pulled forward from M4).
 7. M3.7 Halium initramfs on 6.18: mount `/data`, telnet over USB (the M3 DoD).
 Why changed (2026-11-07): M2 closed without our DT and without clocks/pinctrl
 (the gap matrix had listed clocks and pinctrl under M2, but first light did not
 need them). UFS and USB cannot work without them, and every later test needs a
 readout that works after init. M3.1-M3.4 are those prerequisites.
+Why changed (2026-11-08): M3.6 Test 3 (`log/2026-11-08-M3.6-usb.md`) put the USB switch on USB and left the controller running with no attach. The baseline powers USB from LDO12/13/14 (live `/sys/class/regulator`), and 6.18 has no PMIC access, so their state is unverified. On this phone PMIC access goes through the ACPM firmware (`s2mpu09_read_reg` -> `exynos_acpm_read_reg`, 4.14 `drivers/mfd/s2mpu09-core.c:53`), so the probe uses ACPM IPC and does not drive the SPEEDY bus. Read-only first; any PMIC write is a separate step with the owner's approval. The full PMIC/regulator work stays in M4.
 DoD: Halium initramfs on 6.18 mounts `/data` and exposes telnet
 `192.168.2.15` over USB from the laptop.
 
