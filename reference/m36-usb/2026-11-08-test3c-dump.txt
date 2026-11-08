@@ -1,0 +1,246 @@
+# 6.18 dump read back from /proc/last_kmsg (identifiers redacted: 3)
+===== A50 6.18 DMESG BEGIN (dump_after=150) =====
+[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x410fd034]
+[    0.000000] Linux version 6.18.33-a50-diag+ (a50@firstlight) (Android (15323222, +pgo, +bolt, +lto, +mlgo, based on r584948c) clang version 22.0.1 (https://android.googlesource.com/toolchain/llvm-project 2d65e4108033380e6fe8e08b1f1826cd2bfb0c99), LLD 22.0.1 (/mnt/disks/build-disk/src/googleplex-android/llvm-r584948-release/out/llvm-project/llvm 2d65e4108033380e6fe8e08b1f1826cd2bfb0c99)) #1 SMP Wed Nov  4 00:00:00 UTC 2026
+[    0.000000] Machine model: Samsung Galaxy A50 (SM-A505F)
+[    0.000000] printk: debug: ignoring loglevel setting.
+[    0.000000] [Firmware Bug]: Kernel image misaligned at boot, please fix your bootloader!
+[    0.000000] OF: reserved mem: 0x0000000080000000..0x0000000080000fff (4 KiB) nomap non-reusable sec_debug_magic@80000000
+[    0.000000] OF: reserved mem: 0x00000000b8000000..0x00000000b84fffff (5120 KiB) nomap non-reusable vipx_fw@b8000000
+[    0.000000] OF: reserved mem: 0x00000000c0000000..0x00000000c007ffff (512 KiB) nomap non-reusable seclog@c0000000
+[    0.000000] OF: reserved mem: 0x00000000ca000000..0x00000000ca9fffff (10240 KiB) nomap non-reusable fb_reserved@ca000000
+[    0.000000] OF: reserved mem: 0x00000000e9400000..0x00000000ebbfffff (40960 KiB) nomap non-reusable abox@e9400000
+[    0.000000] OF: reserved mem: 0x00000000ed000000..0x00000000f59fffff (141312 KiB) nomap non-reusable modem_if@ed000000
+[    0.000000] OF: reserved mem: 0x00000000f5a00000..0x00000000f77fffff (30720 KiB) nomap non-reusable cp_ram_logging@f5a00000
+[    0.000000] OF: reserved mem: 0x00000000f9000000..0x00000000fa70ffff (23616 KiB) nomap non-reusable debug_snapshot@f9000000
+[    0.000000] OF: reserved mem: 0x0000000091202000..0x0000000091387fff (1560 KiB) nomap non-reusable sec_debug_bufs@91202000
+[    0.000000] OF: reserved mem: 0x0000000091388000..0x0000000091b87fff (8192 KiB) nomap non-reusable sec_debug_next@91388000
+[    0.000000] OF: reserved mem: 0x00000000fb000000..0x00000000fb7fffff (8192 KiB) nomap non-reusable gnss_if@fb000000
+[    0.000000] OF: reserved mem: 0x00000000fd000000..0x00000000fd07ffff (512 KiB) nomap non-reusable chub@fd000000
+[    0.000000] OF: reserved mem: 0x0000000087000000..0x00000000871fffff (2048 KiB) map non-reusable el2_code
+[    0.000000] OF: reserved mem: 0x00000008fe600000..0x00000008ffffffff (26624 KiB) map non-reusable el2_earlymem
+[    0.000000] OF: reserved mem: 0x0000000080001000..0x0000000080001fff (4 KiB) map non-reusable kaslr
+[    0.000000] Zone ranges:
+[    0.000000]   DMA      [mem 0x0000000080000000-0x00000000ffffffff]
+[    0.000000]   DMA32    empty
+[    0.000000]   Normal   [mem 0x0000000100000000-0x00000008ffffffff]
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000080000000-0x0000000080000fff]
+[    0.000000]   node   0: [mem 0x0000000080001000-0x0000000091201fff]
+[    0.000000]   node   0: [mem 0x0000000091202000-0x0000000091b87fff]
+[    0.000000]   node   0: [mem 0x0000000091b88000-0x00000000b7ffffff]
+[    0.000000]   node   0: [mem 0x00000000b8000000-0x00000000b84fffff]
+[    0.000000]   node   0: [mem 0x00000000b8500000-0x00000000baafffff]
+[    0.000000]   node   0: [mem 0x00000000c0000000-0x00000000c007ffff]
+[    0.000000]   node   0: [mem 0x00000000c0080000-0x00000000c9ffffff]
+[    0.000000]   node   0: [mem 0x00000000ca000000-0x00000000ca9fffff]
+[    0.000000]   node   0: [mem 0x00000000caa00000-0x00000000dfffffff]
+[    0.000000]   node   0: [mem 0x00000000e1900000-0x00000000e93fffff]
+[    0.000000]   node   0: [mem 0x00000000e9400000-0x00000000ebbfffff]
+[    0.000000]   node   0: [mem 0x00000000ebc00000-0x00000000ecffffff]
+[    0.000000]   node   0: [mem 0x00000000ed000000-0x00000000f77fffff]
+[    0.000000]   node   0: [mem 0x00000000f7800000-0x00000000f8ffffff]
+[    0.000000]   node   0: [mem 0x00000000f9000000-0x00000000fa70ffff]
+[    0.000000]   node   0: [mem 0x00000000fa710000-0x00000000faffffff]
+[    0.000000]   node   0: [mem 0x00000000fb000000-0x00000000fb7fffff]
+[    0.000000]   node   0: [mem 0x00000000fb800000-0x00000000fcffffff]
+[    0.000000]   node   0: [mem 0x00000000fd000000-0x00000000fd07ffff]
+[    0.000000]   node   0: [mem 0x00000000fd080000-0x00000000ffffffff]
+[    0.000000]   node   0: [mem 0x0000000880000000-0x00000008ffffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000080000000-0x00000008ffffffff]
+[    0.000000] On node 0, zone DMA: 21760 pages in unavailable ranges
+[    0.000000] On node 0, zone DMA: 6400 pages in unavailable ranges
+[    0.000000] psci: probing for conduit method from DT.
+[    0.000000] psci: Using PSCI v0.1 Function IDs from DT
+[    0.000000] WARNING: x1-x3 nonzero in violation of boot protocol:
+[    0.000000] 	x1: 0000000080000000
+[    0.000000] 	x2: 0000000000180000
+[    0.000000] 	x3: 0000000080180000
+[    0.000000] This indicates a broken bootloader or old kernel
+[    0.000000] percpu: Embedded 14 pages/cpu s25504 r0 d31840 u57344
+[    0.000000] pcpu-alloc: s25504 r0 d31840 u57344 alloc=14*4096
+[    0.000000] pcpu-alloc: [0] 0 [0] 1 [0] 2 [0] 3 [0] 4 [0] 5 [0] 6 [0] 7 
+[    0.000000] Detected VIPT I-cache on CPU0
+[    0.000000] alternatives: applying boot alternatives
+[    0.000000] Kernel command line: console=tty0 loglevel=7 ignore_loglevel maxcpus=1 clk_ignore_unused console=ram loglevel=4 sec_debug.pcb_offset=7346944 sec_debug.smd_offset=7348992 sec_debug.lpddr4_size=4 sec_debug.dram_info=01,06,01,4G sec_debug.pwrsrc_rs=0x0001000820000000 sec_debug.reset_reason=7 sec_reset.reset_reason=7 sec_debug.reset_rwc=1 sec_debug.level=0 sec_watchdog.sec_pet=5 androidboot.debug_level=0x4f4c androidboot.force_upload=0x0 softdog.soft_margin=100 softdog.soft_panic=1 sec_debug.dump_sink=0x0 sec_debug.upload_count=0 androidboot.dram_info=01,06,01,4G androidboot.fmm_lock=0 sec_debug.fmm_lock_offset=7340600 sec_debug.sjl=1 androidboot.sn.param.offset=7343024 androidboot.prototype.param.offset=7351040 androidboot.recovery_offset=7355136 printk.devkmsg=on ess_setup=0xf9000000 sec_avc_log=0x40000@0x91202000 sec_tsp_log=0x40000@0x91244000 sec_disp_log=0x100000@0x91286000 sec_debug_next=0x800000@0x91388000 charging_mode=0x3000 s3cfb.bootloaderfb=0xca000000 lcdtype=9453571 \
+[    0.000000] Kernel command line: androidboot.carrierid.param.offset=7340608 androidboot.carrierid=BKD consoleblank=0 ehci_hcd.park=3 oops=panic pmic_info=27 ccic_info=1 fg_reset=0 androidboot.emmc_checksum=3 androidboot.sales.param.offset=7340572 sales_code=BKD androidboot.odin_download=1 androidboot.bootloader=A505FDDS9CWA2 androidboot.selinux=enforcing androidboot.product.model=SM-A505F androidboot.ucs_mode=0 androidboot.revision=6 androidboot.hardware=exynos9610 androidboot.warranty_bit=1 androidboot.wb.hs=0e03 androidboot.rp=9 androidboot.wb.snapQB=CUSTOM sec_debug.bin=A androidboot.hmac_mismatch=0 androidboot.sec_atd.tty=/dev/ttySAC0 androidboot.serialno=<redacted> androidboot.ap_serial=<redacted> snd_soc_core.pmdown_time=1000 androidboot.cp_reserved_mem=off skip_initramfs rootwait ro init=/init root=/dev/sda25 androidboot.dtbo_idx=5 androidboot.fmp_config=0 androidboot.em.did=<redacted> androidboot.em.model=SM-A505F androidboot.em.status=0x0 androidboot.sb.debug0=0x0 \
+[    0.000000] Kernel command line: androidboot.verifiedbootstate=orange androidboot.svb.ver=SVB1.0 bcm_setup=0xffffff80f8e00000 reserve-fimc=0xffff
+[    0.000000] Unknown kernel command line parameters "ess_setup=0xf9000000 sec_avc_log=0x40000@0x91202000 sec_tsp_log=0x40000@0x91244000 sec_disp_log=0x100000@0x91286000 sec_debug_next=0x800000@0x91388000 charging_mode=0x3000 lcdtype=9453571 pmic_info=27 ccic_info=1 fg_reset=0 sales_code=BKD bcm_setup=0xffffff80f8e00000 reserve-fimc=0xffff", will be passed to user space.
+[    0.000000] printk: log buffer data + meta data: 131072 + 458752 = 589824 bytes
+[    0.000000] Dentry cache hash table entries: 524288 (order: 10, 4194304 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 262144 (order: 9, 2097152 bytes, linear)
+[    0.000000] software IO TLB: area num 8.
+[    0.000000] software IO TLB: mapped [mem 0x00000000e5400000-0x00000000e9400000] (64MB)
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 1020416
+[    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=8, Nodes=1
+[    0.000000] rcu: Hierarchical RCU implementation.
+[    0.000000] rcu: 	RCU restricting CPUs from NR_CPUS=512 to nr_cpu_ids=8.
+[    0.000000] rcu: RCU calculated value of scheduler-enlistment delay is 25 jiffies.
+[    0.000000] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=8
+[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000] Root IRQ handler: gic_handle_irq
+[    0.000000] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.000000] /soc@0/clock-controller@12100000: incorrect res size for automatic clocks
+[    0.000000] /soc@0/clock-controller@12100000: incorrect res size for automatic clocks
+[    0.000000] arch_timer: cp15 timer running at 26.00MHz (virt).
+[    0.000000] clocksource: arch_sys_counter: mask: 0xffffffffffffff max_cycles: 0x5ff13d5a9, max_idle_ns: 440795202370 ns
+[    0.000000] sched_clock: 56 bits at 26MHz, resolution 38ns, wraps every 4398046511088ns
+[    0.000175] Console: colour dummy device 80x25
+[    0.000185] printk: legacy console [tty0] enabled
+[    0.000950] Calibrating delay loop (skipped), value calculated using timer frequency.. 52.00 BogoMIPS (lpj=104000)
+[    0.000974] pid_max: default: 32768 minimum: 301
+[    0.001075] Mount-cache hash table entries: 8192 (order: 4, 65536 bytes, linear)
+[    0.001103] Mountpoint-cache hash table entries: 8192 (order: 4, 65536 bytes, linear)
+[    0.001950] cacheinfo: Unable to detect cache hierarchy for CPU 0
+[    0.002623] rcu: Hierarchical SRCU implementation.
+[    0.002645] rcu: 	Max phase no-delay instances is 1000.
+[    0.003144] smp: Bringing up secondary CPUs ...
+[    0.003167] smp: Brought up 1 node, 1 CPU
+[    0.003179] SMP: Total of 1 processors activated.
+[    0.003189] CPU: All CPU(s) started at EL1
+[    0.003200] CPU features: detected: 32-bit EL0 Support
+[    0.003212] CPU features: detected: CRC32 instructions
+[    0.003251] alternatives: applying system-wide alternatives
+[    0.003613] Memory: 3624284K/4081664K available (3264K kernel code, 676K rwdata, 932K rodata, 2496K init, 400K bss, 453728K reserved, 0K cma-reserved)
+[    0.004158] devtmpfs: initialized
+[    0.007060] A50DIAG: DSS readout armed (buf 1 hdr 1 log 1 pmu 1), dump_after=150
+[    0.007172] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+[    0.007214] posixtimers hash table entries: 4096 (order: 4, 65536 bytes, linear)
+[    0.007304] futex hash table entries: 2048 (131072 bytes on 1 NUMA nodes, total 128 KiB, linear).
+[    0.007369] pinctrl core: initialized pinctrl subsystem
+[    0.008238] DMA: preallocated 512 KiB GFP_KERNEL pool for atomic allocations
+[    0.008350] DMA: preallocated 512 KiB GFP_KERNEL|GFP_DMA pool for atomic allocations
+[    0.008967] ASID allocator initialised with 65536 entries
+[    0.010909] /soc@0/interrupt-controller@12301000: Fixed dependency cycle(s) with /soc@0/interrupt-controller@12301000
+[    0.015317] samsung-pinctrl 11c20000.pinctrl: irq number for muxed EINTs not found
+[    0.019109] /soc@0/clock-controller@13030000: incorrect res size for automatic clocks
+[    0.019187] /soc@0/clock-controller@13030000: incorrect res size for automatic clocks
+[    0.019845] /soc@0/clock-controller@13400000: incorrect res size for automatic clocks
+[    0.019904] /soc@0/clock-controller@13400000: incorrect res size for automatic clocks
+[    0.025741] i2c-gpio i2c-sm5713: using lines 600 (SDA) and 601 (SCL)
+[    0.026141] clocksource: Switched to clocksource arch_sys_counter
+[    0.035226] workingset: timestamp_bits=62 max_order=20 bucket_order=0
+[    0.036232] simple-framebuffer ca000000.framebuffer: framebuffer at 0xca000000, 0x9a3f80 bytes
+[    0.036265] simple-framebuffer ca000000.framebuffer: format=a8r8g8b8, mode=1080x2340x32, linelength=4320
+[    0.038942] Console: switching to colour frame buffer device 67x73
+[    0.054269] simple-framebuffer ca000000.framebuffer: fb0: simplefb registered!
+[    0.055388] i2c_dev: i2c /dev entries driver
+[    0.088857] exynos5_usb3drd_phy 131d0000.phy: A50 PHY: LINKCTRL 00043ff0 LINKPORT 0001107c CLKRST 00000004 UTMI 00000030 HSP 10003300 PARACON f36f3727 HSP_TEST 00000000
+[    1.104225] Unpacking initramfs...
+[    1.104333] Initramfs unpacking failed: invalid magic at start of compressed archive
+[   15.108710] clk: Not disabling unused clocks
+[   15.109673] Freeing unused kernel memory: 2496K
+[   15.109934] Run /init as init process
+[   15.110013]   with arguments:
+[   15.110074]     /init
+[   15.110146]   with environment:
+[   15.110212]     HOME=/
+[   15.110265]     TERM=linux
+[   15.110322]     ess_setup=0xf9000000
+[   15.110395]     sec_avc_log=0x40000@0x91202000
+[   15.110482]     sec_tsp_log=0x40000@0x91244000
+[   15.110570]     sec_disp_log=0x100000@0x91286000
+[   15.110661]     sec_debug_next=0x800000@0x91388000
+[   15.110754]     charging_mode=0x3000
+[   15.110827]     lcdtype=9453571
+[   15.110892]     pmic_info=27
+[   15.110952]     ccic_info=1
+[   15.111010]     fg_reset=0
+[   15.111067]     sales_code=BKD
+[   15.111132]     bcm_setup=0xffffff80f8e00000
+[   15.111216]     reserve-fimc=0xffff
+[   15.128448] a50-m36: init started, Linux 6.18.33-a50-diag+, uptime 15.12 s
+[   15.130665] a50-m36: 13200000.usb driver=dwc3
+[   15.132578] a50-m36: 131d0000.phy driver=exynos5_usb3drd_phy
+[   15.136929] a50-m36: deferred: 
+[   15.140670] a50-m36: udc after 0s: 13200000.usb
+[   15.149104] a50-m36: i2c adapters: i2c-*=  using bus 0
+[   15.169360] a50-m36: MUIC before: id=0x01 cntl=0x24 manual_sw=0x00 devtype1=0x08 devtype2=0x00 cfg1=0x1a
+[   15.177879] a50-m36: MUIC writes: manual_sw=0x09 rc=0, cfg1=0x1e rc=0
+[   15.188122] a50-m36: MUIC after: manual_sw=0x09 cfg1=0x1e cntl=0x24
+[   15.190427] a50-m36: gadget bound rc=0
+[   17.201212] a50-m36: SNAP after-bind uptime=17.19 mode= link=Disconnected state=not attached
+[   17.218939] a50-m36: REG GCTL = 0x30c12004
+[   17.225140] a50-m36: REG GSTS = 0x7e800000
+[   17.230851] a50-m36: REG GSNPSID = 0x5533310a
+[   17.236455] a50-m36: REG GDBGLTSSM = 0x00010440
+[   17.242017] a50-m36: REG GUSB2PHYCFG(0) = 0x40102440
+[   17.247537] a50-m36: REG GUSB2I2CCTL(0) = 0x00000000
+[   17.252971] a50-m36: REG GUSB2I2CCTL(1) = 0x00000000
+[   17.258307] a50-m36: REG GUSB2I2CCTL(2) = 0x00000000
+[   17.263559] a50-m36: REG GUSB2I2CCTL(3) = 0x00000000
+[   17.268722] a50-m36: REG GUSB2I2CCTL(4) = 0x00000000
+[   17.273787] a50-m36: REG GUSB2I2CCTL(5) = 0x00000000
+[   17.278756] a50-m36: REG GUSB2I2CCTL(6) = 0x00000000
+[   17.283634] a50-m36: REG GUSB2I2CCTL(7) = 0x00000000
+[   17.288423] a50-m36: REG GUSB2I2CCTL(8) = 0x00000000
+[   17.293123] a50-m36: REG GUSB2I2CCTL(9) = 0x00000000
+[   17.297739] a50-m36: REG GUSB2I2CCTL(10) = 0x00000000
+[   17.302283] a50-m36: REG GUSB2I2CCTL(11) = 0x00000000
+[   17.306752] a50-m36: REG GUSB2I2CCTL(12) = 0x00000000
+[   17.311141] a50-m36: REG GUSB2I2CCTL(13) = 0x00000000
+[   17.315461] a50-m36: REG GUSB2I2CCTL(14) = 0x00000000
+[   17.319687] a50-m36: REG GUSB2I2CCTL(15) = 0x00000000
+[   17.323820] a50-m36: REG GEVNTCOUNT(0) = 0x00000000
+[   17.327866] a50-m36: REG DCFG = 0x008c0800
+[   17.331847] a50-m36: REG DCTL = 0x80f00000
+[   17.335757] a50-m36: REG DEVTEN = 0x00000257
+[   17.339599] a50-m36: REG DSTS = 0x00920001
+[   17.350599] a50-m36: t=17.34 udc state=not attached speed=UNKNOWN
+[   42.357214] a50-m36: SNAP t+27 uptime=42.34 mode= link=Disconnected state=not attached
+[   42.371125] a50-m36: REG GCTL = 0x30c12004
+[   42.375448] a50-m36: REG GSTS = 0x7e800000
+[   42.379296] a50-m36: REG GSNPSID = 0x5533310a
+[   42.383028] a50-m36: REG GDBGLTSSM = 0x00010440
+[   42.386734] a50-m36: REG GUSB2PHYCFG(0) = 0x40102440
+[   42.390430] a50-m36: REG GUSB2I2CCTL(0) = 0x00000000
+[   42.394056] a50-m36: REG GUSB2I2CCTL(1) = 0x00000000
+[   42.397665] a50-m36: REG GUSB2I2CCTL(2) = 0x00000000
+[   42.401254] a50-m36: REG GUSB2I2CCTL(3) = 0x00000000
+[   42.404825] a50-m36: REG GUSB2I2CCTL(4) = 0x00000000
+[   42.408376] a50-m36: REG GUSB2I2CCTL(5) = 0x00000000
+[   42.411903] a50-m36: REG GUSB2I2CCTL(6) = 0x00000000
+[   42.415401] a50-m36: REG GUSB2I2CCTL(7) = 0x00000000
+[   42.418859] a50-m36: REG GUSB2I2CCTL(8) = 0x00000000
+[   42.422312] a50-m36: REG GUSB2I2CCTL(9) = 0x00000000
+[   42.425725] a50-m36: REG GUSB2I2CCTL(10) = 0x00000000
+[   42.429127] a50-m36: REG GUSB2I2CCTL(11) = 0x00000000
+[   42.432483] a50-m36: REG GUSB2I2CCTL(12) = 0x00000000
+[   42.435815] a50-m36: REG GUSB2I2CCTL(13) = 0x00000000
+[   42.439129] a50-m36: REG GUSB2I2CCTL(14) = 0x00000000
+[   42.442451] a50-m36: REG GUSB2I2CCTL(15) = 0x00000000
+[   42.445735] a50-m36: REG GEVNTCOUNT(0) = 0x00000000
+[   42.449037] a50-m36: REG DCFG = 0x008c0800
+[   42.452305] a50-m36: REG DCTL = 0x80f00000
+[   42.455550] a50-m36: REG DEVTEN = 0x00000257
+[   42.458735] a50-m36: REG DSTS = 0x00920001
+[  102.473129] a50-m36: SNAP t+87 uptime=102.46 mode= link=Disconnected state=not attached
+[  102.485652] a50-m36: REG GCTL = 0x30c12004
+[  102.489379] a50-m36: REG GSTS = 0x7e800000
+[  102.492648] a50-m36: REG GSNPSID = 0x5533310a
+[  102.495791] a50-m36: REG GDBGLTSSM = 0x00010440
+[  102.498919] a50-m36: REG GUSB2PHYCFG(0) = 0x40102440
+[  102.501943] a50-m36: REG GUSB2I2CCTL(0) = 0x00000000
+[  102.504950] a50-m36: REG GUSB2I2CCTL(1) = 0x00000000
+[  102.507845] a50-m36: REG GUSB2I2CCTL(2) = 0x00000000
+[  102.510659] a50-m36: REG GUSB2I2CCTL(3) = 0x00000000
+[  102.513354] a50-m36: REG GUSB2I2CCTL(4) = 0x00000000
+[  102.515984] a50-m36: REG GUSB2I2CCTL(5) = 0x00000000
+[  102.518512] a50-m36: REG GUSB2I2CCTL(6) = 0x00000000
+[  102.520975] a50-m36: REG GUSB2I2CCTL(7) = 0x00000000
+[  102.523386] a50-m36: REG GUSB2I2CCTL(8) = 0x00000000
+[  102.525689] a50-m36: REG GUSB2I2CCTL(9) = 0x00000000
+[  102.527944] a50-m36: REG GUSB2I2CCTL(10) = 0x00000000
+[  102.530203] a50-m36: REG GUSB2I2CCTL(11) = 0x00000000
+[  102.532427] a50-m36: REG GUSB2I2CCTL(12) = 0x00000000
+[  102.534631] a50-m36: REG GUSB2I2CCTL(13) = 0x00000000
+[  102.536787] a50-m36: REG GUSB2I2CCTL(14) = 0x00000000
+[  102.538935] a50-m36: REG GUSB2I2CCTL(15) = 0x00000000
+[  102.541071] a50-m36: REG GEVNTCOUNT(0) = 0x00000000
+[  102.543219] a50-m36: REG DCFG = 0x008c0800
+[  102.545382] a50-m36: REG DCTL = 0x80f00000
+[  102.547567] a50-m36: REG DEVTEN = 0x00000257
+[  102.549763] a50-m36: REG DSTS = 0x00920001
+===== A50 6.18 DMESG END =====
