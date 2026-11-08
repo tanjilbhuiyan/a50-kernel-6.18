@@ -34,6 +34,6 @@ later milestones get tickets when we reach them (evidence first, Rule 1).
 | M3.2 | Readout at any time (panic hook + delayed dump) | yes | M3.1 | done (log/2026-11-07-M3.2-readout.md) |
 | M3.3 | Exynos 9610 clock driver (CMUs for UFS and USB) | build no / test yes | M3.1, M3.2 | done (log/2026-11-07-M3.3-clocks.md) |
 | M3.4 | Exynos 9610 pinctrl data (backport) | build no / test yes | M3.1 | done (log/2026-11-07-M3.4-pinctrl.md) |
-| M3.5 | UFS storage, read-only | yes | M3.3, M3.4 | todo |
+| M3.5 | UFS storage, read-only | yes | M3.3, M3.4 | done (log/2026-11-07-M3.5-ufs.md; acceptance reworded) |
 | M3.6 | USB device mode (DRD + PHY + gadget) | yes | M3.3, M3.4 | todo |
 | M3.7 | Halium initramfs on 6.18: mount /data, telnet over USB (M3 DoD) | yes | M3.5, M3.6 | todo |
