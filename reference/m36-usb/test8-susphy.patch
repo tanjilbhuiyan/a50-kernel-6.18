@@ -1,0 +1,46 @@
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610.dtsi b/arch/arm64/boot/dts/exynos/exynos9610.dtsi
+index d08cb85f7..f788c5d71 100644
+--- a/arch/arm64/boot/dts/exynos/exynos9610.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos9610.dtsi
+@@ -259,6 +259,7 @@ usbdrd_dwc3: usb@0 {
+ 				dr_mode = "peripheral";
+ 				maximum-speed = "high-speed";
+ 				snps,dis-u2-freeclk-exists-quirk;
++				snps,dis_u2_susphy_quirk; /* TEST ONLY (M3.6) */
+ 			};
+ 		};
+ 
+diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+index 9d1a9dbb4..1abdf5850 100644
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -2774,6 +2774,7 @@ static int dwc3_gadget_soft_disconnect(struct dwc3 *dwc)
+  * HSP_TEST LINESTATE (bits 21:20): 0 = SE0 (both low), 1 = J, 2 = K, 3 = SE1.
+  */
+ static void __iomem *a50_phy;
++static void __iomem *a50_pmu;
+ static struct dwc3 *a50_dwc;
+ static unsigned int a50_ls_step;
+ static const unsigned int a50_ls_ms[] = { 1000, 4000, 25000 };
+@@ -2786,10 +2787,11 @@ static void a50_ls_fn(struct work_struct *w)
+ {
+ 	u32 t = readl(a50_phy + 0x5c);
+ 
+-	pr_info("A50 LINESTATE %s: linestate=%u squelch=%u HSP_TEST=%08x UTMI=%08x HSP=%08x DSTS=%08x GDBGLTSSM=%08x\n",
++	pr_info("A50 LINESTATE %s: linestate=%u squelch=%u HSP_TEST=%08x UTMI=%08x HSP=%08x DSTS=%08x GDBGLTSSM=%08x GUSB2PHYCFG=%08x PMU_USB=%08x\n",
+ 		a50_ls_label[a50_ls_step], (t >> 20) & 3, (t >> 25) & 1, t,
+ 		readl(a50_phy + 0x50), readl(a50_phy + 0x54),
+-		dwc3_readl(a50_dwc, DWC3_DSTS), dwc3_readl(a50_dwc, DWC3_GDBGLTSSM));
++		dwc3_readl(a50_dwc, DWC3_DSTS), dwc3_readl(a50_dwc, DWC3_GDBGLTSSM),
++		dwc3_readl(a50_dwc, DWC3_GUSB2PHYCFG(0)), a50_pmu ? readl(a50_pmu) : 0xdeadbeef);
+ 	if (++a50_ls_step < ARRAY_SIZE(a50_ls_ms))
+ 		schedule_delayed_work(&a50_ls_work, msecs_to_jiffies(a50_ls_ms[a50_ls_step]));
+ }
+@@ -2801,6 +2803,7 @@ static void a50_ls_start(struct dwc3 *dwc)
+ 	a50_phy = ioremap(0x131d0000, 0x100);
+ 	if (!a50_phy)
+ 		return;
++	a50_pmu = ioremap(0x11860704, 4); /* USB PHY isolation, offset from the stock DT */
+ 	a50_dwc = dwc;
+ 	schedule_delayed_work(&a50_ls_work, msecs_to_jiffies(a50_ls_ms[0]));
+ }
