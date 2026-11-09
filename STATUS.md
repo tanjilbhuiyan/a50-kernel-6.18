@@ -2,7 +2,7 @@
 
 Updated: 2026-11-10
 
-## Current milestone: **M4 Core SoC: M4.1 done (all 8 CPUs online on 6.18); next ticket = M4.2 (ACPM IPC). M3 done 2026-11-10, with a caveat (see below)**
+## Current milestone: **M4 Core SoC: M4.1 (all CPUs) and M4.2 (ACPM) done; next ticket = M4.3 (PMIC, regulators). M3 done 2026-11-10, with a caveat (see below)**
 
 M1.1 and M1.2 done. M2.1 and M2.3 done (fb pixel format accepted as a risk, resolve in M2.4). M0.1-M0.3 complete. M1.3 done (`reference/contract/`). NOTE: the M1.5 region choice was corrected on 2026-11-04 (last_kmsg = debug-snapshot log_kernel 0xf9010000; the baseline zeroes log_pstore), see the M1.5 log. M1.4: S-Boot does NOT boot a gzip kernel; use uncompressed `Image`, kernel <= 46,876,672 B. M1.5: after a panic the baseline keeps the log in `/proc/last_kmsg` (sec_debug region 0x91388000); pstore/ramoops at 0xf9d10000 stayed empty. M2.2 done: first-light `Image` 7,170,056 B (reproducible) and `boot-firstlight.img` (`src/m22/artifacts/`). M2.4 closed 2026-11-07 (log/2026-11-04-M2.4-diag-build.md).
 
@@ -52,8 +52,8 @@ Decision (owner, 2026-11-02): M0.4 closed (playback = userspace config); microph
 M3 done. On 6.18: the Halium ramdisk contents are embedded in the kernel (305 files verified), /userdata mounts read-only with the A50_UFS_SAFE write guard, and telnet at 192.168.2.15 gives a shell over USB (log/2026-11-10-M3.7-halium-initramfs.md).
 CAVEAT (owner accepted): the mount and telnet were done by our diagnostic init (rdinit=/a50/init). Halium's own /init has not run; it runs e2fsck -y on userdata and may run resize2fs, so it needs deliberate write access. That is M5 work.
 A ramdisk in boot.img does not reach 6.18, so the Halium ramdisk is embedded in the kernel (tools/m37/gen_embed_list.py). Why S-Boot does not deliver it, and other set-aside questions: docs/08-open-questions.md.
-Next: tasks/M4.2-acpm-ipc.md. M4.1 done (kernel config commit on a50-usb). M5 tickets come at M4.8.
-Kernel branches: a50-dt -> a50-clk -> a50-pinctrl -> a50-ufs -> a50-usb (clean); a50-diag (readout, do not merge); a50-m36-clean (a50-usb + a50-diag, test merge); a50-m36-test, a50-m36-min, a50-m37-test (test only, do not merge).
+Next: tasks/M4.3-pmic-regulators.md. M4.1 done (config commit on a50-usb); M4.2 done (branch a50-acpm on a50-usb). M5 tickets come at M4.8.
+Kernel branches: a50-dt -> a50-clk -> a50-pinctrl -> a50-ufs -> a50-usb -> a50-acpm (clean); a50-diag (readout, do not merge); a50-m36-clean (a50-usb + a50-diag, test merge); a50-m36-test, a50-m36-min, a50-m37-test (test only, do not merge).
 Test loop: DT_IMG=src/m36/dt-clean.img tools/m32_run_test.sh IMG OUT IP WAIT. Build: tools/m22_build.sh with A50_INIT, A50_INITRAMFS_LIST=src/m37/embed.list.in, A50_CMDLINE_APPEND, A50_CONFIG (the M3.7 flags are in log/2026-11-10-M3.7-halium-initramfs.md and the test init tools/m37/init-telnet). Any UFS-enabled kernel must carry A50_UFS_SAFE.
 Host: USB-C cable only. Laptop keeps udev rule 99-a50-acm.rules and NetworkManager profile a50-rndis (192.168.2.1) for the test gadget. Clients: tools/m36/acm_shell.py, tools/m37/telnet_test.py.
 Phone: baseline BOOT 7d5855ef..., stock DTB/DTBO, verified 2026-11-10 00:58; DHCP, 192.168.0.171 at home (192.168.181.225 at the office).
