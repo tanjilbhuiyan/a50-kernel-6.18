@@ -1,0 +1,17 @@
+diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+index c964ea841..e641ea350 100644
+--- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
++++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+@@ -1677,6 +1677,12 @@ static void exynos9610_usbdrd_utmi_init(struct exynos5_usbdrd_phy *phy_drd)
+ 	reg = readl(regs_base + EXYNOS850_DRD_LINKPORT);
+ 	reg |= EXYNOS9610_LINKPORT_SEL_OCD_U3 | EXYNOS9610_LINKPORT_SEL_OCD_U2;
+ 	writel(reg, regs_base + EXYNOS850_DRD_LINKPORT);
++	/*
++	 * TEST ONLY (M3.6): exynos850_usbdrd_phy_init() disables the "phy"
++	 * clock when this returns. Take a second reference so it stays on, as
++	 * 4.14 keeps its PHY clocks on from utmi_init until utmi_exit.
++	 */
++	WARN_ON(clk_bulk_prepare_enable(phy_drd->drv_data->n_clks, phy_drd->clks));
+ 	dev_info(phy_drd->dev, "A50 PHY: LINKCTRL %08x LINKPORT %08x CLKRST %08x UTMI %08x HSP %08x PARACON %08x HSP_TEST %08x\n",
+ 		 readl(regs_base + EXYNOS850_DRD_LINKCTRL), readl(regs_base + EXYNOS850_DRD_LINKPORT),
+ 		 readl(regs_base + EXYNOS850_DRD_CLKRST), readl(regs_base + EXYNOS850_DRD_UTMI),
