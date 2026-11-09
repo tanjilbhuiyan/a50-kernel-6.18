@@ -1,0 +1,263 @@
+From 11a0a3f458f550dc31ffe33132799581484dd498 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Tue, 10 Nov 2026 01:14:18 +0600
+Subject: [PATCH] firmware: samsung: acpm: add Exynos9610; mailbox: exynos: add
+ Exynos9610
+
+The 9610 ACPM firmware uses the same SRAM channel layout, sequence numbers
+and PMIC commands as gs101. Only the initdata offset, the mailbox doorbell
+register and the absence of a modelled mailbox clock differ.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I81a2531553aba6aa369ac3b5938e3e01ef6fe56b
+---
+ .../firmware/google,gs101-acpm-ipc.yaml       |  4 +-
+ .../bindings/mailbox/google,gs101-mbox.yaml   | 17 ++++--
+ arch/arm64/boot/dts/exynos/exynos9610.dtsi    | 23 ++++++++
+ arch/arm64/configs/a50_firstlight_defconfig   |  3 ++
+ drivers/firmware/samsung/exynos-acpm.c        |  8 +++
+ drivers/mailbox/exynos-mailbox.c              | 53 ++++++++++++++++---
+ 6 files changed, 97 insertions(+), 11 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
+index 9785aac3b..cd44e93be 100644
+--- a/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
++++ b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
+@@ -22,7 +22,9 @@ description: |
+ 
+ properties:
+   compatible:
+-    const: google,gs101-acpm-ipc
++    enum:
++      - google,gs101-acpm-ipc
++      - samsung,exynos9610-acpm-ipc
+ 
+   mboxes:
+     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/mailbox/google,gs101-mbox.yaml b/Documentation/devicetree/bindings/mailbox/google,gs101-mbox.yaml
+index e249db4c1..f041c2b91 100644
+--- a/Documentation/devicetree/bindings/mailbox/google,gs101-mbox.yaml
++++ b/Documentation/devicetree/bindings/mailbox/google,gs101-mbox.yaml
+@@ -20,7 +20,9 @@ description:
+ 
+ properties:
+   compatible:
+-    const: google,gs101-mbox
++    enum:
++      - google,gs101-mbox
++      - samsung,exynos9610-mbox
+ 
+   reg:
+     maxItems: 1
+@@ -42,11 +44,20 @@ properties:
+ required:
+   - compatible
+   - reg
+-  - clocks
+-  - clock-names
+   - interrupts
+   - '#mbox-cells'
+ 
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: google,gs101-mbox
++    then:
++      required:
++        - clocks
++        - clock-names
++
+ additionalProperties: false
+ 
+ examples:
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610.dtsi b/arch/arm64/boot/dts/exynos/exynos9610.dtsi
+index d08cb85f7..8109f9c79 100644
+--- a/arch/arm64/boot/dts/exynos/exynos9610.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos9610.dtsi
+@@ -135,6 +135,22 @@ oscclk: clock {
+ 		#clock-cells = <0>;
+ 	};
+ 
++	firmware {
++		acpm_ipc: power-management {
++			compatible = "samsung,exynos9610-acpm-ipc";
++			mboxes = <&ap2apm_mailbox>;
++			shmem = <&apm_sram>;
++		};
++	};
++
++	apm_sram: sram@2039000 {
++		compatible = "mmio-sram";
++		reg = <0x0 0x2039000 0x15000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x0 0x0 0x2039000 0x15000>;
++	};
++
+ 	soc: soc@0 {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+@@ -226,6 +242,13 @@ cmu_usb: clock-controller@13030000 {
+ 		};
+ 
+ 		/* M3.6: USB 2.0 device mode only. Facts from the stock DT. */
++		ap2apm_mailbox: mailbox@11900000 {
++			compatible = "samsung,exynos9610-mbox";
++			reg = <0x11900000 0x1000>;
++			interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
++			#mbox-cells = <0>;
++		};
++
+ 		usbdrd_phy: phy@131d0000 {
+ 			compatible = "samsung,exynos9610-usbdrd-phy";
+ 			reg = <0x131d0000 0x200>;
+diff --git a/arch/arm64/configs/a50_firstlight_defconfig b/arch/arm64/configs/a50_firstlight_defconfig
+index 5cef68696..631850e58 100644
+--- a/arch/arm64/configs/a50_firstlight_defconfig
++++ b/arch/arm64/configs/a50_firstlight_defconfig
+@@ -121,3 +121,6 @@ CONFIG_PRINTK_TIME=y
+ # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+ CONFIG_MAGIC_SYSRQ=y
+ # CONFIG_RUNTIME_TESTING_MENU is not set
++CONFIG_MAILBOX=y
++CONFIG_EXYNOS_MBOX=y
++CONFIG_EXYNOS_ACPM_PROTOCOL=y
+diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/samsung/exynos-acpm.c
+index 6572cd7be..a04b0c647 100644
+--- a/drivers/firmware/samsung/exynos-acpm.c
++++ b/drivers/firmware/samsung/exynos-acpm.c
+@@ -37,6 +37,7 @@
+ #define ACPM_TX_TIMEOUT_US		500000
+ 
+ #define ACPM_GS101_INITDATA_BASE	0xa000
++#define ACPM_EXYNOS9610_INITDATA_BASE	0x6f00
+ 
+ /**
+  * struct acpm_shmem - shared memory configuration information.
+@@ -745,10 +746,17 @@ static const struct acpm_match_data acpm_gs101 = {
+ 	.initdata_base = ACPM_GS101_INITDATA_BASE,
+ };
+ 
++static const struct acpm_match_data acpm_exynos9610 = {
++	.initdata_base = ACPM_EXYNOS9610_INITDATA_BASE,
++};
++
+ static const struct of_device_id acpm_match[] = {
+ 	{
+ 		.compatible = "google,gs101-acpm-ipc",
+ 		.data = &acpm_gs101,
++	}, {
++		.compatible = "samsung,exynos9610-acpm-ipc",
++		.data = &acpm_exynos9610,
+ 	},
+ 	{},
+ };
+diff --git a/drivers/mailbox/exynos-mailbox.c b/drivers/mailbox/exynos-mailbox.c
+index 2320649bf..18b99caf3 100644
+--- a/drivers/mailbox/exynos-mailbox.c
++++ b/drivers/mailbox/exynos-mailbox.c
+@@ -31,13 +31,31 @@
+ 
+ #define EXYNOS_MBOX_CHAN_COUNT		HWEIGHT32(EXYNOS_MBOX_INTGR1_MASK)
+ 
++#define EXYNOS9610_MBOX_INTGR0		0x08	/* Interrupt Generation Register 0 */
++
++/**
++ * struct exynos_mbox_data - SoC specific data.
++ * @intgr:	offset of the interrupt generation register.
++ * @intgr_shift: position of the channel bits in @intgr.
++ * @mask_irqs:	the AP interrupts are masked at probe.
++ * @no_pclk:	the SoC has no separately controlled mailbox clock in the DT.
++ */
++struct exynos_mbox_data {
++	u32 intgr;
++	u8 intgr_shift;
++	bool mask_irqs;
++	bool no_pclk;
++};
++
+ /**
+  * struct exynos_mbox - driver's private data.
+  * @regs:	mailbox registers base address.
+  * @mbox:	pointer to the mailbox controller.
+  * @pclk:	pointer to the mailbox peripheral clock.
++ * @data:	SoC specific data.
+  */
+ struct exynos_mbox {
++	const struct exynos_mbox_data *data;
+ 	void __iomem *regs;
+ 	struct mbox_controller *mbox;
+ 	struct clk *pclk;
+@@ -59,7 +77,8 @@ static int exynos_mbox_send_data(struct mbox_chan *chan, void *data)
+ 		return -EINVAL;
+ 	}
+ 
+-	writel(BIT(msg->chan_id), exynos_mbox->regs + EXYNOS_MBOX_INTGR1);
++	writel(BIT(msg->chan_id) << exynos_mbox->data->intgr_shift,
++	       exynos_mbox->regs + exynos_mbox->data->intgr);
+ 
+ 	return 0;
+ }
+@@ -88,8 +107,20 @@ static struct mbox_chan *exynos_mbox_of_xlate(struct mbox_controller *mbox,
+ 	return ERR_PTR(-EINVAL);
+ }
+ 
++static const struct exynos_mbox_data exynos_mbox_gs101 = {
++	.intgr = EXYNOS_MBOX_INTGR1,
++	.mask_irqs = true,
++};
++
++static const struct exynos_mbox_data exynos_mbox_exynos9610 = {
++	.intgr = EXYNOS9610_MBOX_INTGR0,
++	.intgr_shift = 16,
++	.no_pclk = true,
++};
++
+ static const struct of_device_id exynos_mbox_match[] = {
+-	{ .compatible = "google,gs101-mbox" },
++	{ .compatible = "google,gs101-mbox", .data = &exynos_mbox_gs101 },
++	{ .compatible = "samsung,exynos9610-mbox", .data = &exynos_mbox_exynos9610 },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, exynos_mbox_match);
+@@ -115,14 +146,20 @@ static int exynos_mbox_probe(struct platform_device *pdev)
+ 	if (!chans)
+ 		return -ENOMEM;
+ 
++	exynos_mbox->data = of_device_get_match_data(dev);
++	if (!exynos_mbox->data)
++		return -EINVAL;
++
+ 	exynos_mbox->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(exynos_mbox->regs))
+ 		return PTR_ERR(exynos_mbox->regs);
+ 
+-	exynos_mbox->pclk = devm_clk_get_enabled(dev, "pclk");
+-	if (IS_ERR(exynos_mbox->pclk))
+-		return dev_err_probe(dev, PTR_ERR(exynos_mbox->pclk),
+-				     "Failed to enable clock.\n");
++	if (!exynos_mbox->data->no_pclk) {
++		exynos_mbox->pclk = devm_clk_get_enabled(dev, "pclk");
++		if (IS_ERR(exynos_mbox->pclk))
++			return dev_err_probe(dev, PTR_ERR(exynos_mbox->pclk),
++					     "Failed to enable clock.\n");
++	}
+ 
+ 	mbox->num_chans = EXYNOS_MBOX_CHAN_COUNT;
+ 	mbox->chans = chans;
+@@ -138,7 +175,9 @@ static int exynos_mbox_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, exynos_mbox);
+ 
+ 	/* Mask out all interrupts. We support just polling channels for now. */
+-	writel(EXYNOS_MBOX_INTMR0_MASK, exynos_mbox->regs + EXYNOS_MBOX_INTMR0);
++	if (exynos_mbox->data->mask_irqs)
++		writel(EXYNOS_MBOX_INTMR0_MASK,
++		       exynos_mbox->regs + EXYNOS_MBOX_INTMR0);
+ 
+ 	return devm_mbox_controller_register(dev, mbox);
+ }
+-- 
+2.56.0
+
