@@ -1,0 +1,60 @@
+diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+index e641ea350..b516d817f 100644
+--- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
++++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+@@ -1677,6 +1677,16 @@ static void exynos9610_usbdrd_utmi_init(struct exynos5_usbdrd_phy *phy_drd)
+ 	reg = readl(regs_base + EXYNOS850_DRD_LINKPORT);
+ 	reg |= EXYNOS9610_LINKPORT_SEL_OCD_U3 | EXYNOS9610_LINKPORT_SEL_OCD_U2;
+ 	writel(reg, regs_base + EXYNOS850_DRD_LINKPORT);
++	/*
++	 * TEST ONLY (M3.6): the LINK_CTRL part of Samsung's
++	 * phy_exynos_usb_v3p1_pipe_ovrd(): force the PIPE3 signals for the link.
++	 * The working 4.14 phone reads LINK_CTRL 0x00053ff0.
++	 */
++	reg = readl(regs_base + EXYNOS850_DRD_LINKCTRL);
++	reg |= LINKCTRL_FORCE_PIPE_EN | LINKCTRL_FORCE_RXELECIDLE;
++	reg &= ~LINKCTRL_FORCE_PHYSTATUS;
++	writel(reg, regs_base + EXYNOS850_DRD_LINKCTRL);
++
+ 	/*
+ 	 * TEST ONLY (M3.6): exynos850_usbdrd_phy_init() disables the "phy"
+ 	 * clock when this returns. Take a second reference so it stays on, as
+diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+index 1abdf5850..47e0f5c61 100644
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -2780,6 +2780,25 @@ static unsigned int a50_ls_step;
+ static const unsigned int a50_ls_ms[] = { 1000, 4000, 25000 };
+ static const char * const a50_ls_label[] = { "+1s", "+5s", "+30s" };
+ 
++/* TEST ONLY (M3.6): reads only; the registers captured on the working 4.14 phone. */
++static void a50_dump_regs(void)
++{
++	static const u16 phy_off[] = { 0x04, 0x24, 0x28, 0x30, 0x34, 0x38, 0x3c, 0x48, 0x60 };
++	static const u16 cmu_off[] = { 0x100, 0x108, 0x120, 0x128, 0x140, 0x148, 0x800 };
++	void __iomem *cmu = ioremap(0x13030000, 0x8000);
++	unsigned int i;
++
++	for (i = 0; i < ARRAY_SIZE(phy_off); i++)
++		pr_info("A50 REGS PHY +0x%04x = 0x%08x\n", phy_off[i], readl(a50_phy + phy_off[i]));
++	if (!cmu)
++		return;
++	for (i = 0; i < ARRAY_SIZE(cmu_off); i++)
++		pr_info("A50 REGS CMU +0x%04x = 0x%08x\n", cmu_off[i], readl(cmu + cmu_off[i]));
++	for (i = 0x2000; i <= 0x2048; i += 4)
++		pr_info("A50 REGS CMU +0x%04x = 0x%08x\n", i, readl(cmu + i));
++	iounmap(cmu);
++}
++
+ static void a50_ls_fn(struct work_struct *w);
+ static DECLARE_DELAYED_WORK(a50_ls_work, a50_ls_fn);
+ 
+@@ -2787,6 +2806,8 @@ static void a50_ls_fn(struct work_struct *w)
+ {
+ 	u32 t = readl(a50_phy + 0x5c);
+ 
++	if (!a50_ls_step)
++		a50_dump_regs();
+ 	pr_info("A50 LINESTATE %s: linestate=%u squelch=%u HSP_TEST=%08x UTMI=%08x HSP=%08x DSTS=%08x GDBGLTSSM=%08x GUSB2PHYCFG=%08x PMU_USB=%08x\n",
+ 		a50_ls_label[a50_ls_step], (t >> 20) & 3, (t >> 25) & 1, t,
+ 		readl(a50_phy + 0x50), readl(a50_phy + 0x54),
