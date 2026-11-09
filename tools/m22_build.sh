@@ -14,8 +14,9 @@ export PATH=$SHIM:$ACK/prebuilts/clang/host/linux-x86/clang-r584948c/bin:$ACK/pr
 export KBUILD_BUILD_TIMESTAMP='Wed Nov  4 00:00:00 UTC 2026' KBUILD_BUILD_USER=a50 KBUILD_BUILD_HOST=firstlight SOURCE_DATE_EPOCH=1793750400
 LIST=$REPO/src/m22/initramfs.list
 # A50_INIT=path: use another init in the initramfs (default tools/m22/init; M3.2 uses tools/m32/init)
+# A50_INITRAMFS_LIST=path: use another gen_init_cpio list (default tools/m22/initramfs.list.in; A50_INIT replaces its tools/m22/init entry)
 INIT=$(realpath "${A50_INIT:-$REPO/tools/m22/init}")
-sed -e "s#@REPO@#$REPO#g" -e "s#$REPO/tools/m22/init#$INIT#" "$REPO/tools/m22/initramfs.list.in" > "$LIST"
+sed -e "s#@REPO@#$REPO#g" -e "s#$REPO/tools/m22/init#$INIT#" "${A50_INITRAMFS_LIST:-$REPO/tools/m22/initramfs.list.in}" > "$LIST"
 touch -d @1793750400 "$REPO/src/m22/busybox" "$INIT" "$LIST"
 rm -rf "$OUT"; cd "$ACK/common"
 M="make -j16 ARCH=arm64 LLVM=1 O=$OUT"
