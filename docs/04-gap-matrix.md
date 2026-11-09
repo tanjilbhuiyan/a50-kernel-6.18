@@ -35,7 +35,7 @@ TV tuners). Only the drivers below matter.
 | IOMMU (SysMMU) | `iommu/exynos-iommu.c` | A (10 nodes) | DT check vs v7 SysMMU | M6 |
 | DMA (PL330) | `dma/pl330.c` | A (AMBA match) | DT | M4 |
 | I2C, PWM, keys, fixed regulators | mainline drivers | A (14/15 i2c) | DT | M4 |
-| Speedy bus | `i2c/busses/i2c-exynos-speedy` | C | port (PMIC access) | M4 |
+| Speedy bus | `i2c/busses/i2c-exynos-speedy` | C | not needed: PMIC access is through ACPM (M3.6, plan change 2026-11-10) | M4 |
 | PMIC s2mpu09 + s2mpb03 | `mfd/s2mpu09-core.c`, `regulator/s2mpb03.c` | C (mainline has s2mps/s2mpg family, `sec-i2c.c`, `sec-acpm.c`) | port as `sec-core` variant | M4 |
 | ACPM (power firmware IPC) | `soc/samsung/acpm/*`, `cal-if/acpm_dvfs.c` | ✱B-ish: `firmware/samsung/exynos-acpm.c` (gs101) | adapt mainline ACPM to 9610 protocol | M4 |
 | CPU DVFS / devfreq / cpuidle | `cal-if`, `devfreq/exynos`, `cpuidle-exynos64.c` | C (cpuidle → PSCI generic A) | cpufreq via ACPM DVFS; devfreq later | M4, M12 |

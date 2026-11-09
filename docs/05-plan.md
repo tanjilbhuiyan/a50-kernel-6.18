@@ -85,8 +85,9 @@ DoD: Halium initramfs on 6.18 mounts `/data` and exposes telnet
 DoD evaluation (2026-11-10, owner accepted): met with a caveat. Halium's ramdisk contents are in the 6.18 kernel, `/userdata` is mounted read-only and telnet works over USB, set up by our diagnostic init. Halium's own `/init` has not run: it needs write access (`e2fsck -y`, `resize2fs`), so running it moves to M5.
 
 ## M4 — Core SoC
-Tasks: speedy bus, s2mpu09/s2mpb03 PMIC + regulators, ACPM IPC, power
-domains, TMU, PL330, I2C/PWM/keys, CPU frequency via ACPM DVFS.
+Tickets M4.1-M4.8 in `tasks/`. Tasks: all CPUs online, ACPM IPC, s2mpu09/s2mpb03
+PMIC + regulators, power domains, TMU, PL330, I2C/PWM/keys, CPU frequency via ACPM DVFS.
+Why changed (2026-11-10): "speedy bus" removed. PMIC access on this phone goes through the ACPM firmware (4.14 `drivers/mfd/s2mpu09-core.c:53`), proven read-only on 6.18 in M3.6 Test 4. All-CPUs bring-up made an explicit ticket; every 6.18 test so far ran with `maxcpus=1`.
 DoD: all 8 CPUs online, cpufreq scaling between min/max, thermal zones
 readable, regulators enumerated, no warnings from missing supplies at boot.
 

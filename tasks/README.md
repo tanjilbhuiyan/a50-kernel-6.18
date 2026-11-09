@@ -37,3 +37,11 @@ later milestones get tickets when we reach them (evidence first, Rule 1).
 | M3.5 | UFS storage, read-only | yes | M3.3, M3.4 | done (log/2026-11-07-M3.5-ufs.md; acceptance reworded) |
 | M3.6 | USB device mode (DRD + PHY + gadget) | yes | M3.3, M3.4 | done |
 | M3.7 | Halium initramfs on 6.18: mount /data, telnet over USB (M3 DoD) | yes | M3.5, M3.6 | done (caveat in ticket) |
+| M4.1 | All 8 CPUs online | yes | M3 | todo |
+| M4.2 | ACPM firmware IPC for Exynos 9610 | yes | M3 | todo |
+| M4.3 | S2MPU09 and S2MPB03 PMICs, regulators | yes | M4.2, M4.4 | todo |
+| M4.4 | I2C, PWM, keys, PL330 DMA | yes | M3 | todo |
+| M4.5 | Power domains | yes | M3 | todo |
+| M4.6 | Thermal (TMU) | yes | M3 | todo |
+| M4.7 | CPU frequency via ACPM DVFS | yes | M4.1, M4.2, M4.6 | todo |
+| M4.8 | Core SoC integration and DoD | yes | M4.1-M4.7 | todo |
