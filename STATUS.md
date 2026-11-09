@@ -52,6 +52,7 @@ Decision (owner, 2026-11-02): M0.4 closed (playback = userspace config); microph
 M3.6 done: 6.18 enumerates a USB gadget at high speed and the ACM shell answers (log/2026-11-08-M3.6-usb.md). The fix was Samsung's PIPE3 override, kernel commit 36fdc0b53 on a50-usb. The sm5713 needs no setup for device mode.
 Next: tasks/M3.7-halium-initramfs-data.md. M3.7 needs RNDIS added to the gadget (M3.6 is ACM only).
 Open: one 6.18 run stopped responding after the ACM test (18:20 on 2026-11-09, no log, did not repeat); watch for it. M4 tickets not written yet.
+Set-aside questions (ramdisk delivery, one-off hang, and others): docs/08-open-questions.md.
 Kernel branches: a50-dt -> a50-clk -> a50-pinctrl -> a50-ufs -> a50-usb (clean); a50-diag (readout, do not merge); a50-m36-clean (a50-usb + a50-diag, test merge); a50-m36-test and a50-m36-min (test only, do not merge).
 Test loop: DT_IMG=src/m36/dt-clean.img tools/m32_run_test.sh IMG OUT IP WAIT; ACM check tools/m36/acm_shell.py. Builds tools/m22_build.sh (A50_DIAG*, A50_INIT, A50_CMDLINE_APPEND, A50_CONFIG). Any UFS-enabled kernel must carry A50_UFS_SAFE.
 Host: USB-C cable only (USB-A port is unreliable). /etc/udev/rules.d/99-a50-acm.rules opens /dev/ttyACM0 for the test gadget.
