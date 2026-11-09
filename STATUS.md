@@ -1,8 +1,8 @@
 # STATUS
 
-Updated: 2026-11-02 (evening)
+Updated: 2026-11-09
 
-## Current milestone: **M3 Storage + USB: M3.1-M3.5 done (6.18 reads UFS, writes still blocked by A50_UFS_SAFE); next ticket = M3.6 (USB device mode)**
+## Current milestone: **M3 Storage + USB: M3.1-M3.6 done (6.18 reads UFS with writes blocked by A50_UFS_SAFE; USB gadget and ACM shell work); next ticket = M3.7 (Halium initramfs, telnet over USB)**
 
 M1.1 and M1.2 done. M2.1 and M2.3 done (fb pixel format accepted as a risk, resolve in M2.4). M0.1-M0.3 complete. M1.3 done (`reference/contract/`). NOTE: the M1.5 region choice was corrected on 2026-11-04 (last_kmsg = debug-snapshot log_kernel 0xf9010000; the baseline zeroes log_pstore), see the M1.5 log. M1.4: S-Boot does NOT boot a gzip kernel; use uncompressed `Image`, kernel <= 46,876,672 B. M1.5: after a panic the baseline keeps the log in `/proc/last_kmsg` (sec_debug region 0x91388000); pstore/ramoops at 0xf9d10000 stayed empty. M2.2 done: first-light `Image` 7,170,056 B (reproducible) and `boot-firstlight.img` (`src/m22/artifacts/`). M2.4 closed 2026-11-07 (log/2026-11-04-M2.4-diag-build.md).
 
@@ -48,10 +48,12 @@ Decision (owner, 2026-11-02): M0.4 closed (playback = userspace config); microph
 - Exact ioctl sets used by vendor HALs on mali/ion/decon/abox/scsc/modem (M1.3)
 
 
-## RESUME HERE (2026-11-08)
-M3.5 done: 6.18 reads the phone's UFS at HS-G3 1-lane series B; vbmeta read byte-exact; A50_UFS_SAFE default-deny guard + self-test proven live (log/2026-11-07-M3.5-ufs.md).
-Next: tasks/M3.6-usb-device-mode.md. Kernel branches: a50-dt -> a50-clk -> a50-pinctrl -> a50-ufs (clean); a50-diag (readout, do not merge); a50-m3x-test (test merges, do not push).
-Test loop: DT_IMG=<dt.img> tools/m32_run_test.sh IMG OUT IP WAIT; builds tools/m22_build.sh (A50_DIAG*, A50_INIT, A50_CMDLINE_APPEND, A50_CONFIG). Any UFS-enabled kernel must carry A50_UFS_SAFE (the build refuses otherwise).
-On BOOT during a test: the test image, then zeros (Download mode zero-fills). USB can drop in Download mode: reseat the cable; recovery in docs/06-workflow.md.
-Phone: baseline BOOT 7d5855ef..., stock DTB/DTBO, verified 2026-11-08 15:28; IP 192.168.0.171.
-
+## RESUME HERE (2026-11-09)
+M3.6 done: 6.18 enumerates a USB gadget at high speed and the ACM shell answers (log/2026-11-08-M3.6-usb.md). The fix was Samsung's PIPE3 override, kernel commit 36fdc0b53 on a50-usb. The sm5713 needs no setup for device mode.
+Next: tasks/M3.7-halium-initramfs-data.md. M3.7 needs RNDIS added to the gadget (M3.6 is ACM only).
+Open: one 6.18 run stopped responding after the ACM test (18:20 on 2026-11-09, no log, did not repeat); watch for it. M4 tickets not written yet.
+Kernel branches: a50-dt -> a50-clk -> a50-pinctrl -> a50-ufs -> a50-usb (clean); a50-diag (readout, do not merge); a50-m36-clean (a50-usb + a50-diag, test merge); a50-m36-test and a50-m36-min (test only, do not merge).
+Test loop: DT_IMG=src/m36/dt-clean.img tools/m32_run_test.sh IMG OUT IP WAIT; ACM check tools/m36/acm_shell.py. Builds tools/m22_build.sh (A50_DIAG*, A50_INIT, A50_CMDLINE_APPEND, A50_CONFIG). Any UFS-enabled kernel must carry A50_UFS_SAFE.
+Host: USB-C cable only (USB-A port is unreliable). /etc/udev/rules.d/99-a50-acm.rules opens /dev/ttyACM0 for the test gadget.
+Phone: baseline BOOT 7d5855ef..., stock DTB/DTBO, verified 2026-11-09 18:34; DHCP, 192.168.181.225 on office Wi-Fi (192.168.0.171 at home).
+On BOOT during a test: the test image, then zeros. A failed Heimdall handshake leaves Download mode stuck; a replug does not clear it, the key combo does (docs/06-workflow.md).
