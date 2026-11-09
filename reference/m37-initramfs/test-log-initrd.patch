@@ -1,0 +1,56 @@
+diff --git a/init/initramfs.c b/init/initramfs.c
+index 6ddbfb17f..67f2017b7 100644
+--- a/init/initramfs.c
++++ b/init/initramfs.c
+@@ -508,6 +508,10 @@ static unsigned long my_inptr __initdata; /* index of next byte to be processed
+  *
+  * This symbol shouldn't be used externally. It's available for unit tests.
+  */
++/* TEST ONLY (M3.7): log how the bootloader's ramdisk unpacks. */
++static bool __initdata a50_log_unpack;
++static char *__initdata a50_unpack_base;
++
+ char * __init unpack_to_rootfs(char *buf, unsigned long len)
+ {
+ 	long written;
+@@ -545,11 +549,17 @@ char * __init unpack_to_rootfs(char *buf, unsigned long len)
+ 			continue;
+ 		}
+ 		this_header = 0;
++		if (a50_log_unpack)
++			pr_info("A50 UNPACK: segment at +%lu, remaining %lu, state %d, bytes %*ph\n",
++				(unsigned long)(buf - a50_unpack_base), len, state, 16, buf);
+ 		decompress = decompress_method(buf, len, &compress_name);
+ 		pr_debug("Detected %s compressed data\n", compress_name);
+ 		if (decompress) {
+ 			int res = decompress(buf, len, NULL, flush_buffer, NULL,
+ 				   &my_inptr, error);
++			if (a50_log_unpack)
++				pr_info("A50 UNPACK: %s rc=%d consumed=%ld state=%d message=%s\n",
++					compress_name, res, my_inptr, state, message ? message : "none");
+ 			if (res)
+ 				error("decompressor failed");
+ 		} else if (compress_name) {
+@@ -730,7 +740,22 @@ static void __init do_populate_rootfs(void *unused, async_cookie_t cookie)
+ 	else
+ 		printk(KERN_INFO "Unpacking initramfs...\n");
+ 
++	{
++		char *a50 = (char *)initrd_start;
++		unsigned long a50_sz = initrd_end - initrd_start, a50_real = 10792361, a50_i, a50_nz = 0;
++
++		pr_info("A50 INITRD: size=%lu first32=%*ph\n", a50_sz, 32, a50);
++		if (a50_sz > a50_real) {
++			for (a50_i = a50_real; a50_i < a50_sz; a50_i++)
++				a50_nz += a50[a50_i] != 0;
++			pr_info("A50 INITRD: past the real end (+%lu bytes), nonzero=%lu, first32=%*ph\n",
++				a50_sz - a50_real, a50_nz, 32, a50 + a50_real);
++		}
++		a50_unpack_base = a50;
++		a50_log_unpack = true;
++	}
+ 	err = unpack_to_rootfs((char *)initrd_start, initrd_end - initrd_start);
++	a50_log_unpack = false;
+ 	if (err) {
+ #ifdef CONFIG_BLK_DEV_RAM
+ 		populate_initrd_image(err);
