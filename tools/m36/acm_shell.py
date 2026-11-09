@@ -49,7 +49,14 @@ while not os.path.exists(DEV):
     time.sleep(0.2)
 time.sleep(2)
 
-fd = os.open(DEV, os.O_RDWR | os.O_NOCTTY)
+for attempt in range(40):  # udev may apply the permissions just after the node appears
+    try:
+        fd = os.open(DEV, os.O_RDWR | os.O_NOCTTY)
+        break
+    except PermissionError:
+        if attempt == 39:
+            raise
+        time.sleep(0.5)
 attrs = termios.tcgetattr(fd)
 attrs[0] = 0
 attrs[1] = 0
