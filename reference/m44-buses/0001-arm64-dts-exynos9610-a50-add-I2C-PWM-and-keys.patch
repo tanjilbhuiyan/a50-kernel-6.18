@@ -1,4 +1,4 @@
-From 3a7943fc8cee2eb2305c1cfb91af053ccb51b9bd Mon Sep 17 00:00:00 2001
+From 6234ac6e4ee0d6b7b232f3054fc4166d6b7158f7 Mon Sep 17 00:00:00 2001
 From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
 Date: Tue, 10 Nov 2026 01:41:26 +0600
 Subject: [PATCH] arm64: dts: exynos9610-a50: add I2C, PWM and keys
@@ -9,8 +9,8 @@ Change-Id: I3ad867836e32b9e6d740ea63140756175e70b9a9
  arch/arm64/boot/dts/exynos/exynos9610-a50.dts | 34 +++++++
  .../boot/dts/exynos/exynos9610-pinctrl.dtsi   | 32 +++++++
  arch/arm64/boot/dts/exynos/exynos9610.dtsi    | 91 +++++++++++++++++++
- arch/arm64/configs/a50_firstlight_defconfig   |  7 ++
- 4 files changed, 164 insertions(+)
+ arch/arm64/configs/a50_firstlight_defconfig   |  8 ++
+ 4 files changed, 165 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/exynos/exynos9610-a50.dts b/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
 index 64c413d08..ff38a0f55 100644
@@ -112,7 +112,7 @@ index 5736b3db8..e4a540e5c 100644
  
  &pinctrl_shub {
 diff --git a/arch/arm64/boot/dts/exynos/exynos9610.dtsi b/arch/arm64/boot/dts/exynos/exynos9610.dtsi
-index 7b62a0693..c0d3f8a11 100644
+index 7b62a0693..12a98816f 100644
 --- a/arch/arm64/boot/dts/exynos/exynos9610.dtsi
 +++ b/arch/arm64/boot/dts/exynos/exynos9610.dtsi
 @@ -432,6 +432,17 @@ gic: interrupt-controller@12301000 {
@@ -143,7 +143,7 @@ index 7b62a0693..c0d3f8a11 100644
 +			interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
 +			clocks = <&cmu_peri CLK_GOUT_PERI_I2C_0_PCLK>;
 +			clock-names = "i2c";
-+			pinctrl-names = "i2c";
++			pinctrl-names = "default";
 +			pinctrl-0 = <&i2c0_bus>;
 +			samsung,i2c-sda-delay = <100>;
 +			#address-cells = <1>;
@@ -157,7 +157,7 @@ index 7b62a0693..c0d3f8a11 100644
 +			interrupts = <GIC_SPI 248 IRQ_TYPE_LEVEL_HIGH>;
 +			clocks = <&cmu_peri CLK_GOUT_PERI_I2C_1_PCLK>;
 +			clock-names = "i2c";
-+			pinctrl-names = "i2c";
++			pinctrl-names = "default";
 +			pinctrl-0 = <&i2c1_bus>;
 +			samsung,i2c-sda-delay = <100>;
 +			#address-cells = <1>;
@@ -171,7 +171,7 @@ index 7b62a0693..c0d3f8a11 100644
 +			interrupts = <GIC_SPI 250 IRQ_TYPE_LEVEL_HIGH>;
 +			clocks = <&cmu_peri CLK_GOUT_PERI_I2C_3_PCLK>;
 +			clock-names = "i2c";
-+			pinctrl-names = "i2c";
++			pinctrl-names = "default";
 +			pinctrl-0 = <&i2c3_bus>;
 +			samsung,i2c-sda-delay = <100>;
 +			#address-cells = <1>;
@@ -185,7 +185,7 @@ index 7b62a0693..c0d3f8a11 100644
 +			interrupts = <GIC_SPI 251 IRQ_TYPE_LEVEL_HIGH>;
 +			clocks = <&cmu_peri CLK_GOUT_PERI_I2C_4_PCLK>;
 +			clock-names = "i2c";
-+			pinctrl-names = "i2c";
++			pinctrl-names = "default";
 +			pinctrl-0 = <&i2c4_bus>;
 +			samsung,i2c-sda-delay = <100>;
 +			#address-cells = <1>;
@@ -199,7 +199,7 @@ index 7b62a0693..c0d3f8a11 100644
 +			interrupts = <GIC_SPI 253 IRQ_TYPE_LEVEL_HIGH>;
 +			clocks = <&cmu_peri CLK_GOUT_PERI_I2C_6_PCLK>;
 +			clock-names = "i2c";
-+			pinctrl-names = "i2c";
++			pinctrl-names = "default";
 +			pinctrl-0 = <&i2c6_bus>;
 +			samsung,i2c-sda-delay = <100>;
 +			#address-cells = <1>;
@@ -221,10 +221,10 @@ index 7b62a0693..c0d3f8a11 100644
  			compatible = "samsung,exynos9610-mbox";
  			reg = <0x11900000 0x1000>;
 diff --git a/arch/arm64/configs/a50_firstlight_defconfig b/arch/arm64/configs/a50_firstlight_defconfig
-index 8331a7fde..4967b0176 100644
+index 8331a7fde..9f7dd0f4a 100644
 --- a/arch/arm64/configs/a50_firstlight_defconfig
 +++ b/arch/arm64/configs/a50_firstlight_defconfig
-@@ -126,3 +126,10 @@ CONFIG_EXYNOS_MBOX=y
+@@ -126,3 +126,11 @@ CONFIG_EXYNOS_MBOX=y
  CONFIG_EXYNOS_ACPM_PROTOCOL=y
  CONFIG_REGULATOR=y
  CONFIG_REGULATOR_S2MPU09_ACPM=y
@@ -235,6 +235,7 @@ index 8331a7fde..4967b0176 100644
 +CONFIG_INPUT_EVDEV=y
 +CONFIG_PWM=y
 +CONFIG_PWM_SAMSUNG=y
++CONFIG_INPUT_KEYBOARD=y
 -- 
 2.56.0
 
