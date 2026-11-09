@@ -79,6 +79,7 @@ Why changed (2026-11-07): M2 closed without our DT and without clocks/pinctrl
 need them). UFS and USB cannot work without them, and every later test needs a
 readout that works after init. M3.1-M3.4 are those prerequisites.
 Why changed (2026-11-08): M3.6 Test 3 (`log/2026-11-08-M3.6-usb.md`) put the USB switch on USB and left the controller running with no attach. The baseline powers USB from LDO12/13/14 (live `/sys/class/regulator`), and 6.18 has no PMIC access, so their state is unverified. On this phone PMIC access goes through the ACPM firmware (`s2mpu09_read_reg` -> `exynos_acpm_read_reg`, 4.14 `drivers/mfd/s2mpu09-core.c:53`), so the probe uses ACPM IPC and does not drive the SPEEDY bus. Read-only first; any PMIC write is a separate step with the owner's approval. The full PMIC/regulator work stays in M4.
+Why changed (2026-11-09): M3.6 Tests 3-8 ruled out the suspects findable from source, and the D+ line never rises on 6.18 (`log/2026-11-08-M3.6-usb.md`). The baseline kernel has no `/dev/mem` and refuses all modules (`CONFIG_UH_LKM_BLOCK`), so M3.6 adds one diagnostic: a 4.14 test kernel (baseline source + a built-in read-only register dump), flashed to BOOT only with the usual rollback, to read the PHY and USB clock registers of a working phone. It is a measurement tool, never a replacement for the baseline.
 DoD: Halium initramfs on 6.18 mounts `/data` and exposes telnet
 `192.168.2.15` over USB from the laptop.
 
