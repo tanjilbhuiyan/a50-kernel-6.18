@@ -21,18 +21,31 @@ rd = d[off:off + rs]
 open(out_rd, "wb").write(rd)
 a = gzip.decompress(rd)
 
+# newc hardlinks: only one entry of a group carries the data, so collect it first.
+payload, pos = {}, 0
+while True:
+    f = [int(a[pos + 6 + 8 * i:pos + 14 + 8 * i], 16) for i in range(13)]
+    name = a[pos + 110:pos + 110 + f[11] - 1].decode()
+    data = (pos + 110 + f[11] + 3) & ~3
+    if name == "TRAILER!!!":
+        break
+    if stat.S_ISREG(f[1]) and f[4] > 1 and f[6]:
+        payload[f[0]] = a[data:data + f[6]]
+    pos = (data + f[6] + 3) & ~3
+
 pos, lines, others = 0, [], 0
 while True:
     if a[pos:pos + 6] != b"070701":
         sys.exit(f"bad cpio magic at {pos}")
     f = [int(a[pos + 6 + 8 * i:pos + 14 + 8 * i], 16) for i in range(13)]
-    mode, fsize, nsize = f[1], f[6], f[11]
+    ino, mode, nlink, fsize, nsize = f[0], f[1], f[4], f[6], f[11]
     name = a[pos + 110:pos + 110 + nsize - 1].decode()
     data = (pos + 110 + nsize + 3) & ~3
     if name == "TRAILER!!!":
         break
-    if stat.S_ISREG(mode) and fsize:
-        lines.append(f"{hashlib.sha256(a[data:data + fsize]).hexdigest()}  ./{name}")
+    if stat.S_ISREG(mode):
+        content = payload[ino] if nlink > 1 else a[data:data + fsize]
+        lines.append(f"{hashlib.sha256(content).hexdigest()}  ./{name}")
     else:
         others += 1
     pos = (data + fsize + 3) & ~3

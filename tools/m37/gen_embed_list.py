@@ -17,13 +17,28 @@ a = gzip.decompress(open(rd, "rb").read())
 shutil.rmtree(root, ignore_errors=True)
 os.makedirs(root)
 
-entries, seen, counts = [], set(), {}
+# newc hardlinks: every name has the same inode, and only one entry carries the data.
+links, payload = {}, {}
+pos = 0
+while True:
+    f = [int(a[pos + 6 + 8 * i:pos + 14 + 8 * i], 16) for i in range(13)]
+    name = a[pos + 110:pos + 110 + f[11] - 1].decode()
+    data = (pos + 110 + f[11] + 3) & ~3
+    if name == "TRAILER!!!":
+        break
+    if stat.S_ISREG(f[1]) and f[4] > 1:
+        links.setdefault(f[0], []).append("/" + name.lstrip("./"))
+        if f[6]:
+            payload[f[0]] = a[data:data + f[6]]
+    pos = (data + f[6] + 3) & ~3
+
+entries, seen, counts, done = [], set(), {}, set()
 pos = 0
 while True:
     if a[pos:pos + 6] != b"070701":
         sys.exit(f"bad cpio magic at {pos}")
     f = [int(a[pos + 6 + 8 * i:pos + 14 + 8 * i], 16) for i in range(13)]
-    mode, fsize, rmaj, rmin, nsize = f[1], f[6], f[9], f[10], f[11]
+    ino, mode, nlink, fsize, rmaj, rmin, nsize = f[0], f[1], f[4], f[6], f[9], f[10], f[11]
     name = a[pos + 110:pos + 110 + nsize - 1].decode()
     data = (pos + 110 + nsize + 3) & ~3
     if name == "TRAILER!!!":
@@ -40,6 +55,16 @@ while True:
         kind = "slink"; entries.append(f"slink {path} {a[data:data + fsize].decode()} {perm} 0 0")
     elif stat.S_ISCHR(mode) or stat.S_ISBLK(mode):
         kind = "nod"; entries.append(f"nod {path} {perm} 0 0 {'c' if stat.S_ISCHR(mode) else 'b'} {rmaj} {rmin}")
+    elif stat.S_ISREG(mode) and nlink > 1:
+        kind = "hardlink"
+        if ino not in done:
+            done.add(ino)
+            if ino not in payload:
+                sys.exit(f"no data for hardlink group of {path}")
+            src = os.path.join(root, f"f{len(entries)}")
+            with open(src, "wb") as w:
+                w.write(payload[ino])
+            entries.append(f"file {path} {src} {perm} 0 0 " + " ".join(n for n in links[ino] if n != path))
     elif stat.S_ISREG(mode):
         kind = "file"
         src = os.path.join(root, f"f{len(entries)}")
