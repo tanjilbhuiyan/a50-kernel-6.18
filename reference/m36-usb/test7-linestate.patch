@@ -1,0 +1,58 @@
+diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+index ba64592da..9d1a9dbb4 100644
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -2769,6 +2769,42 @@ static int dwc3_gadget_soft_disconnect(struct dwc3 *dwc)
+ 	return ret;
+ }
+ 
++/*
++ * TEST ONLY (M3.6): observe the USB2 line state after run/stop. Reads only.
++ * HSP_TEST LINESTATE (bits 21:20): 0 = SE0 (both low), 1 = J, 2 = K, 3 = SE1.
++ */
++static void __iomem *a50_phy;
++static struct dwc3 *a50_dwc;
++static unsigned int a50_ls_step;
++static const unsigned int a50_ls_ms[] = { 1000, 4000, 25000 };
++static const char * const a50_ls_label[] = { "+1s", "+5s", "+30s" };
++
++static void a50_ls_fn(struct work_struct *w);
++static DECLARE_DELAYED_WORK(a50_ls_work, a50_ls_fn);
++
++static void a50_ls_fn(struct work_struct *w)
++{
++	u32 t = readl(a50_phy + 0x5c);
++
++	pr_info("A50 LINESTATE %s: linestate=%u squelch=%u HSP_TEST=%08x UTMI=%08x HSP=%08x DSTS=%08x GDBGLTSSM=%08x\n",
++		a50_ls_label[a50_ls_step], (t >> 20) & 3, (t >> 25) & 1, t,
++		readl(a50_phy + 0x50), readl(a50_phy + 0x54),
++		dwc3_readl(a50_dwc, DWC3_DSTS), dwc3_readl(a50_dwc, DWC3_GDBGLTSSM));
++	if (++a50_ls_step < ARRAY_SIZE(a50_ls_ms))
++		schedule_delayed_work(&a50_ls_work, msecs_to_jiffies(a50_ls_ms[a50_ls_step]));
++}
++
++static void a50_ls_start(struct dwc3 *dwc)
++{
++	if (a50_phy)
++		return;
++	a50_phy = ioremap(0x131d0000, 0x100);
++	if (!a50_phy)
++		return;
++	a50_dwc = dwc;
++	schedule_delayed_work(&a50_ls_work, msecs_to_jiffies(a50_ls_ms[0]));
++}
++
+ static int dwc3_gadget_soft_connect(struct dwc3 *dwc)
+ {
+ 	int ret;
+@@ -2809,7 +2845,9 @@ static int dwc3_gadget_soft_connect(struct dwc3 *dwc)
+ 
+ 	dwc3_event_buffers_setup(dwc);
+ 	__dwc3_gadget_start(dwc);
+-	return dwc3_gadget_run_stop(dwc, true);
++	ret = dwc3_gadget_run_stop(dwc, true);
++	a50_ls_start(dwc);
++	return ret;
+ }
+ 
+ static int dwc3_gadget_pullup(struct usb_gadget *g, int is_on)
