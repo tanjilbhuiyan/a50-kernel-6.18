@@ -1,0 +1,240 @@
+From 3a7943fc8cee2eb2305c1cfb91af053ccb51b9bd Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Tue, 10 Nov 2026 01:41:26 +0600
+Subject: [PATCH] arm64: dts: exynos9610-a50: add I2C, PWM and keys
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I3ad867836e32b9e6d740ea63140756175e70b9a9
+---
+ arch/arm64/boot/dts/exynos/exynos9610-a50.dts | 34 +++++++
+ .../boot/dts/exynos/exynos9610-pinctrl.dtsi   | 32 +++++++
+ arch/arm64/boot/dts/exynos/exynos9610.dtsi    | 91 +++++++++++++++++++
+ arch/arm64/configs/a50_firstlight_defconfig   |  7 ++
+ 4 files changed, 164 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610-a50.dts b/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
+index 64c413d08..ff38a0f55 100644
+--- a/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
++++ b/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
+@@ -9,6 +9,8 @@
+ 
+ /dts-v1/;
+ 
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/gpio/gpio.h>
+ #include "exynos9610.dtsi"
+ 
+ / {
+@@ -148,3 +150,35 @@ &usbdrd {
+ 	vdd10-supply = <&ldo12_reg>;
+ 	vdd33-supply = <&ldo14_reg>;
+ };
++
++&i2c_0 { status = "okay"; };
++&i2c_1 { status = "okay"; };
++&i2c_3 { status = "okay"; };
++&i2c_4 { status = "okay"; };
++&i2c_6 { status = "okay"; };
++&pwm { status = "okay"; };
++
++/ {
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		button-volume-down {
++			label = "gpio-keys: KEY_VOLUMEDOWN";
++			linux,code = <KEY_VOLUMEDOWN>;
++			gpios = <&gpa1 6 GPIO_ACTIVE_LOW>;
++		};
++
++		button-volume-up {
++			label = "gpio-keys: KEY_VOLUMEUP";
++			linux,code = <KEY_VOLUMEUP>;
++			gpios = <&gpa1 5 GPIO_ACTIVE_LOW>;
++		};
++
++		button-power {
++			label = "gpio-keys: KEY_POWER";
++			linux,code = <KEY_POWER>;
++			gpios = <&gpa1 7 GPIO_ACTIVE_LOW>;
++			wakeup-source;
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynos9610-pinctrl.dtsi
+index 5736b3db8..e4a540e5c 100644
+--- a/arch/arm64/boot/dts/exynos/exynos9610-pinctrl.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos9610-pinctrl.dtsi
+@@ -318,6 +318,25 @@ gpm25: gpm25-gpio-bank {
+ 		interrupt-controller;
+ 		#interrupt-cells = <2>;
+ 	};
++
++	i2c3_bus: i2c3-bus {
++		samsung,pins = "gpm2-0", "gpm3-0";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++	i2c4_bus: i2c4-bus {
++		samsung,pins = "gpm4-0", "gpm5-0";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++	i2c6_bus: i2c6-bus {
++		samsung,pins = "gpm8-0", "gpm9-0";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
+ };
+ 
+ &pinctrl_dispaud {
+@@ -460,6 +479,19 @@ gpg4: gpg4-gpio-bank {
+ 		interrupt-controller;
+ 		#interrupt-cells = <2>;
+ 	};
++
++	i2c0_bus: i2c0-bus {
++		samsung,pins = "gpp0-1", "gpp0-0";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++	i2c1_bus: i2c1-bus {
++		samsung,pins = "gpp0-3", "gpp0-2";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
+ };
+ 
+ &pinctrl_shub {
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610.dtsi b/arch/arm64/boot/dts/exynos/exynos9610.dtsi
+index 7b62a0693..c0d3f8a11 100644
+--- a/arch/arm64/boot/dts/exynos/exynos9610.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos9610.dtsi
+@@ -432,6 +432,17 @@ gic: interrupt-controller@12301000 {
+ 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
+ 		};
+ 
++		cmu_peri: clock-controller@10030000 {
++			compatible = "samsung,exynos9610-cmu-peri";
++			reg = <0x10030000 0x8000>;
++			#clock-cells = <1>;
++			clocks = <&oscclk>,
++				 <&cmu_top CLK_DOUT_CMU_PERI_BUS>,
++				 <&cmu_top CLK_DOUT_CMU_PERI_IP>,
++				 <&cmu_top CLK_DOUT_CMU_PERI_UART>;
++			clock-names = "oscclk", "dout_cmu_peri_bus", "dout_cmu_peri_ip", "dout_cmu_peri_uart";
++		};
++
+ 		cmu_usb: clock-controller@13030000 {
+ 			compatible = "samsung,exynos9610-cmu-usb";
+ 			reg = <0x13030000 0x8000>;
+@@ -447,6 +458,86 @@ cmu_usb: clock-controller@13030000 {
+ 		};
+ 
+ 		/* M3.6: USB 2.0 device mode only. Facts from the stock DT. */
++		i2c_0: i2c@13830000 {
++			compatible = "samsung,s3c2440-i2c";
++			reg = <0x13830000 0x100>;
++			interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cmu_peri CLK_GOUT_PERI_I2C_0_PCLK>;
++			clock-names = "i2c";
++			pinctrl-names = "i2c";
++			pinctrl-0 = <&i2c0_bus>;
++			samsung,i2c-sda-delay = <100>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		i2c_1: i2c@13840000 {
++			compatible = "samsung,s3c2440-i2c";
++			reg = <0x13840000 0x100>;
++			interrupts = <GIC_SPI 248 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cmu_peri CLK_GOUT_PERI_I2C_1_PCLK>;
++			clock-names = "i2c";
++			pinctrl-names = "i2c";
++			pinctrl-0 = <&i2c1_bus>;
++			samsung,i2c-sda-delay = <100>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		i2c_3: i2c@13860000 {
++			compatible = "samsung,s3c2440-i2c";
++			reg = <0x13860000 0x100>;
++			interrupts = <GIC_SPI 250 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cmu_peri CLK_GOUT_PERI_I2C_3_PCLK>;
++			clock-names = "i2c";
++			pinctrl-names = "i2c";
++			pinctrl-0 = <&i2c3_bus>;
++			samsung,i2c-sda-delay = <100>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		i2c_4: i2c@13870000 {
++			compatible = "samsung,s3c2440-i2c";
++			reg = <0x13870000 0x100>;
++			interrupts = <GIC_SPI 251 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cmu_peri CLK_GOUT_PERI_I2C_4_PCLK>;
++			clock-names = "i2c";
++			pinctrl-names = "i2c";
++			pinctrl-0 = <&i2c4_bus>;
++			samsung,i2c-sda-delay = <100>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		i2c_6: i2c@13890000 {
++			compatible = "samsung,s3c2440-i2c";
++			reg = <0x13890000 0x100>;
++			interrupts = <GIC_SPI 253 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cmu_peri CLK_GOUT_PERI_I2C_6_PCLK>;
++			clock-names = "i2c";
++			pinctrl-names = "i2c";
++			pinctrl-0 = <&i2c6_bus>;
++			samsung,i2c-sda-delay = <100>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		pwm: pwm@13970000 {
++			compatible = "samsung,s3c6400-pwm";
++			reg = <0x13970000 0x1000>;
++			samsung,pwm-outputs = <0>, <1>, <2>, <3>, <4>;
++			#pwm-cells = <3>;
++			clocks = <&cmu_peri CLK_GOUT_PERI_PWM_MOTOR_PCLK_S0>;
++			clock-names = "timers";
++			status = "disabled";
++		};
++
+ 		ap2apm_mailbox: mailbox@11900000 {
+ 			compatible = "samsung,exynos9610-mbox";
+ 			reg = <0x11900000 0x1000>;
+diff --git a/arch/arm64/configs/a50_firstlight_defconfig b/arch/arm64/configs/a50_firstlight_defconfig
+index 8331a7fde..4967b0176 100644
+--- a/arch/arm64/configs/a50_firstlight_defconfig
++++ b/arch/arm64/configs/a50_firstlight_defconfig
+@@ -126,3 +126,10 @@ CONFIG_EXYNOS_MBOX=y
+ CONFIG_EXYNOS_ACPM_PROTOCOL=y
+ CONFIG_REGULATOR=y
+ CONFIG_REGULATOR_S2MPU09_ACPM=y
++CONFIG_I2C=y
++CONFIG_I2C_CHARDEV=y
++CONFIG_I2C_S3C2410=y
++CONFIG_KEYBOARD_GPIO=y
++CONFIG_INPUT_EVDEV=y
++CONFIG_PWM=y
++CONFIG_PWM_SAMSUNG=y
+-- 
+2.56.0
+

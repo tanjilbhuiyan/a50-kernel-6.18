@@ -1,0 +1,40 @@
+#!/bin/busybox sh
+# M3.6 USB test init. No storage drivers in this kernel. Brings up a USB CDC-ACM gadget with a shell on it and reports to /dev/kmsg;
+# the timed DSS dump (dump_after) carries the report out.
+export PATH=/bin
+/bin/busybox --install -s /bin
+mount -t proc proc /proc; mount -t sysfs sysfs /sys; mount -t devtmpfs devtmpfs /dev
+mount -t debugfs debugfs /sys/kernel/debug 2>/dev/null
+mount -t configfs configfs /sys/kernel/config
+say() { echo "<6>a50-m44: $*" > /dev/kmsg; }
+say "init started, Linux $(uname -r), uptime $(cut -d' ' -f1 /proc/uptime) s"
+say "REGTABLE begin"
+for r in /sys/class/regulator/regulator.*; do say "REG|$(cat $r/name 2>/dev/null)|$(cat $r/state 2>/dev/null)|$(cat $r/microvolts 2>/dev/null)|$(cat $r/num_users 2>/dev/null)"; done
+say "REGTABLE end; errors: $(dmesg | grep -i -E 'regulator|s2mpu09|supply' | grep -i -E 'fail|error|unable|deferred' | sed 's/^\[[^]]*\] //' | tail -8 | tr '\n' ';')"
+for a in /sys/class/i2c-adapter/i2c-*; do d=$(basename "$(readlink -f $a/device)"); n=${a##*i2c-}; say "adapter i2c-$n = $d"
+  case "$d" in 13830000.i2c) l="33";; 13840000.i2c) l="25 49 71";; 13860000.i2c) l="56";; 13870000.i2c) l="48";; 13890000.i2c) l="1b";; *) l="";; esac
+  for x in $l; do say "probe i2c-$n 0x$x: $(i2cdetect -y -r $n 0x$x 0x$x 2>&1 | tail -n +2 | tr -s ' ' | tr '\n' ';')"; done
+done
+say "pwm: $(ls /sys/class/pwm 2>/dev/null | tr '\n' ' ')"
+say "input: $(grep -E 'Name=' /proc/bus/input/devices 2>/dev/null | tr '\n' ' ')"
+say "i2c/pwm/keys errors: $(dmesg | grep -i -E 'i2c|pwm|gpio-keys|cmu_peri' | grep -i -E 'fail|error|unable|timeout' | sed 's/^\[[^]]*\] //' | tail -8 | tr '\n' ';')"
+for n in 13200000.usb 131d0000.phy; do say "$n driver=$(basename "$(readlink /sys/bus/platform/devices/$n/driver 2>/dev/null)" 2>/dev/null)"; done
+say "deferred: $(cat /sys/kernel/debug/devices_deferred 2>/dev/null | tr '\n' ';')"
+i=0; while [ $i -lt 20 ] && [ -z "$(ls /sys/class/udc 2>/dev/null)" ]; do sleep 1; i=$((i+1)); done
+udc=$(ls /sys/class/udc 2>/dev/null | head -1); say "udc after ${i}s: ${udc:-NONE}"
+if [ -n "$udc" ]; then
+  g=/sys/kernel/config/usb_gadget/g1; mkdir -p $g/strings/0x409 $g/configs/c.1/strings/0x409 $g/functions/acm.GS0
+  echo 0x1d6b > $g/idVendor; echo 0x0104 > $g/idProduct; echo 0x0200 > $g/bcdUSB
+  echo "a50-test" > $g/strings/0x409/serialnumber; echo "A50 6.18" > $g/strings/0x409/manufacturer; echo "A50 ACM test" > $g/strings/0x409/product
+  echo "acm" > $g/configs/c.1/strings/0x409/configuration; ln -s $g/functions/acm.GS0 $g/configs/c.1/
+  echo "$udc" > $g/UDC; say "gadget bound rc=$?"
+  ( while :; do [ -c /dev/ttyGS0 ] && setsid sh -c 'exec sh -i </dev/ttyGS0 >/dev/ttyGS0 2>&1'; sleep 1; done ) &
+  D=/sys/kernel/debug/usb/13200000.usb
+  snap() { say "SNAP $1 uptime=$(cut -d' ' -f1 /proc/uptime) mode=$(cat $D/mode 2>/dev/null) link=$(cat $D/link_state 2>/dev/null) state=$(cat /sys/class/udc/$udc/state 2>/dev/null)"
+    grep -E "^(GSNPSID|GCTL|GSTS|GUSB2PHYCFG\(0\)|GUSB2I2CCTL|DCFG|DCTL|DSTS|DEVTEN|GEVNTCOUNT\(0\)|GDBGLTSSM)" $D/regdump 2>/dev/null | while IFS= read -r l; do say "REG $l"; done; }
+  sleep 2; snap after-bind
+  ( sleep 25; snap t+27; sleep 60; snap t+87; sleep 60; snap t+147 ) &
+  j=0; last=""; while [ $j -lt 215 ]; do s=$(cat /sys/class/udc/$udc/state 2>/dev/null); sp=$(cat /sys/class/udc/$udc/current_speed 2>/dev/null)
+    if [ "$s/$sp" != "$last" ]; then say "t=$(cut -d' ' -f1 /proc/uptime) udc state=$s speed=$sp"; last="$s/$sp"; fi; sleep 1; j=$((j+1)); done
+fi
+say "report done; waiting for the delayed dump"; while :; do sleep 60; done
