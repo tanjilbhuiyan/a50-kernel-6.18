@@ -1,0 +1,42 @@
+$ uname -r
+uname -r; echo A50END$((1000+0))
+6.18.33-a50-diag+
+A50END1000
+~ # [6n
+[ok]
+
+$ cat /proc/version
+cat /proc/version; echo A50END$((1000+1))
+Linux version 6.18.33-a50-diag+ (a50@firstlight) (Android (15323222, +pgo, +bolt, +lto, +mlgo, based on r584948c) clang version 22.0.1 (https://android.googlesource.com/toolchain/llvm-project 2d65e4108033380e6fe8e08b1f1826cd2bfb0c99), LLD 22.0.1 (/mnt/disks/build-disk/src/googleplex-android/llvm-r584948-release/out/llvm-project/llvm 2d65e4108033380e6fe8e08b1f1826cd2bfb0c99)) #1 SMP Wed Nov  4 00:00:00 UTC 2026
+A50END1001
+~ # [6n
+[ok]
+
+$ cat /sys/class/udc/*/state
+cat /sys/class/udc/*/state; echo A50END$((1000+2))
+configured
+A50END1002
+~ # [6n
+[ok]
+
+$ cat /sys/class/udc/*/current_speed
+cat /sys/class/udc/*/current_speed; echo A50END$((1000+3))
+high-speed
+A50END1003
+~ # [6n
+[ok]
+
+$ cat /proc/uptime
+cat /proc/uptime; echo A50END$((1000+4))
+20.07 145.03
+A50END1004
+~ # [6n
+[ok]
+
+$ echo $((6*7))
+echo $((6*7)); echo A50END$((1000+5))
+42
+A50END1005
+~ # [6n
+[ok]
+
