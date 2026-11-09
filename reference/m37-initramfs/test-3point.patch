@@ -1,0 +1,57 @@
+diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
+index c3724aaa5..c17e1d168 100644
+--- a/arch/arm64/kernel/setup.c
++++ b/arch/arm64/kernel/setup.c
+@@ -279,6 +279,28 @@ u64 cpu_logical_map(unsigned int cpu)
+ }
+ EXPORT_SYMBOL_GPL(cpu_logical_map);
+ 
++/* TEST ONLY (M3.7): what is at the initrd address at each stage of early boot. */
++#define A50_RD_PHYS	0x89000000UL
++
++static void __init a50_rd_early(const char *where)
++{
++	void *a = early_memremap(A50_RD_PHYS, 16);
++	void *b = early_memremap(A50_RD_PHYS + SZ_2M, 16);
++
++	pr_info("A50 RD %s: +0 %*ph +2M %*ph\n", where, 16, a, 16, b);
++	if (b)
++		early_memunmap(b, 16);
++	if (a)
++		early_memunmap(a, 16);
++}
++
++static void __init a50_rd_mapped(const char *where)
++{
++	char *p = __va(A50_RD_PHYS);
++
++	pr_info("A50 RD %s: +0 %*ph +2M %*ph\n", where, 16, p, 16, p + SZ_2M);
++}
++
+ void __init __no_sanitize_address setup_arch(char **cmdline_p)
+ {
+ 	setup_initial_init_mm(_text, _etext, _edata, _end);
+@@ -289,6 +311,7 @@ void __init __no_sanitize_address setup_arch(char **cmdline_p)
+ 
+ 	early_fixmap_init();
+ 	early_ioremap_init();
++	a50_rd_early("setup_arch start");
+ #ifdef CONFIG_A50_DIAG
+ 	{
+ 		extern void a50_diag_stage1(void);
+@@ -340,6 +363,7 @@ void __init __no_sanitize_address setup_arch(char **cmdline_p)
+ 	arm64_memblock_init();
+ 
+ 	paging_init();
++	a50_rd_mapped("after paging_init");
+ 
+ 	acpi_table_upgrade();
+ 
+@@ -350,6 +374,7 @@ void __init __no_sanitize_address setup_arch(char **cmdline_p)
+ 		unflatten_device_tree();
+ 
+ 	bootmem_init();
++	a50_rd_mapped("after bootmem_init");
+ 
+ 	kasan_init();
+ 
