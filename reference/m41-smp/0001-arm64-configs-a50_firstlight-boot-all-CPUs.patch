@@ -1,0 +1,29 @@
+From 4fbb731f5666f9f241aa2abcd0867f15d4f1232e Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Tue, 10 Nov 2026 01:11:46 +0600
+Subject: [PATCH] arm64: configs: a50_firstlight: boot all CPUs
+
+All 8 CPUs come up on 6.18 through PSCI (M4.1).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: Ie3b1544a9ef58190e5a761f1a66dacc26929e23b
+---
+ arch/arm64/configs/a50_firstlight_defconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/configs/a50_firstlight_defconfig b/arch/arm64/configs/a50_firstlight_defconfig
+index 3f4aeb076..5cef68696 100644
+--- a/arch/arm64/configs/a50_firstlight_defconfig
++++ b/arch/arm64/configs/a50_firstlight_defconfig
+@@ -57,7 +57,7 @@ CONFIG_ARCH_EXYNOS=y
+ # CONFIG_ARM64_POE is not set
+ # CONFIG_ARM64_GCS is not set
+ # CONFIG_ARM64_SVE is not set
+-CONFIG_CMDLINE="console=tty0 loglevel=7 ignore_loglevel maxcpus=1"
++CONFIG_CMDLINE="console=tty0 loglevel=7 ignore_loglevel"
+ CONFIG_CMDLINE_EXTEND=y
+ # CONFIG_EFI is not set
+ # CONFIG_SUSPEND is not set
+-- 
+2.56.0
+
