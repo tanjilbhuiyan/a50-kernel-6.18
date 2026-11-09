@@ -1,8 +1,8 @@
 # STATUS
 
-Updated: 2026-11-09
+Updated: 2026-11-10
 
-## Current milestone: **M3 Storage + USB: M3.1-M3.6 done (6.18 reads UFS with writes blocked by A50_UFS_SAFE; USB gadget and ACM shell work); next ticket = M3.7 (Halium initramfs, telnet over USB)**
+## Current milestone: **M3 Storage + USB: done 2026-11-10 (DoD met with a caveat: see below); next = write the M4 tickets (Core SoC)**
 
 M1.1 and M1.2 done. M2.1 and M2.3 done (fb pixel format accepted as a risk, resolve in M2.4). M0.1-M0.3 complete. M1.3 done (`reference/contract/`). NOTE: the M1.5 region choice was corrected on 2026-11-04 (last_kmsg = debug-snapshot log_kernel 0xf9010000; the baseline zeroes log_pstore), see the M1.5 log. M1.4: S-Boot does NOT boot a gzip kernel; use uncompressed `Image`, kernel <= 46,876,672 B. M1.5: after a panic the baseline keeps the log in `/proc/last_kmsg` (sec_debug region 0x91388000); pstore/ramoops at 0xf9d10000 stayed empty. M2.2 done: first-light `Image` 7,170,056 B (reproducible) and `boot-firstlight.img` (`src/m22/artifacts/`). M2.4 closed 2026-11-07 (log/2026-11-04-M2.4-diag-build.md).
 
@@ -48,13 +48,13 @@ Decision (owner, 2026-11-02): M0.4 closed (playback = userspace config); microph
 - Exact ioctl sets used by vendor HALs on mali/ion/decon/abox/scsc/modem (M1.3)
 
 
-## RESUME HERE (2026-11-09)
-M3.6 done: 6.18 enumerates a USB gadget at high speed and the ACM shell answers (log/2026-11-08-M3.6-usb.md). The fix was Samsung's PIPE3 override, kernel commit 36fdc0b53 on a50-usb. The sm5713 needs no setup for device mode.
-Next: tasks/M3.7-halium-initramfs-data.md. M3.7 needs RNDIS added to the gadget (M3.6 is ACM only).
-Open: one 6.18 run stopped responding after the ACM test (18:20 on 2026-11-09, no log, did not repeat); watch for it. M4 tickets not written yet.
-Set-aside questions (ramdisk delivery, one-off hang, and others): docs/08-open-questions.md.
-Kernel branches: a50-dt -> a50-clk -> a50-pinctrl -> a50-ufs -> a50-usb (clean); a50-diag (readout, do not merge); a50-m36-clean (a50-usb + a50-diag, test merge); a50-m36-test and a50-m36-min (test only, do not merge).
-Test loop: DT_IMG=src/m36/dt-clean.img tools/m32_run_test.sh IMG OUT IP WAIT; ACM check tools/m36/acm_shell.py. Builds tools/m22_build.sh (A50_DIAG*, A50_INIT, A50_CMDLINE_APPEND, A50_CONFIG). Any UFS-enabled kernel must carry A50_UFS_SAFE.
-Host: USB-C cable only (USB-A port is unreliable). /etc/udev/rules.d/99-a50-acm.rules opens /dev/ttyACM0 for the test gadget.
-Phone: baseline BOOT 7d5855ef..., stock DTB/DTBO, verified 2026-11-09 18:34; DHCP, 192.168.181.225 on office Wi-Fi (192.168.0.171 at home).
-On BOOT during a test: the test image, then zeros. A failed Heimdall handshake leaves Download mode stuck; a replug does not clear it, the key combo does (docs/06-workflow.md).
+## RESUME HERE (2026-11-10)
+M3 done. On 6.18: the Halium ramdisk contents are embedded in the kernel (305 files verified), /userdata mounts read-only with the A50_UFS_SAFE write guard, and telnet at 192.168.2.15 gives a shell over USB (log/2026-11-10-M3.7-halium-initramfs.md).
+CAVEAT (owner accepted): the mount and telnet were done by our diagnostic init (rdinit=/a50/init). Halium's own /init has not run; it runs e2fsck -y on userdata and may run resize2fs, so it needs deliberate write access. That is M5 work.
+A ramdisk in boot.img does not reach 6.18, so the Halium ramdisk is embedded in the kernel (tools/m37/gen_embed_list.py). Why S-Boot does not deliver it, and other set-aside questions: docs/08-open-questions.md.
+Next: write the M4 tickets (docs/05-plan.md, Core SoC). Task rules want tickets for the current and next milestone.
+Kernel branches: a50-dt -> a50-clk -> a50-pinctrl -> a50-ufs -> a50-usb (clean); a50-diag (readout, do not merge); a50-m36-clean (a50-usb + a50-diag, test merge); a50-m36-test, a50-m36-min, a50-m37-test (test only, do not merge).
+Test loop: DT_IMG=src/m36/dt-clean.img tools/m32_run_test.sh IMG OUT IP WAIT. Build: tools/m22_build.sh with A50_INIT, A50_INITRAMFS_LIST=src/m37/embed.list.in, A50_CMDLINE_APPEND, A50_CONFIG (the M3.7 flags are in log/2026-11-10-M3.7-halium-initramfs.md and the test init tools/m37/init-telnet). Any UFS-enabled kernel must carry A50_UFS_SAFE.
+Host: USB-C cable only. Laptop keeps udev rule 99-a50-acm.rules and NetworkManager profile a50-rndis (192.168.2.1) for the test gadget. Clients: tools/m36/acm_shell.py, tools/m37/telnet_test.py.
+Phone: baseline BOOT 7d5855ef..., stock DTB/DTBO, verified 2026-11-10 00:58; DHCP, 192.168.0.171 at home (192.168.181.225 at the office).
+A failed Heimdall handshake leaves Download mode stuck; a replug does not clear it, the key combo does (docs/06-workflow.md).

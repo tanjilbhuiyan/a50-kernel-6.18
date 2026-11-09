@@ -82,6 +82,7 @@ Why changed (2026-11-08): M3.6 Test 3 (`log/2026-11-08-M3.6-usb.md`) put the USB
 Why changed (2026-11-09): M3.6 Tests 3-8 ruled out the suspects findable from source, and the D+ line never rises on 6.18 (`log/2026-11-08-M3.6-usb.md`). The baseline kernel has no `/dev/mem` and refuses all modules (`CONFIG_UH_LKM_BLOCK`), so M3.6 adds one diagnostic: a 4.14 test kernel (baseline source + a built-in read-only register dump), flashed to BOOT only with the usual rollback, to read the PHY and USB clock registers of a working phone. It is a measurement tool, never a replacement for the baseline.
 DoD: Halium initramfs on 6.18 mounts `/data` and exposes telnet
 `192.168.2.15` over USB from the laptop.
+DoD evaluation (2026-11-10, owner accepted): met with a caveat. Halium's ramdisk contents are in the 6.18 kernel, `/userdata` is mounted read-only and telnet works over USB, set up by our diagnostic init. Halium's own `/init` has not run: it needs write access (`e2fsck -y`, `resize2fs`), so running it moves to M5.
 
 ## M4 — Core SoC
 Tasks: speedy bus, s2mpu09/s2mpb03 PMIC + regulators, ACPM IPC, power
