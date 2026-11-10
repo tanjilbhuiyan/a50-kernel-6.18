@@ -2,7 +2,7 @@
 
 Updated: 2026-11-10
 
-## Current milestone: **M5 Ubuntu Touch userspace: M5.1 config done (pending the owner's OK on the checker wording); next = M5.2 (userdata writes, needs owner decisions)**
+## Current milestone: **M5 Ubuntu Touch userspace: M5.1 done (checker goal reworded, revisit later); M5.2 in progress (backup of ubuntu.img first; first writable boot approved)**
 
 M1.1 and M1.2 done. M2.1 and M2.3 done (fb pixel format accepted as a risk, resolve in M2.4). M0.1-M0.3 complete. M1.3 done (`reference/contract/`). NOTE: the M1.5 region choice was corrected on 2026-11-04 (last_kmsg = debug-snapshot log_kernel 0xf9010000; the baseline zeroes log_pstore), see the M1.5 log. M1.4: S-Boot does NOT boot a gzip kernel; use uncompressed `Image`, kernel <= 46,876,672 B. M1.5: after a panic the baseline keeps the log in `/proc/last_kmsg` (sec_debug region 0x91388000); pstore/ramoops at 0xf9d10000 stayed empty. M2.2 done: first-light `Image` 7,170,056 B (reproducible) and `boot-firstlight.img` (`src/m22/artifacts/`). M2.4 closed 2026-11-07 (log/2026-11-04-M2.4-diag-build.md).
 
@@ -52,7 +52,7 @@ Decision (owner, 2026-11-02): M0.4 closed (playback = userspace config); microph
 M3 done. On 6.18: the Halium ramdisk contents are embedded in the kernel (305 files verified), /userdata mounts read-only with the A50_UFS_SAFE write guard, and telnet at 192.168.2.15 gives a shell over USB (log/2026-11-10-M3.7-halium-initramfs.md).
 CAVEAT (owner accepted): the mount and telnet were done by our diagnostic init (rdinit=/a50/init). Halium's own /init has not run; it runs e2fsck -y on userdata and may run resize2fs, so it needs deliberate write access. That is M5 work.
 A ramdisk in boot.img does not reach 6.18, so the Halium ramdisk is embedded in the kernel (tools/m37/gen_embed_list.py). Why S-Boot does not deliver it, and other set-aside questions: docs/08-open-questions.md.
-Next: tasks/M5.2-userdata-writes.md (needs owner decisions: backup, first writable boot). M5.1: Halium config via A50_HALIUM=1 (tools/m51/halium.flags), modern-first (nftables, CONFIG_LSM/AppArmor, cgroup v2); boots with all M3/M4 checks passing.
+Next: tasks/M5.2-userdata-writes.md. Owner 2026-11-10: back up ubuntu.img only; first writable boot approved after the backup; M5 checker goal reworded, to revisit later. M5.1: Halium config via A50_HALIUM=1 (tools/m51/halium.flags), modern-first (nftables, CONFIG_LSM/AppArmor, cgroup v2); boots with all M3/M4 checks passing.
 Owner rule 2026-11-10: prefer 6.18-native mechanisms over 4.14-era or legacy ones.
 M4 done on the clean kernel branch a50-core (a50-usb -> a50-acpm -> a50-pmic -> a50-thermal -> PHY supply fix): all 8 CPUs, ACPM, 35 S2MPU09 regulators (read-only driver), read-only thermal (4 zones), no missing-supply warnings, M3 functions intact (log/2026-11-10-M4.8-integration.md). Owner decisions 2026-11-10: cpufreq out of M4 (DVFS needs a firmware plugin 6.18 does not set up); thermal read directly from the TMU registers; power domains read-only (control in M12).
 Open from M4: real I2C controllers freeze 6.18 (a50-bus; do not boot it with I2C enabled), so S2MPB03, keys and PL330 are untested (docs/08-open-questions.md #8). Sending requests on ACPM channel 7 (thermal) stalls the firmware for the boot: do not.

@@ -96,8 +96,12 @@ Why changed (2026-11-10, owner decision): on this phone CPU frequency and voltag
 ## M5 — Ubuntu Touch userspace boots (no hardware HALs yet)
 Tasks: full Halium config (checker clean), AppArmor, loop, LXC; boot baseline
 `ubuntu.img`.
-DoD: systemd reaches multi-user; SSH over USB RNDIS; `halium-check-kernel-config`
-zero errors; Android container may fail (expected until M6).
+DoD: systemd reaches multi-user; SSH over USB RNDIS; every `halium-check-kernel-config`
+option that exists in 6.18 is set as wanted or replaced by its 6.18-native mechanism, the rest
+listed with reasons; Android container may fail (expected until M6).
+Why changed (2026-11-10, owner decision): the checker predates 6.18 (the working 4.14 baseline
+scores 107 errors on it; `log/2026-11-10-M5.1-halium-config.md`), so "zero errors" cannot be
+reached. The owner wants the checker goal revisited later.
 
 ## M6 — Android container + ION
 Tasks: binder/binderfs, Rust ashmem, legacy ION ABI shim + Exynos heaps,
