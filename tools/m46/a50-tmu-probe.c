@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0
 /*
  * TEST ONLY (M4.6), do not merge: send TMU_IPC_READ_TEMP to the ACPM firmware
- * (channel 7) for thermal zones 0-3 and log the raw reply words, to learn the
+ * (channel 7) after TMU_IPC_INIT, for thermal zones 0-3, and log the raw reply words, to learn the
  * reply layout before writing the real driver. Adapted from the M3.6 probe.
  *
  * READ-ONLY towards the PMIC: every request sent is FUNC_READ, and the
@@ -73,7 +73,7 @@ static bool in_sram(u32 off, u32 len)
 }
 
 /* Only reads exist here: there is deliberately no way to pass another function. */
-static int tmu_read(u8 tzid)
+static int tmu_cmd(u8 type, u8 tzid)
 {
 	u32 front, rear, next, i, n, w0, sent_seq;
 	int t;
@@ -93,7 +93,7 @@ static int tmu_read(u8 tzid)
 	seq = seq % 63 + 1;
 	sent_seq = seq;
 	/* Samsung's request: type 0x02 in byte 0, tzid in byte 2; the sequence number is ORed in as 4.14 does. */
-	writel(0x02 | ((u32)tzid << 16) | (sent_seq << SEQ_SHIFT), to_apm.base + ELEM_SIZE * front);
+	writel(type | ((u32)tzid << 16) | (sent_seq << SEQ_SHIFT), to_apm.base + ELEM_SIZE * front);
 	writel(0, to_apm.base + ELEM_SIZE * front + 4);
 	writel(0, to_apm.base + ELEM_SIZE * front + 8);
 	writel(0, to_apm.base + ELEM_SIZE * front + 12);
@@ -109,8 +109,8 @@ static int tmu_read(u8 tzid)
 		}
 		if (front != rear) {
 			w0 = readl(to_ap.base + ELEM_SIZE * rear);
-			pr_info("a50-tmu: tz%u sent seq %u reply %08x %08x %08x %08x (front %u rear %u)\n",
-				tzid, sent_seq, w0, readl(to_ap.base + ELEM_SIZE * rear + 4),
+			pr_info("a50-tmu: type 0x%02x tz%u sent seq %u reply %08x %08x %08x %08x (front %u rear %u)\n",
+				type, tzid, sent_seq, w0, readl(to_ap.base + ELEM_SIZE * rear + 4),
 				readl(to_ap.base + ELEM_SIZE * rear + 8),
 				readl(to_ap.base + ELEM_SIZE * rear + 12), front, rear);
 			rear = (rear + 1) % q_len;
@@ -189,8 +189,11 @@ static int __init a50_tmu_probe(void)
 		readl(c + CH_AP_POLL), q_len, readl(to_apm.front), readl(to_apm.rear),
 		readl(to_ap.front), readl(to_ap.rear));
 
+	/* 4.14 order: TMU_IPC_INIT once (exynos_acpm_tmu_set_init), then TMU_IPC_READ_TEMP per zone. */
+	if (tmu_cmd(0x01, 0))
+		goto out;
 	for (i = 0; i < 4; i++)
-		if (tmu_read(i))
+		if (tmu_cmd(0x02, i))
 			break;
 out:
 	if (sram)
