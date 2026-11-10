@@ -77,6 +77,8 @@ Checkout: `a50-usb` (clean). Check it before any build: builds check out a test 
 - Do not change mixer or PulseAudio state on the phone. Never commit device identifiers (check `grep -c 'R28[M]'` (phone serial prefix) before commit and push).
 - M5 checker goal reworded (2026-11-10): every checker option that exists in 6.18 is set or replaced by its 6.18-native mechanism,
   the rest listed with reasons. To revisit later.
+- M5 runtime masks are temporary (2026-11-10): M6.4 boots once without them and records what still blocks; bluebinder is
+  removed in M9, a50-audio-route in M10, rild/ofono in M11 (each milestone's DoD in `docs/05-plan.md`).
 
 ## Done (details in each log; index `tasks/README.md`)
 - **M0** baseline locked and measured; **M1** reproducible builds, vendor ABI captured; **M2** first light on 6.18.

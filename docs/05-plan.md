@@ -107,6 +107,8 @@ M5 may use per-boot `systemd.mask=` for rild, ofono, bluebinder and
 a50-audio-route while hardware HALs are unavailable. Masks must be runtime-only,
 recorded in the test evidence, with the rootfs unchanged. Systemd must actually
 reach multi-user and running/degraded; remaining failed units still require review.
+Mask removal (2026-11-10, owner): M6.4 re-tests without the masks; bluebinder goes in M9,
+a50-audio-route in M10, rild/ofono in M11 (each milestone's DoD).
 M5.3 result (2026-11-10): test 5 reached multi-user at 84.17 s and degraded
 with zero jobs at 122/201 s; Android/device-helper failures reviewed and baseline
 restored clean (`log/2026-11-10-M5.3-split-control-test5.md`).
@@ -132,13 +134,14 @@ DoD: S2 (Lomiri visible, accelerated); 10-minute UI soak without GPU faults.
 DoD: S3.
 
 ## M9 — Wi-Fi + Bluetooth (SCSC)
-DoD: S4 + S8.
+DoD: S4 + S8. The M5 runtime mask of `bluebinder` is removed and multi-user is still reached.
 
 ## M10 — Audio (ABOX + TFA9872)
-DoD: S6.
+DoD: S6. The M5 runtime mask of `a50-audio-route` is removed and multi-user is still reached.
 
 ## M11 — Modem (modem_v1, mcu_ipc, shm_ipc)
-DoD: S7.
+DoD: S7. The M5 runtime masks of `rild` and `ofono` are removed and multi-user is still reached;
+no `systemd.mask=` remains in the built-in command line.
 
 ## M12 — Power: battery/charger, suspend, devfreq, USB modes
 DoD: S5, S9; 10 suspend/resume cycles; charge state correct.
