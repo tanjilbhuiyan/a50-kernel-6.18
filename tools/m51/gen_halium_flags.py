@@ -61,6 +61,8 @@ DEPS = ["NETFILTER_ADVANCED", "NF_CONNTRACK", "NETFILTER_XTABLES", "IP_NF_IPTABL
         "NF_TABLES", "NF_TABLES_INET", "NF_TABLES_IPV4", "NF_TABLES_IPV6", "NFT_COMPAT", "NFT_CT",
         "NFT_NAT", "NFT_MASQ", "NFT_REDIR", "NFT_REJECT", "NFT_LOG", "NFT_LIMIT", "NFT_FIB_INET",
         "NF_NAT", "NF_CONNTRACK_IPV4",
+        # Unix and packet sockets: the old checker assumes them; udev and systemd fail without UNIX (M5.3 test 1).
+        "UNIX", "PACKET",
         # systemd on the unified cgroup v2 hierarchy.
         "CGROUP_BPF", "BPF_SYSCALL", "FHANDLE", "SECCOMP_FILTER", "PSI"]
 for n in DEPS:
