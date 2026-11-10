@@ -18,7 +18,7 @@ for n in 'TEST_UNIT_READY REQUEST_SENSE READ_6 INQUIRY MODE_SENSE START_STOP REA
 e = ufs[ufs.index('enum query_opcode {'):]; e = e[:e.index('};')]
 for n, v in re.findall(r'(UPIU_QUERY_OPCODE_\w+)\s*=\s*(0x[0-9a-fA-F]+)', e): defs.append('#define %s %s' % (n, v))
 defs.append('#define QUERY_FLAG_IDN_FDEVICEINIT %s' % re.search(r'QUERY_FLAG_IDN_FDEVICEINIT\s*=\s*(0x[0-9a-fA-F]+)', ufs).group(1))
-head = '#include <stdio.h>\n#include <stdbool.h>\ntypedef unsigned char u8;\n#define noinline\n' + '\n'.join(defs) + '\n'
+head = '#include <stdio.h>\n#include <stdbool.h>\ntypedef unsigned char u8;typedef unsigned int u32;typedef unsigned long long u64;\n#define noinline\n#define ARRAY_SIZE(a) (sizeof(a)/sizeof((a)[0]))\n#define SYNCHRONIZE_CACHE_16 0x91\n' + '\n'.join(defs) + '\n'
 tail = '\nint main(void){printf("%d\\n",a50_ufs_guard_selftest());return 0;}\n'
 A = '\tcase READ_10:\n'
 Q = '\tcase UPIU_QUERY_OPCODE_READ_DESC:\n'
@@ -36,7 +36,7 @@ muts = [
  ('allow WRITE_DESC', lambda c: c.replace(Q, Q + '\tcase UPIU_QUERY_OPCODE_WRITE_DESC:\n', 1)),
  ('allow CLEAR_FLAG', lambda c: c.replace(Q, Q + '\tcase UPIU_QUERY_OPCODE_CLEAR_FLAG:\n', 1)),
  ('any flag may be set', lambda c: c.replace('return idn == QUERY_FLAG_IDN_FDEVICEINIT;', 'return true;', 1)),
- ('query default allows', lambda c: c[::-1].replace('\tdefault:\n\t\treturn false;'[::-1], '\tdefault:\n\t\treturn true;'[::-1], 1)[::-1]),
+ ('query default allows', lambda c: c.replace('FDEVICEINIT;\n\tdefault:\n\t\treturn false;', 'FDEVICEINIT;\n\tdefault:\n\t\treturn true;', 1)),
 ]
 def run(c):
     with tempfile.TemporaryDirectory() as d:
