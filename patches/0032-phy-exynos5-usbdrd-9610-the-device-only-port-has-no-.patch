@@ -1,0 +1,28 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Tue, 10 Nov 2026 13:04:58 +0600
+Subject: [PATCH 32/35] phy: exynos5-usbdrd: 9610: the device-only port has no
+ VBUS supplies
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: Ifa65b4e2add25cdc683b3b927b90fbc072ccde27
+---
+ drivers/phy/samsung/phy-exynos5-usbdrd.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+index a0777946a..76500d1c3 100644
+--- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
++++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+@@ -2169,8 +2169,9 @@ static const struct exynos5_usbdrd_phy_drvdata exynos9610_usbdrd_phy = {
+ 	.n_clks			= ARRAY_SIZE(exynos5_clk_names),
+ 	.core_clk_names		= exynos5_core_clk_names,
+ 	.n_core_clks		= ARRAY_SIZE(exynos5_core_clk_names),
+-	.regulator_names	= exynos5_regulator_names,
+-	.n_regulators		= ARRAY_SIZE(exynos5_regulator_names),
++	/* Device-only port: VBUS comes from the host, so no VBUS supplies. */
++	.regulator_names	= NULL,
++	.n_regulators		= 0,
+ };
+ 
+ static const struct exynos5_usbdrd_phy_tuning exynos990_tunes_utmi_postinit[] = {

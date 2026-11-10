@@ -1,0 +1,50 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Sat, 7 Nov 2026 02:30:24 +0600
+Subject: [PATCH 05/35] arm64: dts: exynos9610-a50: drop ramoops, keep
+ sec_debug_next reserved
+
+The M1.5 premise (warm-reset survival at 0x91388000) was wrong: /proc/last_kmsg
+comes from the debug_snapshot log_kernel buffer. The readout is that buffer,
+already reserved no-map (debug_snapshot@f9000000).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I6a5729d3d8b570da189144f2388a8f89cb8ee556
+---
+ arch/arm64/boot/dts/exynos/exynos9610-a50.dts | 20 +++++++------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610-a50.dts b/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
+index c3c810c04..607865a1b 100644
+--- a/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
++++ b/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
+@@ -121,22 +121,16 @@ sec_debug_bufs@91202000 {
+ 			no-map;
+ 		};
+ 
+-		/* Crash log across a reboot (M1.5): S-Boot passes
+-		 * sec_debug_next=0x800000@0x91388000 and on the baseline a panic reboot
+-		 * left the previous boot's kernel log readable there (/proc/last_kmsg
+-		 * held the test marker), so this is the region proven to survive a warm
+-		 * reset. Re-check the address against the 6.18 boot's /proc/cmdline.
+-		 * UNVERIFIED with mainline ramoops until first light (M2.4); the initramfs
+-		 * shows the previous boot's records, so it needs two boots.
+-		 * Sizes: console 2 MiB, 512 KiB per crash record, 128 KiB pmsg.
++		/* S-Boot passes sec_debug_next=0x800000@0x91388000 on the command line;
++		 * kept reserved so 6.18 never hands it out. NOT used for ramoops: the
++		 * M1.5 claim that it survives a warm reset was wrong (/proc/last_kmsg
++		 * comes from the debug_snapshot log_kernel buffer, see the M1.5 log
++		 * CORRECTION). The crash-log readout is the debug_snapshot buffer
++		 * reserved above (M2.4 Test 19, M3.1).
+ 		 */
+-		ramoops@91388000 {
+-			compatible = "ramoops";
++		sec_debug_next@91388000 {
+ 			reg = <0x0 0x91388000 0x800000>;
+ 			no-map;
+-			console-size = <0x200000>;
+-			record-size = <0x80000>;
+-			pmsg-size = <0x20000>;
+ 		};
+ 
+ 		gnss_if@fb000000 {

@@ -47,6 +47,8 @@ Userdata retains the M5.2 scratch file. Read-only backup (2026-11-10 before writ
 Checkout: `a50-usb` (clean). Check it before any build: builds check out a test branch and return to `a50-usb`.
 - Clean driver stack: `a50-dt -> a50-clk -> a50-pinctrl -> a50-ufs -> a50-usb -> a50-acpm -> a50-pmic -> a50-thermal -> a50-core`
   (`364673845`, M4 done) `-> a50-userdata` (`c7bde3fe3`, write allow-list + corrected denial sense split).
+- `patches/` is the public export of the clean stack (base `d9a614fed`, 35 patches, ends at `a50-userdata`). After any
+  change to a clean branch, run `tools/export_patches.sh` (it checks the series reproduces the branch) and commit `patches/`.
 - `a50-diag` (`88040ffc9`, v8: DSS readout, panic dump, sync before the timed dump): diagnostics, do not merge into clean branches.
 - `a50-bus` (on `a50-pmic`): I2C/PWM/keys DT. **Do not boot with its I2C nodes enabled: it freezes the phone.**
 - Test branches, do not merge: `a50-m36-*`, `a50-m37-test`, `a50-m42-test` to `a50-m46-test*`, `a50-m48-test`, `a50-m52-test` (m48 + userdata),

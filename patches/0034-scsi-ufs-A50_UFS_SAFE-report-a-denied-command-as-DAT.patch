@@ -1,0 +1,33 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Tue, 10 Nov 2026 18:33:20 +0600
+Subject: [PATCH 34/35] scsi: ufs: A50_UFS_SAFE: report a denied command as
+ DATA PROTECT
+
+ILLEGAL REQUEST / INVALID COMMAND OPCODE on a WRITE(10) denied only by its
+address makes the SCSI midlayer clear use_10_for_rw for the whole LUN, so
+userdata writes fall back to WRITE(6), which the guard also denies (M5.3
+test 2: EFS mount -> userdata journal abort). DATA PROTECT / WRITE PROTECTED
+fails only the request. Allow-list unchanged. Tested on the phone in M5.3
+tests 3 and 4 (log/2026-11-10-M5.3-test3-guard-sense.md).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: Ib5b034e4ba3ef352845079b8777ac79f4504ab74
+---
+ drivers/ufs/core/ufshcd.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index ce0a653c9..0a4333274 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -3298,7 +3298,8 @@ static int ufshcd_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
+ 	    !a50_ufs_write_allowed(cmd->device->lun, cmd->cmnd, A50_UD_FIRST, A50_UD_LAST)) {
+ 		dev_warn_ratelimited(hba->dev, "A50_UFS_SAFE: blocked SCSI opcode 0x%02x lun %llu\n",
+ 				     cmd->cmnd[0], cmd->device->lun);
+-		scsi_build_sense(cmd, 0, ILLEGAL_REQUEST, 0x20, 0);
++		/* Policy denial, not an unsupported opcode: keep SCSI on WRITE(10). */
++		scsi_build_sense(cmd, 0, DATA_PROTECT, 0x27, 0);
+ 		scsi_done(cmd);
+ 		return 0;
+ 	}

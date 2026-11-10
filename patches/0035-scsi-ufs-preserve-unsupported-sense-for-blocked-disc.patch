@@ -1,0 +1,32 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Tue, 10 Nov 2026 18:43:30 +0600
+Subject: [PATCH 35/35] scsi: ufs: preserve unsupported sense for blocked
+ discard operations
+
+Keep DATA_PROTECT for denied WRITE(10/16) ranges so SCSI does not downgrade the entire LUN. Report ILLEGAL_REQUEST for other denied commands so sd disables unsupported UNMAP and WRITE SAME operations. The write allow-list is unchanged.
+
+Change-Id: Ic6ef406e065b77552068676a60d83e73315391de
+---
+ drivers/ufs/core/ufshcd.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 0a4333274..1e775cb43 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -3298,8 +3298,12 @@ static int ufshcd_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
+ 	    !a50_ufs_write_allowed(cmd->device->lun, cmd->cmnd, A50_UD_FIRST, A50_UD_LAST)) {
+ 		dev_warn_ratelimited(hba->dev, "A50_UFS_SAFE: blocked SCSI opcode 0x%02x lun %llu\n",
+ 				     cmd->cmnd[0], cmd->device->lun);
+-		/* Policy denial, not an unsupported opcode: keep SCSI on WRITE(10). */
+-		scsi_build_sense(cmd, 0, DATA_PROTECT, 0x27, 0);
++		/* Denied ranges must not disable WRITE(10) for the whole LUN. */
++		if (cmd->cmnd[0] == WRITE_10 || cmd->cmnd[0] == WRITE_16)
++			scsi_build_sense(cmd, 0, DATA_PROTECT, 0x27, 0);
++		else
++			/* Let sd disable unsupported UNMAP/WRITE SAME operations. */
++			scsi_build_sense(cmd, 0, ILLEGAL_REQUEST, 0x20, 0);
+ 		scsi_done(cmd);
+ 		return 0;
+ 	}

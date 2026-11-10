@@ -1,0 +1,184 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Sun, 8 Nov 2026 15:03:18 +0600
+Subject: [PATCH 20/35] phy: samsung-ufs: add Exynos9610 UFS PHY data
+
+PMA tables and lock handling ported from Samsung's ufs-cal-9610.c.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I97141ce606f30aa687b42f8446be5593bad044c5
+---
+ .../bindings/phy/samsung,ufs-phy.yaml         |   1 +
+ drivers/phy/samsung/Makefile                  |   1 +
+ drivers/phy/samsung/phy-exynos9610-ufs.c      | 110 ++++++++++++++++++
+ drivers/phy/samsung/phy-samsung-ufs.c         |   3 +
+ drivers/phy/samsung/phy-samsung-ufs.h         |   1 +
+ 5 files changed, 116 insertions(+)
+ create mode 100644 drivers/phy/samsung/phy-exynos9610-ufs.c
+
+diff --git a/Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
+index d70ffeb6e..a33fb425d 100644
+--- a/Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
+@@ -17,6 +17,7 @@ properties:
+     enum:
+       - google,gs101-ufs-phy
+       - samsung,exynos7-ufs-phy
++      - samsung,exynos9610-ufs-phy
+       - samsung,exynosautov9-ufs-phy
+       - samsung,exynosautov920-ufs-phy
+       - tesla,fsd-ufs-phy
+diff --git a/drivers/phy/samsung/Makefile b/drivers/phy/samsung/Makefile
+index 342682638..ce7bbea35 100644
+--- a/drivers/phy/samsung/Makefile
++++ b/drivers/phy/samsung/Makefile
+@@ -6,6 +6,7 @@ obj-$(CONFIG_PHY_SAMSUNG_UFS)		+= phy-exynos-ufs.o
+ phy-exynos-ufs-y			+= phy-gs101-ufs.o
+ phy-exynos-ufs-y			+= phy-samsung-ufs.o
+ phy-exynos-ufs-y			+= phy-exynos7-ufs.o
++phy-exynos-ufs-y			+= phy-exynos9610-ufs.o
+ phy-exynos-ufs-y			+= phy-exynosautov9-ufs.o
+ phy-exynos-ufs-y			+= phy-exynosautov920-ufs.o
+ phy-exynos-ufs-y			+= phy-fsd-ufs.o
+diff --git a/drivers/phy/samsung/phy-exynos9610-ufs.c b/drivers/phy/samsung/phy-exynos9610-ufs.c
+new file mode 100644
+index 000000000..a27a717a8
+--- /dev/null
++++ b/drivers/phy/samsung/phy-exynos9610-ufs.c
+@@ -0,0 +1,110 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * UFS PHY driver data for the Samsung Exynos9610 SoC
++ *
++ * Values and their order are from Samsung's ufs-cal-9610.c (Galaxy A50 kernel,
++ * drivers/scsi/ufs). The CAL uses byte offsets; PHY_*_REG_CFG take word offsets
++ * (byte offset / 4), and a transceiver lane spans 0x140 bytes (0x50 words).
++ */
++
++#include <linux/delay.h>
++#include <linux/io.h>
++
++#include "phy-samsung-ufs.h"
++
++#define EXYNOS9610_EMBEDDED_COMBO_PHY_CTRL	0x724
++#define EXYNOS9610_EMBEDDED_COMBO_PHY_CTRL_MASK	0x1
++#define EXYNOS9610_EMBEDDED_COMBO_PHY_CTRL_EN	BIT(0)
++
++#define EXYNOS9610_TRSV_LANE_WORDS		0x50
++#define EXYNOS9610_TRSV_LANE_BYTES		0x140
++#define EXYNOS9610_TRSV_CFG(o, v, d) \
++	PHY_TRSV_REG_CFG_OFFSET(o, v, d, EXYNOS9610_TRSV_LANE_WORDS)
++
++/* CAL init_cfg, PMA entries */
++static const struct samsung_ufs_phy_cfg exynos9610_pre_init_cfg[] = {
++	PHY_COMN_REG_CFG(0x023, 0x80, PWR_MODE_ANY),
++	PHY_COMN_REG_CFG(0x01d, 0x10, PWR_MODE_ANY),
++	EXYNOS9610_TRSV_CFG(0x044, 0xb5, PWR_MODE_ANY),
++	EXYNOS9610_TRSV_CFG(0x04d, 0x43, PWR_MODE_ANY),
++	EXYNOS9610_TRSV_CFG(0x05b, 0x20, PWR_MODE_ANY),
++	EXYNOS9610_TRSV_CFG(0x05e, 0xc0, PWR_MODE_ANY),
++	EXYNOS9610_TRSV_CFG(0x06c, 0x94, PWR_MODE_ANY),
++	EXYNOS9610_TRSV_CFG(0x038, 0x12, PWR_MODE_ANY),
++	EXYNOS9610_TRSV_CFG(0x059, 0x58, PWR_MODE_ANY),
++	PHY_COMN_REG_CFG(0x023, 0xc0, PWR_MODE_ANY),
++	PHY_COMN_REG_CFG(0x023, 0x00, PWR_MODE_ANY),
++	END_UFS_PHY_CFG
++};
++
++/*
++ * CAL calib_of_hs_rate_a/b (identical), PMA entries, HS-G3 values only: the
++ * table is applied without a gear filter and the host only requests HS-G3.
++ */
++static const struct samsung_ufs_phy_cfg exynos9610_pre_pwr_hs_cfg[] = {
++	EXYNOS9610_TRSV_CFG(0x032, 0xbc, PWR_MODE_HS_ANY),
++	EXYNOS9610_TRSV_CFG(0x03c, 0x7f, PWR_MODE_HS_ANY),
++	EXYNOS9610_TRSV_CFG(0x048, 0xc0, PWR_MODE_HS_ANY),
++	EXYNOS9610_TRSV_CFG(0x04a, 0x00, PWR_MODE_HS_G3_ANY),
++	EXYNOS9610_TRSV_CFG(0x04b, 0x10, PWR_MODE_HS_G3_ANY),
++	EXYNOS9610_TRSV_CFG(0x04d, 0x63, PWR_MODE_HS_G3_ANY),
++	END_UFS_PHY_CFG
++};
++
++/* Must exist (may be empty): the wait_for_cdr hook only runs with a table */
++static const struct samsung_ufs_phy_cfg exynos9610_post_pwr_hs_cfg[] = {
++	END_UFS_PHY_CFG
++};
++
++static const struct samsung_ufs_phy_cfg *exynos9610_ufs_phy_cfgs[CFG_TAG_MAX] = {
++	[CFG_PRE_INIT]		= exynos9610_pre_init_cfg,
++	[CFG_PRE_PWR_HS]	= exynos9610_pre_pwr_hs_cfg,
++	[CFG_POST_PWR_HS]	= exynos9610_post_pwr_hs_cfg,
++};
++
++static const char * const exynos9610_ufs_phy_clks[] = {
++	"ref_clk",
++};
++
++/* CAL init_cfg ends with COMMON_WAIT 200 us */
++static int exynos9610_ufs_phy_wait_for_cal(struct phy *phy, u8 lane)
++{
++	udelay(200);
++
++	return 0;
++}
++
++/* CAL ufs_cal_wait_cdr_afc_check */
++static int exynos9610_ufs_phy_wait_for_cdr(struct phy *phy, u8 lane)
++{
++	struct samsung_ufs_phy *ufs_phy = get_samsung_ufs_phy(phy);
++	void __iomem *lane_base = ufs_phy->reg_pma + lane * EXYNOS9610_TRSV_LANE_BYTES;
++	int i;
++
++	for (i = 0; i < 100; i++) {
++		usleep_range(40, 50);
++		if (readl(lane_base + 0x1fc) & 0x40)
++			return 0;
++
++		udelay(1);
++		writel(0x7f, lane_base + 0xf0);
++		writel(0xff, lane_base + 0xf0);
++	}
++
++	dev_err(ufs_phy->dev, "lane %u: CDR AFC lock timeout\n", lane);
++
++	return -ETIMEDOUT;
++}
++
++const struct samsung_ufs_phy_drvdata exynos9610_ufs_phy = {
++	.cfgs = exynos9610_ufs_phy_cfgs,
++	.isol = {
++		.offset = EXYNOS9610_EMBEDDED_COMBO_PHY_CTRL,
++		.mask = EXYNOS9610_EMBEDDED_COMBO_PHY_CTRL_MASK,
++		.en = EXYNOS9610_EMBEDDED_COMBO_PHY_CTRL_EN,
++	},
++	.clk_list = exynos9610_ufs_phy_clks,
++	.num_clks = ARRAY_SIZE(exynos9610_ufs_phy_clks),
++	.wait_for_cal = exynos9610_ufs_phy_wait_for_cal,
++	.wait_for_cdr = exynos9610_ufs_phy_wait_for_cdr,
++};
+diff --git a/drivers/phy/samsung/phy-samsung-ufs.c b/drivers/phy/samsung/phy-samsung-ufs.c
+index f3cbe6b17..4c4018fdd 100644
+--- a/drivers/phy/samsung/phy-samsung-ufs.c
++++ b/drivers/phy/samsung/phy-samsung-ufs.c
+@@ -320,6 +320,9 @@ static const struct of_device_id samsung_ufs_phy_match[] = {
+ 	}, {
+ 		.compatible = "samsung,exynos7-ufs-phy",
+ 		.data = &exynos7_ufs_phy,
++	}, {
++		.compatible = "samsung,exynos9610-ufs-phy",
++		.data = &exynos9610_ufs_phy,
+ 	}, {
+ 		.compatible = "samsung,exynosautov9-ufs-phy",
+ 		.data = &exynosautov9_ufs_phy,
+diff --git a/drivers/phy/samsung/phy-samsung-ufs.h b/drivers/phy/samsung/phy-samsung-ufs.h
+index a28f14808..fd6e668b9 100644
+--- a/drivers/phy/samsung/phy-samsung-ufs.h
++++ b/drivers/phy/samsung/phy-samsung-ufs.h
+@@ -150,6 +150,7 @@ void samsung_ufs_phy_config(struct samsung_ufs_phy *phy,
+ extern const struct samsung_ufs_phy_drvdata exynos7_ufs_phy;
+ extern const struct samsung_ufs_phy_drvdata exynosautov9_ufs_phy;
+ extern const struct samsung_ufs_phy_drvdata exynosautov920_ufs_phy;
++extern const struct samsung_ufs_phy_drvdata exynos9610_ufs_phy;
+ extern const struct samsung_ufs_phy_drvdata fsd_ufs_phy;
+ extern const struct samsung_ufs_phy_drvdata tensor_gs101_ufs_phy;
+ 

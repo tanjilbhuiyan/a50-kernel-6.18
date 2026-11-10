@@ -1,0 +1,33 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Mon, 9 Nov 2026 18:01:37 +0600
+Subject: [PATCH 26/35] phy: exynos5-usbdrd: 9610: force the PIPE3 inputs of
+ the USB 2 only link
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I38958a8d8b8685a1ce2c886aef65417e7712911d
+---
+ drivers/phy/samsung/phy-exynos5-usbdrd.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+index dbb21b76e..a0777946a 100644
+--- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
++++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+@@ -1677,6 +1677,16 @@ static void exynos9610_usbdrd_utmi_init(struct exynos5_usbdrd_phy *phy_drd)
+ 	reg = readl(regs_base + EXYNOS850_DRD_LINKPORT);
+ 	reg |= EXYNOS9610_LINKPORT_SEL_OCD_U3 | EXYNOS9610_LINKPORT_SEL_OCD_U2;
+ 	writel(reg, regs_base + EXYNOS850_DRD_LINKPORT);
++
++	/*
++	 * This port is USB 2 only, so the SuperSpeed PHY is not running: force
++	 * the link's PIPE3 inputs. Without this the controller never connects
++	 * (Samsung's phy_exynos_usb_v3p1_pipe_ovrd).
++	 */
++	reg = readl(regs_base + EXYNOS850_DRD_LINKCTRL);
++	reg |= LINKCTRL_FORCE_PIPE_EN | LINKCTRL_FORCE_RXELECIDLE;
++	reg &= ~LINKCTRL_FORCE_PHYSTATUS;
++	writel(reg, regs_base + EXYNOS850_DRD_LINKCTRL);
+ }
+ 
+ static int exynos850_usbdrd_phy_init(struct phy *phy)

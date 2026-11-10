@@ -1,0 +1,28 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Alexandru Chimac <alex@chimac.ro>
+Date: Fri, 2 Jan 2026 11:29:49 +0000
+Subject: [PATCH 17/35] dt-bindings: pinctrl: samsung: Add
+ exynos9610-wakeup-eint node
+
+Add a dedicated compatible for the exynos9610-wakeup-eint node, which is
+compatbile with Exynos850's implementation (and the Exynos7 fallback).
+
+Signed-off-by: Alexandru Chimac <alex@chimac.ro>
+Link: https://patch.msgid.link/20260102-exynos9610-pinctrl-v3-2-3f21f2cfb651@chimac.ro
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ .../bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml       | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
+index dd11c73a5..f86ced42c 100644
+--- a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
+@@ -47,6 +47,7 @@ properties:
+           - enum:
+               - google,gs101-wakeup-eint
+               - samsung,exynos2200-wakeup-eint
++              - samsung,exynos9610-wakeup-eint
+               - samsung,exynos9810-wakeup-eint
+               - samsung,exynos990-wakeup-eint
+               - samsung,exynosautov9-wakeup-eint

@@ -1,0 +1,214 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Tue, 10 Nov 2026 14:01:34 +0600
+Subject: [PATCH 33/35] scsi: ufs: A50_UFS_SAFE: optional allow-list for writes
+ inside userdata
+
+A50_UFS_ALLOW_USERDATA lets WRITE(10)/WRITE(16) reach LUN 0 only when every
+block lies in [A50_UFS_USERDATA_FIRST, A50_UFS_USERDATA_LAST], plus
+SYNCHRONIZE CACHE on LUN 0. Everything else stays blocked. The decision is a
+pure function inside the unit-tested guard block, with a boot self-test on an
+invalid range, a synthetic range and the configured range.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: Ic55ac16c700a089dc8c2a3f2068bc07bde957642
+---
+ drivers/ufs/core/Kconfig  |  20 ++++++
+ drivers/ufs/core/ufshcd.c | 126 ++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 142 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/ufs/core/Kconfig b/drivers/ufs/core/Kconfig
+index 6fde40955..5c2c22477 100644
+--- a/drivers/ufs/core/Kconfig
++++ b/drivers/ufs/core/Kconfig
+@@ -16,6 +16,26 @@ config A50_UFS_SAFE
+ 	  reach the device. Bring-up aid for the Samsung Galaxy A50, whose
+ 	  UFS holds EFS and the bootloader. Say N on anything else.
+ 
++config A50_UFS_ALLOW_USERDATA
++	bool "Galaxy A50 bring-up: also allow writes inside the userdata partition"
++	depends on A50_UFS_SAFE
++	help
++	  On top of A50_UFS_SAFE, let WRITE(10)/WRITE(16) reach LUN 0 when
++	  every block they write lies in [A50_UFS_USERDATA_FIRST,
++	  A50_UFS_USERDATA_LAST], plus SYNCHRONIZE CACHE on LUN 0. All other
++	  writes (other ranges, other LUNs, UNMAP, WRITE SAME, queries) stay
++	  blocked. The range is fixed at build time from the phone's GPT.
++
++config A50_UFS_USERDATA_FIRST
++	hex "First allowed block (device logical blocks, LUN 0)"
++	depends on A50_UFS_ALLOW_USERDATA
++	default 0x0
++
++config A50_UFS_USERDATA_LAST
++	hex "Last allowed block, inclusive (device logical blocks, LUN 0)"
++	depends on A50_UFS_ALLOW_USERDATA
++	default 0x0
++
+ config SCSI_UFS_BSG
+ 	bool "Universal Flash Storage BSG device node"
+ 	select BLK_DEV_BSGLIB
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 459c9997a..ce0a653c9 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -3100,6 +3100,109 @@ static noinline bool a50_ufs_query_allowed(int opcode, u8 idn)
+ 	}
+ }
+ 
++/*
++ * A50_UFS_ALLOW_USERDATA: a write is allowed only on LUN 0, only as WRITE(10)
++ * or WRITE(16) with a non-zero length, and only when every block it touches
++ * lies in [first, last]. SYNCHRONIZE CACHE (10/16) is allowed on LUN 0. A range
++ * with first == 0 or last < first allows nothing.
++ */
++static noinline bool a50_ufs_write_allowed(u64 lun, const u8 *cdb, u64 first, u64 last)
++{
++	u64 lba;
++	u32 len;
++
++	if (lun != 0 || first == 0 || last < first)
++		return false;
++	switch (cdb[0]) {
++	case SYNCHRONIZE_CACHE:
++	case SYNCHRONIZE_CACHE_16:
++		return true;
++	case WRITE_10:
++		lba = ((u64)cdb[2] << 24) | ((u64)cdb[3] << 16) | ((u64)cdb[4] << 8) | cdb[5];
++		len = ((u32)cdb[7] << 8) | cdb[8];
++		break;
++	case WRITE_16:
++		lba = ((u64)cdb[2] << 56) | ((u64)cdb[3] << 48) | ((u64)cdb[4] << 40) |
++		      ((u64)cdb[5] << 32) | ((u64)cdb[6] << 24) | ((u64)cdb[7] << 16) |
++		      ((u64)cdb[8] << 8) | cdb[9];
++		len = ((u32)cdb[10] << 24) | ((u32)cdb[11] << 16) | ((u32)cdb[12] << 8) | cdb[13];
++		break;
++	default:
++		return false;
++	}
++	return len != 0 && lba >= first && lba <= last && len - 1 <= last - lba;
++}
++
++/* Builds a WRITE(10)/(16) CDB byte by byte, independently of the decoder above. */
++static void a50_ufs_mk_write(u8 *cdb, u8 op, u64 lba, u32 len)
++{
++	int i, n = op == 0x2a ? 4 : 8, m = op == 0x2a ? 2 : 4, at = op == 0x2a ? 7 : 2 + 8;
++
++	for (i = 0; i < 16; i++)
++		cdb[i] = 0;
++	cdb[0] = op;
++	for (i = 0; i < n; i++)
++		cdb[2 + i] = lba >> (8 * (n - 1 - i));
++	for (i = 0; i < m; i++)
++		cdb[at + i] = len >> (8 * (m - 1 - i));
++}
++
++/*
++ * Checks a50_ufs_write_allowed() for one range: boundaries, straddles, other
++ * LUNs and every other opcode. Returns the number of wrong decisions.
++ */
++static noinline int a50_ufs_write_selftest(u64 first, u64 last)
++{
++	static const u64 luns[] = { 0, 1, 2, 3, 0xc1b0, 0xc1c4, 0xc1d0 };
++	static const u8 ops[] = { 0x2a, 0x8a };
++	struct { u64 lba; u32 len; bool ok; } c[] = {
++		{ first, 1, true },
++		{ last, 1, true },
++		{ first, (u32)(last - first + 1 > 0xffff ? 0xffff : last - first + 1), true },
++		{ first - 1, 1, false },
++		{ first - 1, 2, false },
++		{ last, 2, false },
++		{ last + 1, 1, false },
++		{ 0, 1, false },
++		{ first, 0, false },
++		{ last - 1, 0xffff, false },
++		{ 0xffffffffULL, 0xffff, false },
++	};
++	u8 cdb[16];
++	int l, o, i, op, errors = 0;
++	bool valid = first != 0 && last >= first;
++
++	for (l = 0; l < ARRAY_SIZE(luns); l++) {
++		for (o = 0; o < ARRAY_SIZE(ops); o++) {
++			for (i = 0; i < ARRAY_SIZE(c); i++) {
++				bool expect = valid && luns[l] == 0 && c[i].ok;
++
++				/* WRITE(10) carries 32 bits of LBA only */
++				if (ops[o] == 0x2a && c[i].lba > 0xffffffffULL)
++					continue;
++				a50_ufs_mk_write(cdb, ops[o], c[i].lba, c[i].len);
++				if (a50_ufs_write_allowed(luns[l], cdb, first, last) != expect)
++					errors++;
++			}
++			/* WRITE(16): 64-bit wrap past the end */
++			a50_ufs_mk_write(cdb, 0x8a, ~0ULL, 2);
++			if (a50_ufs_write_allowed(luns[l], cdb, first, last))
++				errors++;
++		}
++		for (op = 0; op < 256; op++) {
++			bool expect = valid && luns[l] == 0 && (op == 0x35 || op == 0x91);
++
++			if (op == 0x2a || op == 0x8a)
++				continue;
++			a50_ufs_mk_write(cdb, 0x8a, first, 1);
++			cdb[0] = op;
++			if (a50_ufs_write_allowed(luns[l], cdb, first, last) != expect)
++				errors++;
++		}
++	}
++	return errors;
++}
++
+ /*
+  * Exhaustive check of the two decisions above against an independent list of
+  * numeric values (deliberately not the symbolic names used above). Returns the
+@@ -3147,6 +3250,14 @@ static noinline int a50_ufs_guard_selftest(void)
+ }
+ /* A50-GUARD-END */
+ 
++#ifdef CONFIG_A50_UFS_ALLOW_USERDATA
++#define A50_UD_FIRST ((u64)CONFIG_A50_UFS_USERDATA_FIRST)
++#define A50_UD_LAST ((u64)CONFIG_A50_UFS_USERDATA_LAST)
++#else
++#define A50_UD_FIRST 0ULL	/* first == 0: nothing allowed */
++#define A50_UD_LAST 0ULL
++#endif
++
+ /* A blocked write reports success without reaching the device */
+ static noinline bool a50_ufs_query_blocked(struct ufs_hba *hba,
+ 					   enum query_opcode opcode, u8 idn)
+@@ -3183,9 +3294,10 @@ static int ufshcd_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
+ 	struct ufs_hw_queue *hwq = NULL;
+ 
+ #ifdef CONFIG_A50_UFS_SAFE
+-	if (!a50_ufs_scsi_allowed(cmd->cmnd)) {
+-		dev_warn_ratelimited(hba->dev, "A50_UFS_SAFE: blocked SCSI opcode 0x%02x\n",
+-				     cmd->cmnd[0]);
++	if (!a50_ufs_scsi_allowed(cmd->cmnd) &&
++	    !a50_ufs_write_allowed(cmd->device->lun, cmd->cmnd, A50_UD_FIRST, A50_UD_LAST)) {
++		dev_warn_ratelimited(hba->dev, "A50_UFS_SAFE: blocked SCSI opcode 0x%02x lun %llu\n",
++				     cmd->cmnd[0], cmd->device->lun);
+ 		scsi_build_sense(cmd, 0, ILLEGAL_REQUEST, 0x20, 0);
+ 		scsi_done(cmd);
+ 		return 0;
+@@ -11150,13 +11262,19 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
+ 	struct device *dev = hba->dev;
+ 
+ #ifdef CONFIG_A50_UFS_SAFE
+-	err = a50_ufs_guard_selftest();
++	err = a50_ufs_guard_selftest() +
++	      a50_ufs_write_selftest(0, 0) +		/* invalid range: nothing allowed */
++	      a50_ufs_write_selftest(0x1000, 0x1fff) +	/* fixed synthetic range */
++	      a50_ufs_write_selftest(A50_UD_FIRST, A50_UD_LAST);
+ 	if (err) {
+ 		dev_err(hba->dev, "A50_UFS_SAFE: SELF-TEST FAILED (%d wrong decisions), refusing to start UFS\n",
+ 			err);
+ 		return -EPERM;
+ 	}
+ 	dev_info(hba->dev, "A50_UFS_SAFE: self-test passed, write guard active\n");
++	if (A50_UD_FIRST)
++		dev_info(hba->dev, "A50_UFS_SAFE: writes allowed on LUN 0 blocks 0x%llx-0x%llx only\n",
++			 A50_UD_FIRST, A50_UD_LAST);
+ #endif
+ 
+ 	/*

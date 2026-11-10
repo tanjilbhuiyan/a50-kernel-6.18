@@ -1,0 +1,37 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Tue, 10 Nov 2026 01:31:18 +0600
+Subject: [PATCH 30/35] arm64: dts: exynos9610-a50: use the real USB supplies
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: Idfcdddc76a60ae35ea9432d6cb501d0aa02f8f40
+---
+ arch/arm64/boot/dts/exynos/exynos9610-a50.dts | 16 ++--------------
+ 1 file changed, 2 insertions(+), 14 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610-a50.dts b/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
+index b9545e9d4..64c413d08 100644
+--- a/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
++++ b/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
+@@ -144,19 +144,7 @@ chub@fd000000 {
+ 	};
+ };
+ 
+-/*
+- * Placeholder until the PMIC is modelled (M4): the binding requires these
+- * supplies, and the stock DT gives the USB nodes no supply either, so Samsung's
+- * USB driver does not switch them.
+- */
+-/ {
+-	reg_dummy: regulator-dummy {
+-		compatible = "regulator-fixed";
+-		regulator-name = "dummy";
+-	};
+-};
+-
+ &usbdrd {
+-	vdd10-supply = <&reg_dummy>;
+-	vdd33-supply = <&reg_dummy>;
++	vdd10-supply = <&ldo12_reg>;
++	vdd33-supply = <&ldo14_reg>;
+ };
