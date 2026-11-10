@@ -35,14 +35,18 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
 - **Recommendation (review of test 3, untested):** answer DATA PROTECT only for writes denied by address; keep ILLEGAL REQUEST /
   INVALID OPCODE for UNMAP and WRITE SAME, so sd disables discard after the first refusal (`drivers/scsi/sd.c:2366-2370`; test 2 had
   1 refused UNMAP, test 3 had 24). The midlayer fallback only fires for READ(10)/WRITE(10) (`drivers/scsi/scsi_lib.c:845`).
-- **Owner decisions pending:** (1) test 5 masks rild/ofono/bluebinder/a50-audio-route for one boot; recommended mechanism is the
-  kernel cmdline `systemd.mask=` (runtime masks in /run, no rootfs change); masked units do not run, which reads the acceptance
-  "only Android or HAL units failing" as "not run": owner to confirm. (2) Whether Codex commits its own work at session end.
+- **Owner decisions (2026-11-10, home):** approved recommendation to commit/push this work, correct the guard split and run test 5
+  using runtime `systemd.mask=` for rild/ofono/bluebinder/a50-audio-route. Acceptance clarification recorded in plan/ticket.
+- **Current work:** split committed on a50-userdata `c7bde3fe3`, test branch a50-m53-split `f0618ab59`. Host tests pass both
+  fallback and discard-disable paths and reject both old responses; allow-list unchanged. Build split-only control (4b) before
+  test 5 masks, to keep one variable per boot. Tests 3/4 branches retain their historical, committed broad-response source.
+  Tests 2-4 were already committed/pushed by Claude (`0f1c975`, confirmed on origin/main); no duplicate commit needed.
 
 ## State of the phone (last verified 2026-11-10 after M5.3 test 4, rollback 17:17)
 Baseline BOOT `7d5855efd34e01f09659c7d47ecb0773c30f2acc7443ee87181a0536804086c5`, stock DTB/DTBO (verified by the runner's
 pre-flight). Ubuntu Touch 26.04 on 4.14, root SSH. DHCP: 192.168.0.171 at home, 192.168.181.225 at the office.
-Current connection: home IP `192.168.0.171` (reachable 2026-11-10 evening, 4.14 baseline, up since 17:17). Baseline uptime since 17:17:59; userdata is rw with data=journal.
+Current connection: home IP `192.168.0.171` (verified this session by SSH and full pre-flight, baseline 4.14, battery 100% Full;
+latest reported uptime since 17:17:47). Userdata is rw with data=journal. Home evidence: `reference/m53-halium-init/pre-test5-home.txt`.
 Filesystem health: baseline init's saved `/run/e2fsck.out` reads clean, 6316/3440640 files, 1966367/13745152 blocks, no repairs
 reported. Raw output saved as `reference/m53-halium-init/test4-baseline-e2fsck.txt`; previous test-2/test-3 outputs also archived.
 No filesystem checker run against the mounted filesystem. Baseline SSH is working.
@@ -53,7 +57,7 @@ Backup of `ubuntu.img` (2026-11-10, before any 6.18 write): `../a50-ubuntu-img-b
 ## Kernel tree `src/ack-6.18/common` (not pushed; patches are exported to `reference/m*/`)
 Checkout: `a50-usb` (clean). Check it before any build: builds check out a test branch and return to `a50-usb`.
 - Clean driver stack: `a50-dt -> a50-clk -> a50-pinctrl -> a50-ufs -> a50-usb -> a50-acpm -> a50-pmic -> a50-thermal -> a50-core`
-  (`364673845`, M4 done) `-> a50-userdata` (`44c3fffab`, M5.2 write allow-list).
+  (`364673845`, M4 done) `-> a50-userdata` (`c7bde3fe3`, write allow-list + corrected denial sense split).
 - `a50-diag` (`88040ffc9`, v8: DSS readout, panic dump, sync before the timed dump): diagnostics, do not merge into clean branches.
 - `a50-bus` (on `a50-pmic`): I2C/PWM/keys DT. **Do not boot with its I2C nodes enabled: it freezes the phone.**
 - Test branches, do not merge: `a50-m36-*`, `a50-m37-test`, `a50-m42-test` to `a50-m46-test*`, `a50-m48-test`, `a50-m52-test` (m48 + userdata),

@@ -15,6 +15,7 @@ import tempfile
 tree = Path(sys.argv[1])
 ufs = (tree / 'drivers/ufs/core/ufshcd.c').read_text()
 scsi = (tree / 'drivers/scsi/scsi_lib.c').read_text()
+sd = (tree / 'drivers/scsi/sd.c').read_text()
 proto = (tree / 'include/scsi/scsi_proto.h').read_text()
 query = (tree / 'include/ufs/ufs.h').read_text()
 
@@ -37,10 +38,15 @@ for i, char in enumerate(dispatch):
 else:
     raise RuntimeError('unterminated sense switch')
 
+# Real sd_done ILLEGAL_REQUEST handling, including discard/WRITE SAME disable.
+sd_done = sd[sd.index('static int sd_done('):]
+sd_case = sd_done[sd_done.index('\tcase ILLEGAL_REQUEST:'):
+                  sd_done.index('\n\tdefault:', sd_done.index('\tcase ILLEGAL_REQUEST:'))]
+
 names = '''TEST_UNIT_READY REQUEST_SENSE READ_6 INQUIRY MODE_SENSE START_STOP
 READ_CAPACITY READ_10 MODE_SENSE_10 READ_16 REPORT_LUNS SERVICE_ACTION_IN_16
 SAI_READ_CAPACITY_16 WRITE_6 WRITE_10 WRITE_16 SYNCHRONIZE_CACHE
-SYNCHRONIZE_CACHE_16 UNMAP WRITE_SAME_16 WRITE_BUFFER FORMAT_UNIT
+SYNCHRONIZE_CACHE_16 UNMAP WRITE_SAME WRITE_SAME_16 WRITE_BUFFER FORMAT_UNIT
 UNIT_ATTENTION ILLEGAL_REQUEST ABORTED_COMMAND NOT_READY VOLUME_OVERFLOW
 DATA_PROTECT COMPLETED'''.split()
 defs = []
@@ -81,6 +87,12 @@ static void scsi_build_sense(struct scsi_cmnd *cmd, int descriptor,
     cmd->sense = (struct scsi_sense_hdr){key, asc, ascq};
 }
 static void scsi_done(struct scsi_cmnd *cmd) {cmd->completed++;}
+struct scsi_disk {int discard_enabled, write_same_enabled;};
+struct request {unsigned rq_flags;};
+#define RQF_QUIET 1
+static int sd_completed_bytes(struct scsi_cmnd *cmd) {return 0;}
+static void sd_disable_discard(struct scsi_disk *disk) {disk->discard_enabled = 0;}
+static void sd_disable_write_same(struct scsi_disk *disk) {disk->write_same_enabled = 0;}
 '''
 wrapper = '''
 static int guard(struct scsi_cmnd *cmd) {
@@ -93,7 +105,19 @@ int action = -1, blk_stat = -1;
 %s
 return action;
 }
-''' % (denial, dispatch)
+static int sd_features_after(struct scsi_cmnd *cmd) {
+struct scsi_cmnd *SCpnt = cmd;
+struct scsi_sense_hdr sshdr = cmd->sense;
+struct scsi_disk disk = {1, 1}, *sdkp = &disk;
+struct request request = {0}, *req = &request;
+int good_bytes = 0;
+switch (sshdr.sense_key) {
+%s
+default: break;
+}
+return disk.discard_enabled | (disk.write_same_enabled << 1);
+}
+''' % (denial, dispatch, sd_case)
 main = r'''
 static int failures;
 #define CHECK(x) do {if (!(x)) {puts("FAIL: " #x); failures++;}} while (0)
@@ -128,10 +152,27 @@ int main(void) {
     write10(&cmd, 0x1c9572, 1); disk.lun = 1;
     CHECK(guard(&cmd) == 0 && completion(&cmd) == ACTION_FAIL);
     disk.lun = 0;
+    memset(cmd.cmnd, 0, sizeof(cmd.cmnd));
+    cmd.cmnd[0] = WRITE_16; /* Denied address zero on the protected disk. */
+    cmd.cmnd[13] = 1;
+    CHECK(guard(&cmd) == 0 && completion(&cmd) == ACTION_FAIL);
+    CHECK(cmd.sense.sense_key == DATA_PROTECT && cmd.sense.asc == 0x27);
+    CHECK(disk.use_10_for_rw == 1);
     cmd.cmnd[0] = WRITE_6;
     CHECK(guard(&cmd) == 0 && completion(&cmd) == ACTION_FAIL);
     cmd.cmnd[0] = UNMAP;
     CHECK(guard(&cmd) == 0 && completion(&cmd) == ACTION_FAIL);
+    CHECK(cmd.sense.sense_key == ILLEGAL_REQUEST && cmd.sense.asc == 0x20);
+    CHECK(sd_features_after(&cmd) == 2); /* sd disables discard. */
+    for (int i = 0; i < 2; i++) {
+        cmd.cmnd[0] = i ? WRITE_SAME_16 : WRITE_SAME;
+        cmd.cmnd[1] = 8;
+        CHECK(guard(&cmd) == 0 && completion(&cmd) == ACTION_FAIL);
+        CHECK(sd_features_after(&cmd) == 2);
+        cmd.cmnd[1] = 0;
+        CHECK(guard(&cmd) == 0 && completion(&cmd) == ACTION_FAIL);
+        CHECK(sd_features_after(&cmd) == 1); /* sd disables WRITE SAME. */
+    }
     CHECK(disk.use_10_for_rw == 1);
     /* Positive control: actual SCSI switch must reproduce the old bug. */
     write10(&cmd, 0x1000, 1);
@@ -150,6 +191,7 @@ def run(rejection):
                        wrapper.replace(denial, rejection) + main)
         subprocess.run(['gcc', '-std=gnu11', '-Wall', '-Wextra',
                         '-Wno-unused-parameter', '-Wno-unused-function',
+                        '-Wno-sign-compare',
                         '-Wno-unused-but-set-variable', '-o', str(binary), str(src)], check=True)
         return subprocess.run([str(binary)], capture_output=True, text=True)
 
@@ -163,4 +205,9 @@ regression = run(original)
 assert regression.returncode != 0, 'original bug was not detected'
 assert 'FAIL: disk.use_10_for_rw == 1' in regression.stdout
 print('Original unsupported-opcode response: regression caught')
+broad = denial.replace('ILLEGAL_REQUEST, 0x20, 0', 'DATA_PROTECT, 0x27, 0')
+assert broad != denial, 'unsupported-operation response not found'
+regression = run(broad)
+assert regression.returncode != 0 and 'FAIL: sd_features_after(&cmd) == 2' in regression.stdout
+print('Broad DATA_PROTECT response: repeated-discard regression caught')
 sys.exit(fixed.returncode)

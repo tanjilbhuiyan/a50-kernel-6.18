@@ -102,6 +102,11 @@ listed with reasons; Android container may fail (expected until M6).
 Why changed (2026-11-10, owner decision): the checker predates 6.18 (the working 4.14 baseline
 scores 107 errors on it; `log/2026-11-10-M5.1-halium-config.md`), so "zero errors" cannot be
 reached. The owner wants the checker goal revisited later.
+Acceptance clarification (2026-11-10, owner approved following the test-4 review):
+M5 may use per-boot `systemd.mask=` for rild, ofono, bluebinder and
+a50-audio-route while hardware HALs are unavailable. Masks must be runtime-only,
+recorded in the test evidence, with the rootfs unchanged. Systemd must actually
+reach multi-user and running/degraded; remaining failed units still require review.
 
 ## M6 — Android container + ION
 Tasks: binder/binderfs, Rust ashmem, legacy ION ABI shim + Exynos heaps,
