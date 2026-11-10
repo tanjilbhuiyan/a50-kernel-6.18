@@ -1,0 +1,62 @@
+#!/a50/busybox sh
+# M5.2 ubuntu.img backup image (read-only), on top of the M4.8 integration test: /userdata mounted READ-ONLY (ro,noload) and telnet at 192.168.2.15 over USB (RNDIS). No Halium code runs. The A50_UFS_SAFE guard in the UFS core is the real barrier.
+# File listing is limited to ubuntu.img: nothing else on the data partition goes into the log.
+export PATH=/a50/bin
+/a50/busybox mkdir -p /a50/bin /proc /sys /dev /tmp /userdata
+/a50/busybox --install -s /a50/bin
+mount -t proc proc /proc; mount -t sysfs sysfs /sys; mount -t devtmpfs devtmpfs /dev
+mount -t debugfs debugfs /sys/kernel/debug 2>/dev/null
+mount -t configfs configfs /sys/kernel/config
+say() { echo "<6>a50-m37: $*" > /dev/kmsg; }
+setro() { for d in /sys/block/sd*; do [ -e "$d" ] || continue; n=${d##*/}
+            [ -b "/dev/$n" ] && blockdev --setro "/dev/$n"
+            for p in "$d/$n"*; do [ -e "$p" ] || continue; q=${p##*/}; [ -b "/dev/$q" ] && blockdev --setro "/dev/$q"; done
+          done; }
+say "init started, Linux $(uname -r), uptime $(cut -d' ' -f1 /proc/uptime) s"
+say "guard: $(dmesg | grep -i 'A50_UFS_SAFE' | sed 's/^\[[^]]*\] //' | tr '\n' ';')"
+i=0; while [ $i -lt 60 ]; do setro; ls /sys/block/sd*/sd*/uevent >/dev/null 2>&1 && break; sleep 1; i=$((i+1)); done
+sleep 3; setro
+say "after ${i}s: disks $(ls /sys/block | grep '^sd' | tr '\n' ' ')"
+part=""
+for u in /sys/block/sd*/sd*/uevent; do [ -e "$u" ] || continue
+  if grep -q '^PARTNAME=userdata$' "$u"; then part=$(grep '^DEVNAME=' "$u" | cut -d= -f2); fi
+done
+say "userdata partition: ${part:-NOT FOUND}"
+if [ -n "$part" ]; then
+  say "ro flag: $(blockdev --getro /dev/$part)"
+  mount -t ext4 -o ro,noload,noatime /dev/$part /userdata; rc=$?
+  say "mount rc=$rc"
+  say "mounts: $(grep ' /userdata ' /proc/mounts)"
+  if [ $rc -eq 0 ]; then
+    say "listing: $(ls -l /userdata/ubuntu.img 2>&1)"
+    say "size: $(stat -c %s /userdata/ubuntu.img 2>&1) (expected 6442450944)"
+    say "read 1 MiB: $(dd if=/userdata/ubuntu.img bs=1048576 count=1 2>/dev/null | wc -c) bytes"
+    say "left mounted read-only for the telnet shell"
+  fi
+fi
+say "ext4: $(dmesg | grep -E 'EXT4-fs' | sed 's/^\[[^]]*\] //' | tail -6 | tr '\n' ';')"
+say "guard events: $(dmesg | grep -i -E 'a50.*(block|deny|denied|reject)|A50_UFS.*(block|deny)' | sed 's/^\[[^]]*\] //' | tail -6 | tr '\n' ';')"
+say "DOD cpus online=$(cat /sys/devices/system/cpu/online)"
+say "DOD thermal: $(for z in /sys/class/thermal/thermal_zone*; do echo -n "$(cat $z/type)=$(cat $z/temp) "; done)"
+say "DOD regulators: $(ls /sys/class/regulator | wc -l) listed; $(for r in /sys/class/regulator/regulator.*; do cat $r/name; done | grep -c '^vdd_') vdd_*"
+say "DOD supply warnings: $(dmesg | grep -i -E 'supply .* not found|using dummy regulator|failed to get .*supply' | sed 's/^\[[^]]*\] //' | tr '\n' ';')"
+say "DOD deferred: $(cat /sys/kernel/debug/devices_deferred 2>/dev/null | tr '\n' ';')"
+say "DOD warnings: $(dmesg | grep -c -E 'WARNING: CPU|Unable to handle|BUG:')"
+i=0; while [ $i -lt 20 ] && [ -z "$(ls /sys/class/udc 2>/dev/null)" ]; do sleep 1; i=$((i+1)); done
+udc=$(ls /sys/class/udc 2>/dev/null | head -1); say "udc after ${i}s: ${udc:-NONE}"
+if [ -n "$udc" ]; then
+  g=/sys/kernel/config/usb_gadget/g1; mkdir -p $g/strings/0x409 $g/configs/c.1/strings/0x409 $g/functions/acm.GS0 $g/functions/rndis.usb0
+  echo 0x1d6b > $g/idVendor; echo 0x0104 > $g/idProduct; echo 0x0200 > $g/bcdUSB
+  echo 0xEF > $g/bDeviceClass; echo 0x02 > $g/bDeviceSubClass; echo 0x01 > $g/bDeviceProtocol
+  echo 02:a5:00:00:00:01 > $g/functions/rndis.usb0/dev_addr; echo 02:a5:00:00:00:02 > $g/functions/rndis.usb0/host_addr
+  echo "a50-test" > $g/strings/0x409/serialnumber; echo "A50 6.18" > $g/strings/0x409/manufacturer; echo "A50 ACM test" > $g/strings/0x409/product
+  echo "rndis+acm" > $g/configs/c.1/strings/0x409/configuration; ln -s $g/functions/rndis.usb0 $g/configs/c.1/; ln -s $g/functions/acm.GS0 $g/configs/c.1/
+  echo "$udc" > $g/UDC; say "gadget bound rc=$?"
+  ifconfig usb0 192.168.2.15 netmask 255.255.255.0 up; say "usb0 up rc=$?: $(ifconfig usb0 2>&1 | grep -E 'inet addr|HWaddr' | tr -s ' ' | tr '\n' ';')"
+  mkdir -p /dev/pts; mount -t devpts devpts /dev/pts; say "devpts rc=$?"
+  telnetd -l /a50/bin/sh; say "telnetd rc=$?"
+  # M5.2 backup: busybox httpd serves files from the read-only /userdata mount on port 5000. Never writes.
+  if grep -q " /userdata ext4 ro," /proc/mounts; then httpd -p 5000 -h /userdata; say "backup httpd rc=$? on 5000"; else say "userdata not mounted read-only: NO backup server"; fi
+  ( while :; do [ -c /dev/ttyGS0 ] && setsid sh -c 'exec sh -i </dev/ttyGS0 >/dev/ttyGS0 2>&1'; sleep 1; done ) &
+fi
+say "report done; waiting for the delayed dump"; while :; do sleep 60; done
