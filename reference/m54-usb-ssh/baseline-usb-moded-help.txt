@@ -1,0 +1,68 @@
+usb-moded	0.86.0+mer69-0ubports1+0~20260316041142.24+ubports26.04.1~1.gbp098e3a
+This package was debianized by Philippe De Swert <philippe.de-swert@nokia.com> on
+Tue, 09 Mar 2010 11:28:10 +0200.
+
+Author: Philippe De Swert
+
+Copyright:
+
+    <Copyright © 2010 Nokia Oyj>
+
+License:
+
+	LGPL v2
+
+The Debian packaging is Copyright © 2010, Philippe De Swert <philippe.de-swert@nokia.com> and
+is licensed under the LGPL, see `/usr/share/common-licenses/LGPL-2'.
+Usage: usb_moded [OPTION]...
+USB mode daemon
+
+  -a,  --android_usb_broken
+      keep gadget active on broken android kernels
+  -i,  --android_usb_broken_udev_events
+      ignore incorrect disconnect events after mode setting
+  -f,  --fallback
+      assume always connected
+  -s,  --force-syslog
+      log to syslog
+  -T,  --force-stderr
+      log to stderr
+  -l,  --log-line-info
+      log to stderr and show origin of logging
+  -D,  --debug
+      turn on debug printing
+  -d,  --diag
+      turn on diag mode
+  -h,  --help
+      display this help and exit
+  -r,  --rescue
+      rescue mode
+  -n,  --systemd
+      notify systemd when started up
+  -v,  --version
+      output version information and exit
+  -m,  --max-cable-delay=<ms>
+      maximum delay before accepting cable connection
+  -b,  --android-bootup-function=<function>
+      Setup given function during bootup. Might be required
+      on some devices to make enumeration work on the 1st
+      cable connect.
+  -I --dbus-introspect-xml
+      Dump usb-moded D-Bus introspect data to stdout.
+  -B --dbus-busconfig-xml
+      Dump usb-moded D-Bus busconfig data to stdout.
+
+# /usr/lib/systemd/system/usb-tethering.service
+# systemd service file for usb-tethering
+
+[Unit]
+Wants=local-fs.target
+After=local-fs.target
+Description=USB Tethering
+
+[Service]
+Type=forking
+ExecStart=/bin/bash /usr/bin/usb-tethering
+
+[Install]
+WantedBy=multi-user.target

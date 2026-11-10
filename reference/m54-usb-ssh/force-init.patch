@@ -1,0 +1,63 @@
+--- halium-init-original
++++ halium-init-force
+@@ -324,6 +324,60 @@
+ mknod ${rootmnt}/dev/kmsg c 1 11 2>/dev/null
+ chmod 600 ${rootmnt}/dev/kmsg 2>/dev/null
+ mknod ${rootmnt}/dev/console c 5 1 2>/dev/null
++# M5.4: packaged runtime environment, no persistent rootfs edits.
++mkdir -p "${rootmnt}/run/usb-moded"
++printf 'USB_MODED_ARGS="-f -r"\n' > "${rootmnt}/run/usb-moded/99-a50-m54.conf"
++busybox chroot "${rootmnt}" /bin/sh -c '#!/bin/sh
++# Runs inside the new root, started just before Halium switches to systemd.
++# Output goes straight to kmsg; temporary files live only in /run (tmpfs).
++export PATH=/usr/sbin:/usr/bin:/sbin:/bin
++export SYSTEMD_PAGER=cat SYSTEMD_COLORS=0 LC_ALL=C
++
++emit() {
++    printf '"'"'<6>A50STATUS: %s\n'"'"' "$*" > /dev/kmsg
++}
++
++capture() {
++    emit "CMD $*"
++    timeout 4 "$@" > /run/a50-status-output 2>&1
++    status=$?
++    while IFS= read -r line || [ -n "$line" ]; do
++        emit "$line"
++    done < /run/a50-status-output
++    emit "RC $status"
++}
++
++emit "observer armed in new root"
++: > /run/a50-status-armed
++
++for target in 60 120 200; do
++    while :; do
++        read -r uptime rest < /proc/uptime
++        [ "${uptime%%.*}" -ge "$target" ] && break
++        sleep 2
++    done
++    emit "BEGIN uptime=$uptime target=$target"
++    capture uname -r
++    capture systemctl is-system-running
++    capture systemctl --failed --no-pager --plain --no-legend
++    capture systemctl list-jobs --no-pager --plain --no-legend
++    capture systemctl show multi-user.target graphical.target -p Id -p ActiveState -p SubState -p Job
++    capture systemctl show -p SystemState -p NFailedUnits -p NJobs
++    capture findmnt -no TARGET,OPTIONS /userdata
++    capture ip -brief address
++    capture systemctl show usb-moded.service usb-tethering.service usb-moded-udhcpd.service usb-moded-ssh.service -p Id -p ActiveState -p SubState
++    capture /bin/sh -c '"'"'for u in /sys/class/udc/*; do echo "UDC ${u##*/}"; cat "$u/state"; done; for g in /sys/kernel/config/usb_gadget/*; do echo "gadget ${g##*/}"; cat "$g/UDC"; find "$g/configs" -maxdepth 2 -type l -printf "%f -> %l\n"; done'"'"'
++    emit "END target=$target"
++done
++' </dev/null >"${rootmnt}/dev/kmsg" 2>&1 &
++a50_observer_wait=0
++while [ ! -e "${rootmnt}/run/a50-status-armed" ] && [ "$a50_observer_wait" -lt 5 ]; do
++    busybox sleep 1
++    a50_observer_wait=$((a50_observer_wait + 1))
++done
++if [ ! -e "${rootmnt}/run/a50-status-armed" ]; then
++    echo "A50STATUS: observer did not arm before handoff" >"${rootmnt}/dev/kmsg"
++fi
+ exec busybox switch_root ${rootmnt} ${init} "$@" </dev/null >/dev/kmsg 2>&1
+ echo "Something went badly wrong in the initramfs."
+ panic "Please file a bug on initramfs-tools."
