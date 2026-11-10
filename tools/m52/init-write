@@ -30,7 +30,10 @@ if [ "$geo" = "sda32 14956544 109961216" ]; then
   /sbin/e2fsck -n /dev/$part > /tmp/fsck1 2>&1; f1=$?
   say "W e2fsck -n before: rc=$f1: $(tail -2 /tmp/fsck1 | tr '\n' ';')"
   if [ $f1 -eq 0 ]; then
-    blockdev --setrw /dev/$part; say "W ro flags: $part=$(blockdev --getro /dev/$part) others ro=$(for q in /sys/block/sd*/sd*; do n=${q##*/}; [ $n = $part ] || blockdev --getro /dev/$n; done | sort | uniq -c | tr -s ' ' | tr '\n' ';')"
+    # 6.18: a partition is read-only when its whole disk is (get_disk_ro checks part0), so sda goes rw too; every
+    # other partition keeps its own read-only flag, and the kernel guard still refuses any write outside userdata.
+    blockdev --setrw /dev/sda; blockdev --setrw /dev/$part
+    say "W ro flags: sda=$(blockdev --getro /dev/sda) $part=$(blockdev --getro /dev/$part) other partitions: $(for q in /sys/block/sd*/sd*; do n=${q##*/}; [ $n = $part ] || echo "ro=$(blockdev --getro /dev/$n)"; done | sort | uniq -c | tr -s ' ' | tr '\n' ';')"
     mount -t ext4 -o rw,noatime /dev/$part /userdata; rc=$?
     say "W mount rw rc=$rc: $(grep ' /userdata ' /proc/mounts)"
     if [ $rc -eq 0 ]; then
@@ -43,7 +46,7 @@ if [ "$geo" = "sda32 14956544 109961216" ]; then
       /sbin/e2fsck -n /dev/$part > /tmp/fsck2 2>&1; f2=$?
       say "W e2fsck -n after: rc=$f2: $(tail -2 /tmp/fsck2 | tr '\n' ';')"
     fi
-    blockdev --setro /dev/$part
+    blockdev --setro /dev/$part; blockdev --setro /dev/sda
   fi
 else
   say "W geometry mismatch: NO write test"
