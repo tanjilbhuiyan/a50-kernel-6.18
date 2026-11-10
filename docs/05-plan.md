@@ -88,8 +88,9 @@ DoD evaluation (2026-11-10, owner accepted): met with a caveat. Halium's ramdisk
 Tickets M4.1-M4.8 in `tasks/`. Tasks: all CPUs online, ACPM IPC, s2mpu09/s2mpb03
 PMIC + regulators, power domains, TMU, PL330, I2C/PWM/keys, CPU frequency via ACPM DVFS.
 Why changed (2026-11-10): "speedy bus" removed. PMIC access on this phone goes through the ACPM firmware (4.14 `drivers/mfd/s2mpu09-core.c:53`), proven read-only on 6.18 in M3.6 Test 4. All-CPUs bring-up made an explicit ticket; every 6.18 test so far ran with `maxcpus=1`.
-DoD: all 8 CPUs online, cpufreq scaling between min/max, thermal zones
-readable, regulators enumerated, no warnings from missing supplies at boot.
+DoD: all 8 CPUs online, thermal zones readable, regulators enumerated, no
+warnings from missing supplies at boot. (cpufreq scaling removed 2026-11-10, see below.)
+Why changed (2026-11-10, owner decision): on this phone CPU frequency and voltage changes go through an ACPM firmware plugin that 4.14 sets up at boot and 6.18 does not (`log/2026-11-10-M4.6-thermal.md`). Without it there is no safe way to set CPU voltages, so cpufreq leaves the M4 DoD and the CPUs stay at the bootloader's frequency. M4.7 is deferred. Thermal is read directly from the TMU registers (read-only), not through ACPM. Power domains: read-only reporting in M4 (all 8 need secure-firmware calls to switch); control deferred to M12.
 
 ## M5 — Ubuntu Touch userspace boots (no hardware HALs yet)
 Tasks: full Halium config (checker clean), AppArmor, loop, LXC; boot baseline
