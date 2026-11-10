@@ -1,0 +1,16 @@
+real guard code: read guard 0, invalid range 0, synthetic range 0, userdata 0x1c8700-0xee42ff 0 wrong decisions
+mutant any LUN may write              ->     96 wrong decisions  caught
+mutant start off by one               ->      8 wrong decisions  caught
+mutant end off by one                 ->      4 wrong decisions  caught
+mutant length ignored                 ->      8 wrong decisions  caught
+mutant upper bound ignored            ->     12 wrong decisions  caught
+mutant invalid range allowed          ->     10 wrong decisions  caught
+mutant allow WRITE(6)                 ->      2 wrong decisions  caught
+mutant allow UNMAP                    ->      2 wrong decisions  caught
+mutant allow WRITE SAME(16)           ->      2 wrong decisions  caught
+mutant write default allows           ->    504 wrong decisions  caught
+mutant WRITE(10) LBA bytes swapped    ->      9 wrong decisions  caught
+mutant WRITE(10) length byte wrong    ->      1 wrong decisions  caught
+mutant no flush (over-strict)         ->      4 wrong decisions  caught
+mutant read guard: allow WRITE(10)    ->      1 wrong decisions  caught
+RESULT: PASS

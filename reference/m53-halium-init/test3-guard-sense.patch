@@ -1,0 +1,14 @@
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index ce0a653c9..0a4333274 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -3298,7 +3298,8 @@ static int ufshcd_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
+ 	    !a50_ufs_write_allowed(cmd->device->lun, cmd->cmnd, A50_UD_FIRST, A50_UD_LAST)) {
+ 		dev_warn_ratelimited(hba->dev, "A50_UFS_SAFE: blocked SCSI opcode 0x%02x lun %llu\n",
+ 				     cmd->cmnd[0], cmd->device->lun);
+-		scsi_build_sense(cmd, 0, ILLEGAL_REQUEST, 0x20, 0);
++		/* Policy denial, not an unsupported opcode: keep SCSI on WRITE(10). */
++		scsi_build_sense(cmd, 0, DATA_PROTECT, 0x27, 0);
+ 		scsi_done(cmd);
+ 		return 0;
+ 	}

@@ -1,0 +1,143 @@
+[   18.165782] A50STATUS: observer armed in new root
+[   60.560834] A50STATUS: BEGIN uptime=60.55 target=60
+[   60.560879] A50STATUS: CMD uname -r
+[   60.575474] A50STATUS: 6.18.33-a50-diag+
+[   60.575532] A50STATUS: RC 0
+[   60.575560] A50STATUS: CMD systemctl is-system-running
+[   60.608774] A50STATUS: starting
+[   60.608836] A50STATUS: RC 1
+[   60.608866] A50STATUS: CMD systemctl --failed --no-pager --plain --no-legend
+[   60.642385] A50STATUS: a50-enable-autosuspend.service   loaded failed failed A50 Android 11 automatic suspend activation
+[   60.642522] A50STATUS: a50-gnss-unblock.service         loaded failed failed A50: unblock Samsung gpsd (waits for a boot animation that never runs)
+[   60.642622] A50STATUS: enable-cpu-hotplug.service       loaded failed failed Enable CPU hotplugging after Ubuntu Touch boot
+[   60.642706] A50STATUS: mount-android-partitions.service loaded failed failed Mount Android partitions
+[   60.642804] A50STATUS: no-cpu-hotplug.service           loaded failed failed Disable CPU hotplugging during Ubuntu Touch boot
+[   60.642872] A50STATUS: RC 0
+[   60.642901] A50STATUS: CMD systemctl list-jobs --no-pager --plain --no-legend
+[   60.676226] A50STATUS: 224 keep-display-on-during-boot.service          start running
+[   60.676313] A50STATUS: 203 ofono.service                                start waiting
+[   60.676385] A50STATUS: 223 factory-wipe.service                         start waiting
+[   60.676456] A50STATUS: 184 a50-audio-hidl-compat.service                start running
+[   60.676527] A50STATUS: 214 lightdm.service                              start waiting
+[   60.676598] A50STATUS: 1   graphical.target                             start waiting
+[   60.676669] A50STATUS: 161 android-set-boot-completion-property.service start waiting
+[   60.676737] A50STATUS: 2   multi-user.target                            start waiting
+[   60.676806] A50STATUS: 154 a50-audio-route.service                      start waiting
+[   60.676877] A50STATUS: 206 systemd-update-utmp-runlevel.service         start waiting
+[   60.676948] A50STATUS: 226 force-adb.service                            start waiting
+[   60.677018] A50STATUS: 192 bluebinder.service                           start running
+[   60.677088] A50STATUS: 222 aethercast.service                           start waiting
+[   60.677157] A50STATUS: 225 usb-rescue-mode-off.service                  start waiting
+[   60.677227] A50STATUS: 204 rild.service                                 start running
+[   60.677268] A50STATUS: RC 0
+[   60.677302] A50STATUS: CMD systemctl show multi-user.target graphical.target -p Id -p ActiveState -p SubState -p Job
+[   60.727916] A50STATUS: Id=multi-user.target
+[   60.727979] A50STATUS: ActiveState=inactive
+[   60.728018] A50STATUS: SubState=dead
+[   60.728048] A50STATUS: Job=2
+[   60.728074] A50STATUS: 
+[   60.728114] A50STATUS: Id=graphical.target
+[   60.728153] A50STATUS: ActiveState=inactive
+[   60.728189] A50STATUS: SubState=dead
+[   60.728217] A50STATUS: Job=1
+[   60.728255] A50STATUS: RC 0
+[   60.728285] A50STATUS: CMD systemctl show -p SystemState -p NFailedUnits -p NJobs
+[   60.756252] A50STATUS: NFailedUnits=5
+[   60.756303] A50STATUS: NJobs=15
+[   60.756345] A50STATUS: SystemState=starting
+[   60.756385] A50STATUS: RC 0
+[   60.756412] A50STATUS: CMD findmnt -no TARGET,OPTIONS /userdata
+[   60.784897] A50STATUS: /userdata rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[   60.784939] A50STATUS: RC 0
+[   60.784963] A50STATUS: END target=60
+[  121.220977] A50STATUS: BEGIN uptime=121.21 target=120
+[  121.221022] A50STATUS: CMD uname -r
+[  121.249735] A50STATUS: 6.18.33-a50-diag+
+[  121.249793] A50STATUS: RC 0
+[  121.249822] A50STATUS: CMD systemctl is-system-running
+[  121.282540] A50STATUS: starting
+[  121.282594] A50STATUS: RC 1
+[  121.282624] A50STATUS: CMD systemctl --failed --no-pager --plain --no-legend
+[  121.309455] A50STATUS: a50-enable-autosuspend.service               loaded failed failed A50 Android 11 automatic suspend activation
+[  121.309607] A50STATUS: a50-gnss-unblock.service                     loaded failed failed A50: unblock Samsung gpsd (waits for a boot animation that never runs)
+[  121.309720] A50STATUS: android-set-boot-completion-property.service loaded failed failed Set boot completion property in Android container
+[  121.309827] A50STATUS: enable-cpu-hotplug.service                   loaded failed failed Enable CPU hotplugging after Ubuntu Touch boot
+[  121.309918] A50STATUS: lightdm.service                              loaded failed failed Light Display Manager
+[  121.310012] A50STATUS: mount-android-partitions.service             loaded failed failed Mount Android partitions
+[  121.310116] A50STATUS: no-cpu-hotplug.service                       loaded failed failed Disable CPU hotplugging during Ubuntu Touch boot
+[  121.310156] A50STATUS: RC 0
+[  121.310184] A50STATUS: CMD systemctl list-jobs --no-pager --plain --no-legend
+[  121.343441] A50STATUS: 1269 bluebinder.service                   start running
+[  121.343528] A50STATUS: 3477 rild.service                         start running
+[  121.343595] A50STATUS: 1    graphical.target                     start waiting
+[  121.343660] A50STATUS: 2    multi-user.target                    start waiting
+[  121.343725] A50STATUS: 154  a50-audio-route.service              start running
+[  121.343793] A50STATUS: 206  systemd-update-utmp-runlevel.service start waiting
+[  121.343858] A50STATUS: 3349 ofono.service                        start waiting
+[  121.343921] A50STATUS: 2435 bluetooth.service                    start waiting
+[  121.343961] A50STATUS: RC 0
+[  121.343994] A50STATUS: CMD systemctl show multi-user.target graphical.target -p Id -p ActiveState -p SubState -p Job
+[  121.372334] A50STATUS: Id=multi-user.target
+[  121.372398] A50STATUS: ActiveState=inactive
+[  121.372439] A50STATUS: SubState=dead
+[  121.372469] A50STATUS: Job=2
+[  121.372496] A50STATUS: 
+[  121.372535] A50STATUS: Id=graphical.target
+[  121.372574] A50STATUS: ActiveState=inactive
+[  121.372608] A50STATUS: SubState=dead
+[  121.372638] A50STATUS: Job=1
+[  121.372678] A50STATUS: RC 0
+[  121.372709] A50STATUS: CMD systemctl show -p SystemState -p NFailedUnits -p NJobs
+[  121.407677] A50STATUS: NFailedUnits=7
+[  121.407730] A50STATUS: NJobs=8
+[  121.407775] A50STATUS: SystemState=starting
+[  121.407815] A50STATUS: RC 0
+[  121.407841] A50STATUS: CMD findmnt -no TARGET,OPTIONS /userdata
+[  121.425503] A50STATUS: /userdata rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  121.425564] A50STATUS: RC 0
+[  121.425589] A50STATUS: END target=120
+[  201.980908] A50STATUS: BEGIN uptime=201.97 target=200
+[  201.980955] A50STATUS: CMD uname -r
+[  202.003075] A50STATUS: 6.18.33-a50-diag+
+[  202.003135] A50STATUS: RC 0
+[  202.003163] A50STATUS: CMD systemctl is-system-running
+[  202.036260] A50STATUS: starting
+[  202.036318] A50STATUS: RC 1
+[  202.036352] A50STATUS: CMD systemctl --failed --no-pager --plain --no-legend
+[  202.070051] A50STATUS: a50-enable-autosuspend.service               loaded failed failed A50 Android 11 automatic suspend activation
+[  202.070195] A50STATUS: a50-gnss-unblock.service                     loaded failed failed A50: unblock Samsung gpsd (waits for a boot animation that never runs)
+[  202.070310] A50STATUS: android-set-boot-completion-property.service loaded failed failed Set boot completion property in Android container
+[  202.070417] A50STATUS: enable-cpu-hotplug.service                   loaded failed failed Enable CPU hotplugging after Ubuntu Touch boot
+[  202.070508] A50STATUS: lightdm.service                              loaded failed failed Light Display Manager
+[  202.070599] A50STATUS: mount-android-partitions.service             loaded failed failed Mount Android partitions
+[  202.070705] A50STATUS: no-cpu-hotplug.service                       loaded failed failed Disable CPU hotplugging during Ubuntu Touch boot
+[  202.070750] A50STATUS: RC 0
+[  202.070781] A50STATUS: CMD systemctl list-jobs --no-pager --plain --no-legend
+[  202.096414] A50STATUS: 1    graphical.target                     start waiting
+[  202.096504] A50STATUS: 2    multi-user.target                    start waiting
+[  202.096573] A50STATUS: 7785 rild.service                         start running
+[  202.096640] A50STATUS: 154  a50-audio-route.service              start running
+[  202.096707] A50STATUS: 206  systemd-update-utmp-runlevel.service start waiting
+[  202.096771] A50STATUS: 7657 ofono.service                        start waiting
+[  202.096834] A50STATUS: 5827 bluebinder.service                   start running
+[  202.096876] A50STATUS: RC 0
+[  202.096909] A50STATUS: CMD systemctl show multi-user.target graphical.target -p Id -p ActiveState -p SubState -p Job
+[  202.133971] A50STATUS: Id=multi-user.target
+[  202.134035] A50STATUS: ActiveState=inactive
+[  202.134075] A50STATUS: SubState=dead
+[  202.134106] A50STATUS: Job=2
+[  202.134132] A50STATUS: 
+[  202.134172] A50STATUS: Id=graphical.target
+[  202.134211] A50STATUS: ActiveState=inactive
+[  202.134247] A50STATUS: SubState=dead
+[  202.134276] A50STATUS: Job=1
+[  202.134313] A50STATUS: RC 0
+[  202.134345] A50STATUS: CMD systemctl show -p SystemState -p NFailedUnits -p NJobs
+[  202.162365] A50STATUS: NFailedUnits=7
+[  202.162418] A50STATUS: NJobs=7
+[  202.162462] A50STATUS: SystemState=starting
+[  202.162502] A50STATUS: RC 0
+[  202.162529] A50STATUS: CMD findmnt -no TARGET,OPTIONS /userdata
+[  202.182013] A50STATUS: /userdata rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  202.182069] A50STATUS: RC 0
+[  202.182093] A50STATUS: END target=200

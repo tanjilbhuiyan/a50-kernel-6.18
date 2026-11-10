@@ -1,0 +1,49 @@
+Systemd version: 255.4 (verified in backup dpkg status and live baseline)
+Source: https://raw.githubusercontent.com/systemd/systemd/v255/README
+
+Core requirements (post-olddefconfig):
+PASS CONFIG_DEVTMPFS=y
+PASS CONFIG_CGROUPS=y
+PASS CONFIG_INOTIFY_USER=y
+PASS CONFIG_SIGNALFD=y
+PASS CONFIG_TIMERFD=y
+PASS CONFIG_EPOLL=y
+PASS CONFIG_UNIX=y
+PASS CONFIG_NET=y
+PASS CONFIG_SYSFS=y
+PASS CONFIG_PROC_FS=y
+PASS CONFIG_FHANDLE=y
+
+Additional networking option for this port (not a systemd core requirement):
+PASS CONFIG_PACKET=y
+
+Port storage safety checks (not systemd requirements):
+PASS CONFIG_A50_UFS_SAFE=y
+PASS CONFIG_A50_UFS_ALLOW_USERDATA=y
+PASS CONFIG_SCSI_UFS_CRYPTO=n
+PASS CONFIG_SCSI_UFS_BSG=n
+
+Upstream udev recommendation:
+PASS CONFIG_FW_LOADER_USER_HELPER=n
+
+Config delta from test 1:
+CONFIG_AF_UNIX_OOB: absent -> y
+CONFIG_PACKET: n -> y
+CONFIG_PACKET_DIAG: absent -> n
+CONFIG_UNIX: n -> y
+CONFIG_UNIX_DIAG: absent -> n
+
+Optional/conditional gaps retained for this test:
+BPF_JIT=n: systemd IP/socket BPF filtering not fully supported.
+CGROUP_SCHED=n, FAIR_GROUP_SCHED/CFS_BANDWIDTH absent: CPU resource control unavailable.
+CGROUP_PIDS=n: TasksMax unavailable (core systemd permits all controllers disabled).
+DMI/EFI-specific requirements not applicable to this non-UEFI phone.
+KCMP absent from resolved config: optional kcmp syscall unavailable (kernel/Makefile gates it on CONFIG_KCMP; init/Kconfig defines it).
+SYSFS_DEPRECATED and UEVENT_HELPER_PATH absent; no legacy sysfs/helper enabled.
+
+Only UNIX/PACKET and their selected dependencies are changed for test 2.
+
+Follow-up from owner review: after the guard fix, enable CGROUP_PIDS,
+CGROUP_SCHED/FAIR_GROUP_SCHED/CFS_BANDWIDTH, BPF_JIT and KCMP in a separate
+config test under the modern-first rule. These gaps did not block systemd
+startup in test 2; do not combine their enablement with the guard-fix test.

@@ -1,0 +1,89 @@
+4.14.194 - Mint-user 1763150940
+/userdata rw,noatime,discard,nodelalloc,errors=remount-ro,data=journal
+# /usr/lib/systemd/system/rild.service
+[Unit]
+Description=Wait for rild in the Android container to become ready
+After=lxc-android-config.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+TimeoutStartSec=80
+ExecStart=/usr/libexec/lxc-android-config/wait-and-detect-rild
+
+# /usr/lib/systemd/system/bluebinder.service
+[Unit]
+Description=Simple proxy for using android binder based bluetooth through vhci.
+After=lxc-android-config.service
+Before=bluetooth.service
+
+[Service]
+Type=notify
+ExecStartPre=/usr/bin/droid/bluebinder_wait.sh
+ExecStart=/usr/sbin/bluebinder
+ExecStartPost=-/usr/bin/droid/bluebinder_post.sh
+Restart=always
+RestartSec=1
+StartLimitBurst=10
+StartLimitIntervalSec=20
+TimeoutStartSec=60
+# Sandboxing
+# CapabilityBoundingSet=CAP_DAC_READ_SEARCH
+# DeviceAllow=/dev/hwbinder rw
+# DeviceAllow=/dev/vhci rw
+# DeviceAllow=/dev/rfkill r
+# DevicePolicy=strict
+# NoNewPrivileges=yes
+# RestrictAddressFamilies=AF_BLUETOOTH
+# PrivateTmp=yes
+# ProtectHome=yes
+# ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target
+
+# /etc/systemd/system/a50-audio-route.service
+[Unit]
+Description=A50: pin PulseAudio playback to sink.primary-out
+Documentation=https://github.com/sadatdaniel/a50-ubuntu-touch/blob/main/docs/experiments/007-abox-firmware-too-early.md
+# Must run AFTER the audio HAL has initialised. The HAL applies its own mixer
+# settings from /vendor/etc/mixer_paths.xml when PulseAudio loads it, which
+# resets ABOX UAIF2 SPK back to RESERVED - so applying the route any earlier
+# is silently undone and there is no sound.
+After=lxc-android-config.service lightdm.service
+Wants=lxc-android-config.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+# Give PulseAudio time to load the droid card and let the HAL settle before
+# overriding the one control it leaves unrouted.
+ExecStart=/usr/local/bin/a50-audio-speaker-route.sh
+TimeoutStartSec=180
+
+[Install]
+WantedBy=multi-user.target
+
+# /usr/lib/systemd/system/ofono.service
+[Unit]
+Description=oFono Mobile telephony stack
+Documentation=man:ofonod(8)
+
+[Service]
+Type=dbus
+BusName=org.ofono
+ExecStart=/usr/sbin/ofonod -P ril --nodetach
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
+# /usr/lib/systemd/system/ofono.service.d/lxc-android-config.conf
+[Unit]
+Wants=rild.service
+After=rild.service
+
+[Service]
+EnvironmentFile=/run/ril_ofono_env
+ExecStart=
+ExecStart=/usr/libexec/lxc-android-config/ofonod-wrapper
