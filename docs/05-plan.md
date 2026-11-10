@@ -109,7 +109,13 @@ recorded in the test evidence, with the rootfs unchanged. Systemd must actually
 reach multi-user and running/degraded; remaining failed units still require review.
 M5.3 result (2026-11-10): test 5 reached multi-user at 84.17 s and degraded
 with zero jobs at 122/201 s; Android/device-helper failures reviewed and baseline
-restored clean (`log/2026-11-10-M5.3-split-control-test5.md`). M5.4 SSH still pending.
+restored clean (`log/2026-11-10-M5.3-split-control-test5.md`).
+M5 DoD evaluation (2026-11-10, M5.4): met under the accepted M5.1 checker
+interpretation and runtime HAL masks. Root SSH over verified USB RNDIS on
+6.18, settled systemd, clean restore; current checker differences match M5.1.
+USB uses a one-boot usb-moded -f -r EnvironmentFile override; native charger/
+role detection and overlapping legacy USB/DHCP helpers remain M12. Full evidence:
+`log/2026-11-10-M5.4-usb-ssh.md`. M6 tickets written; implementation not started.
 
 ## M6 — Android container + ION
 Tasks: binder/binderfs, Rust ashmem, legacy ION ABI shim + Exynos heaps,

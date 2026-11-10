@@ -12,3 +12,12 @@ Things we saw and chose not to chase, because the current goal did not need the 
 | 6 | **Why was Samsung's `lkmauth` message missing from dmesg?** | The source prints it when a module is refused, but dmesg showed nothing, even with an immediate read. The refusal itself is certain: the function always fails | `log/2026-11-08-M3.6-usb.md` | Low value. Only if module loading on the baseline ever matters |
 | 8 | **Why do the real I2C controllers freeze 6.18?** | With `samsung,s3c2440-i2c` enabled, the phone froze before the USB gadget twice (2026-11-10): first with I2C 0/1/3/4/6 plus keys, then with only I2C 0 and 1. No log survives. Same pins worked with bit-banged I2C in M3.6, and PWM on the same clock unit works. Candidates, all unverified: an interrupt storm at probe, register access with the gate off, the `i2cdetect` probing in the test init | `log/2026-11-10-M4.4-buses.md`, `tasks/M4.4-i2c-pwm-keys-dma.md` | To be worked again (owner, 2026-11-10): bus 0 only without probing in the init; then the hardware watchdog to keep a log through a freeze (`tasks/M4.4-i2c-pwm-keys-dma.md`) |
 | 7 | **What takes about 15 s before init on 6.18?** | Seen since M3.5; the cause was never identified | `STATUS.md` history, M3.5 and M3.6 dumps | Boot-time logging when boot speed matters |
+
+## M5.4 USB follow-up (2026-11-10; M12)
+The tested -f -r runtime profile provides working USB SSH and packaged DHCP,
+but legacy usb-tethering/ISC dhcpd also runs on the same gadget/interface.
+Both DHCP processes listen on UDP 67; the successful test-2 lease was issued
+by Busybox udhcpd. Native cable/charger detection and single-owner gadget/DHCP
+integration remain M12. Before disabling legacy usb-tethering, establish which
+component creates the initial configfs scaffold. Evidence:
+log/2026-11-10-M5.4-usb-ssh.md and reference/m54-usb-ssh/netdevices-live-dhcp.txt.

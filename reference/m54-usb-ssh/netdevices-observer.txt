@@ -1,0 +1,211 @@
+[   19.366750] A50STATUS: observer armed in new root
+[   61.739519] A50STATUS: BEGIN uptime=61.73 target=60
+[   61.739563] A50STATUS: CMD uname -r
+[   61.768954] A50STATUS: 6.18.33-a50-diag+
+[   61.768995] A50STATUS: RC 0
+[   61.769022] A50STATUS: CMD systemctl is-system-running
+[   61.795252] A50STATUS: starting
+[   61.795310] A50STATUS: RC 1
+[   61.795342] A50STATUS: CMD systemctl --failed --no-pager --plain --no-legend
+[   61.829009] A50STATUS: a50-enable-autosuspend.service   loaded failed failed A50 Android 11 automatic suspend activation
+[   61.829139] A50STATUS: a50-gnss-unblock.service         loaded failed failed A50: unblock Samsung gpsd (waits for a boot animation that never runs)
+[   61.829238] A50STATUS: enable-cpu-hotplug.service       loaded failed failed Enable CPU hotplugging after Ubuntu Touch boot
+[   61.829320] A50STATUS: mount-android-partitions.service loaded failed failed Mount Android partitions
+[   61.829425] A50STATUS: no-cpu-hotplug.service           loaded failed failed Disable CPU hotplugging during Ubuntu Touch boot
+[   61.829466] A50STATUS: RC 0
+[   61.829493] A50STATUS: CMD systemctl list-jobs --no-pager --plain --no-legend
+[   61.855295] A50STATUS: 219 force-adb.service                            start waiting
+[   61.855384] A50STATUS: 212 lightdm.service                              start waiting
+[   61.855455] A50STATUS: 218 usb-rescue-mode-off.service                  start waiting
+[   61.855526] A50STATUS: 151 a50-audio-hidl-compat.service                start running
+[   61.855595] A50STATUS: 1   graphical.target                             start waiting
+[   61.855665] A50STATUS: 211 factory-wipe.service                         start waiting
+[   61.855735] A50STATUS: 223 keep-display-on-during-boot.service          start running
+[   61.855807] A50STATUS: 196 systemd-update-utmp-runlevel.service         start waiting
+[   61.855876] A50STATUS: 2   multi-user.target                            start waiting
+[   61.855945] A50STATUS: 187 android-set-boot-completion-property.service start waiting
+[   61.856013] A50STATUS: 221 aethercast.service                           start waiting
+[   61.856052] A50STATUS: RC 0
+[   61.856084] A50STATUS: CMD systemctl show multi-user.target graphical.target -p Id -p ActiveState -p SubState -p Job
+[   61.898299] A50STATUS: Id=multi-user.target
+[   61.898361] A50STATUS: ActiveState=inactive
+[   61.898399] A50STATUS: SubState=dead
+[   61.898430] A50STATUS: Job=2
+[   61.898458] A50STATUS: 
+[   61.898496] A50STATUS: Id=graphical.target
+[   61.898535] A50STATUS: ActiveState=inactive
+[   61.898570] A50STATUS: SubState=dead
+[   61.898600] A50STATUS: Job=1
+[   61.898636] A50STATUS: RC 0
+[   61.898667] A50STATUS: CMD systemctl show -p SystemState -p NFailedUnits -p NJobs
+[   61.919115] A50STATUS: NFailedUnits=5
+[   61.919166] A50STATUS: NJobs=11
+[   61.919209] A50STATUS: SystemState=starting
+[   61.919247] A50STATUS: RC 0
+[   61.919276] A50STATUS: CMD findmnt -no TARGET,OPTIONS /userdata
+[   61.939123] A50STATUS: /userdata rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[   61.939179] A50STATUS: RC 0
+[   61.939208] A50STATUS: CMD ip -brief address
+[   61.960918] A50STATUS: lo               UNKNOWN        127.0.0.1/8 ::1/128 
+[   61.960977] A50STATUS: sit0@NONE        DOWN           
+[   61.961057] A50STATUS: usb0             UP             10.15.19.82/24 fe80::b40f:11ff:fe90:7e5c/64 
+[   61.961093] A50STATUS: RC 0
+[   61.961126] A50STATUS: CMD systemctl show usb-moded.service usb-tethering.service usb-moded-udhcpd.service usb-moded-ssh.service -p Id -p ActiveState -p SubState
+[   62.038847] A50STATUS: Id=usb-moded.service
+[   62.038906] A50STATUS: ActiveState=active
+[   62.038947] A50STATUS: SubState=running
+[   62.038974] A50STATUS: 
+[   62.039017] A50STATUS: Id=usb-tethering.service
+[   62.039056] A50STATUS: ActiveState=active
+[   62.039092] A50STATUS: SubState=running
+[   62.039116] A50STATUS: 
+[   62.039159] A50STATUS: Id=usb-moded-udhcpd.service
+[   62.039197] A50STATUS: ActiveState=active
+[   62.039232] A50STATUS: SubState=running
+[   62.039256] A50STATUS: 
+[   62.039297] A50STATUS: Id=usb-moded-ssh.service
+[   62.039334] A50STATUS: ActiveState=active
+[   62.039371] A50STATUS: SubState=running
+[   62.039406] A50STATUS: RC 0
+[   62.039485] A50STATUS: CMD /bin/sh -c for u in /sys/class/udc/*; do echo "UDC ${u##*/}"; cat "$u/state"; done; for g in /sys/kernel/config/usb_gadget/*; do echo "gadget ${g##*/}"; cat "$g/UDC"; find "$g/configs" -maxdepth 2 -type l -printf "%f -> %l\n"; done
+[   62.077810] A50STATUS: UDC 13200000.usb
+[   62.077862] A50STATUS: configured
+[   62.077895] A50STATUS: gadget g1
+[   62.077930] A50STATUS: 13200000.usb
+[   62.077999] A50STATUS: rndis.usb0 -> ../../../../usb_gadget/g1/functions/rndis.usb0
+[   62.078037] A50STATUS: RC 0
+[   62.078061] A50STATUS: END target=60
+[  120.531690] A50STATUS: BEGIN uptime=120.53 target=120
+[  120.531734] A50STATUS: CMD uname -r
+[  120.561906] A50STATUS: 6.18.33-a50-diag+
+[  120.561948] A50STATUS: RC 0
+[  120.561974] A50STATUS: CMD systemctl is-system-running
+[  120.601084] A50STATUS: degraded
+[  120.601124] A50STATUS: RC 1
+[  120.601152] A50STATUS: CMD systemctl --failed --no-pager --plain --no-legend
+[  120.634332] A50STATUS: a50-enable-autosuspend.service               loaded failed failed A50 Android 11 automatic suspend activation
+[  120.634473] A50STATUS: a50-gnss-unblock.service                     loaded failed failed A50: unblock Samsung gpsd (waits for a boot animation that never runs)
+[  120.634584] A50STATUS: android-set-boot-completion-property.service loaded failed failed Set boot completion property in Android container
+[  120.634688] A50STATUS: enable-cpu-hotplug.service                   loaded failed failed Enable CPU hotplugging after Ubuntu Touch boot
+[  120.634775] A50STATUS: lightdm.service                              loaded failed failed Light Display Manager
+[  120.634863] A50STATUS: mount-android-partitions.service             loaded failed failed Mount Android partitions
+[  120.634970] A50STATUS: no-cpu-hotplug.service                       loaded failed failed Disable CPU hotplugging during Ubuntu Touch boot
+[  120.635009] A50STATUS: RC 0
+[  120.635036] A50STATUS: CMD systemctl list-jobs --no-pager --plain --no-legend
+[  120.659515] A50STATUS: RC 0
+[  120.659565] A50STATUS: CMD systemctl show multi-user.target graphical.target -p Id -p ActiveState -p SubState -p Job
+[  120.704122] A50STATUS: Id=multi-user.target
+[  120.704168] A50STATUS: ActiveState=active
+[  120.704206] A50STATUS: SubState=active
+[  120.704235] A50STATUS: Job=
+[  120.704262] A50STATUS: 
+[  120.704300] A50STATUS: Id=graphical.target
+[  120.704338] A50STATUS: ActiveState=active
+[  120.704374] A50STATUS: SubState=active
+[  120.704403] A50STATUS: Job=
+[  120.704436] A50STATUS: RC 0
+[  120.704465] A50STATUS: CMD systemctl show -p SystemState -p NFailedUnits -p NJobs
+[  120.738717] A50STATUS: NFailedUnits=7
+[  120.738765] A50STATUS: NJobs=0
+[  120.738805] A50STATUS: SystemState=degraded
+[  120.738841] A50STATUS: RC 0
+[  120.738866] A50STATUS: CMD findmnt -no TARGET,OPTIONS /userdata
+[  120.763576] A50STATUS: /userdata rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  120.763618] A50STATUS: RC 0
+[  120.763643] A50STATUS: CMD ip -brief address
+[  120.782629] A50STATUS: lo               UNKNOWN        127.0.0.1/8 ::1/128 
+[  120.782699] A50STATUS: sit0@NONE        DOWN           
+[  120.782782] A50STATUS: usb0             UP             10.15.19.82/24 fe80::b40f:11ff:fe90:7e5c/64 
+[  120.782822] A50STATUS: RC 0
+[  120.782856] A50STATUS: CMD systemctl show usb-moded.service usb-tethering.service usb-moded-udhcpd.service usb-moded-ssh.service -p Id -p ActiveState -p SubState
+[  120.841760] A50STATUS: Id=usb-moded.service
+[  120.841816] A50STATUS: ActiveState=active
+[  120.841854] A50STATUS: SubState=running
+[  120.841880] A50STATUS: 
+[  120.841921] A50STATUS: Id=usb-tethering.service
+[  120.841958] A50STATUS: ActiveState=active
+[  120.841994] A50STATUS: SubState=running
+[  120.842018] A50STATUS: 
+[  120.842060] A50STATUS: Id=usb-moded-udhcpd.service
+[  120.842097] A50STATUS: ActiveState=active
+[  120.842131] A50STATUS: SubState=running
+[  120.842156] A50STATUS: 
+[  120.842196] A50STATUS: Id=usb-moded-ssh.service
+[  120.842232] A50STATUS: ActiveState=active
+[  120.842267] A50STATUS: SubState=running
+[  120.842302] A50STATUS: RC 0
+[  120.842351] A50STATUS: CMD /bin/sh -c for u in /sys/class/udc/*; do echo "UDC ${u##*/}"; cat "$u/state"; done; for g in /sys/kernel/config/usb_gadget/*; do echo "gadget ${g##*/}"; cat "$g/UDC"; find "$g/configs" -maxdepth 2 -type l -printf "%f -> %l\n"; done
+[  120.878504] A50STATUS: UDC 13200000.usb
+[  120.878553] A50STATUS: configured
+[  120.878587] A50STATUS: gadget g1
+[  120.878623] A50STATUS: 13200000.usb
+[  120.878694] A50STATUS: rndis.usb0 -> ../../../../usb_gadget/g1/functions/rndis.usb0
+[  120.878734] A50STATUS: RC 0
+[  120.878757] A50STATUS: END target=120
+[  201.511768] A50STATUS: BEGIN uptime=201.51 target=200
+[  201.511810] A50STATUS: CMD uname -r
+[  201.542118] A50STATUS: 6.18.33-a50-diag+
+[  201.542159] A50STATUS: RC 0
+[  201.542187] A50STATUS: CMD systemctl is-system-running
+[  201.581765] A50STATUS: degraded
+[  201.581804] A50STATUS: RC 1
+[  201.581834] A50STATUS: CMD systemctl --failed --no-pager --plain --no-legend
+[  201.615094] A50STATUS: a50-enable-autosuspend.service               loaded failed failed A50 Android 11 automatic suspend activation
+[  201.615234] A50STATUS: a50-gnss-unblock.service                     loaded failed failed A50: unblock Samsung gpsd (waits for a boot animation that never runs)
+[  201.615345] A50STATUS: android-set-boot-completion-property.service loaded failed failed Set boot completion property in Android container
+[  201.615450] A50STATUS: enable-cpu-hotplug.service                   loaded failed failed Enable CPU hotplugging after Ubuntu Touch boot
+[  201.615537] A50STATUS: lightdm.service                              loaded failed failed Light Display Manager
+[  201.615627] A50STATUS: mount-android-partitions.service             loaded failed failed Mount Android partitions
+[  201.615733] A50STATUS: no-cpu-hotplug.service                       loaded failed failed Disable CPU hotplugging during Ubuntu Touch boot
+[  201.615773] A50STATUS: RC 0
+[  201.615803] A50STATUS: CMD systemctl list-jobs --no-pager --plain --no-legend
+[  201.653727] A50STATUS: RC 0
+[  201.653761] A50STATUS: CMD systemctl show multi-user.target graphical.target -p Id -p ActiveState -p SubState -p Job
+[  201.682201] A50STATUS: Id=multi-user.target
+[  201.682259] A50STATUS: ActiveState=active
+[  201.682297] A50STATUS: SubState=active
+[  201.682327] A50STATUS: Job=
+[  201.682353] A50STATUS: 
+[  201.682391] A50STATUS: Id=graphical.target
+[  201.682428] A50STATUS: ActiveState=active
+[  201.682462] A50STATUS: SubState=active
+[  201.682490] A50STATUS: Job=
+[  201.682524] A50STATUS: RC 0
+[  201.682552] A50STATUS: CMD systemctl show -p SystemState -p NFailedUnits -p NJobs
+[  201.716765] A50STATUS: NFailedUnits=7
+[  201.716813] A50STATUS: NJobs=0
+[  201.716854] A50STATUS: SystemState=degraded
+[  201.716890] A50STATUS: RC 0
+[  201.716915] A50STATUS: CMD findmnt -no TARGET,OPTIONS /userdata
+[  201.736766] A50STATUS: /userdata rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  201.736825] A50STATUS: RC 0
+[  201.736852] A50STATUS: CMD ip -brief address
+[  201.758847] A50STATUS: lo               UNKNOWN        127.0.0.1/8 ::1/128 
+[  201.758903] A50STATUS: sit0@NONE        DOWN           
+[  201.758984] A50STATUS: usb0             UP             10.15.19.82/24 fe80::b40f:11ff:fe90:7e5c/64 
+[  201.759021] A50STATUS: RC 0
+[  201.759054] A50STATUS: CMD systemctl show usb-moded.service usb-tethering.service usb-moded-udhcpd.service usb-moded-ssh.service -p Id -p ActiveState -p SubState
+[  201.838656] A50STATUS: Id=usb-moded.service
+[  201.838700] A50STATUS: ActiveState=active
+[  201.838739] A50STATUS: SubState=running
+[  201.838767] A50STATUS: 
+[  201.838809] A50STATUS: Id=usb-tethering.service
+[  201.838846] A50STATUS: ActiveState=active
+[  201.838883] A50STATUS: SubState=running
+[  201.838909] A50STATUS: 
+[  201.838953] A50STATUS: Id=usb-moded-udhcpd.service
+[  201.838991] A50STATUS: ActiveState=active
+[  201.839027] A50STATUS: SubState=running
+[  201.839052] A50STATUS: 
+[  201.839094] A50STATUS: Id=usb-moded-ssh.service
+[  201.839132] A50STATUS: ActiveState=active
+[  201.839167] A50STATUS: SubState=running
+[  201.839200] A50STATUS: RC 0
+[  201.839250] A50STATUS: CMD /bin/sh -c for u in /sys/class/udc/*; do echo "UDC ${u##*/}"; cat "$u/state"; done; for g in /sys/kernel/config/usb_gadget/*; do echo "gadget ${g##*/}"; cat "$g/UDC"; find "$g/configs" -maxdepth 2 -type l -printf "%f -> %l\n"; done
+[  201.873157] A50STATUS: UDC 13200000.usb
+[  201.873208] A50STATUS: configured
+[  201.873241] A50STATUS: gadget g1
+[  201.873275] A50STATUS: 13200000.usb
+[  201.873343] A50STATUS: rndis.usb0 -> ../../../../usb_gadget/g1/functions/rndis.usb0
+[  201.873383] A50STATUS: RC 0
+[  201.873405] A50STATUS: END target=200

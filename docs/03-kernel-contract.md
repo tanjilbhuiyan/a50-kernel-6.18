@@ -8,7 +8,12 @@ the baseline kernel. Three consumers: (1) Ubuntu Touch / Halium userspace,
 
 - Authoritative checker: `reference/halium-check-kernel-config.sh`
   (from Halium `halium-boot`, 244 `CONFIG_` options). Run it against every
-  candidate `.config`; zero errors is required (M5 DoD).
+  candidate `.config`. Owner's M5.1 clarification (2026-11-10): options
+  available in 6.18 must be enabled as needed or replaced natively, with
+  removed/unavailable and intentionally replaced legacy options recorded.
+  The accepted modern config has 89 legacy-checker differences; M5.4's
+  comparison shows no new discrepancy. See `log/2026-11-10-M5.1-halium-config.md`
+  and `reference/m54-usb-ssh/checker-review.txt`. Broader checker review is deferred.
 - Additionally required by this port (from baseline behaviour):
   `CONFIG_SECURITY_APPARMOR` (UT confinement), `CONFIG_BLK_DEV_LOOP` with
   `loop.max_part=7`, ext4, `CONFIG_DEVTMPFS`, namespaces + cgroups for LXC,
