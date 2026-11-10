@@ -93,7 +93,9 @@ Before working on something:
 The project is licensed under the [Apache License 2.0](LICENSE), with these exceptions:
 - **Kernel code is GPL-2.0-only** ([LICENSES/GPL-2.0-only.txt](LICENSES/GPL-2.0-only.txt)), like the Linux kernel it
   modifies: the patch series in [patches/](patches/), every other `.patch` file under `reference/`, and the kernel
-  modules in `tools/` that carry a `SPDX-License-Identifier: GPL-2.0` header.
+  modules in `tools/` that carry a `SPDX-License-Identifier: GPL-2.0` header. Device-tree files are kernel sources
+  too: the `.dtb` files under `reference/` are compiled from this project's DT patches, and `reference/stock-dt/` holds
+  Samsung's stock DTB/DTBO, built from Samsung's GPL kernel source, with decompiled `.dts` next to each.
 - **Third-party material keeps its owner's terms.** This covers files taken from other projects, such as
   [reference/halium-check-kernel-config.sh](reference/halium-check-kernel-config.sh) from Halium, and extracts and logs
   of Samsung's stock firmware under `reference/` (for example `reference/stock-vendor/`), kept as evidence of what
