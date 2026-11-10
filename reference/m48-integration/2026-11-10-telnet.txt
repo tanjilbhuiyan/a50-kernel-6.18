@@ -1,0 +1,50 @@
+$ uname -r
+uname -r; echo A50END$((2000+0))
+6.18.33-a50-diag+
+A50END2000
+~ # [6n
+[ok]
+
+$ cat /proc/version
+cat /proc/version; echo A50END$((2000+1))
+Linux version 6.18.33-a50-diag+ (a50@firstlight) (Android (15323222, +pgo, +bolt, +lto, +mlgo, based on r584948c) clang version 22.0.1 (https://android.googlesource.com/toolchain/llvm-project 2d65e4108033380e6fe8e08b1f1826cd2bfb0c99), LLD 22.0.1 (/mnt/disks/build-disk/src/googleplex-android/llvm-r584948-release/out/llvm-project/llvm 2d65e4108033380e6fe8e08b1f1826cd2bfb0c99)) #1 SMP Wed Nov  4 00:00:00 UTC 2026
+A50END2001
+~ # [6n
+[ok]
+
+$ grep userdata /proc/mounts
+grep userdata /proc/mounts; echo A50END$((2000+2))
+/dev/sda32 /userdata ext4 ro,noatime,norecovery 0 0
+A50END2002
+~ # [6n
+[ok]
+
+$ ls -l /userdata/ubuntu.img
+ls -l /userdata/ubuntu.img; echo A50END$((2000+3))
+-rw-rw-rw-    1 0        0        6442450944 Nov 10  2026 /userdata/ubuntu.img
+A50END2003
+~ # [6n
+[ok]
+
+$ ifconfig usb0
+ifconfig usb0; echo A50END$((2000+4))
+usb0      Link encap:Ethernet  HWaddr 02:A5:00:00:00:01  
+          inet addr:192.168.2.15  Bcast:192.168.2.255  Mask:255.255.255.0
+          inet6 addr: fe80::a5:ff:fe00:1/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:48 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:26 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:6136 (5.9 KiB)  TX bytes:3982 (3.8 KiB)
+
+A50END2004
+~ # [6n
+[ok]
+
+$ echo $((6*7))
+echo $((6*7)); echo A50END$((2000+5))
+42
+A50END2005
+~ # [6n
+[ok]
+

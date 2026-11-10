@@ -39,9 +39,13 @@ later milestones get tickets when we reach them (evidence first, Rule 1).
 | M3.7 | Halium initramfs on 6.18: mount /data, telnet over USB (M3 DoD) | yes | M3.5, M3.6 | done (caveat in ticket) |
 | M4.1 | All 8 CPUs online | yes | M3 | done (log/2026-11-10-M4.1-smp.md) |
 | M4.2 | ACPM firmware IPC for Exynos 9610 | yes | M3 | done (log/2026-11-10-M4.2-acpm.md) |
-| M4.3 | S2MPU09 and S2MPB03 PMICs, regulators | yes | M4.2, M4.4 | todo |
-| M4.4 | I2C, PWM, keys, PL330 DMA | yes | M3 | todo |
+| M4.3 | S2MPU09 and S2MPB03 PMICs, regulators | yes | M4.2, M4.4 | S2MPU09 done; S2MPB03 waits for I2C |
+| M4.4 | I2C, PWM, keys, PL330 DMA | yes | M3 | blocked (real I2C freezes 6.18) |
 | M4.5 | Power domains | yes | M3 | done (read-only; log/2026-11-10-M4.5-power-domains.md) |
 | M4.6 | Thermal (TMU) | yes | M3 | done (log/2026-11-10-M4.6-thermal.md) |
 | M4.7 | CPU frequency via ACPM DVFS | yes | M4.1, M4.2, M4.6 | dropped from M4 (owner decision 2026-11-10) |
-| M4.8 | Core SoC integration and DoD | yes | M4.1-M4.7 | todo |
+| M4.8 | Core SoC integration and DoD | yes | M4.1-M4.7 | done (log/2026-11-10-M4.8-integration.md) |
+| M5.1 | Halium kernel config, checker clean | build no / test yes | M4 | todo |
+| M5.2 | Allow writes to the userdata partition only | yes | M5.1 | todo |
+| M5.3 | Halium's own init boots ubuntu.img to systemd | yes | M5.1, M5.2 | todo |
+| M5.4 | SSH over USB RNDIS; M5 DoD | yes | M5.3 | todo |
