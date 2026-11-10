@@ -1,0 +1,329 @@
+# 6.18 dump read back from /proc/last_kmsg (identifiers redacted: 3)
+===== A50 6.18 DMESG BEGIN (dump_after=150) =====
+[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x410fd034]
+[    0.000000] Linux version 6.18.33-a50-diag+ (a50@firstlight) (Android (15323222, +pgo, +bolt, +lto, +mlgo, based on r584948c) clang version 22.0.1 (https://android.googlesource.com/toolchain/llvm-project 2d65e4108033380e6fe8e08b1f1826cd2bfb0c99), LLD 22.0.1 (/mnt/disks/build-disk/src/googleplex-android/llvm-r584948-release/out/llvm-project/llvm 2d65e4108033380e6fe8e08b1f1826cd2bfb0c99)) #1 SMP Wed Nov  4 00:00:00 UTC 2026
+[    0.000000] Machine model: Samsung Galaxy A50 (SM-A505F)
+[    0.000000] printk: debug: ignoring loglevel setting.
+[    0.000000] [Firmware Bug]: Kernel image misaligned at boot, please fix your bootloader!
+[    0.000000] OF: reserved mem: 0x0000000080000000..0x0000000080000fff (4 KiB) nomap non-reusable sec_debug_magic@80000000
+[    0.000000] OF: reserved mem: 0x00000000b8000000..0x00000000b84fffff (5120 KiB) nomap non-reusable vipx_fw@b8000000
+[    0.000000] OF: reserved mem: 0x00000000c0000000..0x00000000c007ffff (512 KiB) nomap non-reusable seclog@c0000000
+[    0.000000] OF: reserved mem: 0x00000000ca000000..0x00000000ca9fffff (10240 KiB) nomap non-reusable fb_reserved@ca000000
+[    0.000000] OF: reserved mem: 0x00000000e9400000..0x00000000ebbfffff (40960 KiB) nomap non-reusable abox@e9400000
+[    0.000000] OF: reserved mem: 0x00000000ed000000..0x00000000f59fffff (141312 KiB) nomap non-reusable modem_if@ed000000
+[    0.000000] OF: reserved mem: 0x00000000f5a00000..0x00000000f77fffff (30720 KiB) nomap non-reusable cp_ram_logging@f5a00000
+[    0.000000] OF: reserved mem: 0x00000000f9000000..0x00000000fa70ffff (23616 KiB) nomap non-reusable debug_snapshot@f9000000
+[    0.000000] OF: reserved mem: 0x0000000091202000..0x0000000091387fff (1560 KiB) nomap non-reusable sec_debug_bufs@91202000
+[    0.000000] OF: reserved mem: 0x0000000091388000..0x0000000091b87fff (8192 KiB) nomap non-reusable sec_debug_next@91388000
+[    0.000000] OF: reserved mem: 0x00000000fb000000..0x00000000fb7fffff (8192 KiB) nomap non-reusable gnss_if@fb000000
+[    0.000000] OF: reserved mem: 0x00000000fd000000..0x00000000fd07ffff (512 KiB) nomap non-reusable chub@fd000000
+[    0.000000] OF: reserved mem: 0x0000000087000000..0x00000000871fffff (2048 KiB) map non-reusable el2_code
+[    0.000000] OF: reserved mem: 0x00000008fe600000..0x00000008ffffffff (26624 KiB) map non-reusable el2_earlymem
+[    0.000000] OF: reserved mem: 0x0000000080001000..0x0000000080001fff (4 KiB) map non-reusable kaslr
+[    0.000000] Zone ranges:
+[    0.000000]   DMA      [mem 0x0000000080000000-0x00000000ffffffff]
+[    0.000000]   DMA32    empty
+[    0.000000]   Normal   [mem 0x0000000100000000-0x00000008ffffffff]
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000080000000-0x0000000080000fff]
+[    0.000000]   node   0: [mem 0x0000000080001000-0x0000000091201fff]
+[    0.000000]   node   0: [mem 0x0000000091202000-0x0000000091b87fff]
+[    0.000000]   node   0: [mem 0x0000000091b88000-0x00000000b7ffffff]
+[    0.000000]   node   0: [mem 0x00000000b8000000-0x00000000b84fffff]
+[    0.000000]   node   0: [mem 0x00000000b8500000-0x00000000baafffff]
+[    0.000000]   node   0: [mem 0x00000000c0000000-0x00000000c007ffff]
+[    0.000000]   node   0: [mem 0x00000000c0080000-0x00000000c9ffffff]
+[    0.000000]   node   0: [mem 0x00000000ca000000-0x00000000ca9fffff]
+[    0.000000]   node   0: [mem 0x00000000caa00000-0x00000000dfffffff]
+[    0.000000]   node   0: [mem 0x00000000e1900000-0x00000000e93fffff]
+[    0.000000]   node   0: [mem 0x00000000e9400000-0x00000000ebbfffff]
+[    0.000000]   node   0: [mem 0x00000000ebc00000-0x00000000ecffffff]
+[    0.000000]   node   0: [mem 0x00000000ed000000-0x00000000f77fffff]
+[    0.000000]   node   0: [mem 0x00000000f7800000-0x00000000f8ffffff]
+[    0.000000]   node   0: [mem 0x00000000f9000000-0x00000000fa70ffff]
+[    0.000000]   node   0: [mem 0x00000000fa710000-0x00000000faffffff]
+[    0.000000]   node   0: [mem 0x00000000fb000000-0x00000000fb7fffff]
+[    0.000000]   node   0: [mem 0x00000000fb800000-0x00000000fcffffff]
+[    0.000000]   node   0: [mem 0x00000000fd000000-0x00000000fd07ffff]
+[    0.000000]   node   0: [mem 0x00000000fd080000-0x00000000ffffffff]
+[    0.000000]   node   0: [mem 0x0000000880000000-0x00000008ffffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000080000000-0x00000008ffffffff]
+[    0.000000] On node 0, zone DMA: 21760 pages in unavailable ranges
+[    0.000000] On node 0, zone DMA: 6400 pages in unavailable ranges
+[    0.000000] psci: probing for conduit method from DT.
+[    0.000000] psci: Using PSCI v0.1 Function IDs from DT
+[    0.000000] WARNING: x1-x3 nonzero in violation of boot protocol:
+[    0.000000] 	x1: 0000000080000000
+[    0.000000] 	x2: 0000000000130000
+[    0.000000] 	x3: 0000000080130000
+[    0.000000] This indicates a broken bootloader or old kernel
+[    0.000000] percpu: Embedded 16 pages/cpu s36504 r0 d29032 u65536
+[    0.000000] pcpu-alloc: s36504 r0 d29032 u65536 alloc=16*4096
+[    0.000000] pcpu-alloc: [0] 0 [0] 1 [0] 2 [0] 3 [0] 4 [0] 5 [0] 6 [0] 7 
+[    0.000000] Detected VIPT I-cache on CPU0
+[    0.000000] alternatives: applying boot alternatives
+[    0.000000] Kernel command line: console=tty0 loglevel=7 ignore_loglevel clk_ignore_unused rdinit=/a50/init console=ram loglevel=4 sec_debug.pcb_offset=7346944 sec_debug.smd_offset=7348992 sec_debug.lpddr4_size=4 sec_debug.dram_info=01,06,01,4G sec_debug.pwrsrc_rs=0x0001000820000000 sec_debug.reset_reason=7 sec_reset.reset_reason=7 sec_debug.reset_rwc=1 sec_debug.level=0 sec_watchdog.sec_pet=5 androidboot.debug_level=0x4f4c androidboot.force_upload=0x0 softdog.soft_margin=100 softdog.soft_panic=1 sec_debug.dump_sink=0x0 sec_debug.upload_count=0 androidboot.dram_info=01,06,01,4G androidboot.fmm_lock=0 sec_debug.fmm_lock_offset=7340600 sec_debug.sjl=1 androidboot.sn.param.offset=7343024 androidboot.prototype.param.offset=7351040 androidboot.recovery_offset=7355136 printk.devkmsg=on ess_setup=0xf9000000 sec_avc_log=0x40000@0x91202000 sec_tsp_log=0x40000@0x91244000 sec_disp_log=0x100000@0x91286000 sec_debug_next=0x800000@0x91388000 charging_mode=0x3000 s3cfb.bootloaderfb=0xca000000 lcdtype=9453571 \
+[    0.000000] Kernel command line: androidboot.carrierid.param.offset=7340608 androidboot.carrierid=BKD consoleblank=0 ehci_hcd.park=3 oops=panic pmic_info=27 ccic_info=1 fg_reset=0 androidboot.emmc_checksum=3 androidboot.sales.param.offset=7340572 sales_code=BKD androidboot.odin_download=1 androidboot.bootloader=A505FDDS9CWA2 androidboot.selinux=enforcing androidboot.product.model=SM-A505F androidboot.ucs_mode=0 androidboot.revision=6 androidboot.hardware=exynos9610 androidboot.warranty_bit=1 androidboot.wb.hs=0e03 androidboot.rp=9 androidboot.wb.snapQB=CUSTOM sec_debug.bin=A androidboot.hmac_mismatch=0 androidboot.sec_atd.tty=/dev/ttySAC0 androidboot.serialno=<redacted> androidboot.ap_serial=<redacted> snd_soc_core.pmdown_time=1000 androidboot.cp_reserved_mem=off skip_initramfs rootwait ro init=/init root=/dev/sda25 androidboot.dtbo_idx=5 androidboot.fmp_config=0 androidboot.em.did=<redacted> androidboot.em.model=SM-A505F androidboot.em.status=0x0 androidboot.sb.debug0=0x0 \
+[    0.000000] Kernel command line: androidboot.verifiedbootstate=orange androidboot.svb.ver=SVB1.0 bcm_setup=0xffffff80f8e00000 reserve-fimc
+[    0.000000] Unknown kernel command line parameters "reserve-fimc ess_setup=0xf9000000 sec_avc_log=0x40000@0x91202000 sec_tsp_log=0x40000@0x91244000 sec_disp_log=0x100000@0x91286000 sec_debug_next=0x800000@0x91388000 charging_mode=0x3000 lcdtype=9453571 pmic_info=27 ccic_info=1 fg_reset=0 sales_code=BKD bcm_setup=0xffffff80f8e00000", will be passed to user space.
+[    0.000000] printk: log buffer data + meta data: 131072 + 458752 = 589824 bytes
+[    0.000000] Dentry cache hash table entries: 524288 (order: 10, 4194304 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 262144 (order: 9, 2097152 bytes, linear)
+[    0.000000] software IO TLB: area num 8.
+[    0.000000] software IO TLB: mapped [mem 0x00000000e5400000-0x00000000e9400000] (64MB)
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 1020416
+[    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=8, Nodes=1
+[    0.000000] rcu: Hierarchical RCU implementation.
+[    0.000000] rcu: 	RCU restricting CPUs from NR_CPUS=512 to nr_cpu_ids=8.
+[    0.000000] 	Tracing variant of Tasks RCU enabled.
+[    0.000000] rcu: RCU calculated value of scheduler-enlistment delay is 25 jiffies.
+[    0.000000] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=8
+[    0.000000] RCU Tasks Trace: Setting shift to 3 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=8.
+[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000] Root IRQ handler: gic_handle_irq
+[    0.000000] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.000000] /soc@0/clock-controller@12100000: incorrect res size for automatic clocks
+[    0.000000] /soc@0/clock-controller@12100000: incorrect res size for automatic clocks
+[    0.000000] arch_timer: cp15 timer running at 26.00MHz (virt).
+[    0.000000] clocksource: arch_sys_counter: mask: 0xffffffffffffff max_cycles: 0x5ff13d5a9, max_idle_ns: 440795202370 ns
+[    0.000000] sched_clock: 56 bits at 26MHz, resolution 38ns, wraps every 4398046511088ns
+[    0.000338] Console: colour dummy device 80x25
+[    0.000350] printk: legacy console [tty0] enabled
+[    0.001157] Calibrating delay loop (skipped), value calculated using timer frequency.. 52.00 BogoMIPS (lpj=104000)
+[    0.001181] pid_max: default: 32768 minimum: 301
+[    0.001290] LSM: initializing lsm=capability,yama,apparmor,tomoyo,evm
+[    0.001360] Yama: becoming mindful.
+[    0.001569] AppArmor: AppArmor initialized
+[    0.001628] TOMOYO Linux initialized
+[    0.001750] Mount-cache hash table entries: 8192 (order: 4, 65536 bytes, linear)
+[    0.001780] Mountpoint-cache hash table entries: 8192 (order: 4, 65536 bytes, linear)
+[    0.002891] cacheinfo: Unable to detect cache hierarchy for CPU 0
+[    0.003942] rcu: Hierarchical SRCU implementation.
+[    0.003969] rcu: 	Max phase no-delay instances is 1000.
+[    0.004652] smp: Bringing up secondary CPUs ...
+[    0.005184] Detected VIPT I-cache on CPU1
+[    0.005267] CPU1: Booted secondary processor 0x0000000001 [0x410fd034]
+[    0.005912] Detected VIPT I-cache on CPU2
+[    0.005989] CPU2: Booted secondary processor 0x0000000002 [0x410fd034]
+[    0.006625] Detected VIPT I-cache on CPU3
+[    0.006705] CPU3: Booted secondary processor 0x0000000003 [0x410fd034]
+[    0.007432] CPU features: detected: Spectre-v2
+[    0.007442] CPU features: detected: Spectre-v4
+[    0.007445] CPU features: detected: Spectre-BHB
+[    0.007449] CPU features: detected: ARM erratum 858921
+[    0.007453] Detected VIPT I-cache on CPU4
+[    0.007493] arch_timer: Enabling local workaround for ARM erratum 858921
+[    0.007505] arch_timer: CPU4: Trapping CNTVCT access
+[    0.007512] CPU4: Booted secondary processor 0x0000000100 [0x410fd092]
+[    0.008151] Detected VIPT I-cache on CPU5
+[    0.008177] arch_timer: Enabling local workaround for ARM erratum 858921
+[    0.008184] arch_timer: CPU5: Trapping CNTVCT access
+[    0.008189] CPU5: Booted secondary processor 0x0000000101 [0x410fd092]
+[    0.008807] Detected VIPT I-cache on CPU6
+[    0.008833] arch_timer: Enabling local workaround for ARM erratum 858921
+[    0.008839] arch_timer: CPU6: Trapping CNTVCT access
+[    0.008844] CPU6: Booted secondary processor 0x0000000102 [0x410fd092]
+[    0.009446] Detected VIPT I-cache on CPU7
+[    0.009476] arch_timer: Enabling local workaround for ARM erratum 858921
+[    0.009484] arch_timer: CPU7: Trapping CNTVCT access
+[    0.009489] CPU7: Booted secondary processor 0x0000000103 [0x410fd092]
+[    0.009581] smp: Brought up 1 node, 8 CPUs
+[    0.009772] SMP: Total of 8 processors activated.
+[    0.009782] CPU: All CPU(s) started at EL1
+[    0.009794] CPU features: detected: 32-bit EL0 Support
+[    0.009805] CPU features: detected: CRC32 instructions
+[    0.009821] CPU features: detected: PMUv3
+[    0.009900] alternatives: applying system-wide alternatives
+[    0.011225] Memory: 3603288K/4081664K available (9088K kernel code, 916K rwdata, 2188K rodata, 13760K init, 520K bss, 472500K reserved, 0K cma-reserved)
+[    0.011875] devtmpfs: initialized
+[    0.016270] A50DIAG: DSS readout armed (buf 1 hdr 1 log 1 pmu 1), dump_after=150
+[    0.016497] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+[    0.016543] posixtimers hash table entries: 4096 (order: 4, 65536 bytes, linear)
+[    0.016629] futex hash table entries: 2048 (131072 bytes on 1 NUMA nodes, total 128 KiB, linear).
+[    0.016858] pinctrl core: initialized pinctrl subsystem
+[    0.017702] NET: Registered PF_NETLINK/PF_ROUTE protocol family
+[    0.018614] DMA: preallocated 512 KiB GFP_KERNEL pool for atomic allocations
+[    0.018730] DMA: preallocated 512 KiB GFP_KERNEL|GFP_DMA pool for atomic allocations
+[    0.018787] audit: initializing netlink subsys (disabled)
+[    0.018978] audit: type=2000 audit(0.000:1): state=initialized audit_enabled=0 res=1
+[    0.019208] thermal_sys: Registered thermal governor 'step_wise'
+[    0.019580] hw-breakpoint: found 6 breakpoint and 4 watchpoint registers.
+[    0.019941] ASID allocator initialised with 65536 entries
+[    0.023000] /soc@0/interrupt-controller@12301000: Fixed dependency cycle(s) with /soc@0/interrupt-controller@12301000
+[    0.026671] samsung-pinctrl 11c20000.pinctrl: irq number for muxed EINTs not found
+[    0.028690] /soc@0/clock-controller@13030000: incorrect res size for automatic clocks
+[    0.028736] /soc@0/clock-controller@13030000: incorrect res size for automatic clocks
+[    0.029193] /soc@0/clock-controller@13400000: incorrect res size for automatic clocks
+[    0.029232] /soc@0/clock-controller@13400000: incorrect res size for automatic clocks
+[    0.032272] SCSI subsystem initialized
+[    0.032713] Bluetooth: Core ver 2.22
+[    0.032742] NET: Registered PF_BLUETOOTH protocol family
+[    0.032749] Bluetooth: HCI device and connection manager initialized
+[    0.032757] Bluetooth: HCI socket layer initialized
+[    0.032763] Bluetooth: L2CAP socket layer initialized
+[    0.032772] Bluetooth: SCO socket layer initialized
+[    0.032781] NetLabel: Initializing
+[    0.032785] NetLabel:  domain hash size = 128
+[    0.032790] NetLabel:  protocols = UNLABELED CIPSOv4 CALIPSO
+[    0.032825] NetLabel:  unlabeled traffic allowed by default
+[    0.033068] clocksource: Switched to clocksource arch_sys_counter
+[    0.033431] AppArmor: AppArmor Filesystem Enabled
+[    0.035790] NET: Registered PF_INET protocol family
+[    0.035922] IP idents hash table entries: 65536 (order: 7, 524288 bytes, linear)
+[    0.037783] tcp_listen_portaddr_hash hash table entries: 2048 (order: 3, 32768 bytes, linear)
+[    0.037805] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+[    0.037821] TCP established hash table entries: 32768 (order: 6, 262144 bytes, linear)
+[    0.037928] TCP bind hash table entries: 32768 (order: 8, 1048576 bytes, linear)
+[    0.038212] TCP: Hash tables configured (established 32768 bind 32768)
+[    0.038287] UDP hash table entries: 2048 (order: 5, 131072 bytes, linear)
+[    0.038351] UDP-Lite hash table entries: 2048 (order: 5, 131072 bytes, linear)
+[    0.042848] workingset: timestamp_bits=46 max_order=20 bucket_order=0
+[    0.067132] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 252)
+[    0.067155] io scheduler mq-deadline registered
+[    0.070002] simple-framebuffer ca000000.framebuffer: framebuffer at 0xca000000, 0x9a3f80 bytes
+[    0.070017] simple-framebuffer ca000000.framebuffer: format=a8r8g8b8, mode=1080x2340x32, linelength=4320
+[    0.070109] simple-framebuffer ca000000.framebuffer: fb0: simplefb registered!
+[    0.073586] loop: module loaded
+[    0.073892] exynos9610-tmu 10070000.thermal-sensor: sensor 0: trim 278/338, two-point
+[    0.073906] exynos9610-tmu 10070000.thermal-sensor: sensor 1: trim 278/338, two-point
+[    0.073916] exynos9610-tmu 10070000.thermal-sensor: sensor 2: trim 279/338, two-point
+[    0.074444] exynos-ufshc 13520000.ufs: ufshcd_populate_vreg: Unable to find vdd-hba-supply regulator, assuming enabled
+[    0.074458] exynos-ufshc 13520000.ufs: ufshcd_populate_vreg: Unable to find vcc-supply regulator, assuming enabled
+[    0.074467] exynos-ufshc 13520000.ufs: ufshcd_populate_vreg: Unable to find vccq-supply regulator, assuming enabled
+[    0.074476] exynos-ufshc 13520000.ufs: ufshcd_populate_vreg: Unable to find vccq2-supply regulator, assuming enabled
+[    0.075035] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: self-test passed, write guard active
+[    0.119936] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x4 idn 0xd
+[    0.119963] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x7 idn 0x4
+[    0.120011] exynos-ufshc 13520000.ufs: dme-set: attr-id 0x9540 val 0x1 failed 0 retries
+[    0.120030] exynos-ufshc 13520000.ufs: dme-set: attr-id 0x321 val 0x15 failed 0 retries
+[    0.120049] exynos-ufshc 13520000.ufs: dme-set: attr-id 0x9540 val 0x0 failed 0 retries
+[    0.125083] exynos-ufshc 13520000.ufs: Power mode changed to : FAST series_B G_3 L_1
+[    0.125095] scsi host0: ufshcd
+[    0.126295] xt_time: kernel timezone is -0000
+[    0.126393] Initializing XFRM netlink socket
+[    0.126421] NET: Registered PF_INET6 protocol family
+[    0.127029] Segment Routing with IPv6
+[    0.127056] In-situ OAM (IOAM) with IPv6
+[    0.127123] sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
+[    0.127379] NET: Registered PF_KEY protocol family
+[    0.127401] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x4 idn 0x3
+[    0.127514] Bluetooth: RFCOMM TTY layer initialized
+[    0.127524] Bluetooth: RFCOMM socket layer initialized
+[    0.127555] Bluetooth: RFCOMM ver 1.11
+[    0.127566] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
+[    0.127572] Bluetooth: BNEP filters: protocol multicast
+[    0.127579] Bluetooth: BNEP socket layer initialized
+[    0.127584] Bluetooth: HIDP (Human Interface Emulation) ver 1.2
+[    0.127591] Bluetooth: HIDP socket layer initialized
+[    0.127615] Key type dns_resolver registered
+[    0.129133] scsi 0:0:0:49488: Well-known LUN    SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.133542] scsi 0:0:0:49476: Well-known LUN    SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.135042] Key type encrypted registered
+[    0.135062] AppArmor: AppArmor sha256 policy hashing enabled
+[    0.135078] evm: Initialising EVM extended attributes:
+[    0.135083] evm: security.selinux
+[    0.135089] evm: security.SMACK64
+[    0.135093] evm: security.SMACK64EXEC (disabled)
+[    0.135098] evm: security.SMACK64TRANSMUTE (disabled)
+[    0.135103] evm: security.SMACK64MMAP (disabled)
+[    0.135107] evm: security.apparmor
+[    0.135111] evm: security.ima (disabled)
+[    0.135115] evm: security.capability
+[    0.135113] scsi 0:0:0:49456: Well-known LUN    SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.135119] evm: HMAC attrs: 0x1
+[    0.136526] scsi 0:0:0:0: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.138215] sd 0:0:0:0: [sda] 15616000 4096-byte logical blocks: (64.0 GB/59.6 GiB)
+[    0.138299] scsi 0:0:0:1: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.138340] sd 0:0:0:0: [sda] Write Protect is off
+[    0.138364] sd 0:0:0:0: [sda] Mode Sense: 00 32 00 10
+[    0.138486] sd 0:0:0:0: [sda] Write cache: enabled, read cache: enabled, supports DPO and FUA
+[    0.138557] sd 0:0:0:0: [sda] Preferred minimum I/O size 8192 bytes
+[    0.138575] sd 0:0:0:0: [sda] Optimal transfer size 8192 bytes
+[    0.140956] sd 0:0:0:1: [sdb] 1024 4096-byte logical blocks: (4.19 MB/4.00 MiB)
+[    0.141039] scsi 0:0:0:2: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.141121] sd 0:0:0:1: [sdb] Write Protect is on
+[    0.141148] sd 0:0:0:1: [sdb] Mode Sense: 00 32 00 90
+[    0.141302] sd 0:0:0:1: [sdb] Write cache: disabled, read cache: enabled, supports DPO and FUA
+[    0.141372] sd 0:0:0:1: [sdb] Preferred minimum I/O size 8192 bytes
+[    0.141389] sd 0:0:0:1: [sdb] Optimal transfer size 8192 bytes
+[    0.143738] sd 0:0:0:2: [sdc] 1024 4096-byte logical blocks: (4.19 MB/4.00 MiB)
+[    0.143838] scsi 0:0:0:3: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.143909] sd 0:0:0:2: [sdc] Write Protect is on
+[    0.143926] sd 0:0:0:2: [sdc] Mode Sense: 00 32 00 90
+[    0.144045] sd 0:0:0:2: [sdc] Write cache: disabled, read cache: enabled, supports DPO and FUA
+[    0.144114] sd 0:0:0:2: [sdc] Preferred minimum I/O size 8192 bytes
+[    0.144130] sd 0:0:0:2: [sdc] Optimal transfer size 8192 bytes
+[    0.146573] scsi 0:0:0:4: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.146642] sd 0:0:0:3: [sdd] 2048 4096-byte logical blocks: (8.39 MB/8.00 MiB)
+[    0.146722] sd 0:0:0:3: [sdd] Write Protect is on
+[    0.146748] sd 0:0:0:3: [sdd] Mode Sense: 00 32 00 90
+[    0.146868] sd 0:0:0:3: [sdd] Write cache: disabled, read cache: enabled, supports DPO and FUA
+[    0.146938] sd 0:0:0:3: [sdd] Preferred minimum I/O size 8192 bytes
+[    0.146955] sd 0:0:0:3: [sdd] Optimal transfer size 8192 bytes
+[    0.149042] sd 0:0:0:4: [sde] 2048 4096-byte logical blocks: (8.39 MB/8.00 MiB)
+[    0.149156] sd 0:0:0:4: [sde] Write Protect is on
+[    0.149175] sd 0:0:0:4: [sde] Mode Sense: 00 32 00 90
+[    0.149292] sd 0:0:0:4: [sde] Write cache: disabled, read cache: enabled, supports DPO and FUA
+[    0.149365] sd 0:0:0:4: [sde] Preferred minimum I/O size 8192 bytes
+[    0.149381] sd 0:0:0:4: [sde] Optimal transfer size 8192 bytes
+[    0.310923] Unpacking initramfs...
+[    1.157693] sd 0:0:0:2: [sdc] Attached SCSI disk
+[    1.158107] sd 0:0:0:1: [sdb] Attached SCSI disk
+[    1.159166] Alternate GPT is invalid, using primary GPT.
+[    1.159252]  sda: sda1 sda2 sda3 sda4 sda5 sda6 sda7 sda8 sda9 sda10 sda11 sda12 sda13 sda14 sda15 sda16 sda17 sda18 sda19 sda20 sda21 sda22 sda23 sda24 sda25 sda26 sda27 sda28 sda29 sda30 sda31 sda32
+[    1.161996] sd 0:0:0:0: [sda] Attached SCSI disk
+[    2.163215]  sdd: sdd1
+[    2.163438] sd 0:0:0:3: [sdd] Attached SCSI disk
+[    3.165509] sd 0:0:0:4: [sde] Attached SCSI disk
+[   15.154584] clk: Not disabling unused clocks
+[   15.157233] Freeing unused kernel memory: 13760K
+[   15.157339] Run /a50/init as init process
+[   15.157347]   with arguments:
+[   15.157351]     /a50/init
+[   15.157356]     reserve-fimc
+[   15.157360]   with environment:
+[   15.157365]     HOME=/
+[   15.157369]     TERM=linux
+[   15.157373]     ess_setup=0xf9000000
+[   15.157378]     sec_avc_log=0x40000@0x91202000
+[   15.157383]     sec_tsp_log=0x40000@0x91244000
+[   15.157388]     sec_disp_log=0x100000@0x91286000
+[   15.157392]     sec_debug_next=0x800000@0x91388000
+[   15.157396]     charging_mode=0x3000
+[   15.157400]     lcdtype=9453571
+[   15.157404]     pmic_info=27
+[   15.157407]     ccic_info=1
+[   15.157411]     fg_reset=0
+[   15.157414]     sales_code=BKD
+[   15.157417]     bcm_setup=0xffffff80f8e00000
+[   15.176090] a50-m37: init started, Linux 6.18.33-a50-diag+, uptime 15.17 s
+[   15.182322] a50-m37: guard: exynos-ufshc 13520000.ufs: A50_UFS_SAFE: self-test passed, write guard active;exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x4 idn 0xd;exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x7 idn 0x4;exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x4 idn 0x3;
+[   18.233938] a50-m37: after 0s: disks sda sdb sdc sdd sde 
+[   18.299104] a50-m37: userdata partition: sda32
+[   18.300093] a50-m37: ro flag: 1
+[   18.304637] EXT4-fs (sda32): mounted filesystem 6be7290a-f5e9-4537-8738-6adea31bf339 ro without journal. Quota mode: disabled.
+[   18.305015] a50-m37: mount rc=0
+[   18.306524] a50-m37: mounts: /dev/sda32 /userdata ext4 ro,noatime,norecovery 0 0
+[   18.307885] a50-m37: listing: -rw-rw-rw-    1 0        0        6442450944 Nov 10  2026 /userdata/ubuntu.img
+[   18.308684] a50-m37: size: 6442450944 (expected 6442450944)
+[   18.351041] a50-m37: read 1 MiB: 1048576 bytes
+[   18.351108] a50-m37: left mounted read-only for the telnet shell
+[   18.357116] a50-m37: ext4: EXT4-fs (sda32): mounted filesystem 6be7290a-f5e9-4537-8738-6adea31bf339 ro without journal. Quota mode: disabled.;
+[   18.369176] a50-m37: guard events: exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x4 idn 0xd;exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x7 idn 0x4;exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x4 idn 0x3;a50-m37: guard: exynos-ufshc 13520000.ufs: A50_UFS_SAFE: self-test passed, write guard active;exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x4 idn 0xd;exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x7 idn 0x4;exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x4 idn 0x3;;
+[   18.370285] a50-m37: DOD cpus online=0-7
+[   18.382350] a50-m37: DOD thermal: big-thermal=37203 little-thermal=36000 g3d-thermal=37000 isp-thermal=36000 
+[   18.434070] a50-m37: DOD regulators: 36 listed; 29 vdd_*
+[   18.443289] a50-m37: DOD supply warnings: 
+[   18.445832] a50-m37: DOD deferred: 
+[   18.450166] a50-m37: DOD warnings: 0
+[   18.452879] a50-m37: udc after 0s: 13200000.usb
+[   18.456455] configfs-gadget.g1 gadget.0: HOST MAC 02:a5:00:00:00:02
+[   18.456476] configfs-gadget.g1 gadget.0: MAC 02:a5:00:00:00:01
+[   18.461176] a50-m37: gadget bound rc=0
+[   18.465349] a50-m37: usb0 up rc=0: usb0 Link encap:Ethernet HWaddr 02:A5:00:00:00:01 ; inet addr:192.168.2.15 Bcast:192.168.2.255 Mask:255.255.255.0;
+[   18.467850] a50-m37: devpts rc=0
+[   18.469696] a50-m37: telnetd rc=0
+[   18.469870] a50-m37: report done; waiting for the delayed dump
+===== A50 6.18 DMESG END =====

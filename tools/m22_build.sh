@@ -35,6 +35,8 @@ if [ -n "${A50_DIAG_DUMP_AFTER:-}" ]; then ./scripts/config --file "$OUT/.config
 # A50_CMDLINE_APPEND="..." : append to CONFIG_CMDLINE (S-Boot drops the boot.img cmdline; CONFIG_CMDLINE_EXTEND=y)
 if [ -n "${A50_CMDLINE_APPEND:-}" ]; then ./scripts/config --file "$OUT/.config" --set-str CMDLINE "$(sed -n 's/^CONFIG_CMDLINE="\(.*\)"$/\1/p' "$OUT/.config") $A50_CMDLINE_APPEND"; fi
 # A50_CONFIG="-e FOO -d BAR ..." : extra scripts/config arguments (diagnostic builds)
+# A50_HALIUM=1 : apply tools/m51/halium.flags (Halium/Ubuntu Touch config, M5.1) before A50_CONFIG
+if [ "${A50_HALIUM:-0}" = 1 ]; then ./scripts/config --file "$OUT/.config" $(tr '\n' ' ' < "$REPO/tools/m51/halium.flags"); fi
 if [ -n "${A50_CONFIG:-}" ]; then ./scripts/config --file "$OUT/.config" $A50_CONFIG; fi
 $M olddefconfig >/dev/null
 # Safety (M3.5): a kernel that can reach the phone's UFS must carry the write guard and no inline crypto (no SMC to the secure world)

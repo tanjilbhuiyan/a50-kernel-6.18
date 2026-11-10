@@ -45,7 +45,7 @@ later milestones get tickets when we reach them (evidence first, Rule 1).
 | M4.6 | Thermal (TMU) | yes | M3 | done (log/2026-11-10-M4.6-thermal.md) |
 | M4.7 | CPU frequency via ACPM DVFS | yes | M4.1, M4.2, M4.6 | dropped from M4 (owner decision 2026-11-10) |
 | M4.8 | Core SoC integration and DoD | yes | M4.1-M4.7 | done (log/2026-11-10-M4.8-integration.md) |
-| M5.1 | Halium kernel config, checker clean | build no / test yes | M4 | todo |
+| M5.1 | Halium kernel config, checker clean | build no / test yes | M4 | done pending the owner's OK on the wording |
 | M5.2 | Allow writes to the userdata partition only | yes | M5.1 | todo |
 | M5.3 | Halium's own init boots ubuntu.img to systemd | yes | M5.1, M5.2 | todo |
 | M5.4 | SSH over USB RNDIS; M5 DoD | yes | M5.3 | todo |
