@@ -1,0 +1,21 @@
+6.18.33-a50-diag+
+degraded
+a50-enable-autosuspend.service               loaded failed failed A50 Android 11 automatic suspend activation
+a50-gnss-unblock.service                     loaded failed failed A50: unblock Samsung gpsd (waits for a boot animation that never runs)
+android-set-boot-completion-property.service loaded failed failed Set boot completion property in Android container
+enable-cpu-hotplug.service                   loaded failed failed Enable CPU hotplugging after Ubuntu Touch boot
+lightdm.service                              loaded failed failed Light Display Manager
+mount-android-partitions.service             loaded failed failed Mount Android partitions
+no-cpu-hotplug.service                       loaded failed failed Disable CPU hotplugging during Ubuntu Touch boot
+usb-moded-udhcpd.service                     loaded failed failed Busybox's udhcpd, using usb-moded configuration
+Nov 10 19:57:53 ubuntu-phablet busybox[1168]: udhcpd: started, v1.37.0
+Nov 10 19:57:53 ubuntu-phablet busybox[1168]: udhcpd: can't bind to interface usb0: Protocol not available
+start	10.15.19.1
+end	10.15.19.15
+interface	usb0
+option	subnet	255.255.255.0
+option	lease	3600
+max_leases	15
+UNCONN 0      0            0.0.0.0:67        0.0.0.0:*    users:(("dhcpd",pid=1234,fd=8))
+COMMAND         COMMAND
+dhcpd           /usr/sbin/dhcpd -4 -q -cf /etc/hybris-usb/dhcpd.conf -pf /run/hybris-usb/dhcpd4.pid -lf /run/hybris-usb/dhcpd4.leases usb0

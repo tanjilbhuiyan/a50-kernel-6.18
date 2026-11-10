@@ -63,6 +63,9 @@ DEPS = ["NETFILTER_ADVANCED", "NF_CONNTRACK", "NETFILTER_XTABLES", "IP_NF_IPTABL
         "NF_NAT", "NF_CONNTRACK_IPV4",
         # Unix and packet sockets: the old checker assumes them; udev and systemd fail without UNIX (M5.3 test 1).
         "UNIX", "PACKET",
+        # Packaged udhcpd binds to usb0 with SO_BINDTODEVICE. RNDIS can build
+        # without NETDEVICES, but net/core/sock.c then returns ENOPROTOOPT.
+        "NETDEVICES",
         # systemd on the unified cgroup v2 hierarchy.
         "CGROUP_BPF", "BPF_SYSCALL", "FHANDLE", "SECCOMP_FILTER", "PSI"]
 for n in DEPS:
