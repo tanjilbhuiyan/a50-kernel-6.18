@@ -54,8 +54,15 @@ DEPS = ["NETFILTER_ADVANCED", "NF_CONNTRACK", "NETFILTER_XTABLES", "IP_NF_IPTABL
         "IP6_NF_IPTABLES", "NF_CONNTRACK_MARK", "NF_CONNTRACK_SECMARK", "NETWORK_SECMARK",
         "NEW_LEDS", "LEDS_CLASS", "LEDS_TRIGGERS", "PERF_EVENTS", "DEVMEM", "HID", "BT_BREDR",
         "NF_TPROXY_IPV4", "NF_TPROXY_IPV6", "RTC_CLASS", "BLK_DEV", "BLK_DEV_LOOP",
-        "NETFILTER_XTABLES_LEGACY", "IP_NF_IPTABLES_LEGACY", "IP6_NF_IPTABLES_LEGACY",
-        "IP_NF_MANGLE", "IP6_NF_MANGLE", "HID_SUPPORT", "HID"]
+        "HID_SUPPORT", "HID",
+        # 6.18-native packet filtering: nftables, with NFT_COMPAT so iptables-nft rules (Ubuntu's default)
+        # can use the xt matches and targets. The legacy iptables tables are not enabled; whether Android's
+        # netd in the container (M6) needs them is UNVERIFIED and decided there.
+        "NF_TABLES", "NF_TABLES_INET", "NF_TABLES_IPV4", "NF_TABLES_IPV6", "NFT_COMPAT", "NFT_CT",
+        "NFT_NAT", "NFT_MASQ", "NFT_REDIR", "NFT_REJECT", "NFT_LOG", "NFT_LIMIT", "NFT_FIB_INET",
+        "NF_NAT", "NF_CONNTRACK_IPV4",
+        # systemd on the unified cgroup v2 hierarchy.
+        "CGROUP_BPF", "BPF_SYSCALL", "FHANDLE", "SECCOMP_FILTER", "PSI"]
 for n in DEPS:
     if n in known:
         flags.insert(0, f"-e {n}")
