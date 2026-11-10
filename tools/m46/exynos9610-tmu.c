@@ -80,6 +80,7 @@ static int tmu_probe(struct platform_device *pdev)
 	struct device *dev = &pdev->dev;
 	struct tmu *tmu;
 	unsigned int i;
+	bool two_point;
 
 	tmu = devm_kzalloc(dev, sizeof(*tmu), GFP_KERNEL);
 	if (!tmu)
@@ -88,13 +89,15 @@ static int tmu_probe(struct platform_device *pdev)
 	if (IS_ERR(tmu->base))
 		return PTR_ERR(tmu->base);
 
+	/* As 4.14: the calibration type is read once, from TRIMINFO0, for all sensors. */
+	two_point = (readl(tmu->base + TMU_TRIMINFO(0)) >> TMU_CALIB_SEL_SHIFT) & 1;
 	for (i = 0; i < TMU_SENSORS; i++) {
 		u32 trim = readl(tmu->base + TMU_TRIMINFO(i));
 		struct tmu_sensor *s = &tmu->s[i];
 
 		s->e1 = trim & TMU_CODE_MASK;
 		s->e2 = (trim >> TMU_TRIM_85_SHIFT) & TMU_CODE_MASK;
-		s->two_point = ((trim >> TMU_CALIB_SEL_SHIFT) & 1) && s->e2 > s->e1;
+		s->two_point = two_point && s->e2 > s->e1;
 		if (!s->e1)
 			return dev_err_probe(dev, -ENODEV, "sensor %u has no trim data\n", i);
 		dev_info(dev, "sensor %u: trim %u/%u, %s-point\n", i, s->e1, s->e2,

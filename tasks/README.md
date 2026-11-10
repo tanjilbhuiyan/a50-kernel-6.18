@@ -42,6 +42,6 @@ later milestones get tickets when we reach them (evidence first, Rule 1).
 | M4.3 | S2MPU09 and S2MPB03 PMICs, regulators | yes | M4.2, M4.4 | todo |
 | M4.4 | I2C, PWM, keys, PL330 DMA | yes | M3 | todo |
 | M4.5 | Power domains | yes | M3 | todo |
-| M4.6 | Thermal (TMU) | yes | M3 | todo |
+| M4.6 | Thermal (TMU) | yes | M3 | done (log/2026-11-10-M4.6-thermal.md) |
 | M4.7 | CPU frequency via ACPM DVFS | yes | M4.1, M4.2, M4.6 | dropped from M4 (owner decision 2026-11-10) |
 | M4.8 | Core SoC integration and DoD | yes | M4.1-M4.7 | todo |

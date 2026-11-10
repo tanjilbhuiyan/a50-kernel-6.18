@@ -1,4 +1,4 @@
-From d7e5280e56405291f1a280ae1c0d6ce6d73e4b64 Mon Sep 17 00:00:00 2001
+From 1ce4dc3e8a7942486c271d480979b8d8264f5fed Mon Sep 17 00:00:00 2001
 From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
 Date: Tue, 10 Nov 2026 12:51:59 +0600
 Subject: [PATCH] thermal: samsung: add read-only Exynos 9610 TMU driver;
@@ -11,8 +11,8 @@ Change-Id: I7ec8cd4ec0e561b6022fd4bd545e498306722c26
  arch/arm64/configs/a50_firstlight_defconfig |   3 +
  drivers/thermal/samsung/Kconfig             |   8 ++
  drivers/thermal/samsung/Makefile            |   1 +
- drivers/thermal/samsung/exynos9610-tmu.c    | 132 ++++++++++++++++++++
- 5 files changed, 205 insertions(+)
+ drivers/thermal/samsung/exynos9610-tmu.c    | 135 ++++++++++++++++++++
+ 5 files changed, 208 insertions(+)
  create mode 100644 drivers/thermal/samsung/exynos9610-tmu.c
 
 diff --git a/arch/arm64/boot/dts/exynos/exynos9610.dtsi b/arch/arm64/boot/dts/exynos/exynos9610.dtsi
@@ -132,10 +132,10 @@ index f13940715..98f58a7b2 100644
 +obj-$(CONFIG_EXYNOS9610_TMU)	+= exynos9610-tmu.o
 diff --git a/drivers/thermal/samsung/exynos9610-tmu.c b/drivers/thermal/samsung/exynos9610-tmu.c
 new file mode 100644
-index 000000000..71c41c819
+index 000000000..e3d7472b2
 --- /dev/null
 +++ b/drivers/thermal/samsung/exynos9610-tmu.c
-@@ -0,0 +1,132 @@
+@@ -0,0 +1,135 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Exynos 9610 TMU, read-only temperature sensor.
@@ -218,6 +218,7 @@ index 000000000..71c41c819
 +	struct device *dev = &pdev->dev;
 +	struct tmu *tmu;
 +	unsigned int i;
++	bool two_point;
 +
 +	tmu = devm_kzalloc(dev, sizeof(*tmu), GFP_KERNEL);
 +	if (!tmu)
@@ -226,13 +227,15 @@ index 000000000..71c41c819
 +	if (IS_ERR(tmu->base))
 +		return PTR_ERR(tmu->base);
 +
++	/* As 4.14: the calibration type is read once, from TRIMINFO0, for all sensors. */
++	two_point = (readl(tmu->base + TMU_TRIMINFO(0)) >> TMU_CALIB_SEL_SHIFT) & 1;
 +	for (i = 0; i < TMU_SENSORS; i++) {
 +		u32 trim = readl(tmu->base + TMU_TRIMINFO(i));
 +		struct tmu_sensor *s = &tmu->s[i];
 +
 +		s->e1 = trim & TMU_CODE_MASK;
 +		s->e2 = (trim >> TMU_TRIM_85_SHIFT) & TMU_CODE_MASK;
-+		s->two_point = ((trim >> TMU_CALIB_SEL_SHIFT) & 1) && s->e2 > s->e1;
++		s->two_point = two_point && s->e2 > s->e1;
 +		if (!s->e1)
 +			return dev_err_probe(dev, -ENODEV, "sensor %u has no trim data\n", i);
 +		dev_info(dev, "sensor %u: trim %u/%u, %s-point\n", i, s->e1, s->e2,
