@@ -1,0 +1,124 @@
+[   18.792369] A50STATUS: observer armed in new root
+[   61.175645] A50STATUS: BEGIN uptime=61.17 target=60
+[   61.175720] A50STATUS: CMD uname -r
+[   61.204390] A50STATUS: 6.18.33-a50-diag+
+[   61.204489] A50STATUS: RC 0
+[   61.204542] A50STATUS: CMD systemctl is-system-running
+[   61.230793] A50STATUS: starting
+[   61.230897] A50STATUS: RC 1
+[   61.230960] A50STATUS: CMD systemctl --failed --no-pager --plain --no-legend
+[   61.264625] A50STATUS: a50-enable-autosuspend.service   loaded failed failed A50 Android 11 automatic suspend activation
+[   61.264922] A50STATUS: a50-gnss-unblock.service         loaded failed failed A50: unblock Samsung gpsd (waits for a boot animation that never runs)
+[   61.265153] A50STATUS: enable-cpu-hotplug.service       loaded failed failed Enable CPU hotplugging after Ubuntu Touch boot
+[   61.265388] A50STATUS: mount-android-partitions.service loaded failed failed Mount Android partitions
+[   61.265617] A50STATUS: no-cpu-hotplug.service           loaded failed failed Disable CPU hotplugging during Ubuntu Touch boot
+[   61.265737] A50STATUS: RC 0
+[   61.265797] A50STATUS: CMD systemctl list-jobs --no-pager --plain --no-legend
+[   61.285434] A50STATUS: 1   graphical.target                             start waiting
+[   61.285626] A50STATUS: 211 lightdm.service                              start waiting
+[   61.285791] A50STATUS: 210 aethercast.service                           start waiting
+[   61.285952] A50STATUS: 219 force-adb.service                            start waiting
+[   61.286115] A50STATUS: 152 systemd-update-utmp-runlevel.service         start waiting
+[   61.286281] A50STATUS: 220 keep-display-on-during-boot.service          start running
+[   61.286442] A50STATUS: 217 factory-wipe.service                         start waiting
+[   61.286605] A50STATUS: 203 android-set-boot-completion-property.service start waiting
+[   61.286767] A50STATUS: 218 usb-rescue-mode-off.service                  start waiting
+[   61.286928] A50STATUS: 199 a50-audio-hidl-compat.service                start running
+[   61.287091] A50STATUS: 2   multi-user.target                            start waiting
+[   61.287188] A50STATUS: RC 0
+[   61.287250] A50STATUS: CMD systemctl show multi-user.target graphical.target -p Id -p ActiveState -p SubState -p Job
+[   61.338786] A50STATUS: Id=multi-user.target
+[   61.338906] A50STATUS: ActiveState=inactive
+[   61.338988] A50STATUS: SubState=dead
+[   61.339054] A50STATUS: Job=2
+[   61.339111] A50STATUS: 
+[   61.339201] A50STATUS: Id=graphical.target
+[   61.339291] A50STATUS: ActiveState=inactive
+[   61.339370] A50STATUS: SubState=dead
+[   61.339435] A50STATUS: Job=1
+[   61.339518] A50STATUS: RC 0
+[   61.339579] A50STATUS: CMD systemctl show -p SystemState -p NFailedUnits -p NJobs
+[   61.360221] A50STATUS: NFailedUnits=5
+[   61.360311] A50STATUS: NJobs=11
+[   61.360408] A50STATUS: SystemState=starting
+[   61.360484] A50STATUS: RC 0
+[   61.360539] A50STATUS: CMD findmnt -no TARGET,OPTIONS /userdata
+[   61.389513] A50STATUS: /userdata rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[   61.389623] A50STATUS: RC 0
+[   61.389676] A50STATUS: END target=60
+[  121.859555] A50STATUS: BEGIN uptime=121.85 target=120
+[  121.859633] A50STATUS: CMD uname -r
+[  121.889981] A50STATUS: 6.18.33-a50-diag+
+[  121.890084] A50STATUS: RC 0
+[  121.890141] A50STATUS: CMD systemctl is-system-running
+[  121.917144] A50STATUS: degraded
+[  121.917243] A50STATUS: RC 1
+[  121.917342] A50STATUS: CMD systemctl --failed --no-pager --plain --no-legend
+[  121.951715] A50STATUS: a50-enable-autosuspend.service               loaded failed failed A50 Android 11 automatic suspend activation
+[  121.952061] A50STATUS: a50-gnss-unblock.service                     loaded failed failed A50: unblock Samsung gpsd (waits for a boot animation that never runs)
+[  121.952320] A50STATUS: android-set-boot-completion-property.service loaded failed failed Set boot completion property in Android container
+[  121.952571] A50STATUS: enable-cpu-hotplug.service                   loaded failed failed Enable CPU hotplugging after Ubuntu Touch boot
+[  121.952779] A50STATUS: lightdm.service                              loaded failed failed Light Display Manager
+[  121.952991] A50STATUS: mount-android-partitions.service             loaded failed failed Mount Android partitions
+[  121.953241] A50STATUS: no-cpu-hotplug.service                       loaded failed failed Disable CPU hotplugging during Ubuntu Touch boot
+[  121.953378] A50STATUS: RC 0
+[  121.953442] A50STATUS: CMD systemctl list-jobs --no-pager --plain --no-legend
+[  121.986723] A50STATUS: RC 0
+[  121.986809] A50STATUS: CMD systemctl show multi-user.target graphical.target -p Id -p ActiveState -p SubState -p Job
+[  122.008640] A50STATUS: Id=multi-user.target
+[  122.008767] A50STATUS: ActiveState=active
+[  122.008851] A50STATUS: SubState=active
+[  122.008917] A50STATUS: Job=
+[  122.008976] A50STATUS: 
+[  122.009064] A50STATUS: Id=graphical.target
+[  122.009150] A50STATUS: ActiveState=active
+[  122.009233] A50STATUS: SubState=active
+[  122.009331] A50STATUS: Job=
+[  122.009423] A50STATUS: RC 0
+[  122.009482] A50STATUS: CMD systemctl show -p SystemState -p NFailedUnits -p NJobs
+[  122.045034] A50STATUS: NFailedUnits=7
+[  122.045127] A50STATUS: NJobs=0
+[  122.045222] A50STATUS: SystemState=degraded
+[  122.045357] A50STATUS: RC 0
+[  122.045417] A50STATUS: CMD findmnt -no TARGET,OPTIONS /userdata
+[  122.065788] A50STATUS: /userdata rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  122.065893] A50STATUS: RC 0
+[  122.065944] A50STATUS: END target=120
+[  200.691605] A50STATUS: BEGIN uptime=200.69 target=200
+[  200.691681] A50STATUS: CMD uname -r
+[  200.722311] A50STATUS: 6.18.33-a50-diag+
+[  200.722414] A50STATUS: RC 0
+[  200.722468] A50STATUS: CMD systemctl is-system-running
+[  200.756522] A50STATUS: degraded
+[  200.756622] A50STATUS: RC 1
+[  200.756683] A50STATUS: CMD systemctl --failed --no-pager --plain --no-legend
+[  200.784459] A50STATUS: a50-enable-autosuspend.service               loaded failed failed A50 Android 11 automatic suspend activation
+[  200.784774] A50STATUS: a50-gnss-unblock.service                     loaded failed failed A50: unblock Samsung gpsd (waits for a boot animation that never runs)
+[  200.785039] A50STATUS: android-set-boot-completion-property.service loaded failed failed Set boot completion property in Android container
+[  200.785325] A50STATUS: enable-cpu-hotplug.service                   loaded failed failed Enable CPU hotplugging after Ubuntu Touch boot
+[  200.785533] A50STATUS: lightdm.service                              loaded failed failed Light Display Manager
+[  200.785744] A50STATUS: mount-android-partitions.service             loaded failed failed Mount Android partitions
+[  200.785994] A50STATUS: no-cpu-hotplug.service                       loaded failed failed Disable CPU hotplugging during Ubuntu Touch boot
+[  200.786084] A50STATUS: RC 0
+[  200.786142] A50STATUS: CMD systemctl list-jobs --no-pager --plain --no-legend
+[  200.819315] A50STATUS: RC 0
+[  200.819404] A50STATUS: CMD systemctl show multi-user.target graphical.target -p Id -p ActiveState -p SubState -p Job
+[  200.848982] A50STATUS: Id=multi-user.target
+[  200.849111] A50STATUS: ActiveState=active
+[  200.849199] A50STATUS: SubState=active
+[  200.849266] A50STATUS: Job=
+[  200.849350] A50STATUS: 
+[  200.849438] A50STATUS: Id=graphical.target
+[  200.849529] A50STATUS: ActiveState=active
+[  200.849614] A50STATUS: SubState=active
+[  200.849676] A50STATUS: Job=
+[  200.849768] A50STATUS: RC 0
+[  200.849833] A50STATUS: CMD systemctl show -p SystemState -p NFailedUnits -p NJobs
+[  200.885661] A50STATUS: NFailedUnits=7
+[  200.885756] A50STATUS: NJobs=0
+[  200.885848] A50STATUS: SystemState=degraded
+[  200.885935] A50STATUS: RC 0
+[  200.885990] A50STATUS: CMD findmnt -no TARGET,OPTIONS /userdata
+[  200.911326] A50STATUS: /userdata rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  200.911429] A50STATUS: RC 0
+[  200.911479] A50STATUS: END target=200

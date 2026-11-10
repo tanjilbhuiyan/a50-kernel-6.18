@@ -1,0 +1,1218 @@
+# 6.18 dump read back from /proc/last_kmsg (identifiers redacted: 3)
+===== A50 6.18 DMESG BEGIN (dump_after=240) =====
+[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x410fd034]
+[    0.000000] Linux version 6.18.33-a50-diag+ (a50@firstlight) (Android (15323222, +pgo, +bolt, +lto, +mlgo, based on r584948c) clang version 22.0.1 (https://android.googlesource.com/toolchain/llvm-project 2d65e4108033380e6fe8e08b1f1826cd2bfb0c99), LLD 22.0.1 (/mnt/disks/build-disk/src/googleplex-android/llvm-r584948-release/out/llvm-project/llvm 2d65e4108033380e6fe8e08b1f1826cd2bfb0c99)) #1 SMP Wed Nov  4 00:00:00 UTC 2026
+[    0.000000] Machine model: Samsung Galaxy A50 (SM-A505F)
+[    0.000000] printk: debug: ignoring loglevel setting.
+[    0.000000] [Firmware Bug]: Kernel image misaligned at boot, please fix your bootloader!
+[    0.000000] OF: reserved mem: 0x0000000080000000..0x0000000080000fff (4 KiB) nomap non-reusable sec_debug_magic@80000000
+[    0.000000] OF: reserved mem: 0x00000000b8000000..0x00000000b84fffff (5120 KiB) nomap non-reusable vipx_fw@b8000000
+[    0.000000] OF: reserved mem: 0x00000000c0000000..0x00000000c007ffff (512 KiB) nomap non-reusable seclog@c0000000
+[    0.000000] OF: reserved mem: 0x00000000ca000000..0x00000000ca9fffff (10240 KiB) nomap non-reusable fb_reserved@ca000000
+[    0.000000] OF: reserved mem: 0x00000000e9400000..0x00000000ebbfffff (40960 KiB) nomap non-reusable abox@e9400000
+[    0.000000] OF: reserved mem: 0x00000000ed000000..0x00000000f59fffff (141312 KiB) nomap non-reusable modem_if@ed000000
+[    0.000000] OF: reserved mem: 0x00000000f5a00000..0x00000000f77fffff (30720 KiB) nomap non-reusable cp_ram_logging@f5a00000
+[    0.000000] OF: reserved mem: 0x00000000f9000000..0x00000000fa70ffff (23616 KiB) nomap non-reusable debug_snapshot@f9000000
+[    0.000000] OF: reserved mem: 0x0000000091202000..0x0000000091387fff (1560 KiB) nomap non-reusable sec_debug_bufs@91202000
+[    0.000000] OF: reserved mem: 0x0000000091388000..0x0000000091b87fff (8192 KiB) nomap non-reusable sec_debug_next@91388000
+[    0.000000] OF: reserved mem: 0x00000000fb000000..0x00000000fb7fffff (8192 KiB) nomap non-reusable gnss_if@fb000000
+[    0.000000] OF: reserved mem: 0x00000000fd000000..0x00000000fd07ffff (512 KiB) nomap non-reusable chub@fd000000
+[    0.000000] OF: reserved mem: 0x0000000087000000..0x00000000871fffff (2048 KiB) map non-reusable el2_code
+[    0.000000] OF: reserved mem: 0x00000008fe600000..0x00000008ffffffff (26624 KiB) map non-reusable el2_earlymem
+[    0.000000] OF: reserved mem: 0x0000000080001000..0x0000000080001fff (4 KiB) map non-reusable kaslr
+[    0.000000] Zone ranges:
+[    0.000000]   DMA      [mem 0x0000000080000000-0x00000000ffffffff]
+[    0.000000]   DMA32    empty
+[    0.000000]   Normal   [mem 0x0000000100000000-0x00000008ffffffff]
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000080000000-0x0000000080000fff]
+[    0.000000]   node   0: [mem 0x0000000080001000-0x0000000091201fff]
+[    0.000000]   node   0: [mem 0x0000000091202000-0x0000000091b87fff]
+[    0.000000]   node   0: [mem 0x0000000091b88000-0x00000000b7ffffff]
+[    0.000000]   node   0: [mem 0x00000000b8000000-0x00000000b84fffff]
+[    0.000000]   node   0: [mem 0x00000000b8500000-0x00000000baafffff]
+[    0.000000]   node   0: [mem 0x00000000c0000000-0x00000000c007ffff]
+[    0.000000]   node   0: [mem 0x00000000c0080000-0x00000000c9ffffff]
+[    0.000000]   node   0: [mem 0x00000000ca000000-0x00000000ca9fffff]
+[    0.000000]   node   0: [mem 0x00000000caa00000-0x00000000dfffffff]
+[    0.000000]   node   0: [mem 0x00000000e1900000-0x00000000e93fffff]
+[    0.000000]   node   0: [mem 0x00000000e9400000-0x00000000ebbfffff]
+[    0.000000]   node   0: [mem 0x00000000ebc00000-0x00000000ecffffff]
+[    0.000000]   node   0: [mem 0x00000000ed000000-0x00000000f77fffff]
+[    0.000000]   node   0: [mem 0x00000000f7800000-0x00000000f8ffffff]
+[    0.000000]   node   0: [mem 0x00000000f9000000-0x00000000fa70ffff]
+[    0.000000]   node   0: [mem 0x00000000fa710000-0x00000000faffffff]
+[    0.000000]   node   0: [mem 0x00000000fb000000-0x00000000fb7fffff]
+[    0.000000]   node   0: [mem 0x00000000fb800000-0x00000000fcffffff]
+[    0.000000]   node   0: [mem 0x00000000fd000000-0x00000000fd07ffff]
+[    0.000000]   node   0: [mem 0x00000000fd080000-0x00000000ffffffff]
+[    0.000000]   node   0: [mem 0x0000000880000000-0x00000008ffffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000080000000-0x00000008ffffffff]
+[    0.000000] On node 0, zone DMA: 21760 pages in unavailable ranges
+[    0.000000] On node 0, zone DMA: 6400 pages in unavailable ranges
+[    0.000000] psci: probing for conduit method from DT.
+[    0.000000] psci: Using PSCI v0.1 Function IDs from DT
+[    0.000000] WARNING: x1-x3 nonzero in violation of boot protocol:
+[    0.000000] 	x1: 0000000080000000
+[    0.000000] 	x2: 00000000001a8000
+[    0.000000] 	x3: 00000000801a8000
+[    0.000000] This indicates a broken bootloader or old kernel
+[    0.000000] percpu: Embedded 16 pages/cpu s36504 r0 d29032 u65536
+[    0.000000] pcpu-alloc: s36504 r0 d29032 u65536 alloc=16*4096
+[    0.000000] pcpu-alloc: [0] 0 [0] 1 [0] 2 [0] 3 [0] 4 [0] 5 [0] 6 [0] 7 
+[    0.000000] Detected VIPT I-cache on CPU0
+[    0.000000] alternatives: applying boot alternatives
+[    0.000000] Kernel command line: console=tty0 loglevel=7 ignore_loglevel clk_ignore_unused printk.devkmsg=on systemd.log_target=kmsg systemd.journald.forward_to_kmsg=1 systemd.show_status=1 console=ram loglevel=4 sec_debug.pcb_offset=7346944 sec_debug.smd_offset=7348992 sec_debug.lpddr4_size=4 sec_debug.dram_info=01,06,01,4G sec_debug.pwrsrc_rs=0x0001000820000000 sec_debug.reset_reason=7 sec_reset.reset_reason=7 sec_debug.reset_rwc=1 sec_debug.level=0 sec_watchdog.sec_pet=5 androidboot.debug_level=0x4f4c androidboot.force_upload=0x0 softdog.soft_margin=100 softdog.soft_panic=1 sec_debug.dump_sink=0x0 sec_debug.upload_count=0 androidboot.dram_info=01,06,01,4G androidboot.fmm_lock=0 sec_debug.fmm_lock_offset=7340600 sec_debug.sjl=1 androidboot.sn.param.offset=7343024 androidboot.prototype.param.offset=7351040 androidboot.recovery_offset=7355136 printk.devkmsg=on ess_setup=0xf9000000 sec_avc_log=0x40000@0x91202000 sec_tsp_log=0x40000@0x91244000 sec_disp_log=0x100000@0x91286000 sec_debug_next=0x800000@0x91388000 \
+[    0.000000] Kernel command line: charging_mode=0x3000 s3cfb.bootloaderfb=0xca000000 lcdtype=9453571 androidboot.carrierid.param.offset=7340608 androidboot.carrierid=BKD consoleblank=0 ehci_hcd.park=3 oops=panic pmic_info=27 ccic_info=1 fg_reset=0 androidboot.emmc_checksum=3 androidboot.sales.param.offset=7340572 sales_code=BKD androidboot.odin_download=1 androidboot.bootloader=A505FDDS9CWA2 androidboot.selinux=enforcing androidboot.product.model=SM-A505F androidboot.ucs_mode=0 androidboot.revision=6 androidboot.hardware=exynos9610 androidboot.warranty_bit=1 androidboot.wb.hs=0e03 androidboot.rp=9 androidboot.wb.snapQB=CUSTOM sec_debug.bin=A androidboot.hmac_mismatch=0 androidboot.sec_atd.tty=/dev/ttySAC0 androidboot.serialno=<redacted> androidboot.ap_serial=<redacted> snd_soc_core.pmdown_time=1000 androidboot.cp_reserved_mem=off skip_initramfs rootwait ro init=/init root=/dev/sda25 androidboot.dtbo_idx=5 androidboot.fmp_config=0 androidboot.em.did=<redacted> androidboot.em.model=SM-A505F \
+[    0.000000] Kernel command line: androidboot.em.status=0x0 androidboot.sb.debug0=0x0 androidboot.verifiedboo
+[    0.000000] Unknown kernel command line parameters "ess_setup=0xf9000000 sec_avc_log=0x40000@0x91202000 sec_tsp_log=0x40000@0x91244000 sec_disp_log=0x100000@0x91286000 sec_debug_next=0x800000@0x91388000 charging_mode=0x3000 lcdtype=9453571 pmic_info=27 ccic_info=1 fg_reset=0 sales_code=BKD", will be passed to user space.
+[    0.000000] printk: log buffer data + meta data: 131072 + 458752 = 589824 bytes
+[    0.000000] Dentry cache hash table entries: 524288 (order: 10, 4194304 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 262144 (order: 9, 2097152 bytes, linear)
+[    0.000000] software IO TLB: area num 8.
+[    0.000000] software IO TLB: mapped [mem 0x00000000e5400000-0x00000000e9400000] (64MB)
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 1020416
+[    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=8, Nodes=1
+[    0.000000] rcu: Hierarchical RCU implementation.
+[    0.000000] rcu: 	RCU restricting CPUs from NR_CPUS=512 to nr_cpu_ids=8.
+[    0.000000] 	Tracing variant of Tasks RCU enabled.
+[    0.000000] rcu: RCU calculated value of scheduler-enlistment delay is 25 jiffies.
+[    0.000000] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=8
+[    0.000000] RCU Tasks Trace: Setting shift to 3 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=8.
+[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000] Root IRQ handler: gic_handle_irq
+[    0.000000] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.000000] /soc@0/clock-controller@12100000: incorrect res size for automatic clocks
+[    0.000000] /soc@0/clock-controller@12100000: incorrect res size for automatic clocks
+[    0.000000] arch_timer: cp15 timer running at 26.00MHz (virt).
+[    0.000000] clocksource: arch_sys_counter: mask: 0xffffffffffffff max_cycles: 0x5ff13d5a9, max_idle_ns: 440795202370 ns
+[    0.000000] sched_clock: 56 bits at 26MHz, resolution 38ns, wraps every 4398046511088ns
+[    0.000338] Console: colour dummy device 80x25
+[    0.000351] printk: legacy console [tty0] enabled
+[    0.001168] Calibrating delay loop (skipped), value calculated using timer frequency.. 52.00 BogoMIPS (lpj=104000)
+[    0.001192] pid_max: default: 32768 minimum: 301
+[    0.001301] LSM: initializing lsm=capability,yama,apparmor,tomoyo,evm
+[    0.001372] Yama: becoming mindful.
+[    0.001582] AppArmor: AppArmor initialized
+[    0.001641] TOMOYO Linux initialized
+[    0.001762] Mount-cache hash table entries: 8192 (order: 4, 65536 bytes, linear)
+[    0.001793] Mountpoint-cache hash table entries: 8192 (order: 4, 65536 bytes, linear)
+[    0.002893] cacheinfo: Unable to detect cache hierarchy for CPU 0
+[    0.003936] rcu: Hierarchical SRCU implementation.
+[    0.003964] rcu: 	Max phase no-delay instances is 1000.
+[    0.004639] smp: Bringing up secondary CPUs ...
+[    0.005166] Detected VIPT I-cache on CPU1
+[    0.005249] CPU1: Booted secondary processor 0x0000000001 [0x410fd034]
+[    0.005881] Detected VIPT I-cache on CPU2
+[    0.005956] CPU2: Booted secondary processor 0x0000000002 [0x410fd034]
+[    0.006580] Detected VIPT I-cache on CPU3
+[    0.006658] CPU3: Booted secondary processor 0x0000000003 [0x410fd034]
+[    0.007380] CPU features: detected: Spectre-v2
+[    0.007391] CPU features: detected: Spectre-v4
+[    0.007394] CPU features: detected: Spectre-BHB
+[    0.007398] CPU features: detected: ARM erratum 858921
+[    0.007402] Detected VIPT I-cache on CPU4
+[    0.007443] arch_timer: Enabling local workaround for ARM erratum 858921
+[    0.007454] arch_timer: CPU4: Trapping CNTVCT access
+[    0.007461] CPU4: Booted secondary processor 0x0000000100 [0x410fd092]
+[    0.008080] Detected VIPT I-cache on CPU5
+[    0.008105] arch_timer: Enabling local workaround for ARM erratum 858921
+[    0.008111] arch_timer: CPU5: Trapping CNTVCT access
+[    0.008117] CPU5: Booted secondary processor 0x0000000101 [0x410fd092]
+[    0.008699] Detected VIPT I-cache on CPU6
+[    0.008725] arch_timer: Enabling local workaround for ARM erratum 858921
+[    0.008731] arch_timer: CPU6: Trapping CNTVCT access
+[    0.008737] CPU6: Booted secondary processor 0x0000000102 [0x410fd092]
+[    0.009347] Detected VIPT I-cache on CPU7
+[    0.009374] arch_timer: Enabling local workaround for ARM erratum 858921
+[    0.009380] arch_timer: CPU7: Trapping CNTVCT access
+[    0.009386] CPU7: Booted secondary processor 0x0000000103 [0x410fd092]
+[    0.009460] smp: Brought up 1 node, 8 CPUs
+[    0.009651] SMP: Total of 8 processors activated.
+[    0.009663] CPU: All CPU(s) started at EL1
+[    0.009675] CPU features: detected: 32-bit EL0 Support
+[    0.009686] CPU features: detected: CRC32 instructions
+[    0.009701] CPU features: detected: PMUv3
+[    0.009766] alternatives: applying system-wide alternatives
+[    0.011083] Memory: 3603224K/4081664K available (9152K kernel code, 918K rwdata, 2192K rodata, 13760K init, 522K bss, 472564K reserved, 0K cma-reserved)
+[    0.011682] devtmpfs: initialized
+[    0.016176] A50DIAG: DSS readout armed (buf 1 hdr 1 log 1 pmu 1), dump_after=240
+[    0.016395] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+[    0.016443] posixtimers hash table entries: 4096 (order: 4, 65536 bytes, linear)
+[    0.016541] futex hash table entries: 2048 (131072 bytes on 1 NUMA nodes, total 128 KiB, linear).
+[    0.016776] pinctrl core: initialized pinctrl subsystem
+[    0.017655] NET: Registered PF_NETLINK/PF_ROUTE protocol family
+[    0.018585] DMA: preallocated 512 KiB GFP_KERNEL pool for atomic allocations
+[    0.018700] DMA: preallocated 512 KiB GFP_KERNEL|GFP_DMA pool for atomic allocations
+[    0.018771] audit: initializing netlink subsys (disabled)
+[    0.018965] audit: type=2000 audit(0.000:1): state=initialized audit_enabled=0 res=1
+[    0.019195] thermal_sys: Registered thermal governor 'step_wise'
+[    0.019569] hw-breakpoint: found 6 breakpoint and 4 watchpoint registers.
+[    0.019926] ASID allocator initialised with 65536 entries
+[    0.022874] /soc@0/interrupt-controller@12301000: Fixed dependency cycle(s) with /soc@0/interrupt-controller@12301000
+[    0.027712] samsung-pinctrl 11c20000.pinctrl: irq number for muxed EINTs not found
+[    0.032010] /soc@0/clock-controller@13030000: incorrect res size for automatic clocks
+[    0.032085] /soc@0/clock-controller@13030000: incorrect res size for automatic clocks
+[    0.033128] /soc@0/clock-controller@13400000: incorrect res size for automatic clocks
+[    0.033197] /soc@0/clock-controller@13400000: incorrect res size for automatic clocks
+[    0.039662] SCSI subsystem initialized
+[    0.040576] Bluetooth: Core ver 2.22
+[    0.040621] NET: Registered PF_BLUETOOTH protocol family
+[    0.040633] Bluetooth: HCI device and connection manager initialized
+[    0.040651] Bluetooth: HCI socket layer initialized
+[    0.040665] Bluetooth: L2CAP socket layer initialized
+[    0.040684] Bluetooth: SCO socket layer initialized
+[    0.040701] NetLabel: Initializing
+[    0.040710] NetLabel:  domain hash size = 128
+[    0.040720] NetLabel:  protocols = UNLABELED CIPSOv4 CALIPSO
+[    0.040788] NetLabel:  unlabeled traffic allowed by default
+[    0.041277] clocksource: Switched to clocksource arch_sys_counter
+[    0.041988] AppArmor: AppArmor Filesystem Enabled
+[    0.046843] NET: Registered PF_INET protocol family
+[    0.047081] IP idents hash table entries: 65536 (order: 7, 524288 bytes, linear)
+[    0.050079] tcp_listen_portaddr_hash hash table entries: 2048 (order: 3, 32768 bytes, linear)
+[    0.050141] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+[    0.050172] TCP established hash table entries: 32768 (order: 6, 262144 bytes, linear)
+[    0.050424] TCP bind hash table entries: 32768 (order: 8, 1048576 bytes, linear)
+[    0.051297] TCP: Hash tables configured (established 32768 bind 32768)
+[    0.051431] UDP hash table entries: 2048 (order: 5, 131072 bytes, linear)
+[    0.051593] UDP-Lite hash table entries: 2048 (order: 5, 131072 bytes, linear)
+[    0.051910] NET: Registered PF_UNIX/PF_LOCAL protocol family
+[    0.053773] workingset: timestamp_bits=46 max_order=20 bucket_order=0
+[    0.078089] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 252)
+[    0.078101] io scheduler mq-deadline registered
+[    0.078852] simple-framebuffer ca000000.framebuffer: framebuffer at 0xca000000, 0x9a3f80 bytes
+[    0.078865] simple-framebuffer ca000000.framebuffer: format=a8r8g8b8, mode=1080x2340x32, linelength=4320
+[    0.078934] simple-framebuffer ca000000.framebuffer: fb0: simplefb registered!
+[    0.082769] loop: module loaded
+[    0.083063] exynos9610-tmu 10070000.thermal-sensor: sensor 0: trim 278/338, two-point
+[    0.083077] exynos9610-tmu 10070000.thermal-sensor: sensor 1: trim 278/338, two-point
+[    0.083088] exynos9610-tmu 10070000.thermal-sensor: sensor 2: trim 279/338, two-point
+[    0.083579] exynos-ufshc 13520000.ufs: ufshcd_populate_vreg: Unable to find vdd-hba-supply regulator, assuming enabled
+[    0.083592] exynos-ufshc 13520000.ufs: ufshcd_populate_vreg: Unable to find vcc-supply regulator, assuming enabled
+[    0.083601] exynos-ufshc 13520000.ufs: ufshcd_populate_vreg: Unable to find vccq-supply regulator, assuming enabled
+[    0.083609] exynos-ufshc 13520000.ufs: ufshcd_populate_vreg: Unable to find vccq2-supply regulator, assuming enabled
+[    0.084253] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: self-test passed, write guard active
+[    0.084261] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: writes allowed on LUN 0 blocks 0x1c8700-0xee42ff only
+[    0.133630] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x4 idn 0xd
+[    0.133641] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x7 idn 0x4
+[    0.133704] exynos-ufshc 13520000.ufs: dme-set: attr-id 0x9540 val 0x1 failed 0 retries
+[    0.133723] exynos-ufshc 13520000.ufs: dme-set: attr-id 0x321 val 0x15 failed 0 retries
+[    0.133742] exynos-ufshc 13520000.ufs: dme-set: attr-id 0x9540 val 0x0 failed 0 retries
+[    0.137262] exynos-ufshc 13520000.ufs: Power mode changed to : FAST series_B G_3 L_1
+[    0.137272] scsi host0: ufshcd
+[    0.138303] xt_time: kernel timezone is -0000
+[    0.138392] Initializing XFRM netlink socket
+[    0.138420] NET: Registered PF_INET6 protocol family
+[    0.138812] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x4 idn 0x3
+[    0.139027] Segment Routing with IPv6
+[    0.139052] In-situ OAM (IOAM) with IPv6
+[    0.139117] sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
+[    0.139348] NET: Registered PF_PACKET protocol family
+[    0.139359] NET: Registered PF_KEY protocol family
+[    0.139444] Bluetooth: RFCOMM TTY layer initialized
+[    0.139454] Bluetooth: RFCOMM socket layer initialized
+[    0.139470] Bluetooth: RFCOMM ver 1.11
+[    0.139478] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
+[    0.139483] Bluetooth: BNEP filters: protocol multicast
+[    0.139490] Bluetooth: BNEP socket layer initialized
+[    0.139496] Bluetooth: HIDP (Human Interface Emulation) ver 1.2
+[    0.139503] Bluetooth: HIDP socket layer initialized
+[    0.139523] Key type dns_resolver registered
+[    0.146398] scsi 0:0:0:49488: Well-known LUN    SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.146835] Key type encrypted registered
+[    0.146844] AppArmor: AppArmor sha256 policy hashing enabled
+[    0.146861] evm: Initialising EVM extended attributes:
+[    0.146866] evm: security.selinux
+[    0.146871] evm: security.SMACK64
+[    0.146875] evm: security.SMACK64EXEC (disabled)
+[    0.146880] evm: security.SMACK64TRANSMUTE (disabled)
+[    0.146885] evm: security.SMACK64MMAP (disabled)
+[    0.146890] evm: security.apparmor
+[    0.146894] evm: security.ima (disabled)
+[    0.146898] evm: security.capability
+[    0.146902] evm: HMAC attrs: 0x1
+[    0.164709] scsi 0:0:0:49476: Well-known LUN    SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.171327] scsi 0:0:0:49456: Well-known LUN    SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.176640] scsi 0:0:0:0: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.182132] sd 0:0:0:0: [sda] 15616000 4096-byte logical blocks: (64.0 GB/59.6 GiB)
+[    0.182228] sd 0:0:0:0: [sda] Write Protect is off
+[    0.182238] sd 0:0:0:0: [sda] Mode Sense: 00 32 00 10
+[    0.182267] scsi 0:0:0:1: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.182742] sd 0:0:0:0: [sda] Write cache: enabled, read cache: enabled, supports DPO and FUA
+[    0.183524] sd 0:0:0:0: [sda] Preferred minimum I/O size 8192 bytes
+[    0.183533] sd 0:0:0:0: [sda] Optimal transfer size 8192 bytes
+[    0.190110] scsi 0:0:0:2: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.190214] sd 0:0:0:1: [sdb] 1024 4096-byte logical blocks: (4.19 MB/4.00 MiB)
+[    0.190265] sd 0:0:0:1: [sdb] Write Protect is on
+[    0.190278] sd 0:0:0:1: [sdb] Mode Sense: 00 32 00 90
+[    0.190358] sd 0:0:0:1: [sdb] Write cache: disabled, read cache: enabled, supports DPO and FUA
+[    0.190408] sd 0:0:0:1: [sdb] Preferred minimum I/O size 8192 bytes
+[    0.190417] sd 0:0:0:1: [sdb] Optimal transfer size 8192 bytes
+[    0.191517] scsi 0:0:0:3: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.191587] sd 0:0:0:2: [sdc] 1024 4096-byte logical blocks: (4.19 MB/4.00 MiB)
+[    0.191640] sd 0:0:0:2: [sdc] Write Protect is on
+[    0.191653] sd 0:0:0:2: [sdc] Mode Sense: 00 32 00 90
+[    0.191733] sd 0:0:0:2: [sdc] Write cache: disabled, read cache: enabled, supports DPO and FUA
+[    0.191781] sd 0:0:0:2: [sdc] Preferred minimum I/O size 8192 bytes
+[    0.191789] sd 0:0:0:2: [sdc] Optimal transfer size 8192 bytes
+[    0.192840] scsi 0:0:0:4: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.192908] sd 0:0:0:3: [sdd] 2048 4096-byte logical blocks: (8.39 MB/8.00 MiB)
+[    0.192962] sd 0:0:0:3: [sdd] Write Protect is on
+[    0.192975] sd 0:0:0:3: [sdd] Mode Sense: 00 32 00 90
+[    0.193054] sd 0:0:0:3: [sdd] Write cache: disabled, read cache: enabled, supports DPO and FUA
+[    0.193102] sd 0:0:0:3: [sdd] Preferred minimum I/O size 8192 bytes
+[    0.193110] sd 0:0:0:3: [sdd] Optimal transfer size 8192 bytes
+[    0.194204] sd 0:0:0:4: [sde] 2048 4096-byte logical blocks: (8.39 MB/8.00 MiB)
+[    0.194257] sd 0:0:0:4: [sde] Write Protect is on
+[    0.194266] sd 0:0:0:4: [sde] Mode Sense: 00 32 00 90
+[    0.194346] sd 0:0:0:4: [sde] Write cache: disabled, read cache: enabled, supports DPO and FUA
+[    0.194390] sd 0:0:0:4: [sde] Preferred minimum I/O size 8192 bytes
+[    0.194398] sd 0:0:0:4: [sde] Optimal transfer size 8192 bytes
+[    0.380725] Unpacking initramfs...
+[    2.169620] sd 0:0:0:2: [sdc] Attached SCSI disk
+[    2.169696] sd 0:0:0:4: [sde] Attached SCSI disk
+[    2.170326] sd 0:0:0:1: [sdb] Attached SCSI disk
+[    2.171995]  sdd: sdd1
+[    2.172122] sd 0:0:0:3: [sdd] Attached SCSI disk
+[    3.182426] Alternate GPT is invalid, using primary GPT.
+[    3.182465]  sda: sda1 sda2 sda3 sda4 sda5 sda6 sda7 sda8 sda9 sda10 sda11 sda12 sda13 sda14 sda15 sda16 sda17 sda18 sda19 sda20 sda21 sda22 sda23 sda24 sda25 sda26 sda27 sda28 sda29 sda30 sda31 sda32
+[    3.183888] sd 0:0:0:0: [sda] Attached SCSI disk
+[   15.165712] clk: Not disabling unused clocks
+[   15.168344] Freeing unused kernel memory: 13760K
+[   15.168437] Run /init as init process
+[   15.168445]   with arguments:
+[   15.168449]     /init
+[   15.168452]   with environment:
+[   15.168457]     HOME=/
+[   15.168461]     TERM=linux
+[   15.168465]     ess_setup=0xf9000000
+[   15.168470]     sec_avc_log=0x40000@0x91202000
+[   15.168475]     sec_tsp_log=0x40000@0x91244000
+[   15.168480]     sec_disp_log=0x100000@0x91286000
+[   15.168484]     sec_debug_next=0x800000@0x91388000
+[   15.168489]     charging_mode=0x3000
+[   15.168494]     lcdtype=9453571
+[   15.168498]     pmic_info=27
+[   15.168502]     ccic_info=1
+[   15.168506]     fg_reset=0
+[   15.168509]     sales_code=BKD
+[   15.198349] systemd-udevd[121]: starting version 232
+[   16.205272] random: crng init done
+[   16.433516] Begin: Running /scripts/nfs-top ... 
+[   16.433579] done.
+[   16.433651] Begin: Running /scripts/nfs-premount ... 
+[   16.433710] done.
+[   16.433789] Begin: Running /scripts/local-top ... 
+[   16.433848] done.
+[   16.433896] Begin: Running /scripts/local-premount ... 
+[   16.434916] done.
+[   16.437518] initrd: Loading kernel modules from /lib/modules
+[   16.438056] cat: can't open 'modules.load': No such file or directory
+[   16.438513] /
+[   16.438563] initrd: Finished loading kernel modules
+[   17.458534] initrd: checking filesystem integrity for the userdata partition
+[   17.709689] EXT4-fs (sda32): recovery complete
+[   17.710311] EXT4-fs (sda32): mounted filesystem 6be7290a-f5e9-4537-8738-6adea31bf339 r/w with ordered data mode. Quota mode: disabled.
+[   17.712346] EXT4-fs (sda32): unmounting filesystem 6be7290a-f5e9-4537-8738-6adea31bf339.
+[   17.773416] initrd: checking filesystem for userdata took (including e2fsck) 0 seconds
+[   17.778315] dumpe2fs 1.43.4 (31-Jan-2017)
+[   17.781262] initrd: mounting /dev/sda32
+[   17.804055] EXT4-fs: Warning: mounting with data=journal disables delayed allocation, dioread_nolock, O_DIRECT and fast_commit support!
+[   17.804449] EXT4-fs: Mount option(s) incompatible with ext2
+[   17.806849] EXT4-fs (sda32): mounted filesystem 6be7290a-f5e9-4537-8738-6adea31bf339 r/w with journalled data mode. Quota mode: disabled.
+[   17.809267] initrd: Halium rootfs is /tmpmnt/ubuntu.img 
+[   17.809985] initrd: mounting system rootfs at /halium-system
+[   17.811391] loop0: detected capacity change from 0 to 12582912
+[   17.838578] EXT4-fs (loop0): mounted filesystem e00143fa-d6ec-408e-b9f2-061fce1fe573 r/w with ordered data mode. Quota mode: disabled.
+[   17.845468] initrd: mounting  /tmpmnt/ubuntu.img (image developer mode)
+[   17.845590] initrd: mounting android system image (/tmpmnt/android-rootfs.img) ro, in /android-rootfs (rootfs mode)
+[   17.845632] initrd: mounting android system image from system rootfs
+[   17.847622] loop1: detected capacity change from 0 to 925296
+[   17.886157] EXT4-fs (loop1): mounted filesystem db906ff9-90b8-4ccb-bda6-79dd7205d5e0 ro without journal. Quota mode: disabled.
+[   17.896762] initrd: Android system image API level is 30
+[   17.896820] initrd: boot mode: halium
+[   17.897297] initrd: Normal boot
+[   17.918294] initrd: WARNING: Didn't find a device name. Is the Android system image mounted correctly?
+[   17.918341] initrd: device is unknown
+[   17.922349] initrd: Adding bind-mounts to /root/etc/fstab
+[   18.154594] initrd: checking fstab /root/var/lib/lxc/android/rootfs/fstab* for additional mount points
+[   18.157450] cat: can't open '/root/var/lib/lxc/android/rootfs/fstab*': No such file or directory
+[   18.160915] mkdir: can't create directory '/root/android/cache': File exists
+[   18.163420] initrd: moving Android system to /android/system
+[   18.166502] Begin: Running /scripts/local-bottom ... 
+[   18.166579] done.
+[   18.166632] done.
+[   18.169878] Begin: Running /scripts/nfs-bottom ... 
+[   18.169932] done.
+[   18.170090] Begin: Running /scripts/init-bottom ... 
+[   18.180906] done.
+[   18.181887] Target filesystem doesn't have requested /root-rescue2.sh.
+[   18.212759] A50STATUS: observer armed in new root
+[   19.196843] Not activating Mandatory Access Control as /sbin/tomoyo-init does not exist.
+[   19.249281] systemd[1]: System time before build time, advancing clock.
+[   19.259597] systemd[1]: systemd 255.4-1ubuntu8.15+0~20260429201649.9+ubports26.04.1~1.gbp732c4b running in system mode (+PAM +AUDIT +SELINUX +APPARMOR +IMA +SMACK +SECCOMP +GCRYPT -GNUTLS +OPENSSL +ACL +BLKID +CURL +ELFUTILS +FIDO2 +IDN2 -IDN +IPTC +KMOD +LIBCRYPTSETUP +LIBFDISK +PCRE2 -PWQUALITY +P11KIT +QRENCODE +TPM2 +BZIP2 +LZ4 +XZ +ZLIB +ZSTD -BPF_FRAMEWORK -XKBCOMMON +UTMP +SYSVINIT default-hierarchy=unified)
+[   19.259635] systemd[1]: Detected architecture arm64.
+[   19.262163] systemd[1]: Hostname set to <ubuntu-phablet>.
+[   19.541770] systemd[1]: /usr/lib/systemd/system/bluebinder.service:14: Unknown key name 'StartLimitIntervalSec' in section 'Service', ignoring.
+[   19.698600] systemd[1]: Queued start job for default target graphical.target.
+[   19.702975] systemd[1]: Created slice system-modprobe.slice - Slice /system/modprobe.
+[   19.703798] systemd[1]: Created slice user.slice - User and Session Slice.
+[   19.704046] systemd[1]: Started systemd-ask-password-wall.path - Forward Password Requests to Wall Directory Watch.
+[   19.704330] systemd[1]: proc-sys-fs-binfmt_misc.automount - Arbitrary Executable File Formats File System Automount Point was skipped because of an unmet condition check (ConditionPathExists=/proc/sys/fs/binfmt_misc).
+[   19.704421] systemd[1]: Reached target integritysetup.target - Local Integrity Protected Volumes.
+[   19.704584] systemd[1]: Reached target remote-fs.target - Remote File Systems.
+[   19.704687] systemd[1]: Reached target slices.target - Slice Units.
+[   19.704791] systemd[1]: Reached target snapd.mounts-pre.target - Mounting snaps.
+[   19.704887] systemd[1]: Reached target snapd.mounts.target - Mounted snaps.
+[   19.705034] systemd[1]: Reached target veritysetup.target - Local Verity Protected Volumes.
+[   19.705303] systemd[1]: Listening on systemd-initctl.socket - initctl Compatibility Named Pipe.
+[   19.705717] systemd[1]: Listening on systemd-journald-dev-log.socket - Journal Socket (/dev/log).
+[   19.706112] systemd[1]: Listening on systemd-journald.socket - Journal Socket.
+[   19.706311] systemd[1]: systemd-pcrextend.socket - TPM2 PCR Extension (Varlink) was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
+[   19.706945] systemd[1]: Listening on systemd-udevd-control.socket - udev Control Socket.
+[   19.707265] systemd[1]: Listening on systemd-udevd-kernel.socket - udev Kernel Socket.
+[   19.707661] systemd[1]: dev-hugepages.mount - Huge Pages File System was skipped because of an unmet condition check (ConditionPathExists=/sys/kernel/mm/hugepages).
+[   19.707851] systemd[1]: dev-mqueue.mount - POSIX Message Queue File System was skipped because of an unmet condition check (ConditionPathExists=/proc/sys/fs/mqueue).
+[   19.709908] systemd[1]: Mounting sys-kernel-debug.mount - Kernel Debug File System...
+[   19.710275] systemd[1]: sys-kernel-tracing.mount - Kernel Trace File System was skipped because of an unmet condition check (ConditionPathExists=/sys/kernel/tracing).
+[   19.715153] systemd[1]: Starting systemd-journald.service - Journal Service...
+[   19.718218] systemd[1]: Starting keyboard-setup.service - Set the console keyboard layout...
+[   19.718444] systemd[1]: kmod-static-nodes.service - Create List of Static Device Nodes was skipped because of an unmet condition check (ConditionFileNotEmpty=/lib/modules/6.18.33-a50-diag+/modules.devname).
+[   19.720987] systemd[1]: Starting modprobe@configfs.service - Load Kernel Module configfs...
+[   19.723287] systemd[1]: Starting modprobe@dm_mod.service - Load Kernel Module dm_mod...
+[   19.725799] systemd[1]: Starting modprobe@drm.service - Load Kernel Module drm...
+[   19.728763] systemd[1]: Starting modprobe@efi_pstore.service - Load Kernel Module efi_pstore...
+[   19.734825] systemd[1]: Starting modprobe@fuse.service - Load Kernel Module fuse...
+[   19.742118] systemd[1]: Starting modprobe@loop.service - Load Kernel Module loop...
+[   19.745447] systemd[1]: mount-android-system.service - Find the Android's system or root image was skipped because of an unmet condition check (ConditionPathIsMountPoint=!/android).
+[   19.746058] systemd[1]: systemd-pcrmachine.service - TPM2 PCR Machine ID Measurement was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
+[   19.749698] systemd[1]: Starting systemd-remount-fs.service - Remount Root and Kernel File Systems...
+[   19.752402] systemd[1]: Starting systemd-tmpfiles-setup-dev-early.service - Create Static Device Nodes in /dev gracefully...
+[   19.752701] systemd[1]: systemd-tpm2-setup-early.service - TPM2 SRK Setup (Early) was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
+[   19.755019] systemd[1]: modprobe@configfs.service: Deactivated successfully.
+[   19.755650] systemd[1]: Finished modprobe@configfs.service - Load Kernel Module configfs.
+[   19.767692] systemd[1]: Mounted sys-kernel-debug.mount - Kernel Debug File System.
+[   19.768307] systemd[1]: modprobe@dm_mod.service: Deactivated successfully.
+[   19.768781] systemd[1]: Finished modprobe@dm_mod.service - Load Kernel Module dm_mod.
+[   19.769771] systemd[1]: modprobe@drm.service: Deactivated successfully.
+[   19.770126] systemd[1]: Finished modprobe@drm.service - Load Kernel Module drm.
+[   19.770834] systemd[1]: modprobe@efi_pstore.service: Deactivated successfully.
+[   19.771141] systemd[1]: Finished modprobe@efi_pstore.service - Load Kernel Module efi_pstore.
+[   19.771756] systemd[1]: modprobe@fuse.service: Deactivated successfully.
+[   19.772035] systemd[1]: Finished modprobe@fuse.service - Load Kernel Module fuse.
+[   19.772622] systemd[1]: modprobe@loop.service: Deactivated successfully.
+[   19.772900] systemd[1]: Finished modprobe@loop.service - Load Kernel Module loop.
+[   19.773741] systemd[1]: sys-fs-fuse-connections.mount - FUSE Control File System was skipped because of an unmet condition check (ConditionPathExists=/sys/fs/fuse/connections).
+[   19.775362] systemd[1]: Mounting sys-kernel-config.mount - Kernel Configuration File System...
+[   19.775578] systemd[1]: systemd-repart.service - Repartition Root Disk was skipped because no trigger condition checks were met.
+[   19.791663] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked SCSI opcode 0x42 lun 0
+[   19.791733] sd 0:0:0:0: [sda] tag#12 UNKNOWN(0x2003) Result: hostbyte=0x00 driverbyte=DRIVER_OK cmd_age=0s
+[   19.791761] sd 0:0:0:0: [sda] tag#12 Sense Key : 0x5 [current] 
+[   19.791778] sd 0:0:0:0: [sda] tag#12 ASC=0x20 ASCQ=0x0 
+[   19.791796] sd 0:0:0:0: [sda] tag#12 CDB: opcode=0x42 42 00 00 00 00 00 00 00 18 00
+[   19.791812] critical target error, dev sda, sector 112072704 op 0x3:(DISCARD) flags 0x800 phys_seg 1 prio class 2
+[   19.796485] systemd[1]: Mounted sys-kernel-config.mount - Kernel Configuration File System.
+[   19.823635] EXT4-fs (loop0): re-mounted e00143fa-d6ec-408e-b9f2-061fce1fe573 ro.
+[   19.837549] systemd[1]: Finished systemd-remount-fs.service - Remount Root and Kernel File Systems.
+[   19.838273] systemd[1]: Finished systemd-tmpfiles-setup-dev-early.service - Create Static Device Nodes in /dev gracefully.
+[   19.838560] systemd[1]: userdata-SWAP.img.swap - /userdata/SWAP.img was skipped because of an unmet condition check (ConditionPathExists=/userdata/SWAP.img).
+[   19.838617] systemd[1]: Reached target swap.target - Swaps.
+[   19.839946] systemd[1]: systemd-hwdb-update.service - Rebuild Hardware Database was skipped because of an unmet condition check (ConditionNeedsUpdate=/etc).
+[   19.840039] systemd-journald[444]: Collecting audit messages is disabled.
+[   19.840213] systemd[1]: systemd-sysusers.service - Create System Users was skipped because no trigger condition checks were met.
+[   19.842452] systemd[1]: Starting systemd-tmpfiles-setup-dev.service - Create Static Device Nodes in /dev...
+[   19.848418] systemd[1]: Started systemd-journald.service - Journal Service.
+[   19.862446] systemd[1]: Finished keyboard-setup.service - Set the console keyboard layout.
+[   19.869394] systemd[1]: Finished systemd-tmpfiles-setup-dev.service - Create Static Device Nodes in /dev.
+[   19.870087] systemd[1]: Reached target local-fs-pre.target - Preparation for Local File Systems.
+[   19.870820] systemd[1]: home.mount: Directory /home to mount over is not empty, mounting anyway.
+[   19.872895] systemd[1]: Mounting home.mount - /home...
+[   19.875425] systemd[1]: Mounting media.mount - /media...
+[   19.878508] systemd[1]: Mounting nix.mount - /nix...
+[   19.882463] systemd[1]: Mounting opt-click.ubuntu.com.mount - /opt/click.ubuntu.com...
+[   19.883201] systemd[1]: root.mount: Directory /root to mount over is not empty, mounting anyway.
+[   19.885565] systemd[1]: Mounting root.mount - /root...
+[   19.888327] systemd[1]: Mounting snap.mount - /snap...
+[   19.891967] systemd[1]: Mounting tmp.mount - /tmp...
+[   19.892746] systemd[1]: var-cache-apparmor.mount: Directory /var/cache/apparmor to mount over is not empty, mounting anyway.
+[   19.895271] systemd[1]: Mounting var-cache-apparmor.mount - /var/cache/apparmor...
+[   19.898705] systemd[1]: Mounting var-cache-snapd.mount - /var/cache/snapd...
+[   19.900638] systemd[1]: var-lib-AccountsService.mount: Directory /var/lib/AccountsService to mount over is not empty, mounting anyway.
+[   19.903115] systemd[1]: Mounting var-lib-AccountsService.mount - /var/lib/AccountsService...
+[   19.906146] systemd[1]: Mounting var-lib-NetworkManager.mount - /var/lib/NetworkManager...
+[   19.909802] systemd[1]: Mounting var-lib-PackageKit.mount - /var/lib/PackageKit...
+[   19.912793] systemd[1]: Mounting var-lib-aethercast.mount - /var/lib/aethercast...
+[   19.916344] systemd[1]: Mounting var-lib-android\x2ddata.mount - /var/lib/android-data...
+[   19.916918] systemd[1]: var-lib-apparmor.mount: Directory /var/lib/apparmor to mount over is not empty, mounting anyway.
+[   19.919835] systemd[1]: Mounting var-lib-apparmor.mount - /var/lib/apparmor...
+[   19.923310] systemd[1]: Mounting var-lib-bluetooth.mount - /var/lib/bluetooth...
+[   19.923766] systemd[1]: var-lib-extrausers.mount: Directory /var/lib/extrausers to mount over is not empty, mounting anyway.
+[   19.926723] systemd[1]: Mounting var-lib-extrausers.mount - /var/lib/extrausers...
+[   19.929671] systemd[1]: Mounting var-lib-lightdm.mount - /var/lib/lightdm...
+[   19.933194] systemd[1]: Mounting var-lib-lightdm\x2ddata.mount - /var/lib/lightdm-data...
+[   19.936983] systemd[1]: Mounting var-lib-logrotate.mount - /var/lib/logrotate...
+[   19.942203] systemd[1]: Mounting var-lib-lomiri\x2dlocation\x2dservice.mount - /var/lib/lomiri-location-service...
+[   19.945797] systemd[1]: Mounting var-lib-misc.mount - /var/lib/misc...
+[   19.949719] systemd[1]: Mounting var-lib-nfcd.mount - /var/lib/nfcd...
+[   19.953231] systemd[1]: Mounting var-lib-ofono.mount - /var/lib/ofono...
+[   19.953908] systemd[1]: var-lib-snapd.mount: Directory /var/lib/snapd to mount over is not empty, mounting anyway.
+[   19.956474] systemd[1]: Mounting var-lib-snapd.mount - /var/lib/snapd...
+[   19.957079] systemd[1]: var-lib-sudo.mount: Directory /var/lib/sudo to mount over is not empty, mounting anyway.
+[   19.959418] systemd[1]: Mounting var-lib-sudo.mount - /var/lib/sudo...
+[   19.960074] systemd[1]: var-lib-system\x2dimage.mount: Directory /var/lib/system-image to mount over is not empty, mounting anyway.
+[   19.962488] systemd[1]: Mounting var-lib-system\x2dimage.mount - /var/lib/system-image...
+[   19.963066] systemd[1]: var-lib-systemd.mount: Directory /var/lib/systemd to mount over is not empty, mounting anyway.
+[   19.965955] systemd[1]: Mounting var-lib-systemd.mount - /var/lib/systemd...
+[   19.969272] systemd[1]: Mounting var-lib-upower.mount - /var/lib/upower...
+[   19.975128] systemd[1]: Mounting var-lib-urfkill.mount - /var/lib/urfkill...
+[   19.981324] systemd[1]: Mounting var-lib-usb\x2dmoded.mount - /var/lib/usb-moded...
+[   19.987416] systemd[1]: Mounting var-lib-usermetrics.mount - /var/lib/usermetrics...
+[   19.992893] systemd[1]: Mounting var-lib-waydroid.mount - /var/lib/waydroid...
+[   19.994001] systemd[1]: var-log.mount: Directory /var/log to mount over is not empty, mounting anyway.
+[   19.998952] systemd[1]: Mounting var-log.mount - /var/log...
+[   20.004561] systemd[1]: Mounting var-snap.mount - /var/snap...
+[   20.010153] systemd[1]: Mounting var-tmp.mount - /var/tmp...
+[   20.147756] systemd[1]: Mounted home.mount - /home.
+[   20.148776] systemd[1]: Mounted media.mount - /media.
+[   20.149774] systemd[1]: Mounted nix.mount - /nix.
+[   20.150736] systemd[1]: Mounted opt-click.ubuntu.com.mount - /opt/click.ubuntu.com.
+[   20.151723] systemd[1]: Mounted root.mount - /root.
+[   20.152698] systemd[1]: Mounted snap.mount - /snap.
+[   20.153719] systemd[1]: Mounted tmp.mount - /tmp.
+[   20.154711] systemd[1]: Mounted var-cache-apparmor.mount - /var/cache/apparmor.
+[   20.155728] systemd[1]: Mounted var-cache-snapd.mount - /var/cache/snapd.
+[   20.156688] systemd[1]: Mounted var-lib-AccountsService.mount - /var/lib/AccountsService.
+[   20.157733] systemd[1]: Mounted var-lib-NetworkManager.mount - /var/lib/NetworkManager.
+[   20.158728] systemd[1]: Mounted var-lib-PackageKit.mount - /var/lib/PackageKit.
+[   20.159717] systemd[1]: Mounted var-lib-aethercast.mount - /var/lib/aethercast.
+[   20.160723] systemd[1]: Mounted var-lib-android\x2ddata.mount - /var/lib/android-data.
+[   20.161754] systemd[1]: Mounted var-lib-apparmor.mount - /var/lib/apparmor.
+[   20.162759] systemd[1]: Mounted var-lib-bluetooth.mount - /var/lib/bluetooth.
+[   20.163727] systemd[1]: Mounted var-lib-extrausers.mount - /var/lib/extrausers.
+[   20.164738] systemd[1]: Mounted var-lib-lightdm.mount - /var/lib/lightdm.
+[   20.165745] systemd[1]: Mounted var-lib-lightdm\x2ddata.mount - /var/lib/lightdm-data.
+[   20.166731] systemd[1]: Mounted var-lib-logrotate.mount - /var/lib/logrotate.
+[   20.167718] systemd[1]: Mounted var-lib-lomiri\x2dlocation\x2dservice.mount - /var/lib/lomiri-location-service.
+[   20.168696] systemd[1]: Mounted var-lib-misc.mount - /var/lib/misc.
+[   20.169809] systemd[1]: Mounted var-lib-nfcd.mount - /var/lib/nfcd.
+[   20.170768] systemd[1]: Mounted var-lib-ofono.mount - /var/lib/ofono.
+[   20.171729] systemd[1]: Mounted var-lib-snapd.mount - /var/lib/snapd.
+[   20.172704] systemd[1]: Mounted var-lib-sudo.mount - /var/lib/sudo.
+[   20.173722] systemd[1]: Mounted var-lib-system\x2dimage.mount - /var/lib/system-image.
+[   20.174705] systemd[1]: Mounted var-lib-systemd.mount - /var/lib/systemd.
+[   20.175723] systemd[1]: Mounted var-lib-upower.mount - /var/lib/upower.
+[   20.176708] systemd[1]: Mounted var-lib-urfkill.mount - /var/lib/urfkill.
+[   20.177708] systemd[1]: Mounted var-lib-usb\x2dmoded.mount - /var/lib/usb-moded.
+[   20.178686] systemd[1]: Mounted var-lib-usermetrics.mount - /var/lib/usermetrics.
+[   20.179669] systemd[1]: Mounted var-lib-waydroid.mount - /var/lib/waydroid.
+[   20.180641] systemd[1]: Mounted var-log.mount - /var/log.
+[   20.181642] systemd[1]: Mounted var-snap.mount - /var/snap.
+[   20.182602] systemd[1]: Mounted var-tmp.mount - /var/tmp.
+[   20.257703] systemd[1]: Reached target local-fs.target - Local File Systems.
+[   20.264020] systemd[1]: Listening on systemd-sysext.socket - System Extension Image Management (Varlink).
+[   20.293919] systemd[1]: Starting console-setup.service - Set console font and keymap...
+[   20.294859] systemd[1]: ldconfig.service - Rebuild Dynamic Linker Cache was skipped because no trigger condition checks were met.
+[   20.299931] systemd[1]: Starting mount-android-partitions.service - Mount Android partitions...
+[   20.305265] systemd[1]: Starting plymouth-read-write.service - Tell Plymouth To Write Out Runtime Data...
+[   20.306617] systemd[1]: systemd-binfmt.service - Set Up Additional Binary Formats was skipped because of an unmet condition check (ConditionPathIsMountPoint=/proc/sys/fs/binfmt_misc).
+[   20.311589] systemd[1]: Starting systemd-journal-flush.service - Flush Journal to Persistent Storage...
+[   20.312146] systemd[1]: systemd-pstore.service - Platform Persistent Storage Archival was skipped because of an unmet condition check (ConditionDirectoryNotEmpty=/sys/fs/pstore).
+[   20.318079] systemd[1]: Starting systemd-random-seed.service - Load/Save OS Random Seed...
+[   20.318616] systemd[1]: systemd-tpm2-setup.service - TPM2 SRK Setup was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
+[   20.324248] systemd[1]: Starting ufw.service - Uncomplicated firewall...
+[   20.332036] systemd-journald[444]: Received client request to flush runtime journal.
+[   20.333534] systemd[1]: Finished console-setup.service - Set console font and keymap.
+[   20.335566] systemd[1]: Finished plymouth-read-write.service - Tell Plymouth To Write Out Runtime Data.
+[   20.354692] systemd-journald[444]: /var/log/journal/8b7a4ea163e84f4f89218e4a86aedb78/system.journal: Realtime clock jumped backwards relative to last journal entry, rotating.
+[   20.354734] systemd-journald[444]: Rotating system journal.
+[   20.356136] systemd[1]: Finished ufw.service - Uncomplicated firewall.
+[   20.356944] systemd[1]: Reached target network-pre.target - Preparation for Network.
+[   20.364694] systemd[1]: Finished systemd-random-seed.service - Load/Save OS Random Seed.
+[   20.415697] EXT4-fs (sda26): mounting with "discard" option, but the device does not support discard
+[   20.415861] EXT4-fs (sda26): mounted filesystem 07373cec-6e3e-5f97-9250-62eb356c889e ro without journal. Quota mode: disabled.
+[   20.477933] systemd[1]: Finished systemd-journal-flush.service - Flush Journal to Persistent Storage.
+[   20.501886] systemd[1]: Starting systemd-tmpfiles-setup.service - Create Volatile Files and Directories...
+[   20.518787] EXT4-fs (sda3): warning: maximal mount count reached, running e2fsck is recommended
+[   20.518826] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked SCSI opcode 0x2a lun 0
+[   20.518868] sd 0:0:0:0: [sda] tag#5 UNKNOWN(0x2003) Result: hostbyte=0x00 driverbyte=DRIVER_OK cmd_age=0s
+[   20.518880] sd 0:0:0:0: [sda] tag#5 Sense Key : 0x7 [current] 
+[   20.518889] sd 0:0:0:0: [sda] tag#5 ASC=0x27 ASCQ=0x0 
+[   20.518898] sd 0:0:0:0: [sda] tag#5 CDB: opcode=0x2a 2a 08 00 00 10 00 00 00 01 00
+[   20.518906] critical target error, dev sda, sector 32768 op 0x1:(WRITE) flags 0x20800 phys_seg 1 prio class 2
+[   20.518917] Buffer I/O error on dev sda3, logical block 0, lost sync page write
+[   20.518940] EXT4-fs (sda3): I/O error while writing superblock
+[   20.518956] EXT4-fs (sda3): mount failed
+[   20.519033] Aborting journal on device sda3-8.
+[   20.519046] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked SCSI opcode 0x2a lun 0
+[   20.519070] sd 0:0:0:0: [sda] tag#4 UNKNOWN(0x2003) Result: hostbyte=0x00 driverbyte=DRIVER_OK cmd_age=0s
+[   20.519081] sd 0:0:0:0: [sda] tag#4 Sense Key : 0x7 [current] 
+[   20.519089] sd 0:0:0:0: [sda] tag#4 ASC=0x27 ASCQ=0x0 
+[   20.519097] sd 0:0:0:0: [sda] tag#4 CDB: opcode=0x2a 2a 08 00 00 10 08 00 00 01 00
+[   20.519105] critical target error, dev sda, sector 32832 op 0x1:(WRITE) flags 0x29800 phys_seg 1 prio class 2
+[   20.519115] Buffer I/O error on dev sda3, logical block 8, lost sync page write
+[   20.519132] JBD2: I/O error when updating journal superblock for sda3-8.
+[   20.528216] systemd-tmpfiles[596]: fchmod() of /var failed: Read-only file system
+[   20.528322] systemd-tmpfiles[596]: fchmod() of /var/lib failed: Read-only file system
+[   20.529949] systemd-tmpfiles[596]: symlink(../locale.conf, /etc/default/locale) failed: Read-only file system
+[   20.540462] systemd[1]: Finished systemd-tmpfiles-setup.service - Create Volatile Files and Directories.
+[   20.542120] systemd[1]: systemd-firstboot.service - First Boot Wizard was skipped because of an unmet condition check (ConditionFirstBoot=yes).
+[   20.542293] systemd[1]: first-boot-complete.target - First Boot Complete was skipped because of an unmet condition check (ConditionFirstBoot=yes).
+[   20.543024] systemd[1]: systemd-journal-catalog-update.service - Rebuild Journal Catalog was skipped because of an unmet condition check (ConditionNeedsUpdate=/var).
+[   20.543326] systemd[1]: systemd-machine-id-commit.service - Commit a transient machine-id on disk was skipped because of an unmet condition check (ConditionPathIsReadWrite=/etc).
+[   20.544289] systemd[1]: systemd-update-done.service - Update is Completed was skipped because no trigger condition checks were met.
+[   20.549150] systemd[1]: Starting systemd-update-utmp.service - Record System Boot/Shutdown in UTMP...
+[   20.578064] /dev/sdd1: Can't open blockdev
+[   20.579523] EXT4-fs (sdd1): mounted filesystem d636c00f-f04c-4d84-acf5-0aa9358eac48 ro with ordered data mode. Quota mode: disabled.
+[   20.582257] systemd[1]: Finished systemd-update-utmp.service - Record System Boot/Shutdown in UTMP.
+[   20.601436] systemd[1]: mount-android-partitions.service: Main process exited, code=exited, status=32/n/a
+[   20.602096] systemd[1]: mount-android-partitions.service: Failed with result 'exit-code'.
+[   20.603021] systemd[1]: Failed to start mount-android-partitions.service - Mount Android partitions.
+[   20.603505] systemd[1]: Dependency failed for lxc-android-config.service - LXC Android Config and Container Initialization.
+[   20.603717] systemd[1]: Dependency failed for lomiri-location-service.service - Location Services.
+[   20.603905] systemd[1]: lomiri-location-service.service: Job lomiri-location-service.service/start failed with result 'dependency'.
+[   20.603991] systemd[1]: lxc-android-config.service: Job lxc-android-config.service/start failed with result 'dependency'.
+[   20.604022] systemd[1]: lxc-android-config.service: Triggering OnFailure= dependencies.
+[   20.605743] systemd[1]: Dependency failed for a50-container-prepare.service - A50: generate the Android container overrides this port needs.
+[   20.606070] systemd[1]: a50-container-prepare.service: Job a50-container-prepare.service/start failed with result 'dependency'.
+[   20.607415] systemd[1]: mount-android-system.service - Find the Android's system or root image was skipped because of an unmet condition check (ConditionPathIsMountPoint=!/android).
+[   20.612319] systemd[1]: Starting lxc-android-config-mount-apexes.service - Mount Android APEXes...
+[   20.617801] systemd[1]: Starting mount-halium-overlay.service - Bind-mount Halium overlay from Android image...
+[   20.622934] systemd[1]: Starting systemd-udev-trigger-real.service - Coldplug All udev Devices...
+[   20.628933] systemd[1]: Starting timekeeper.service - Timekeeper is a utility to keep/restore RTC offset for Qualcomm devices...
+[   20.655712] systemd[1]: Finished mount-halium-overlay.service - Bind-mount Halium overlay from Android image.
+[   20.664949] systemd[1]: Starting systemd-modules-load.service - Load Kernel Modules...
+[   20.672688] systemd[1]: Starting systemd-udevd.service - Rule-based Manager for Device Events and Files...
+[   20.683515] systemd[1]: Finished timekeeper.service - Timekeeper is a utility to keep/restore RTC offset for Qualcomm devices.
+[   20.693862] systemd[1]: Starting systemd-timesyncd.service - Network Time Synchronization...
+[   20.702274] systemd[1]: Finished systemd-modules-load.service - Load Kernel Modules.
+[   20.708899] systemd[1]: Starting systemd-sysctl.service - Apply Kernel Variables...
+[   20.742040] systemd[1]: Too many messages being logged to kmsg, ignoring
+[   20.761542] systemd-sysctl[643]: Couldn't write '1' to 'kernel/apparmor_restrict_unprivileged_userns', ignoring: No such file or directory
+[   20.779165] systemd-udevd[639]: Using default interface naming scheme 'v255'.
+[   22.272956] udevadm[709]: systemd-udev-settle.service is deprecated. Please fix usb-moded.service not to pull it in.
+[   22.287990] audit: type=1400 audit(1794315063.466:2): apparmor="STATUS" operation="profile_load" profile="unconfined" name=4D6F6E676F444220436F6D70617373 pid=718 comm="apparmor_parser"
+[   22.288045] audit: type=1400 audit(1794315063.466:3): apparmor="STATUS" operation="profile_load" profile="unconfined" name="balena-etcher" pid=723 comm="apparmor_parser"
+[   22.288070] audit: type=1400 audit(1794315063.466:4): apparmor="STATUS" operation="profile_load" profile="unconfined" name="1password" pid=716 comm="apparmor_parser"
+[   22.288094] audit: type=1400 audit(1794315063.466:5): apparmor="STATUS" operation="profile_load" profile="unconfined" name="Discord" pid=717 comm="apparmor_parser"
+[   22.292363] audit: type=1400 audit(1794315063.470:6): apparmor="STATUS" operation="profile_load" profile="unconfined" name="bfdd" pid=724 comm="apparmor_parser"
+[   22.294427] audit: type=1400 audit(1794315063.474:7): apparmor="STATUS" operation="profile_load" profile="unconfined" name="babeld" pid=722 comm="apparmor_parser"
+[   22.295751] audit: type=1400 audit(1794315063.474:8): apparmor="STATUS" operation="profile_load" profile="unconfined" name="brave" pid=727 comm="apparmor_parser"
+[   22.298514] audit: type=1400 audit(1794315063.478:9): apparmor="STATUS" operation="profile_load" profile="unconfined" name="buildah" pid=728 comm="apparmor_parser"
+[   22.298924] audit: type=1400 audit(1794315063.478:10): apparmor="STATUS" operation="profile_load" profile="unconfined" name="cam" pid=730 comm="apparmor_parser"
+[   22.299357] audit: type=1400 audit(1794315063.478:11): apparmor="STATUS" operation="profile_load" profile="unconfined" name="ch-checkns" pid=731 comm="apparmor_parser"
+[   22.943509] repowerd[929]: DefaultDaemonConfig: Failed to create SyfsBacklight: Couldn't find backlight in sysfs
+[   22.944730] repowerd[929]: DefaultDaemonConfig: Failed to create BrightnessControl: Failed to create backlight
+[   22.945042] repowerd[929]: DefaultDaemonConfig: Falling back to NullBrightnessControl
+[   22.945258] repowerd[929]: DefaultDaemonConfig: Failed to create SyfsBacklight: Couldn't find backlight in sysfs
+[   22.945456] repowerd[929]: DefaultDaemonConfig: Failed to create BrightnessNotification: Failed to create backlight
+[   22.945641] repowerd[929]: DefaultDaemonConfig: Falling back to NullBrightnessNotification
+[   22.945862] repowerd[929]: DefaultDaemonConfig: Failed to create HidlSystemPowerControl: No hwbinder interface available
+[   22.946036] repowerd[929]: DefaultDaemonConfig: Trying LibsuspendSystemPowerControl
+[   22.946162] repowerd[929]: DefaultDaemonConfig: Failed to create LibsuspendSystemPowerControl: Failed to initialize libsuspend
+[   22.946337] repowerd[929]: DefaultDaemonConfig: Trying LogindSystemPowerControl
+[   23.047393] URfkill[982]: No configured profile found
+[   23.047760] URfkill[982]: <warning> No dmi devices found.
+[   23.048362] URfkill[982]: <warning> Failed to get DMI information
+[   23.052011] URfkill[982]: Starting urfkilld version 0.6.0
+[   23.062936] repowerd[929]: DefaultDaemonConfig: Failed to create SysfsHBM: HBMSysfsPath not found in DeviceInfo
+[   23.063172] repowerd[929]: DefaultDaemonConfig: Falling back to NullHBM
+[   23.079447] configfs-gadget.g1 gadget.0: HOST MAC a2:dc:f1:d3:e5:f5
+[   23.079473] configfs-gadget.g1 gadget.0: MAC 72:6a:69:b9:1f:61
+[   23.355536] usb_moded[1082]: /etc/usb-moded/usb-moded.ini: has reappeared after settings migration
+[   23.361837] usb_moded[1082]: Failed to write mac address to /etc/modprobe.d/g_ether.conf
+[   23.367807] usb_moded[1082]: CONFIGFS detected
+[   23.373149] usb_moded[1082]: /sys/kernel/config/usb_gadget/g1//functions/mass_storage.usb0: mkdir failed: Function not implemented
+[   23.373446] usb_moded[1082]: /sys/kernel/config/usb_gadget/g1//functions/mtp.mtp: mkdir failed: Function not implemented
+[   23.373572] usb_moded[1082]: Failed to read mac address from /etc/modprobe.d/g_ether.conf
+[   23.373671] usb_moded[1082]: /sys/kernel/config/usb_gadget/g1//functions/rndis.usb0/wceis: can't open for writing: No such file or directory
+[   23.380824] usb_moded[1082]: Unable to find $charger device '/sys/class/power_supply/usb'
+[   23.390691] usb_moded[1082]: /sys/kernel/config/usb_gadget/g1//functions/mass_storage.usb0: mkdir failed: Function not implemented
+[   23.390964] usb_moded[1082]: function mass_storage.usb0 is not registered
+[   23.391114] usb_moded[1082]: switch to charging mode failed
+[   23.391293] usb_moded[1082]: failed to activate charging, all bets are off
+[   23.391436] usb_moded[1082]: mode setting failed, fallback to undefined
+[   23.477819] wpa_supplicant[1106]: Successfully initialized wpa_supplicant
+[   23.727306] URfkill[982]: <warning> Error opening RFKILL control device, please verify your installation
+[   23.727779] URfkill[982]: Setting WLAN devices to unblocked
+[   23.728254] URfkill[982]: Setting BLUETOOTH devices to blocked
+[   23.728589] URfkill[982]: Setting UWB devices to unblocked
+[   23.730121] udisksd[975]: Error creating directory /var/lib/udisks2: Read-only file system
+[   23.730610] URfkill[982]: Setting WIMAX devices to unblocked
+[   23.730967] URfkill[982]: Setting WWAN devices to unblocked
+[   23.731186] URfkill[982]: Setting GPS devices to unblocked
+[   23.731569] URfkill[982]: Setting FM devices to unblocked
+[   23.731855] URfkill[982]: Setting NFC devices to unblocked
+[   23.939332] NetworkManager[1120]: ((../src/core/devices/nm-device.c:5820)): assertion '<dropped>' failed
+[   23.961113] NetworkManager[1120]: ((../src/core/devices/nm-device.c:5820)): assertion '<dropped>' failed
+[   23.967655] NetworkManager[1120]: ((../src/core/devices/nm-device.c:5820)): assertion '<dropped>' failed
+[   24.042167] root[1196]: 02default_route_workaround: (lo): up: flushing routing table (proto boot)
+[   24.330427] loop2: detected capacity change from 0 to 8
+[   24.392553] systemd[1]: Started usb-tethering.service - USB Tethering.
+[   24.445355] systemd[1]: Finished click-system-hooks.service - Run Click system-level hooks.
+[   24.570631] systemd[1]: Started udisks2.service - Disk Manager.
+[   26.620665] systemd[1]: Starting systemd-timedated.service - Time & Date Service...
+[   26.621436] systemd[1]: Started snapd.service - Snap Daemon.
+[   26.820133] systemd[1]: Started systemd-timedated.service - Time & Date Service.
+[   26.837873] systemd[1]: Finished snapd.seeded.service - Wait until snapd is fully seeded.
+[   26.839407] systemd[1]: snapd.autoimport.service - Auto import assertions from block devices was skipped because no trigger condition checks were met.
+[   28.278242] systemd[1]: Started sensorfwd.service - Sensor daemon for the sensor framework.
+[   28.316938] systemd[1]: Started repowerd.service - monitor and control system power state.
+[   28.341847] systemd[1]: Starting a50-enable-autosuspend.service - A50 Android 11 automatic suspend activation...
+[   28.345558] systemd[1]: Starting keep-display-on-during-boot.service - Keep the display on during boot...
+[   28.355068] systemd[1]: Starting upower.service - Daemon for power management...
+[   28.377170] systemd[1]: a50-enable-autosuspend.service: Main process exited, code=exited, status=1/FAILURE
+[   28.377514] systemd[1]: a50-enable-autosuspend.service: Failed with result 'exit-code'.
+[   28.378100] systemd[1]: Failed to start a50-enable-autosuspend.service - A50 Android 11 automatic suspend activation.
+[   28.510289] systemd[1]: Started upower.service - Daemon for power management.
+[   34.064957] systemd[1]: NetworkManager-dispatcher.service: Deactivated successfully.
+[   34.593284] systemd[1]: snapd.service: Deactivated successfully.
+[   34.593914] systemd[1]: snapd.service: Consumed 3.177s CPU time.
+[   53.851131] systemd[1]: systemd-hostnamed.service: Deactivated successfully.
+[   56.838473] systemd[1]: systemd-timedated.service: Deactivated successfully.
+[   60.297868] systemd[1]: Starting enable-cpu-hotplug.service - Enable CPU hotplugging after Ubuntu Touch boot...
+[   60.301153] systemd[1]: enable-cpu-hotplug.service: Main process exited, code=exited, status=1/FAILURE
+[   60.301488] systemd[1]: enable-cpu-hotplug.service: Failed with result 'exit-code'.
+[   60.302043] systemd[1]: Failed to start enable-cpu-hotplug.service - Enable CPU hotplugging after Ubuntu Touch boot.
+[   60.619347] A50STATUS: BEGIN uptime=60.61 target=60
+[   60.619388] A50STATUS: CMD uname -r
+[   60.649141] A50STATUS: 6.18.33-a50-diag+
+[   60.649183] A50STATUS: RC 0
+[   60.649210] A50STATUS: CMD systemctl is-system-running
+[   60.682191] A50STATUS: starting
+[   60.682242] A50STATUS: RC 1
+[   60.682273] A50STATUS: CMD systemctl --failed --no-pager --plain --no-legend
+[   60.709038] A50STATUS: a50-enable-autosuspend.service   loaded failed failed A50 Android 11 automatic suspend activation
+[   60.709177] A50STATUS: a50-gnss-unblock.service         loaded failed failed A50: unblock Samsung gpsd (waits for a boot animation that never runs)
+[   60.709293] A50STATUS: enable-cpu-hotplug.service       loaded failed failed Enable CPU hotplugging after Ubuntu Touch boot
+[   60.709379] A50STATUS: mount-android-partitions.service loaded failed failed Mount Android partitions
+[   60.709477] A50STATUS: no-cpu-hotplug.service           loaded failed failed Disable CPU hotplugging during Ubuntu Touch boot
+[   60.709529] A50STATUS: RC 0
+[   60.709557] A50STATUS: CMD systemctl list-jobs --no-pager --plain --no-legend
+[   60.735785] A50STATUS: 155 ofono.service                                start waiting
+[   60.735878] A50STATUS: 158 systemd-update-utmp-runlevel.service         start waiting
+[   60.735949] A50STATUS: 216 keep-display-on-during-boot.service          start running
+[   60.736018] A50STATUS: 220 lightdm.service                              start waiting
+[   60.736089] A50STATUS: 152 a50-audio-hidl-compat.service                start running
+[   60.736158] A50STATUS: 226 force-adb.service                            start waiting
+[   60.736226] A50STATUS: 185 android-set-boot-completion-property.service start waiting
+[   60.736295] A50STATUS: 225 usb-rescue-mode-off.service                  start waiting
+[   60.736365] A50STATUS: 192 a50-audio-route.service                      start waiting
+[   60.736435] A50STATUS: 1   graphical.target                             start waiting
+[   60.736504] A50STATUS: 224 aethercast.service                           start waiting
+[   60.736572] A50STATUS: 157 bluebinder.service                           start running
+[   60.736641] A50STATUS: 2   multi-user.target                            start waiting
+[   60.736710] A50STATUS: 219 factory-wipe.service                         start waiting
+[   60.736779] A50STATUS: 156 rild.service                                 start running
+[   60.736819] A50STATUS: RC 0
+[   60.736851] A50STATUS: CMD systemctl show multi-user.target graphical.target -p Id -p ActiveState -p SubState -p Job
+[   60.780595] A50STATUS: Id=multi-user.target
+[   60.780658] A50STATUS: ActiveState=inactive
+[   60.780695] A50STATUS: SubState=dead
+[   60.780725] A50STATUS: Job=2
+[   60.780752] A50STATUS: 
+[   60.780791] A50STATUS: Id=graphical.target
+[   60.780830] A50STATUS: ActiveState=inactive
+[   60.780867] A50STATUS: SubState=dead
+[   60.780895] A50STATUS: Job=1
+[   60.780931] A50STATUS: RC 0
+[   60.780961] A50STATUS: CMD systemctl show -p SystemState -p NFailedUnits -p NJobs
+[   60.808609] A50STATUS: NFailedUnits=5
+[   60.808659] A50STATUS: NJobs=15
+[   60.808703] A50STATUS: SystemState=starting
+[   60.808740] A50STATUS: RC 0
+[   60.808767] A50STATUS: CMD findmnt -no TARGET,OPTIONS /userdata
+[   60.830974] A50STATUS: /userdata rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[   60.831031] A50STATUS: RC 0
+[   60.831055] A50STATUS: END target=60
+[   82.769315] systemd[1]: bluebinder.service: start-pre operation timed out. Terminating.
+[   82.770144] systemd[1]: bluebinder.service: Control process exited, code=killed, status=15/TERM
+[   82.770961] systemd[1]: bluebinder.service: Failed with result 'timeout'.
+[   82.771431] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[   82.771900] systemd[1]: bluebinder.service: Consumed 3.927s CPU time.
+[   83.392958] systemd[1]: Finished a50-audio-hidl-compat.service - A50: present the 64-bit audio HIDL compat wrapper to PulseAudio.
+[   83.421719] systemd[1]: Starting lightdm.service - Light Display Manager...
+[   83.515713] systemd[1]: Started lightdm.service - Light Display Manager.
+[   83.519775] systemd[1]: Starting a50-audio-route.service - A50: pin PulseAudio playback to sink.primary-out...
+[   83.524324] systemd[1]: Starting aethercast.service - Aethercast Wireless Display...
+[   83.528209] systemd[1]: Starting android-set-boot-completion-property.service - Set boot completion property in Android container...
+[   83.528565] systemd[1]: factory-wipe.service - Factory Wipe Watcher was skipped because of an unmet condition check (ConditionPathExists=/userdata/.factory_wipe).
+[   83.533710] systemd[1]: Starting usb-rescue-mode-off.service - Turn usb-moded rescue mode off...
+[   83.583299] su[2328]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[   83.584468] su[2328]: (to phablet) root on none
+[   83.584531] systemd[1]: android-set-boot-completion-property.service: Main process exited, code=exited, status=1/FAILURE
+[   83.584898] systemd[1]: android-set-boot-completion-property.service: Failed with result 'exit-code'.
+[   83.585594] systemd[1]: Failed to start android-set-boot-completion-property.service - Set boot completion property in Android container.
+[   83.609999] systemd[1]: Started aethercast.service - Aethercast Wireless Display.
+[   83.639292] usb_moded[1082]: init_done -> reached
+[   83.647273] systemd[1]: Finished keep-display-on-during-boot.service - Keep the display on during boot.
+[   83.649019] systemd[1]: Finished usb-rescue-mode-off.service - Turn usb-moded rescue mode off.
+[   83.653297] systemd[1]: Created slice user-32011.slice - User Slice of UID 32011.
+[   83.674556] systemd[1]: Starting force-adb.service - Force enable or disable ADB as appropriate...
+[   83.677486] systemd[1]: Starting user-runtime-dir@32011.service - User Runtime Directory /run/user/32011...
+[   83.711545] systemd[1]: lightdm.service: Main process exited, code=exited, status=1/FAILURE
+[   83.711766] systemd[1]: lightdm.service: Failed with result 'exit-code'.
+[   83.737126] usb_moded[1082]: Mode 'developer_mode' requested while not connected to pc
+[   83.741699] systemd[1]: force-adb.service: Deactivated successfully.
+[   83.742219] systemd[1]: Finished force-adb.service - Force enable or disable ADB as appropriate.
+[   83.853224] systemd[1]: Finished user-runtime-dir@32011.service - User Runtime Directory /run/user/32011.
+[   83.855390] systemd[1]: lightdm.service: Scheduled restart job, restart counter is at 1.
+[   83.856867] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 1.
+[   83.873831] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[   83.877203] systemd[1]: Starting lightdm.service - Light Display Manager...
+[   83.880479] systemd[1]: Starting user@32011.service - User Manager for UID 32011...
+[   83.919721] (systemd)[2375]: pam_extrausers(systemd-user:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[   83.950988] systemd[1]: Started lightdm.service - Light Display Manager.
+[   84.121563] systemd[1]: lightdm.service: Main process exited, code=exited, status=1/FAILURE
+[   84.121772] systemd[1]: lightdm.service: Failed with result 'exit-code'.
+[   84.270685] systemd[1]: lightdm.service: Scheduled restart job, restart counter is at 2.
+[   84.297674] systemd[1]: Starting lightdm.service - Light Display Manager...
+[   84.381216] systemd[1]: Started lightdm.service - Light Display Manager.
+[   84.549870] systemd[1]: lightdm.service: Main process exited, code=exited, status=1/FAILURE
+[   84.550079] systemd[1]: lightdm.service: Failed with result 'exit-code'.
+[   84.770750] systemd[1]: lightdm.service: Scheduled restart job, restart counter is at 3.
+[   84.793688] systemd[1]: Starting lightdm.service - Light Display Manager...
+[   84.883986] systemd[1]: Started lightdm.service - Light Display Manager.
+[   85.045947] systemd[1]: lightdm.service: Main process exited, code=exited, status=1/FAILURE
+[   85.046154] systemd[1]: lightdm.service: Failed with result 'exit-code'.
+[   85.270764] systemd[1]: lightdm.service: Scheduled restart job, restart counter is at 4.
+[   85.305698] systemd[1]: Starting lightdm.service - Light Display Manager...
+[   85.388746] systemd[1]: Started lightdm.service - Light Display Manager.
+[   85.561060] systemd[1]: lightdm.service: Main process exited, code=exited, status=1/FAILURE
+[   85.561291] systemd[1]: lightdm.service: Failed with result 'exit-code'.
+[   85.770727] systemd[1]: lightdm.service: Scheduled restart job, restart counter is at 5.
+[   85.771207] systemd[1]: lightdm.service: Start request repeated too quickly.
+[   85.771229] systemd[1]: lightdm.service: Failed with result 'exit-code'.
+[   85.771390] systemd[1]: Failed to start lightdm.service - Light Display Manager.
+[   86.162534] systemd[1]: Started user@32011.service - User Manager for UID 32011.
+[   86.164833] systemd[1]: Started session-c1.scope - Session c1 of User phablet.
+[   86.461836] systemd[1]: Starting rtkit-daemon.service - RealtimeKit Scheduling Policy Service...
+[   86.503779] systemd[1]: Started rtkit-daemon.service - RealtimeKit Scheduling Policy Service.
+[   86.796812] pulseaudio[2518]: Unsupported Android version 0
+[   87.028319] systemd[1]: session-c1.scope: Deactivated successfully.
+[   89.060831] su[2595]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[   89.065440] su[2595]: (to phablet) root on none
+[   89.105806] systemd[1]: Started session-c2.scope - Session c2 of User phablet.
+[   89.694457] pulseaudio[2625]: Unsupported Android version 0
+[   89.791459] systemd[1]: session-c2.scope: Deactivated successfully.
+[   91.813459] su[2694]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[   91.813706] su[2694]: (to phablet) root on none
+[   91.873837] systemd[1]: Started session-c3.scope - Session c3 of User phablet.
+[   92.430962] pulseaudio[2716]: Unsupported Android version 0
+[   92.522764] systemd[1]: session-c3.scope: Deactivated successfully.
+[   94.555215] su[2791]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[   94.555460] su[2791]: (to phablet) root on none
+[   94.613573] systemd[1]: Started session-c4.scope - Session c4 of User phablet.
+[   95.213858] pulseaudio[2813]: Unsupported Android version 0
+[   95.317923] systemd[1]: session-c4.scope: Deactivated successfully.
+[   97.349683] su[2882]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[   97.349921] su[2882]: (to phablet) root on none
+[   97.401862] systemd[1]: Started session-c5.scope - Session c5 of User phablet.
+[   98.065724] pulseaudio[2911]: Unsupported Android version 0
+[   98.260437] systemd[1]: session-c5.scope: Deactivated successfully.
+[  100.291674] su[2981]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  100.291916] su[2981]: (to phablet) root on none
+[  100.357825] systemd[1]: Started session-c6.scope - Session c6 of User phablet.
+[  100.950894] pulseaudio[3003]: Unsupported Android version 0
+[  101.144720] systemd[1]: session-c6.scope: Deactivated successfully.
+[  102.769335] systemd[1]: rild.service: start operation timed out. Terminating.
+[  102.771073] systemd[1]: rild.service: Main process exited, code=killed, status=15/TERM
+[  102.771430] systemd[1]: rild.service: Failed with result 'timeout'.
+[  102.772512] systemd[1]: Failed to start rild.service - Wait for rild in the Android container to become ready.
+[  102.773654] systemd[1]: rild.service: Consumed 8.227s CPU time.
+[  102.780343] systemd[1]: ofono.service: Failed to load environment files: No such file or directory
+[  102.780403] systemd[1]: ofono.service: Failed to spawn 'start' task: No such file or directory
+[  102.781055] systemd[1]: ofono.service: Failed with result 'resources'.
+[  102.782596] systemd[1]: Failed to start ofono.service - oFono Mobile telephony stack.
+[  103.024518] systemd[1]: ofono.service: Scheduled restart job, restart counter is at 1.
+[  103.042288] systemd[1]: Starting rild.service - Wait for rild in the Android container to become ready...
+[  103.173728] su[3082]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  103.174004] su[3082]: (to phablet) root on none
+[  103.237825] systemd[1]: Started session-c7.scope - Session c7 of User phablet.
+[  103.954972] pulseaudio[3105]: Unsupported Android version 0
+[  104.145787] systemd[1]: session-c7.scope: Deactivated successfully.
+[  106.160999] su[3182]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  106.161214] su[3182]: (to phablet) root on none
+[  106.213823] systemd[1]: Started session-c8.scope - Session c8 of User phablet.
+[  106.782854] pulseaudio[3204]: Unsupported Android version 0
+[  106.875639] systemd[1]: session-c8.scope: Deactivated successfully.
+[  108.911732] su[3272]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  108.912030] su[3272]: (to phablet) root on none
+[  108.961838] systemd[1]: Started session-c9.scope - Session c9 of User phablet.
+[  109.717060] pulseaudio[3295]: Unsupported Android version 0
+[  109.898678] systemd[1]: session-c9.scope: Deactivated successfully.
+[  111.926979] su[3373]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  111.927198] su[3373]: (to phablet) root on none
+[  111.989791] dbus-daemon[909]: [system] Failed to activate service 'org.bluez': timed out (service_start_timeout=25000ms)
+[  111.990102] systemd[1]: Started session-c10.scope - Session c10 of User phablet.
+[  112.681876] pulseaudio[3395]: Unsupported Android version 0
+[  112.874431] systemd[1]: session-c10.scope: Deactivated successfully.
+[  114.902465] su[3473]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  114.902796] su[3473]: (to phablet) root on none
+[  114.941638] systemd[1]: Started session-c11.scope - Session c11 of User phablet.
+[  115.592095] pulseaudio[3496]: Unsupported Android version 0
+[  115.773779] systemd[1]: session-c11.scope: Deactivated successfully.
+[  117.803136] su[3573]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  117.803395] su[3573]: (to phablet) root on none
+[  117.853982] systemd[1]: Started session-c12.scope - Session c12 of User phablet.
+[  118.446810] pulseaudio[3595]: Unsupported Android version 0
+[  118.626962] systemd[1]: session-c12.scope: Deactivated successfully.
+[  120.654042] su[3667]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  120.654332] su[3667]: (to phablet) root on none
+[  120.705866] systemd[1]: Started session-c13.scope - Session c13 of User phablet.
+[  121.249515] pulseaudio[3696]: Unsupported Android version 0
+[  121.271488] A50STATUS: BEGIN uptime=121.27 target=120
+[  121.271533] A50STATUS: CMD uname -r
+[  121.293616] A50STATUS: 6.18.33-a50-diag+
+[  121.293674] A50STATUS: RC 0
+[  121.293701] A50STATUS: CMD systemctl is-system-running
+[  121.327319] A50STATUS: starting
+[  121.327376] A50STATUS: RC 1
+[  121.327407] A50STATUS: CMD systemctl --failed --no-pager --plain --no-legend
+[  121.354247] A50STATUS: a50-enable-autosuspend.service               loaded failed failed A50 Android 11 automatic suspend activation
+[  121.354392] A50STATUS: a50-gnss-unblock.service                     loaded failed failed A50: unblock Samsung gpsd (waits for a boot animation that never runs)
+[  121.354502] A50STATUS: android-set-boot-completion-property.service loaded failed failed Set boot completion property in Android container
+[  121.354607] A50STATUS: enable-cpu-hotplug.service                   loaded failed failed Enable CPU hotplugging after Ubuntu Touch boot
+[  121.354694] A50STATUS: lightdm.service                              loaded failed failed Light Display Manager
+[  121.354784] A50STATUS: mount-android-partitions.service             loaded failed failed Mount Android partitions
+[  121.354888] A50STATUS: no-cpu-hotplug.service                       loaded failed failed Disable CPU hotplugging during Ubuntu Touch boot
+[  121.354926] A50STATUS: RC 0
+[  121.354954] A50STATUS: CMD systemctl list-jobs --no-pager --plain --no-legend
+[  121.356527] systemd[1]: session-c13.scope: Deactivated successfully.
+[  121.389331] A50STATUS: 2436 bluetooth.service                    start waiting
+[  121.389422] A50STATUS: 158  systemd-update-utmp-runlevel.service start waiting
+[  121.389490] A50STATUS: 1661 bluebinder.service                   start running
+[  121.389555] A50STATUS: 3347 rild.service                         start running
+[  121.389620] A50STATUS: 192  a50-audio-route.service              start running
+[  121.389684] A50STATUS: 1    graphical.target                     start waiting
+[  121.389747] A50STATUS: 2    multi-user.target                    start waiting
+[  121.389811] A50STATUS: 3219 ofono.service                        start waiting
+[  121.389850] A50STATUS: RC 0
+[  121.389882] A50STATUS: CMD systemctl show multi-user.target graphical.target -p Id -p ActiveState -p SubState -p Job
+[  121.435683] A50STATUS: Id=multi-user.target
+[  121.435743] A50STATUS: ActiveState=inactive
+[  121.435782] A50STATUS: SubState=dead
+[  121.435813] A50STATUS: Job=2
+[  121.435839] A50STATUS: 
+[  121.435878] A50STATUS: Id=graphical.target
+[  121.435916] A50STATUS: ActiveState=inactive
+[  121.435953] A50STATUS: SubState=dead
+[  121.435982] A50STATUS: Job=1
+[  121.436021] A50STATUS: RC 0
+[  121.436050] A50STATUS: CMD systemctl show -p SystemState -p NFailedUnits -p NJobs
+[  121.470633] A50STATUS: NFailedUnits=7
+[  121.470683] A50STATUS: NJobs=8
+[  121.470726] A50STATUS: SystemState=starting
+[  121.470762] A50STATUS: RC 0
+[  121.470788] A50STATUS: CMD findmnt -no TARGET,OPTIONS /userdata
+[  121.495313] A50STATUS: /userdata rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  121.495372] A50STATUS: RC 0
+[  121.495397] A50STATUS: END target=120
+[  123.387758] su[3778]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  123.388226] su[3778]: (to phablet) root on none
+[  123.445870] systemd[1]: Started session-c14.scope - Session c14 of User phablet.
+[  124.187655] pulseaudio[3801]: Unsupported Android version 0
+[  124.380221] systemd[1]: session-c14.scope: Deactivated successfully.
+[  126.411939] su[3880]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  126.412511] su[3880]: (to phablet) root on none
+[  126.449615] systemd[1]: Started session-c15.scope - Session c15 of User phablet.
+[  127.104989] pulseaudio[3902]: Unsupported Android version 0
+[  127.295886] systemd[1]: session-c15.scope: Deactivated successfully.
+[  129.326450] su[3975]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  129.326898] su[3975]: (to phablet) root on none
+[  129.373645] systemd[1]: Started session-c16.scope - Session c16 of User phablet.
+[  130.061139] pulseaudio[4002]: Unsupported Android version 0
+[  130.167277] systemd[1]: session-c16.scope: Deactivated successfully.
+[  132.208432] su[4073]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  132.208959] su[4073]: (to phablet) root on none
+[  132.265867] systemd[1]: Started session-c17.scope - Session c17 of User phablet.
+[  132.806099] pulseaudio[4102]: Unsupported Android version 0
+[  132.905059] systemd[1]: session-c17.scope: Deactivated successfully.
+[  134.934670] su[4170]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  134.935109] su[4170]: (to phablet) root on none
+[  134.969789] systemd[1]: Started session-c18.scope - Session c18 of User phablet.
+[  135.498385] pulseaudio[4192]: Unsupported Android version 0
+[  135.601777] systemd[1]: session-c18.scope: Deactivated successfully.
+[  137.640236] su[4261]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  137.640865] su[4261]: (to phablet) root on none
+[  137.685618] systemd[1]: Started session-c19.scope - Session c19 of User phablet.
+[  137.846262] dbus-daemon[909]: [system] Failed to activate service 'org.bluez': timed out (service_start_timeout=25000ms)
+[  138.286216] pulseaudio[4289]: Unsupported Android version 0
+[  138.395196] systemd[1]: session-c19.scope: Deactivated successfully.
+[  140.433826] su[4359]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  140.434051] su[4359]: (to phablet) root on none
+[  140.485627] systemd[1]: Started session-c20.scope - Session c20 of User phablet.
+[  141.102239] pulseaudio[4381]: Unsupported Android version 0
+[  141.202585] systemd[1]: session-c20.scope: Deactivated successfully.
+[  143.230546] su[4456]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  143.231008] su[4456]: (to phablet) root on none
+[  143.273649] systemd[1]: Started session-c21.scope - Session c21 of User phablet.
+[  143.960291] pulseaudio[4479]: Unsupported Android version 0
+[  144.021363] systemd[1]: bluebinder.service: start-pre operation timed out. Terminating.
+[  144.022329] systemd[1]: bluebinder.service: Control process exited, code=killed, status=15/TERM
+[  144.024306] systemd[1]: bluebinder.service: Failed with result 'timeout'.
+[  144.024991] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  144.025605] systemd[1]: bluebinder.service: Consumed 3.788s CPU time.
+[  144.049749] (uetoothd)[4511]: bluetooth.service: ConfigurationDirectory 'bluetooth' already exists but the mode is different. (File system: 755 ConfigurationDirectoryMode: 555)
+[  144.049880] systemd[1]: Starting bluetooth.service - Bluetooth service...
+[  144.058606] systemd[1]: session-c21.scope: Deactivated successfully.
+[  144.383786] systemd[1]: Started bluetooth.service - Bluetooth service.
+[  144.433801] systemd[1]: Starting systemd-hostnamed.service - Hostname Service...
+[  145.005516] systemd[1]: Started systemd-hostnamed.service - Hostname Service.
+[  145.011918] systemd[1]: aethercast.service: Deactivated successfully.
+[  145.270962] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 2.
+[  145.293677] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  146.086710] su[4548]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  146.087019] su[4548]: (to phablet) root on none
+[  146.113601] systemd[1]: Started session-c22.scope - Session c22 of User phablet.
+[  146.646314] pulseaudio[4571]: Unsupported Android version 0
+[  146.743283] systemd[1]: session-c22.scope: Deactivated successfully.
+[  148.781772] su[4644]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  148.782338] su[4644]: (to phablet) root on none
+[  148.817675] systemd[1]: Started session-c23.scope - Session c23 of User phablet.
+[  149.376623] pulseaudio[4668]: Unsupported Android version 0
+[  149.490223] systemd[1]: session-c23.scope: Deactivated successfully.
+[  151.509615] su[4738]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  151.510049] su[4738]: (to phablet) root on none
+[  151.557641] systemd[1]: Started session-c24.scope - Session c24 of User phablet.
+[  152.108079] pulseaudio[4768]: Unsupported Android version 0
+[  152.201349] systemd[1]: session-c24.scope: Deactivated successfully.
+[  154.230448] su[4836]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  154.230989] su[4836]: (to phablet) root on none
+[  154.265633] systemd[1]: Started session-c25.scope - Session c25 of User phablet.
+[  154.917898] pulseaudio[4858]: Unsupported Android version 0
+[  155.013294] systemd[1]: session-c25.scope: Deactivated successfully.
+[  157.042914] su[4933]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  157.043148] su[4933]: (to phablet) root on none
+[  157.093802] systemd[1]: Started session-c26.scope - Session c26 of User phablet.
+[  157.701146] pulseaudio[4955]: Unsupported Android version 0
+[  157.897952] systemd[1]: session-c26.scope: Deactivated successfully.
+[  159.921531] su[5026]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  159.922106] su[5026]: (to phablet) root on none
+[  159.965784] systemd[1]: Started session-c27.scope - Session c27 of User phablet.
+[  160.656885] pulseaudio[5054]: Unsupported Android version 0
+[  160.764303] systemd[1]: session-c27.scope: Deactivated successfully.
+[  162.785656] su[5124]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  162.786110] su[5124]: (to phablet) root on none
+[  162.821672] systemd[1]: Started session-c28.scope - Session c28 of User phablet.
+[  163.667723] pulseaudio[5146]: Unsupported Android version 0
+[  163.851642] systemd[1]: session-c28.scope: Deactivated successfully.
+[  165.888496] su[5225]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  165.889104] su[5225]: (to phablet) root on none
+[  165.937622] systemd[1]: Started session-c29.scope - Session c29 of User phablet.
+[  166.672122] pulseaudio[5247]: Unsupported Android version 0
+[  166.868271] systemd[1]: session-c29.scope: Deactivated successfully.
+[  168.908342] su[5325]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  168.908575] su[5325]: (to phablet) root on none
+[  168.949642] systemd[1]: Started session-c30.scope - Session c30 of User phablet.
+[  169.545873] pulseaudio[5346]: Unsupported Android version 0
+[  169.650194] systemd[1]: session-c30.scope: Deactivated successfully.
+[  171.684068] su[5416]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  171.684373] su[5416]: (to phablet) root on none
+[  171.741848] systemd[1]: Started session-c31.scope - Session c31 of User phablet.
+[  172.393550] pulseaudio[5445]: Unsupported Android version 0
+[  172.574861] systemd[1]: session-c31.scope: Deactivated successfully.
+[  174.601941] su[5515]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  174.602196] su[5515]: (to phablet) root on none
+[  174.633570] systemd[1]: Started session-c32.scope - Session c32 of User phablet.
+[  175.020226] systemd[1]: systemd-hostnamed.service: Deactivated successfully.
+[  175.276682] pulseaudio[5537]: Unsupported Android version 0
+[  175.380761] systemd[1]: session-c32.scope: Deactivated successfully.
+[  177.409801] su[5616]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  177.410100] su[5616]: (to phablet) root on none
+[  177.457583] systemd[1]: Started session-c33.scope - Session c33 of User phablet.
+[  178.129181] pulseaudio[5638]: Unsupported Android version 0
+[  178.316982] systemd[1]: session-c33.scope: Deactivated successfully.
+[  180.346559] su[5716]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  180.347007] su[5716]: (to phablet) root on none
+[  180.409824] systemd[1]: Started session-c34.scope - Session c34 of User phablet.
+[  181.053461] pulseaudio[5738]: Unsupported Android version 0
+[  181.157529] systemd[1]: session-c34.scope: Deactivated successfully.
+[  183.186655] su[5809]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  183.186992] su[5809]: (to phablet) root on none
+[  183.193990] systemd[1]: rild.service: start operation timed out. Terminating.
+[  183.194805] systemd[1]: rild.service: Main process exited, code=killed, status=15/TERM
+[  183.196694] systemd[1]: rild.service: Failed with result 'timeout'.
+[  183.197412] systemd[1]: Failed to start rild.service - Wait for rild in the Android container to become ready.
+[  183.197978] systemd[1]: rild.service: Consumed 7.738s CPU time.
+[  183.201339] systemd[1]: ofono.service: Failed to load environment files: No such file or directory
+[  183.201373] systemd[1]: ofono.service: Failed to spawn 'start' task: No such file or directory
+[  183.201662] systemd[1]: ofono.service: Failed with result 'resources'.
+[  183.202374] systemd[1]: Failed to start ofono.service - oFono Mobile telephony stack.
+[  183.225813] systemd[1]: Started session-c35.scope - Session c35 of User phablet.
+[  183.401143] systemd[1]: ofono.service: Scheduled restart job, restart counter is at 2.
+[  183.405047] systemd[1]: Starting rild.service - Wait for rild in the Android container to become ready...
+[  183.813902] pulseaudio[5840]: Unsupported Android version 0
+[  183.915621] systemd[1]: session-c35.scope: Deactivated successfully.
+[  185.947776] su[5908]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  185.952782] su[5908]: (to phablet) root on none
+[  185.989621] systemd[1]: Started session-c36.scope - Session c36 of User phablet.
+[  186.595856] pulseaudio[5932]: Unsupported Android version 0
+[  186.697658] systemd[1]: session-c36.scope: Deactivated successfully.
+[  188.731246] su[5999]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  188.731615] su[5999]: (to phablet) root on none
+[  188.765616] systemd[1]: Started session-c37.scope - Session c37 of User phablet.
+[  189.349167] pulseaudio[6029]: Unsupported Android version 0
+[  189.448369] systemd[1]: session-c37.scope: Deactivated successfully.
+[  191.474121] su[6096]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  191.474381] su[6096]: (to phablet) root on none
+[  191.513612] systemd[1]: Started session-c38.scope - Session c38 of User phablet.
+[  192.210373] pulseaudio[6119]: Unsupported Android version 0
+[  192.330547] systemd[1]: session-c38.scope: Deactivated successfully.
+[  194.350209] su[6195]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  194.350890] su[6195]: (to phablet) root on none
+[  194.397594] systemd[1]: Started session-c39.scope - Session c39 of User phablet.
+[  195.086435] pulseaudio[6218]: Unsupported Android version 0
+[  195.280687] systemd[1]: session-c39.scope: Deactivated successfully.
+[  197.310887] su[6295]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  197.311118] su[6295]: (to phablet) root on none
+[  197.353568] systemd[1]: Started session-c40.scope - Session c40 of User phablet.
+[  198.059240] pulseaudio[6316]: Unsupported Android version 0
+[  198.247723] systemd[1]: session-c40.scope: Deactivated successfully.
+[  200.066332] A50STATUS: BEGIN uptime=200.06 target=200
+[  200.066373] A50STATUS: CMD uname -r
+[  200.081442] A50STATUS: 6.18.33-a50-diag+
+[  200.081504] A50STATUS: RC 0
+[  200.081533] A50STATUS: CMD systemctl is-system-running
+[  200.107619] A50STATUS: starting
+[  200.107676] A50STATUS: RC 1
+[  200.107710] A50STATUS: CMD systemctl --failed --no-pager --plain --no-legend
+[  200.134519] A50STATUS: a50-enable-autosuspend.service               loaded failed failed A50 Android 11 automatic suspend activation
+[  200.134662] A50STATUS: a50-gnss-unblock.service                     loaded failed failed A50: unblock Samsung gpsd (waits for a boot animation that never runs)
+[  200.134772] A50STATUS: android-set-boot-completion-property.service loaded failed failed Set boot completion property in Android container
+[  200.134878] A50STATUS: enable-cpu-hotplug.service                   loaded failed failed Enable CPU hotplugging after Ubuntu Touch boot
+[  200.134965] A50STATUS: lightdm.service                              loaded failed failed Light Display Manager
+[  200.135054] A50STATUS: mount-android-partitions.service             loaded failed failed Mount Android partitions
+[  200.135157] A50STATUS: no-cpu-hotplug.service                       loaded failed failed Disable CPU hotplugging during Ubuntu Touch boot
+[  200.135196] A50STATUS: RC 0
+[  200.135223] A50STATUS: CMD systemctl list-jobs --no-pager --plain --no-legend
+[  200.168599] A50STATUS: 158  systemd-update-utmp-runlevel.service start waiting
+[  200.168684] A50STATUS: 7658 ofono.service                        start waiting
+[  200.168752] A50STATUS: 7786 rild.service                         start running
+[  200.168817] A50STATUS: 5697 bluebinder.service                   start running
+[  200.168882] A50STATUS: 192  a50-audio-route.service              start running
+[  200.168947] A50STATUS: 1    graphical.target                     start waiting
+[  200.169011] A50STATUS: 2    multi-user.target                    start waiting
+[  200.169055] A50STATUS: RC 0
+[  200.169089] A50STATUS: CMD systemctl show multi-user.target graphical.target -p Id -p ActiveState -p SubState -p Job
+[  200.190485] A50STATUS: Id=multi-user.target
+[  200.190547] A50STATUS: ActiveState=inactive
+[  200.190586] A50STATUS: SubState=dead
+[  200.190616] A50STATUS: Job=2
+[  200.190643] A50STATUS: 
+[  200.190683] A50STATUS: Id=graphical.target
+[  200.190722] A50STATUS: ActiveState=inactive
+[  200.190756] A50STATUS: SubState=dead
+[  200.190784] A50STATUS: Job=1
+[  200.190821] A50STATUS: RC 0
+[  200.190853] A50STATUS: CMD systemctl show -p SystemState -p NFailedUnits -p NJobs
+[  200.226065] A50STATUS: NFailedUnits=7
+[  200.226110] A50STATUS: NJobs=7
+[  200.226155] A50STATUS: SystemState=starting
+[  200.226193] A50STATUS: RC 0
+[  200.226218] A50STATUS: CMD findmnt -no TARGET,OPTIONS /userdata
+[  200.238756] A50STATUS: /userdata rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  200.238817] A50STATUS: RC 0
+[  200.238843] A50STATUS: END target=200
+[  200.279322] su[6400]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  200.279625] su[6400]: (to phablet) root on none
+[  200.325564] systemd[1]: Started session-c41.scope - Session c41 of User phablet.
+[  200.932661] pulseaudio[6428]: Unsupported Android version 0
+[  201.030404] systemd[1]: session-c41.scope: Deactivated successfully.
+[  203.058611] su[6494]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  203.059120] su[6494]: (to phablet) root on none
+[  203.097988] systemd[1]: Started session-c42.scope - Session c42 of User phablet.
+[  203.803318] pulseaudio[6518]: Unsupported Android version 0
+[  203.994898] systemd[1]: session-c42.scope: Deactivated successfully.
+[  205.521334] systemd[1]: bluebinder.service: start-pre operation timed out. Terminating.
+[  205.522197] systemd[1]: bluebinder.service: Control process exited, code=killed, status=15/TERM
+[  205.523906] systemd[1]: bluebinder.service: Failed with result 'timeout'.
+[  205.524693] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  205.525804] systemd[1]: bluebinder.service: Consumed 3.781s CPU time.
+[  206.013074] su[6587]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  206.013459] su[6587]: (to phablet) root on none
+[  206.053646] systemd[1]: Started session-c43.scope - Session c43 of User phablet.
+[  206.714414] pulseaudio[6609]: Unsupported Android version 0
+[  206.770908] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 3.
+[  206.793686] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  206.896627] systemd[1]: session-c43.scope: Deactivated successfully.
+[  208.928285] su[6685]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  208.928543] su[6685]: (to phablet) root on none
+[  208.981597] systemd[1]: Started session-c44.scope - Session c44 of User phablet.
+[  209.686296] pulseaudio[6708]: Unsupported Android version 0
+[  209.867184] systemd[1]: session-c44.scope: Deactivated successfully.
+[  211.894570] su[6778]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  211.895193] su[6778]: (to phablet) root on none
+[  211.945839] systemd[1]: Started session-c45.scope - Session c45 of User phablet.
+[  212.524579] pulseaudio[6807]: Unsupported Android version 0
+[  212.632935] systemd[1]: session-c45.scope: Deactivated successfully.
+[  214.662646] su[6877]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  214.663080] su[6877]: (to phablet) root on none
+[  214.725835] systemd[1]: Started session-c46.scope - Session c46 of User phablet.
+[  215.380202] pulseaudio[6898]: Unsupported Android version 0
+[  215.563147] systemd[1]: session-c46.scope: Deactivated successfully.
+[  217.596617] su[6975]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  217.597139] su[6975]: (to phablet) root on none
+[  217.649857] systemd[1]: Started session-c47.scope - Session c47 of User phablet.
+[  218.148656] pulseaudio[6996]: Unsupported Android version 0
+[  218.259542] systemd[1]: session-c47.scope: Deactivated successfully.
+[  220.295790] su[7064]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  220.296019] su[7064]: (to phablet) root on none
+[  220.345609] systemd[1]: Started session-c48.scope - Session c48 of User phablet.
+[  220.940551] pulseaudio[7093]: Unsupported Android version 0
+[  221.030846] systemd[1]: session-c48.scope: Deactivated successfully.
+[  223.068261] su[7160]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  223.068893] su[7160]: (to phablet) root on none
+[  223.117640] systemd[1]: Started session-c49.scope - Session c49 of User phablet.
+[  223.737541] pulseaudio[7183]: Unsupported Android version 0
+[  223.921997] systemd[1]: session-c49.scope: Deactivated successfully.
+[  225.950499] su[7258]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  225.950931] su[7258]: (to phablet) root on none
+[  225.989919] systemd[1]: Started session-c50.scope - Session c50 of User phablet.
+[  226.664166] pulseaudio[7280]: Unsupported Android version 0
+[  226.766400] systemd[1]: session-c50.scope: Deactivated successfully.
+[  228.794948] su[7348]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  228.795254] su[7348]: (to phablet) root on none
+[  228.861794] systemd[1]: Started session-c51.scope - Session c51 of User phablet.
+[  229.562686] pulseaudio[7377]: Unsupported Android version 0
+[  229.667208] systemd[1]: session-c51.scope: Deactivated successfully.
+[  231.695328] su[7445]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  231.695557] su[7445]: (to phablet) root on none
+[  231.749831] systemd[1]: Started session-c52.scope - Session c52 of User phablet.
+[  232.297519] pulseaudio[7467]: Unsupported Android version 0
+[  232.406194] systemd[1]: session-c52.scope: Deactivated successfully.
+[  234.435631] su[7541]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  234.435863] su[7541]: (to phablet) root on none
+[  234.489585] systemd[1]: Started session-c53.scope - Session c53 of User phablet.
+[  235.131546] pulseaudio[7563]: Unsupported Android version 0
+[  235.326467] systemd[1]: session-c53.scope: Deactivated successfully.
+[  237.364272] su[7632]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  237.364512] su[7632]: (to phablet) root on none
+[  237.409637] systemd[1]: Started session-c54.scope - Session c54 of User phablet.
+[  237.986894] pulseaudio[7661]: Unsupported Android version 0
+[  238.084849] systemd[1]: session-c54.scope: Deactivated successfully.
+[  240.115580] su[7729]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  240.115902] su[7729]: (to phablet) root on none
+[  240.169562] systemd[1]: Started session-c55.scope - Session c55 of User phablet.
+[  240.779020] pulseaudio[7751]: Unsupported Android version 0
+[  240.884117] systemd[1]: session-c55.scope: Deactivated successfully.
+[  242.914252] su[7826]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  242.914675] su[7826]: (to phablet) root on none
+[  242.953757] systemd[1]: Started session-c56.scope - Session c56 of User phablet.
+[  243.454366] pulseaudio[7848]: Unsupported Android version 0
+[  243.554335] systemd[1]: session-c56.scope: Deactivated successfully.
+[  245.592931] su[7918]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  245.593258] su[7918]: (to phablet) root on none
+[  245.645543] systemd[1]: Started session-c57.scope - Session c57 of User phablet.
+[  246.408637] pulseaudio[7939]: Unsupported Android version 0
+[  246.606547] systemd[1]: session-c57.scope: Deactivated successfully.
+[  248.640043] su[8017]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  248.640280] su[8017]: (to phablet) root on none
+[  248.693639] systemd[1]: Started session-c58.scope - Session c58 of User phablet.
+[  249.301873] pulseaudio[8037]: Unsupported Android version 0
+[  249.397671] systemd[1]: session-c58.scope: Deactivated successfully.
+[  250.849296] A50DIAG: sync before the timed dump
+[  250.864019] A50DIAG: sync done
+===== A50 6.18 DMESG END =====

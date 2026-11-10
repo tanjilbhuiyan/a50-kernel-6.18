@@ -1,0 +1,94 @@
+4.14.194 - Mint-user 1763150940
+/userdata rw,noatime,discard,nodelalloc,errors=remount-ro,data=journal
+Id=rild.service
+LoadState=loaded
+FragmentPath=/usr/lib/systemd/system/rild.service
+UnitFileState=static
+
+Id=ofono.service
+LoadState=loaded
+FragmentPath=/usr/lib/systemd/system/ofono.service
+UnitFileState=enabled
+
+Id=bluebinder.service
+LoadState=loaded
+FragmentPath=/usr/lib/systemd/system/bluebinder.service
+UnitFileState=enabled
+
+Id=a50-audio-route.service
+LoadState=loaded
+FragmentPath=/etc/systemd/system/a50-audio-route.service
+UnitFileState=enabled
+# /usr/lib/systemd/system/no-cpu-hotplug.service
+[Unit]
+Description=Disable CPU hotplugging during Ubuntu Touch boot
+Before=basic.target
+After=local-fs.target sysinit.target
+DefaultDependencies=no
+
+[Service]
+Type=oneshot
+ExecStart=:/bin/sh -c 'for cpu in /sys/devices/system/cpu/cpu?/online; do test -e "${cpu}" && chmod 444 "${cpu}"; done'
+
+[Install]
+WantedBy=basic.target
+
+# /usr/lib/systemd/system/enable-cpu-hotplug.service
+[Unit]
+Description=Enable CPU hotplugging after Ubuntu Touch boot
+
+[Service]
+Type=oneshot
+ExecStart=:/bin/sh -c 'for cpu in /sys/devices/system/cpu/cpu?/online; do test -e "${cpu}" && chmod 644 "${cpu}"; done'
+
+# /etc/systemd/system/a50-enable-autosuspend.service
+[Unit]
+Description=A50 Android 11 automatic suspend activation
+Requires=repowerd.service
+After=repowerd.service
+PartOf=repowerd.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/sh /usr/local/bin/a50-enable-autosuspend.sh
+TimeoutStartSec=20
+
+[Install]
+WantedBy=repowerd.service
+
+# /etc/systemd/system/a50-gnss-unblock.service
+[Unit]
+Description=A50: unblock Samsung gpsd (waits for a boot animation that never runs)
+Documentation=https://github.com/sadatdaniel/a50-ubuntu-touch/blob/main/docs/experiments/009-gps-permissions.md
+After=lxc-android-config.service
+Wants=lxc-android-config.service
+Before=lomiri-location-service.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/a50-gnss-unblock.sh
+TimeoutStartSec=120
+
+[Install]
+WantedBy=multi-user.target
+
+# /usr/lib/systemd/system/lightdm.service
+[Unit]
+Description=Light Display Manager
+Documentation=man:lightdm(1)
+Conflicts=getty@tty7.service plymouth-quit.service
+After=systemd-user-sessions.service getty@tty7.service plymouth-quit.service
+
+[Service]
+# temporary safety check until all DMs are converted to correct
+# display-manager.service symlink handling
+ExecStartPre=/bin/sh -c '[ "$(basename $(cat /etc/X11/default-display-manager 2>/dev/null))" = "lightdm" ]'
+ExecStart=/usr/sbin/lightdm
+Restart=always
+BusName=org.freedesktop.DisplayManager
+
+# /usr/lib/systemd/system/lightdm.service.d/ubuntu-touch-session.conf
+[Service]
+OOMScoreAdjust=-1000

@@ -107,6 +107,9 @@ M5 may use per-boot `systemd.mask=` for rild, ofono, bluebinder and
 a50-audio-route while hardware HALs are unavailable. Masks must be runtime-only,
 recorded in the test evidence, with the rootfs unchanged. Systemd must actually
 reach multi-user and running/degraded; remaining failed units still require review.
+M5.3 result (2026-11-10): test 5 reached multi-user at 84.17 s and degraded
+with zero jobs at 122/201 s; Android/device-helper failures reviewed and baseline
+restored clean (`log/2026-11-10-M5.3-split-control-test5.md`). M5.4 SSH still pending.
 
 ## M6 — Android container + ION
 Tasks: binder/binderfs, Rust ashmem, legacy ION ABI shim + Exynos heaps,
