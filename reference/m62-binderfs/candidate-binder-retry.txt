@@ -1,0 +1,16 @@
+/run tmpfs rw,nosuid,noexec,relatime,size=362084k,mode=755
+/run tmpfs rw,nosuid,noexec,relatime,mode=755
+/run/a50-m62-exec.mXa1cW tmpfs rw,nosuid,nodev,relatime,size=4096k,mode=700
+kernel=6.18.33-a50-diag+
+mount-android-partitions=masked
+android=STOPPED
+userdata=rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+/run/a50-m62-binderfs.vewNsZ binder binder rw,relatime,max=1048576,stats=global
+/run/a50-m62-binderfs.vewNsZ/binder-control character special file f8:0
+/run/a50-m62-binderfs.vewNsZ/binder character special file f8:1
+/run/a50-m62-binderfs.vewNsZ/hwbinder character special file f8:2
+/run/a50-m62-binderfs.vewNsZ/vndbinder character special file f8:3
+/run/a50-m62-binderfs.vewNsZ/binder: BINDER_VERSION=8
+/run/a50-m62-binderfs.vewNsZ/hwbinder: BINDER_VERSION=8
+/run/a50-m62-binderfs.vewNsZ/vndbinder: BINDER_VERSION=8
+PASS candidate: BinderFS and three Binder contexts

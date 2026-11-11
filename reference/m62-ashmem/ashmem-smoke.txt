@@ -1,0 +1,17 @@
+kernel=6.18.33-a50-diag+
+mount-android-partitions=masked
+android=STOPPED
+userdata=rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+/run/a50-m62-binderfs.ZUCvzZ binder binder rw,relatime,max=1048576,stats=global
+/run/a50-m62-binderfs.ZUCvzZ/binder-control character special file f8:0
+/run/a50-m62-binderfs.ZUCvzZ/binder character special file f8:1
+/run/a50-m62-binderfs.ZUCvzZ/hwbinder character special file f8:2
+/run/a50-m62-binderfs.ZUCvzZ/vndbinder character special file f8:3
+/run/a50-m62-binderfs.ZUCvzZ/binder: BINDER_VERSION=8
+/run/a50-m62-binderfs.ZUCvzZ/hwbinder: BINDER_VERSION=8
+/run/a50-m62-binderfs.ZUCvzZ/vndbinder: BINDER_VERSION=8
+PASS candidate: BinderFS and three Binder contexts
+/dev/ashmem character special file a:101
+10:257
+ASHMEM_SET_SIZE / ASHMEM_GET_SIZE: 4096 bytes
+PASS: ashmem size ioctls and shared mmap

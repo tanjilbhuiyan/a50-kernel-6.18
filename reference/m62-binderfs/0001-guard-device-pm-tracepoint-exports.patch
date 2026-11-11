@@ -1,0 +1,29 @@
+From e8a5a7feaa7dbb5c5fc8d8e87db6c209a770bee6 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Wed, 11 Nov 2026 05:30:42 +0600
+Subject: [PATCH] tracing: guard device PM tracepoint exports with
+ CONFIG_PM_SLEEP
+
+The power tracepoint definitions exist only with CONFIG_PM_SLEEP. Match that guard on their exports so TRACEPOINTS can build with PM sleep disabled.
+
+Change-Id: Ia0e4c012405626cdffdf2705099060e9e126d2cc
+---
+ kernel/trace/power-traces.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/kernel/trace/power-traces.c b/kernel/trace/power-traces.c
+index 0abaceea7..e391ac2ae 100644
+--- a/kernel/trace/power-traces.c
++++ b/kernel/trace/power-traces.c
+@@ -17,6 +17,8 @@
+ EXPORT_TRACEPOINT_SYMBOL_GPL(suspend_resume);
+ EXPORT_TRACEPOINT_SYMBOL_GPL(cpu_idle);
+ EXPORT_TRACEPOINT_SYMBOL_GPL(cpu_frequency);
++#ifdef CONFIG_PM_SLEEP
+ EXPORT_TRACEPOINT_SYMBOL_GPL(device_pm_callback_start);
+ EXPORT_TRACEPOINT_SYMBOL_GPL(device_pm_callback_end);
++#endif
+ 
+-- 
+2.56.0
+

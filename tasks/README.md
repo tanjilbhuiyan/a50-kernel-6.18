@@ -49,7 +49,7 @@ later milestones get tickets when we reach them (evidence first, Rule 1).
 | M5.2 | Allow writes to the userdata partition only | yes | M5.1 | done (log/2026-11-10-M5.2-userdata-writes.md) |
 | M5.3 | Halium's own init boots ubuntu.img to systemd | yes | M5.1, M5.2 | done (log/2026-11-10-M5.3-split-control-test5.md; approved runtime HAL masks) |
 | M5.4 | SSH over USB RNDIS; M5 DoD | yes | M5.3 | done (log/2026-11-10-M5.4-usb-ssh.md; temporary usb-moded -f -r, NETDEVICES prerequisite) |
-| M6.1 | Android runtime and kernel ABI audit | no (saved evidence first) | M5 | todo |
-| M6.2 | Binder, ACK ashmem, sync/wakelock interfaces | build no / test yes | M6.1 | todo |
+| M6.1 | Android runtime and kernel ABI audit | no (saved evidence first) | M5 | done |
+| M6.2 | Binder, ACK ashmem, sync/wakelock interfaces | build no / test yes | M6.1 | in-progress |
 | M6.3 | ION ABI, Exynos heaps and SysMMU preparation | build no / test yes | M6.1 | todo |
 | M6.4 | Android container and allocator; M6 DoD | yes | M6.2, M6.3 | todo |

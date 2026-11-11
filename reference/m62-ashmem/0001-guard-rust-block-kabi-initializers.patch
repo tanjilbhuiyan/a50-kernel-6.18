@@ -1,0 +1,39 @@
+From f1a66edfab03eebbc7db29f969a9883db7034cde Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Wed, 11 Nov 2026 05:59:06 +0600
+Subject: [PATCH] rust: initialize block KABI reservations only when enabled
+
+The generated block operations bindings omit the reservation fields with CONFIG_ANDROID_KABI_RESERVE disabled. Match the C definitions in both Rust vtables.
+
+Change-Id: Idca5d3c5af6ac60da32eb8da9de96c7e26928d43
+---
+ rust/kernel/block/mq/gen_disk.rs   | 2 ++
+ rust/kernel/block/mq/operations.rs | 1 +
+ 2 files changed, 3 insertions(+)
+
+diff --git a/rust/kernel/block/mq/gen_disk.rs b/rust/kernel/block/mq/gen_disk.rs
+index 5e34388f7..32b1c564f 100644
+--- a/rust/kernel/block/mq/gen_disk.rs
++++ b/rust/kernel/block/mq/gen_disk.rs
+@@ -148,7 +148,9 @@ pub fn build<T: Operations>(
+             pr_ops: core::ptr::null_mut(),
+             free_disk: None,
+             poll_bio: None,
++            #[cfg(CONFIG_ANDROID_KABI_RESERVE)]
+             __kabi_reserved1: 0,
++            #[cfg(CONFIG_ANDROID_KABI_RESERVE)]
+             __kabi_reserved2: 0,
+         };
+ 
+diff --git a/rust/kernel/block/mq/operations.rs b/rust/kernel/block/mq/operations.rs
+index 4e6ea4111..6dd27c228 100644
+--- a/rust/kernel/block/mq/operations.rs
++++ b/rust/kernel/block/mq/operations.rs
+@@ -278,6 +278,7 @@ impl<T: Operations> OperationsVTable<T> {
+         map_queues: None,
+         #[cfg(CONFIG_BLK_DEBUG_FS)]
+         show_rq: None,
++        #[cfg(CONFIG_ANDROID_KABI_RESERVE)]
+         __kabi_reserved1: 0,
+     };
+ 
