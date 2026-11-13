@@ -2,6 +2,11 @@
 
 The Galaxy A50 changes as one ordered series on top of the Android Common Kernel.
 
+For the **latest phone-tested M6 diagnostic build**, use
+[reproduce/m6/](../reproduce/m6/README.md). It includes the complete test source,
+final config, pinned toolchains and public ramdisk bootstrap. This directory
+continues to hold the separate clean driver series.
+
 - **Base:** https://android.googlesource.com/kernel/common, branch `android17-6.18`,
   commit `d9a614feddce2e8e68767df1d3421305d26a965b` (2026-10-31, Linux 6.18.33).
 - **Series:** `0001` to `0035`. It is the project's clean driver stack: device tree and defconfig, Exynos 9610 clocks,

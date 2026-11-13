@@ -109,6 +109,10 @@ recorded in the test evidence, with the rootfs unchanged. Systemd must actually
 reach multi-user and running/degraded; remaining failed units still require review.
 Mask removal (2026-11-10, owner): M6.4 re-tests without the masks; bluebinder goes in M9,
 a50-audio-route in M10, rild/ofono in M11 (each milestone's DoD).
+M6.4 result (2026-11-14): all four M5 masks were removed; Android and the real allocator
+run, multi-user is reached and systemd settles degraded with zero jobs. Keep the units
+unmasked through their hardware milestones. Three separate diagnostic power masks remain;
+the existing M11 zero-mask gate still applies (follow-up in `08-open-questions.md`).
 M5.3 result (2026-11-10): test 5 reached multi-user at 84.17 s and degraded
 with zero jobs at 122/201 s; Android/device-helper failures reviewed and baseline
 restored clean (`log/2026-11-10-M5.3-split-control-test5.md`).
@@ -117,13 +121,20 @@ interpretation and runtime HAL masks. Root SSH over verified USB RNDIS on
 6.18, settled systemd, clean restore; current checker differences match M5.1.
 USB uses a one-boot usb-moded -f -r EnvironmentFile override; native charger/
 role detection and overlapping legacy USB/DHCP helpers remain M12. Full evidence:
-`log/2026-11-10-M5.4-usb-ssh.md`. M6 tickets written; implementation not started.
+`log/2026-11-10-M5.4-usb-ssh.md`. M6 implementation result follows below.
 
 ## M6 — Android container + ION
 Tasks: binder/binderfs, Rust ashmem, legacy ION ABI shim + Exynos heaps,
 SysMMU, sync_file, wakelocks.
 DoD: `sys.boot_completed=1` in container; `android.hardware.graphics.allocator@2.0-service`
 running; ION allocations succeed (contract capture replay).
+Result (2026-11-14): DoD met in M6.4 test 7. Real allocator registered over HIDL;
+64/32-bit replay passed as Android's system user; vendor/protected storage and USB
+preserved; stock restore/fsck clean. Runtime TEEGRIS action is deferred without fake
+readiness. Only measured heap 0 is implemented; secure heaps/security HALs, legacy
+task-profile migration and actual graphics DMA remain explicit limits. Three power
+masks remain until power prerequisites and the M11 zero-mask gate are resolved.
+Evidence: `log/2026-11-14-M6.4-runtime.md`, `reference/m64-runtime/results.json`.
 
 ## M7 — Display + GPU (Lomiri UI)
 Tasks: dpu20 DECON/DPP/DSIM + panel forward-port preserving ioctls; Mali kbase

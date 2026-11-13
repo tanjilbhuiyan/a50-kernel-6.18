@@ -1,0 +1,35 @@
+kernel=6.18.33-a50-diag+
+mount-android-partitions=masked
+android=STOPPED
+userdata=rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+/run/a50-m62-binderfs.6AWIjW binder binder rw,relatime,max=1048576,stats=global
+/run/a50-m62-binderfs.6AWIjW/binder-control character special file f8:0
+/run/a50-m62-binderfs.6AWIjW/binder character special file f8:1
+/run/a50-m62-binderfs.6AWIjW/hwbinder character special file f8:2
+/run/a50-m62-binderfs.6AWIjW/vndbinder character special file f8:3
+/run/a50-m62-binderfs.6AWIjW/binder: BINDER_VERSION=8
+/run/a50-m62-binderfs.6AWIjW/hwbinder: BINDER_VERSION=8
+/run/a50-m62-binderfs.6AWIjW/vndbinder: BINDER_VERSION=8
+PASS candidate: BinderFS and three Binder contexts
+/dev/binder -> /dev/binderfs/binder
+/dev/hwbinder -> /dev/binderfs/hwbinder
+/dev/vndbinder -> /dev/binderfs/vndbinder
+/dev/binder: BINDER_VERSION=8
+/dev/hwbinder: BINDER_VERSION=8
+/dev/vndbinder: BINDER_VERSION=8
+PASS: Halium Binder device paths
+ASHMEM_SET_SIZE / ASHMEM_GET_SIZE: 4096 bytes
+PASS: ashmem size ioctls and shared mmap
+merged fence: signaled=0 active=2 poll=0
+merged fence: signaled=1 active=1 poll=0
+merged fence: signaled=2 active=0 poll=1
+PASS: software timeline fences merge and signal in order
+repowerd.service load=masked active=inactive
+a50-enable-autosuspend.service load=masked active=inactive
+sleep.target load=masked active=inactive
+available sleep states: freeze mem
+a50-m62-wakelock-1307 manually acquired
+a50-m62-wakelock-1307 manually released
+a50-m62-wakelock-1307 timed acquisition expired
+PASS: native wakelock acquire, release and timeout
+online CPUs: 0-7

@@ -1,0 +1,1238 @@
+# 6.18 dump read back from /proc/last_kmsg (identifiers redacted: 2)
+===== A50 6.18 DMESG BEGIN (dump_after=420) =====
+[  114.382855] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  115.386758] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  116.390771] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  117.394686] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  118.398766] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  118.461747] init: starting service 'tz_service'...
+[  118.463286] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  118.463338] init: createProcessGroup(1000, 247) failed for service 'tz_service': Read-only file system
+[  118.486834] init: Service 'tz_service' (pid 247) exited with status 1
+[  118.486860] init: Sending signal 9 to service 'tz_service' (pid 247) process group...
+[  118.486918] libprocessgroup: Successfully killed process cgroup uid 1000 pid 247 in 0ms
+[  119.402696] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  120.059910] A50STATUS: BEGIN uptime=120.05 target=120
+[  120.059996] A50STATUS: CMD uname -r
+[  120.090103] A50STATUS: 6.18.33-a50-diag+
+[  120.090188] A50STATUS: RC 0
+[  120.090257] A50STATUS: CMD systemctl is-system-running
+[  120.124573] A50STATUS: starting
+[  120.124670] A50STATUS: RC 1
+[  120.124742] A50STATUS: CMD systemctl --failed --no-pager --plain --no-legend
+[  120.151894] A50STATUS: RC 0
+[  120.151986] A50STATUS: CMD systemctl list-jobs --no-pager --plain --no-legend
+[  120.186066] A50STATUS: 217 usb-rescue-mode-off.service                  start waiting
+[  120.186205] A50STATUS: 174 a50-audio-hidl-compat.service                start running
+[  120.186320] A50STATUS: 218 force-adb.service                            start waiting
+[  120.186431] A50STATUS: 212 factory-wipe.service                         start waiting
+[  120.186542] A50STATUS: 201 systemd-update-utmp-runlevel.service         start waiting
+[  120.186653] A50STATUS: 2   multi-user.target                            start waiting
+[  120.186763] A50STATUS: 196 lomiri-location-service.service              start running
+[  120.186873] A50STATUS: 189 android-set-boot-completion-property.service start waiting
+[  120.186984] A50STATUS: 216 aethercast.service                           start waiting
+[  120.187095] A50STATUS: 213 lightdm.service                              start waiting
+[  120.187206] A50STATUS: 1   graphical.target                             start waiting
+[  120.187286] A50STATUS: RC 0
+[  120.187359] A50STATUS: CMD systemctl show multi-user.target graphical.target -p Id -p ActiveState -p SubState -p Job
+[  120.225310] A50STATUS: Id=multi-user.target
+[  120.225418] A50STATUS: ActiveState=inactive
+[  120.225501] A50STATUS: SubState=dead
+[  120.225575] A50STATUS: Job=2
+[  120.225644] A50STATUS:
+[  120.225737] A50STATUS: Id=graphical.target
+[  120.225819] A50STATUS: ActiveState=inactive
+[  120.225896] A50STATUS: SubState=dead
+[  120.225967] A50STATUS: Job=1
+[  120.226048] A50STATUS: RC 0
+[  120.226120] A50STATUS: CMD systemctl show -p SystemState -p NFailedUnits -p NJobs
+[  120.261875] A50STATUS: NFailedUnits=0
+[  120.261972] A50STATUS: NJobs=11
+[  120.262060] A50STATUS: SystemState=starting
+[  120.262140] A50STATUS: RC 0
+[  120.262211] A50STATUS: CMD findmnt -no TARGET,OPTIONS /userdata
+[  120.288155] A50STATUS: /userdata rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  120.288241] A50STATUS: RC 0
+[  120.288309] A50STATUS: CMD ip -brief address
+[  120.311322] A50STATUS: lo               UNKNOWN        127.0.0.1/8 ::1/128
+[  120.311421] A50STATUS: sit0@NONE        DOWN
+[  120.311545] A50STATUS: usb0             UP             10.15.19.82/24 <redacted-linklocal>/64
+[  120.311623] A50STATUS: RC 0
+[  120.311699] A50STATUS: CMD systemctl show usb-moded.service usb-tethering.service usb-moded-udhcpd.service usb-moded-ssh.service -p Id -p ActiveState -p SubState
+[  120.367820] A50STATUS: Id=usb-moded.service
+[  120.367925] A50STATUS: ActiveState=active
+[  120.368007] A50STATUS: SubState=running
+[  120.368079] A50STATUS:
+[  120.368164] A50STATUS: Id=usb-tethering.service
+[  120.368250] A50STATUS: ActiveState=active
+[  120.368331] A50STATUS: SubState=running
+[  120.368400] A50STATUS:
+[  120.368487] A50STATUS: Id=usb-moded-udhcpd.service
+[  120.368568] A50STATUS: ActiveState=active
+[  120.368648] A50STATUS: SubState=running
+[  120.368716] A50STATUS:
+[  120.368801] A50STATUS: Id=usb-moded-ssh.service
+[  120.368881] A50STATUS: ActiveState=active
+[  120.368960] A50STATUS: SubState=running
+[  120.369041] A50STATUS: RC 0
+[  120.369136] A50STATUS: CMD /bin/sh -c for u in /sys/class/udc/*; do echo "UDC ${u##*/}"; cat "$u/state"; done; for g in /sys/kernel/config/usb_gadget/*; do echo "gadget ${g##*/}"; cat "$g/UDC"; find "$g/configs" -maxdepth 2 -type l -printf "%f -> %l\n"; done
+[  120.406656] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  120.413440] A50STATUS: UDC 13200000.usb
+[  120.413536] A50STATUS: configured
+[  120.413612] A50STATUS: gadget g1
+[  120.413704] A50STATUS: 13200000.usb
+[  120.413818] A50STATUS: rndis.usb0 -> ../../../../usb_gadget/g1/functions/rndis.usb0
+[  120.413897] A50STATUS: RC 0
+[  120.413961] A50STATUS: END target=120
+[  121.410649] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  121.602814] A50M64: BEGIN target=120 uptime=121.60
+[  121.602912] A50M64: CMD systemctl show mount-android-partitions.service a50-container-prepare.service lxc-android-config.service -p Id -p ActiveState -p SubState -p Result -p ExecMainStatus
+[  121.659682] A50M64: Result=success
+[  121.659786] A50M64: ExecMainStatus=0
+[  121.659886] A50M64: Id=mount-android-partitions.service
+[  121.659970] A50M64: ActiveState=active
+[  121.660052] A50M64: SubState=exited
+[  121.660126] A50M64:
+[  121.660206] A50M64: Result=success
+[  121.660286] A50M64: ExecMainStatus=0
+[  121.660380] A50M64: Id=a50-container-prepare.service
+[  121.660463] A50M64: ActiveState=active
+[  121.660543] A50M64: SubState=exited
+[  121.660614] A50M64:
+[  121.660694] A50M64: Result=success
+[  121.660775] A50M64: ExecMainStatus=0
+[  121.660864] A50M64: Id=lxc-android-config.service
+[  121.660947] A50M64: ActiveState=active
+[  121.661028] A50M64: SubState=running
+[  121.661112] A50M64: RC 0
+[  121.661182] A50M64: CMD lxc-info -n android
+[  121.686363] A50M64: Name:           android
+[  121.686472] A50M64: State:          RUNNING
+[  121.686562] A50M64: PID:            862
+[  121.686652] A50M64: IP:             10.15.19.82
+[  121.686736] A50M64: RC 0
+[  121.686809] A50M64: CMD lxc-attach -n android -- /system/bin/getprop sys.boot_completed
+[  121.721153] lxc[845]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[  121.747667] A50M64:
+[  121.747777] A50M64: RC 0
+[  121.747853] A50M64: CMD lxc-attach -n android -- /system/bin/getprop init.svc.vendor.gralloc-2-0
+[  121.783461] lxc[845]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[  121.818862] A50M64:
+[  121.818965] A50M64: RC 0
+[  121.819044] A50M64: CMD /bin/sh -c ps -eo pid,comm,args | grep -E "graphics.allocator|/system/bin/init|lxc-start|servicemanager" | grep -v grep
+[  121.860177] A50M64:     845 lxc-start       /usr/bin/lxc-start -n android -F -- /system/bin/env -i PATH=/product/bin:/apex/com.android.runtime/bin:/apex/com.android.art/bin:/sbin:/system/sbin:/system_ext/bin:/system/bin:/system/xbin:/odm/bin:/vendor/bin:/vendor/xbin INIT_STARTED_AT=0 /init second_stage
+[  121.860336] A50M64:     883 init            /system/bin/init subcontext u:r:vendor_init:s0 14
+[  121.860448] A50M64:     951 servicemanager  /system/bin/servicemanager
+[  121.860558] A50M64:     952 hwservicemanage /system/bin/hwservicemanager
+[  121.860675] A50M64:     953 vndservicemanag /vendor/bin/vndservicemanager /dev/vndbinder
+[  121.860763] A50M64: RC 0
+[  121.860840] A50M64: CMD /bin/sh -c cat /sys/fs/cgroup/cgroup.controllers; cat /sys/fs/cgroup/cgroup.subtree_control; cat /proc/self/cgroup
+[  121.908893] A50M64: cpuset io memory
+[  121.908995] A50M64: cpuset io memory
+[  121.909077] A50M64: 0::/init.scope
+[  121.909166] A50M64: RC 0
+[  121.909240] A50M64: CMD findmnt -R /android -o TARGET,SOURCE,FSTYPE,OPTIONS
+[  121.929194] A50M64: TARGET                                 SOURCE                                            FSTYPE OPTIONS
+[  121.929367] A50M64: /android                               /dev/loop1                                        ext4   ro,relatime
+[  121.929524] A50M64: |-/android/system                      /dev/loop1[/system]                               ext4   ro,relatime
+[  121.929733] A50M64: |-/android/data                        /dev/sda32[/android-data]                         ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  121.929926] A50M64: | `-/android/data                      /dev/sda32[/android-data]                         ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  121.930115] A50M64: |-/android/cache                       /dev/sda32[/cache]                                ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  121.930302] A50M64: | `-/android/cache                     /dev/sda32[/android-data/cache]                   ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  121.930477] A50M64: |-/android/vendor                      /dev/sda26                                        ext4   ro,nosuid,nodev,relatime,nodiscard,norecovery
+[  121.930650] A50M64: |-/android/mnt                         a50-android-mnt                                   tmpfs  rw,nosuid,nodev,relatime,size=16384k,mode=755
+[  121.930803] A50M64: |-/android/apex                        android_apex                                      tmpfs  rw,relatime
+[  121.930955] A50M64: | |-/android/apex/com.android.i18n     /dev/loop1[/system/apex/com.android.i18n]         ext4   ro,relatime
+[  121.931109] A50M64: | |-/android/apex/com.android.art      /dev/loop1[/system/apex/com.android.art.release]  ext4   ro,relatime
+[  121.931261] A50M64: | |-/android/apex/com.android.runtime  /dev/loop1[/system/apex/com.android.runtime]      ext4   ro,relatime
+[  121.931413] A50M64: | `-/android/apex/com.android.vndk.v30 /dev/loop1[/system/apex/com.android.vndk.current] ext4   ro,relatime
+[  121.931564] A50M64: `-/android/linkerconfig                linkerconfig                                      tmpfs  rw,relatime
+[  121.931651] A50M64: RC 0
+[  121.931731] A50M64: CMD tail -n 35 /run/a50-m64/mount.log
+[  121.962737] A50M64: A50M64: mount vendor /dev/disk/by-partlabel/vendor ro,noload,nodev,nosuid
+[  121.962861] A50M64: A50M64: EFS, SEC_EFS, CPEFS and physical cache mounts skipped
+[  121.962984] A50M64: TARGET             SOURCE                          FSTYPE OPTIONS
+[  121.963106] A50M64: /android           /dev/loop1                      ext4   ro,relatime
+[  121.963237] A50M64: ââ/android/system  /dev/loop1[/system]             ext4   ro,relatime
+[  121.963404] A50M64: ââ/android/data    /dev/sda32[/android-data]       ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  121.963572] A50M64: â ââ/android/data  /dev/sda32[/android-data]       ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  121.963736] A50M64: ââ/android/cache   /dev/sda32[/cache]              ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  121.963901] A50M64: â ââ/android/cache /dev/sda32[/android-data/cache] ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  121.964054] A50M64: ââ/android/vendor  /dev/sda26                      ext4   ro,nosuid,nodev,relatime,nodiscard,norecovery
+[  121.964202] A50M64: ââ/android/mnt     a50-android-mnt                 tmpfs  rw,nosuid,nodev,relatime,size=16384k,mode=755
+[  121.964305] A50M64: A50M64: safe Android mounts ready
+[  121.964387] A50M64: RC 0
+[  121.964462] A50M64: CMD /bin/sh -c tail -n 70 /run/a50-m64/lxc.log
+[  121.990681] A50M64: RC 0
+[  121.990782] A50M64: CMD journalctl -b --no-pager -n 35 -u mount-android-partitions.service -u a50-container-prepare.service -u lxc-android-config.service
+[  122.065531] A50M64: -- No entries --
+[  122.065637] A50M64: RC 0
+[  122.065725] A50M64: END target=120
+[  122.414649] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  123.418638] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  123.465749] init: starting service 'tz_service'...
+[  123.467230] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  123.467284] init: createProcessGroup(1000, 255) failed for service 'tz_service': Read-only file system
+[  123.490719] init: Service 'tz_service' (pid 255) exited with status 1
+[  123.490757] init: Sending signal 9 to service 'tz_service' (pid 255) process group...
+[  123.490823] libprocessgroup: Successfully killed process cgroup uid 1000 pid 255 in 0ms
+[  124.422703] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  125.426679] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  125.464820] systemd[1]: Finished a50-audio-hidl-compat.service - A50: present the 64-bit audio HIDL compat wrapper to PulseAudio.
+[  125.482100] systemd[1]: Starting lightdm.service - Light Display Manager...
+[  125.587245] systemd[1]: Started lightdm.service - Light Display Manager.
+[  125.592486] systemd[1]: Starting aethercast.service - Aethercast Wireless Display...
+[  125.596272] systemd[1]: Starting android-set-boot-completion-property.service - Set boot completion property in Android container...
+[  125.596544] systemd[1]: factory-wipe.service - Factory Wipe Watcher was skipped because of an unmet condition check (ConditionPathExists=/userdata/.factory_wipe).
+[  125.600249] systemd[1]: Starting usb-rescue-mode-off.service - Turn usb-moded rescue mode off...
+[  125.673861] init: sys_prop: invalid command 2
+[  125.673865] usb_moded[1898]: init_done -> reached
+[  125.675654] systemd[1]: Finished usb-rescue-mode-off.service - Turn usb-moded rescue mode off.
+[  125.680685] systemd[1]: Starting force-adb.service - Force enable or disable ADB as appropriate...
+[  125.702428] systemd[1]: Started aethercast.service - Aethercast Wireless Display.
+[  125.709270] init: sys_prop: invalid command 2
+[  125.727862] init: sys_prop: invalid command 2
+[  125.739583] systemd[1]: force-adb.service: Deactivated successfully.
+[  125.740066] systemd[1]: Finished force-adb.service - Force enable or disable ADB as appropriate.
+[  125.776570] init: sys_prop: invalid command 2
+[  125.795701] systemd[1]: android-set-boot-completion-property.service: Deactivated successfully.
+[  125.796210] systemd[1]: Finished android-set-boot-completion-property.service - Set boot completion property in Android container.
+[  126.215383] systemd[1]: lightdm.service: Main process exited, code=exited, status=1/FAILURE
+[  126.215576] systemd[1]: lightdm.service: Failed with result 'exit-code'.
+[  126.430847] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  126.507408] systemd[1]: lightdm.service: Scheduled restart job, restart counter is at 1.
+[  126.534373] systemd[1]: Starting lightdm.service - Light Display Manager...
+[  126.622248] systemd[1]: Started lightdm.service - Light Display Manager.
+[  126.688351] init: sys_prop: invalid command 2
+[  126.909152] systemd[1]: lightdm.service: Main process exited, code=exited, status=1/FAILURE
+[  126.909354] systemd[1]: lightdm.service: Failed with result 'exit-code'.
+[  127.255382] systemd[1]: lightdm.service: Scheduled restart job, restart counter is at 2.
+[  127.282411] systemd[1]: Starting lightdm.service - Light Display Manager...
+[  127.377188] systemd[1]: Started lightdm.service - Light Display Manager.
+[  127.434836] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  127.512897] init: sys_prop: invalid command 2
+[  127.978015] systemd[1]: lightdm.service: Main process exited, code=exited, status=1/FAILURE
+[  127.978225] systemd[1]: lightdm.service: Failed with result 'exit-code'.
+[  128.255385] systemd[1]: lightdm.service: Scheduled restart job, restart counter is at 3.
+[  128.282066] systemd[1]: Starting lightdm.service - Light Display Manager...
+[  128.376972] systemd[1]: Started lightdm.service - Light Display Manager.
+[  128.438751] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  128.443116] init: sys_prop: invalid command 2
+[  128.469743] init: starting service 'tz_service'...
+[  128.471238] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  128.471284] init: createProcessGroup(1000, 261) failed for service 'tz_service': Read-only file system
+[  128.493722] init: Service 'tz_service' (pid 261) exited with status 1
+[  128.493759] init: Sending signal 9 to service 'tz_service' (pid 261) process group...
+[  128.493836] libprocessgroup: Successfully killed process cgroup uid 1000 pid 261 in 0ms
+[  128.636055] systemd[1]: lightdm.service: Main process exited, code=exited, status=1/FAILURE
+[  128.636274] systemd[1]: lightdm.service: Failed with result 'exit-code'.
+[  128.755251] systemd[1]: lightdm.service: Scheduled restart job, restart counter is at 4.
+[  128.778083] systemd[1]: Starting lightdm.service - Light Display Manager...
+[  128.856917] systemd[1]: Started lightdm.service - Light Display Manager.
+[  128.921981] init: sys_prop: invalid command 2
+[  129.115811] systemd[1]: lightdm.service: Main process exited, code=exited, status=1/FAILURE
+[  129.116028] systemd[1]: lightdm.service: Failed with result 'exit-code'.
+[  129.255172] systemd[1]: lightdm.service: Scheduled restart job, restart counter is at 5.
+[  129.255639] systemd[1]: lightdm.service: Start request repeated too quickly.
+[  129.255664] systemd[1]: lightdm.service: Failed with result 'exit-code'.
+[  129.255823] systemd[1]: Failed to start lightdm.service - Light Display Manager.
+[  129.442886] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  130.446793] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  131.450794] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  132.454791] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  133.458760] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  133.473712] init: starting service 'tz_service'...
+[  133.475178] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  133.475227] init: createProcessGroup(1000, 267) failed for service 'tz_service': Read-only file system
+[  133.498805] init: Service 'tz_service' (pid 267) exited with status 1
+[  133.498831] init: Sending signal 9 to service 'tz_service' (pid 267) process group...
+[  133.498897] libprocessgroup: Successfully killed process cgroup uid 1000 pid 267 in 0ms
+[  134.462849] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  135.466769] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  136.470820] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  137.474726] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  138.477950] init: starting service 'tz_service'...
+[  138.479487] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  138.479542] init: createProcessGroup(1000, 273) failed for service 'tz_service': Read-only file system
+[  138.480102] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  138.502746] init: Service 'tz_service' (pid 273) exited with status 1
+[  138.502786] init: Sending signal 9 to service 'tz_service' (pid 273) process group...
+[  138.502853] libprocessgroup: Successfully killed process cgroup uid 1000 pid 273 in 0ms
+[  139.482874] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  140.486797] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  141.490720] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  142.494793] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  143.481755] init: starting service 'tz_service'...
+[  143.483270] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  143.483323] init: createProcessGroup(1000, 278) failed for service 'tz_service': Read-only file system
+[  143.498722] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  143.506847] init: Service 'tz_service' (pid 278) exited with status 1
+[  143.506887] init: Sending signal 9 to service 'tz_service' (pid 278) process group...
+[  143.506946] libprocessgroup: Successfully killed process cgroup uid 1000 pid 278 in 0ms
+[  144.502840] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  145.506736] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  146.510793] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  147.514728] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  148.485771] init: starting service 'tz_service'...
+[  148.487278] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  148.487332] init: createProcessGroup(1000, 284) failed for service 'tz_service': Read-only file system
+[  148.510760] init: Service 'tz_service' (pid 284) exited with status 1
+[  148.510795] init: Sending signal 9 to service 'tz_service' (pid 284) process group...
+[  148.510855] libprocessgroup: Successfully killed process cgroup uid 1000 pid 284 in 0ms
+[  148.518694] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  149.522731] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  150.526800] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  151.530715] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  152.534775] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  153.489753] init: starting service 'tz_service'...
+[  153.491283] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  153.491337] init: createProcessGroup(1000, 290) failed for service 'tz_service': Read-only file system
+[  153.514687] init: Service 'tz_service' (pid 290) exited with status 1
+[  153.514725] init: Sending signal 9 to service 'tz_service' (pid 290) process group...
+[  153.514785] libprocessgroup: Successfully killed process cgroup uid 1000 pid 290 in 0ms
+[  153.538618] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  154.542785] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  155.546749] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  155.753705] systemd[1]: lomiri-location-service.service: start operation timed out. Terminating.
+[  156.550779] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  157.554763] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  158.493775] init: starting service 'tz_service'...
+[  158.495216] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  158.495270] init: createProcessGroup(1000, 296) failed for service 'tz_service': Read-only file system
+[  158.518696] init: Service 'tz_service' (pid 296) exited with status 1
+[  158.518735] init: Sending signal 9 to service 'tz_service' (pid 296) process group...
+[  158.518792] libprocessgroup: Successfully killed process cgroup uid 1000 pid 296 in 0ms
+[  158.558612] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  159.562754] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  160.566802] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  161.570723] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  162.574750] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  163.497755] init: starting service 'tz_service'...
+[  163.499321] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  163.499371] init: createProcessGroup(1000, 302) failed for service 'tz_service': Read-only file system
+[  163.522770] init: Service 'tz_service' (pid 302) exited with status 1
+[  163.522810] init: Sending signal 9 to service 'tz_service' (pid 302) process group...
+[  163.522867] libprocessgroup: Successfully killed process cgroup uid 1000 pid 302 in 0ms
+[  163.578602] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  164.582780] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  165.586742] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  166.005719] systemd[1]: lomiri-location-service.service: State 'stop-sigterm' timed out. Killing.
+[  166.005858] systemd[1]: lomiri-location-service.service: Killing process 1962 (lomiri-location) with signal SIGKILL.
+[  166.015062] binder: release 1962:2004 transaction 157 out, still active
+[  166.015879] systemd[1]: lomiri-location-service.service: Main process exited, code=killed, status=9/KILL
+[  166.016082] systemd[1]: lomiri-location-service.service: Failed with result 'timeout'.
+[  166.016780] systemd[1]: Failed to start lomiri-location-service.service - Location Services.
+[  166.018774] systemd[1]: Reached target multi-user.target - Multi-User System.
+[  166.019258] systemd[1]: Reached target graphical.target - Graphical Interface.
+[  166.046313] systemd[1]: Starting systemd-update-utmp-runlevel.service - Record Runlevel Change in UTMP...
+[  166.072642] systemd[1]: systemd-update-utmp-runlevel.service: Deactivated successfully.
+[  166.073159] systemd[1]: Finished systemd-update-utmp-runlevel.service - Record Runlevel Change in UTMP.
+[  166.073865] systemd[1]: Startup finished in 19.791s (kernel) + 2min 26.280s (userspace) = 2min 46.072s.
+[  166.590797] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  167.594695] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  168.501775] init: starting service 'tz_service'...
+[  168.503291] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  168.503345] init: createProcessGroup(1000, 308) failed for service 'tz_service': Read-only file system
+[  168.526635] init: Service 'tz_service' (pid 308) exited with status 1
+[  168.526673] init: Sending signal 9 to service 'tz_service' (pid 308) process group...
+[  168.526737] libprocessgroup: Successfully killed process cgroup uid 1000 pid 308 in 0ms
+[  168.598717] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  169.602713] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  170.606874] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  171.255185] systemd[1]: lomiri-location-service.service: Scheduled restart job, restart counter is at 1.
+[  171.274241] systemd[1]: Starting lomiri-location-service.service - Location Services...
+[  171.286756] init: sys_prop: invalid command 2
+[  171.311757] init: sys_prop: invalid command 2
+[  171.420267] init: sys_prop: invalid command 2
+[  171.610932] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  172.614817] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  173.505755] init: starting service 'tz_service'...
+[  173.507251] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  173.507304] init: createProcessGroup(1000, 314) failed for service 'tz_service': Read-only file system
+[  173.530821] init: Service 'tz_service' (pid 314) exited with status 1
+[  173.530848] init: Sending signal 9 to service 'tz_service' (pid 314) process group...
+[  173.530905] libprocessgroup: Successfully killed process cgroup uid 1000 pid 314 in 0ms
+[  173.618729] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  174.622771] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  175.626753] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  176.630761] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  177.634764] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  178.509773] init: starting service 'tz_service'...
+[  178.511270] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  178.511322] init: createProcessGroup(1000, 320) failed for service 'tz_service': Read-only file system
+[  178.534617] init: Service 'tz_service' (pid 320) exited with status 1
+[  178.534645] init: Sending signal 9 to service 'tz_service' (pid 320) process group...
+[  178.534703] libprocessgroup: Successfully killed process cgroup uid 1000 pid 320 in 0ms
+[  178.638726] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  179.642739] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  180.646766] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  181.650755] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  182.654795] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  183.513751] init: starting service 'tz_service'...
+[  183.515261] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  183.515313] init: createProcessGroup(1000, 326) failed for service 'tz_service': Read-only file system
+[  183.538867] init: Service 'tz_service' (pid 326) exited with status 1
+[  183.538894] init: Sending signal 9 to service 'tz_service' (pid 326) process group...
+[  183.538953] libprocessgroup: Successfully killed process cgroup uid 1000 pid 326 in 0ms
+[  183.658744] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  184.662764] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  185.666783] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  186.670813] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  187.005638] systemd[1]: aethercast.service: Deactivated successfully.
+[  187.674886] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  188.517863] init: starting service 'tz_service'...
+[  188.519337] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  188.519390] init: createProcessGroup(1000, 332) failed for service 'tz_service': Read-only file system
+[  188.542741] init: Service 'tz_service' (pid 332) exited with status 1
+[  188.542767] init: Sending signal 9 to service 'tz_service' (pid 332) process group...
+[  188.542825] libprocessgroup: Successfully killed process cgroup uid 1000 pid 332 in 0ms
+[  188.678691] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  189.682725] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  190.686789] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  191.690739] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  192.694764] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  193.521749] init: starting service 'tz_service'...
+[  193.523228] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  193.523281] init: createProcessGroup(1000, 338) failed for service 'tz_service': Read-only file system
+[  193.546868] init: Service 'tz_service' (pid 338) exited with status 1
+[  193.546908] init: Sending signal 9 to service 'tz_service' (pid 338) process group...
+[  193.546972] libprocessgroup: Successfully killed process cgroup uid 1000 pid 338 in 0ms
+[  193.698727] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  194.702792] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  195.706763] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  196.710799] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  197.714754] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  198.525768] init: starting service 'tz_service'...
+[  198.527318] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  198.527373] init: createProcessGroup(1000, 344) failed for service 'tz_service': Read-only file system
+[  198.550825] init: Service 'tz_service' (pid 344) exited with status 1
+[  198.550864] init: Sending signal 9 to service 'tz_service' (pid 344) process group...
+[  198.550922] libprocessgroup: Successfully killed process cgroup uid 1000 pid 344 in 0ms
+[  198.718722] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  199.722723] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  200.587966] A50M64: BEGIN target=200 uptime=200.58
+[  200.588089] A50M64: CMD systemctl show mount-android-partitions.service a50-container-prepare.service lxc-android-config.service -p Id -p ActiveState -p SubState -p Result -p ExecMainStatus
+[  200.638611] A50M64: Result=success
+[  200.638747] A50M64: ExecMainStatus=0
+[  200.638871] A50M64: Id=mount-android-partitions.service
+[  200.638978] A50M64: ActiveState=active
+[  200.639083] A50M64: SubState=exited
+[  200.639178] A50M64:
+[  200.639281] A50M64: Result=success
+[  200.639386] A50M64: ExecMainStatus=0
+[  200.639510] A50M64: Id=a50-container-prepare.service
+[  200.639617] A50M64: ActiveState=active
+[  200.639720] A50M64: SubState=exited
+[  200.639814] A50M64:
+[  200.639915] A50M64: Result=success
+[  200.640020] A50M64: ExecMainStatus=0
+[  200.640134] A50M64: Id=lxc-android-config.service
+[  200.640240] A50M64: ActiveState=active
+[  200.640346] A50M64: SubState=running
+[  200.640451] A50M64: RC 0
+[  200.640544] A50M64: CMD lxc-info -n android
+[  200.671297] A50M64: Name:           android
+[  200.671429] A50M64: State:          RUNNING
+[  200.671543] A50M64: PID:            862
+[  200.671661] A50M64: IP:             10.15.19.82
+[  200.671767] A50M64: RC 0
+[  200.671868] A50M64: CMD lxc-attach -n android -- /system/bin/getprop sys.boot_completed
+[  200.700017] lxc[845]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[  200.726699] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  200.742687] A50M64: 1
+[  200.742814] A50M64: RC 0
+[  200.742912] A50M64: CMD lxc-attach -n android -- /system/bin/getprop init.svc.vendor.gralloc-2-0
+[  200.777254] lxc[845]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[  200.836155] A50M64:
+[  200.836277] A50M64: RC 0
+[  200.836389] A50M64: CMD /bin/sh -c ps -eo pid,comm,args | grep -E "graphics.allocator|/system/bin/init|lxc-start|servicemanager" | grep -v grep
+[  200.894624] A50M64:     845 lxc-start       /usr/bin/lxc-start -n android -F -- /system/bin/env -i PATH=/product/bin:/apex/com.android.runtime/bin:/apex/com.android.art/bin:/sbin:/system/sbin:/system_ext/bin:/system/bin:/system/xbin:/odm/bin:/vendor/bin:/vendor/xbin INIT_STARTED_AT=0 /init second_stage
+[  200.894812] A50M64:     883 init            /system/bin/init subcontext u:r:vendor_init:s0 14
+[  200.894947] A50M64:     951 servicemanager  /system/bin/servicemanager
+[  200.895079] A50M64:     952 hwservicemanage /system/bin/hwservicemanager
+[  200.895229] A50M64:     953 vndservicemanag /vendor/bin/vndservicemanager /dev/vndbinder
+[  200.895343] A50M64: RC 0
+[  200.895443] A50M64: CMD /bin/sh -c cat /sys/fs/cgroup/cgroup.controllers; cat /sys/fs/cgroup/cgroup.subtree_control; cat /proc/self/cgroup
+[  200.943415] A50M64: cpuset io memory
+[  200.943545] A50M64: cpuset io memory
+[  200.943652] A50M64: 0::/init.scope
+[  200.943760] A50M64: RC 0
+[  200.943859] A50M64: CMD findmnt -R /android -o TARGET,SOURCE,FSTYPE,OPTIONS
+[  200.964870] A50M64: TARGET                                 SOURCE                                            FSTYPE OPTIONS
+[  200.965066] A50M64: /android                               /dev/loop1                                        ext4   ro,relatime
+[  200.965247] A50M64: |-/android/system                      /dev/loop1[/system]                               ext4   ro,relatime
+[  200.965463] A50M64: |-/android/data                        /dev/sda32[/android-data]                         ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  200.965699] A50M64: | `-/android/data                      /dev/sda32[/android-data]                         ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  200.965922] A50M64: |-/android/cache                       /dev/sda32[/cache]                                ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  200.966136] A50M64: | `-/android/cache                     /dev/sda32[/android-data/cache]                   ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  200.966338] A50M64: |-/android/vendor                      /dev/sda26                                        ext4   ro,nosuid,nodev,relatime,nodiscard,norecovery
+[  200.966536] A50M64: |-/android/mnt                         a50-android-mnt                                   tmpfs  rw,nosuid,nodev,relatime,size=16384k,mode=755
+[  200.966713] A50M64: |-/android/apex                        android_apex                                      tmpfs  rw,relatime
+[  200.966903] A50M64: | |-/android/apex/com.android.i18n     /dev/loop1[/system/apex/com.android.i18n]         ext4   ro,relatime
+[  200.967083] A50M64: | |-/android/apex/com.android.art      /dev/loop1[/system/apex/com.android.art.release]  ext4   ro,relatime
+[  200.967269] A50M64: | |-/android/apex/com.android.runtime  /dev/loop1[/system/apex/com.android.runtime]      ext4   ro,relatime
+[  200.967454] A50M64: | `-/android/apex/com.android.vndk.v30 /dev/loop1[/system/apex/com.android.vndk.current] ext4   ro,relatime
+[  200.967626] A50M64: `-/android/linkerconfig                linkerconfig                                      tmpfs  rw,relatime
+[  200.967737] A50M64: RC 0
+[  200.967837] A50M64: CMD tail -n 35 /run/a50-m64/mount.log
+[  200.991145] A50M64: A50M64: mount vendor /dev/disk/by-partlabel/vendor ro,noload,nodev,nosuid
+[  200.991309] A50M64: A50M64: EFS, SEC_EFS, CPEFS and physical cache mounts skipped
+[  200.991459] A50M64: TARGET             SOURCE                          FSTYPE OPTIONS
+[  200.991614] A50M64: /android           /dev/loop1                      ext4   ro,relatime
+[  200.991770] A50M64: ââ/android/system  /dev/loop1[/system]             ext4   ro,relatime
+[  200.991963] A50M64: ââ/android/data    /dev/sda32[/android-data]       ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  200.992161] A50M64: â ââ/android/data  /dev/sda32[/android-data]       ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  200.992352] A50M64: ââ/android/cache   /dev/sda32[/cache]              ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  200.992557] A50M64: â ââ/android/cache /dev/sda32[/android-data/cache] ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  200.992736] A50M64: ââ/android/vendor  /dev/sda26                      ext4   ro,nosuid,nodev,relatime,nodiscard,norecovery
+[  200.992911] A50M64: ââ/android/mnt     a50-android-mnt                 tmpfs  rw,nosuid,nodev,relatime,size=16384k,mode=755
+[  200.993049] A50M64: A50M64: safe Android mounts ready
+[  200.993159] A50M64: RC 0
+[  200.993259] A50M64: CMD /bin/sh -c tail -n 70 /run/a50-m64/lxc.log
+[  201.019603] A50M64: RC 0
+[  201.019728] A50M64: CMD journalctl -b --no-pager -n 35 -u mount-android-partitions.service -u a50-container-prepare.service -u lxc-android-config.service
+[  201.043726] A50STATUS: BEGIN uptime=201.04 target=200
+[  201.043848] A50STATUS: CMD uname -r
+[  201.068022] A50M64: -- No entries --
+[  201.068167] A50M64: RC 0
+[  201.068265] A50M64: END target=200
+[  201.071490] A50STATUS: 6.18.33-a50-diag+
+[  201.071614] A50STATUS: RC 0
+[  201.071714] A50STATUS: CMD systemctl is-system-running
+[  201.090739] A50STATUS: degraded
+[  201.090875] A50STATUS: RC 1
+[  201.090992] A50STATUS: CMD systemctl --failed --no-pager --plain --no-legend
+[  201.125170] A50STATUS: lightdm.service loaded failed failed Light Display Manager
+[  201.125308] A50STATUS: RC 0
+[  201.125415] A50STATUS: CMD systemctl list-jobs --no-pager --plain --no-legend
+[  201.159197] A50STATUS: 2949 lomiri-location-service.service start running
+[  201.159335] A50STATUS: RC 0
+[  201.159455] A50STATUS: CMD systemctl show multi-user.target graphical.target -p Id -p ActiveState -p SubState -p Job
+[  201.197686] A50STATUS: Id=multi-user.target
+[  201.197837] A50STATUS: ActiveState=active
+[  201.197954] A50STATUS: SubState=active
+[  201.198057] A50STATUS: Job=
+[  201.198161] A50STATUS:
+[  201.198275] A50STATUS: Id=graphical.target
+[  201.198398] A50STATUS: ActiveState=active
+[  201.198511] A50STATUS: SubState=active
+[  201.198614] A50STATUS: Job=
+[  201.198737] A50STATUS: RC 0
+[  201.198842] A50STATUS: CMD systemctl show -p SystemState -p NFailedUnits -p NJobs
+[  201.235037] A50STATUS: NFailedUnits=1
+[  201.235169] A50STATUS: NJobs=1
+[  201.235295] A50STATUS: SystemState=degraded
+[  201.235410] A50STATUS: RC 0
+[  201.235524] A50STATUS: CMD findmnt -no TARGET,OPTIONS /userdata
+[  201.254027] A50STATUS: /userdata rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  201.254175] A50STATUS: RC 0
+[  201.254279] A50STATUS: CMD ip -brief address
+[  201.276940] A50STATUS: lo               UNKNOWN        127.0.0.1/8 ::1/128
+[  201.277072] A50STATUS: sit0@NONE        DOWN
+[  201.277233] A50STATUS: usb0             UP             10.15.19.82/24 <redacted-linklocal>/64
+[  201.277348] A50STATUS: RC 0
+[  201.277456] A50STATUS: CMD systemctl show usb-moded.service usb-tethering.service usb-moded-udhcpd.service usb-moded-ssh.service -p Id -p ActiveState -p SubState
+[  201.334309] A50STATUS: Id=usb-moded.service
+[  201.334449] A50STATUS: ActiveState=active
+[  201.334566] A50STATUS: SubState=running
+[  201.334682] A50STATUS:
+[  201.334802] A50STATUS: Id=usb-tethering.service
+[  201.334923] A50STATUS: ActiveState=active
+[  201.335047] A50STATUS: SubState=running
+[  201.335149] A50STATUS:
+[  201.335272] A50STATUS: Id=usb-moded-udhcpd.service
+[  201.335387] A50STATUS: ActiveState=active
+[  201.335501] A50STATUS: SubState=running
+[  201.335606] A50STATUS:
+[  201.335726] A50STATUS: Id=usb-moded-ssh.service
+[  201.335849] A50STATUS: ActiveState=active
+[  201.335963] A50STATUS: SubState=running
+[  201.336080] A50STATUS: RC 0
+[  201.336208] A50STATUS: CMD /bin/sh -c for u in /sys/class/udc/*; do echo "UDC ${u##*/}"; cat "$u/state"; done; for g in /sys/kernel/config/usb_gadget/*; do echo "gadget ${g##*/}"; cat "$g/UDC"; find "$g/configs" -maxdepth 2 -type l -printf "%f -> %l\n"; done
+[  201.381536] A50STATUS: UDC 13200000.usb
+[  201.381689] A50STATUS: configured
+[  201.381812] A50STATUS: gadget g1
+[  201.381938] A50STATUS: 13200000.usb
+[  201.382086] A50STATUS: rndis.usb0 -> ../../../../usb_gadget/g1/functions/rndis.usb0
+[  201.382204] A50STATUS: RC 0
+[  201.382305] A50STATUS: END target=200
+[  201.730852] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  202.734758] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  203.529773] init: starting service 'tz_service'...
+[  203.531271] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  203.531344] init: createProcessGroup(1000, 352) failed for service 'tz_service': Read-only file system
+[  203.554770] init: Service 'tz_service' (pid 352) exited with status 1
+[  203.554805] init: Sending signal 9 to service 'tz_service' (pid 352) process group...
+[  203.554866] libprocessgroup: Successfully killed process cgroup uid 1000 pid 352 in 0ms
+[  203.738753] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  204.742785] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  205.746772] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  206.750783] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  207.754808] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  208.533791] init: starting service 'tz_service'...
+[  208.535313] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  208.535365] init: createProcessGroup(1000, 358) failed for service 'tz_service': Read-only file system
+[  208.558763] init: Service 'tz_service' (pid 358) exited with status 1
+[  208.558791] init: Sending signal 9 to service 'tz_service' (pid 358) process group...
+[  208.558850] libprocessgroup: Successfully killed process cgroup uid 1000 pid 358 in 0ms
+[  208.758733] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  209.762828] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  210.766763] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  211.770774] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  212.774810] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  213.537770] init: starting service 'tz_service'...
+[  213.539255] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  213.539311] init: createProcessGroup(1000, 364) failed for service 'tz_service': Read-only file system
+[  213.562813] init: Service 'tz_service' (pid 364) exited with status 1
+[  213.562854] init: Sending signal 9 to service 'tz_service' (pid 364) process group...
+[  213.562912] libprocessgroup: Successfully killed process cgroup uid 1000 pid 364 in 0ms
+[  213.778748] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  214.782791] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  215.786777] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  216.790862] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  217.794779] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  218.541766] init: starting service 'tz_service'...
+[  218.543272] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  218.543326] init: createProcessGroup(1000, 370) failed for service 'tz_service': Read-only file system
+[  218.566829] init: Service 'tz_service' (pid 370) exited with status 1
+[  218.566858] init: Sending signal 9 to service 'tz_service' (pid 370) process group...
+[  218.566924] libprocessgroup: Successfully killed process cgroup uid 1000 pid 370 in 0ms
+[  218.798738] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  219.802799] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  220.598184] lxc[845]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[  220.671934] lxc[845]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[  220.744034] lxc[845]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[  220.806693] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  220.878341] lxc[845]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[  220.984400] lxc[845]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[  221.043674] lxc[845]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[  221.157179] lxc[845]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[  221.721743] binder: release 3271:3280 transaction 844 out, still active
+[  221.810756] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  222.225740] binder: release 3271:3281 transaction 845 out, still active
+[  222.729738] binder: release 3271:3284 transaction 852 out, still active
+[  222.814705] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  223.233728] binder: release 3271:3285 transaction 853 out, still active
+[  223.545755] init: starting service 'tz_service'...
+[  223.547265] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  223.547319] init: createProcessGroup(1000, 403) failed for service 'tz_service': Read-only file system
+[  223.570690] init: Service 'tz_service' (pid 403) exited with status 1
+[  223.570728] init: Sending signal 9 to service 'tz_service' (pid 403) process group...
+[  223.570791] libprocessgroup: Successfully killed process cgroup uid 1000 pid 403 in 0ms
+[  223.737763] binder: release 3271:3289 transaction 858 out, still active
+[  223.818778] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  224.241752] binder: release 3271:3291 transaction 859 out, still active
+[  224.745740] binder: release 3271:3294 transaction 866 out, still active
+[  224.822687] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  225.249712] binder: release 3271:3295 transaction 867 out, still active
+[  225.761742] binder: release 3271:3319 transaction 917 out, still active
+[  225.826734] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  226.265740] binder: release 3271:3320 transaction 918 out, still active
+[  226.385938] lxc[845]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[  226.445315] lxc[845]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[  226.519056] lxc[845]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[  226.834728] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  227.014647] systemd[1]: session-8.scope: Deactivated successfully.
+[  227.015055] systemd[1]: session-8.scope: Consumed 1.722s CPU time.
+[  227.838985] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  228.549742] init: starting service 'tz_service'...
+[  228.551237] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  228.551312] init: createProcessGroup(1000, 443) failed for service 'tz_service': Read-only file system
+[  228.574767] init: Service 'tz_service' (pid 443) exited with status 1
+[  228.574793] init: Sending signal 9 to service 'tz_service' (pid 443) process group...
+[  228.574856] libprocessgroup: Successfully killed process cgroup uid 1000 pid 443 in 0ms
+[  228.842648] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  229.846776] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  230.850716] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  231.854888] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  232.858718] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  233.553741] init: starting service 'tz_service'...
+[  233.555234] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  233.555286] init: createProcessGroup(1000, 449) failed for service 'tz_service': Read-only file system
+[  233.578838] init: Service 'tz_service' (pid 449) exited with status 1
+[  233.578863] init: Sending signal 9 to service 'tz_service' (pid 449) process group...
+[  233.578919] libprocessgroup: Successfully killed process cgroup uid 1000 pid 449 in 0ms
+[  233.862713] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  234.866646] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  235.870833] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  236.874726] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  237.256677] systemd[1]: Stopping user@0.service - User Manager for UID 0...
+[  237.262337] systemd[2170]: Activating special unit exit.target...
+[  237.263501] systemd[2170]: Removed slice session.slice - User Core Session Slice.
+[  237.263688] systemd[2170]: Stopped target default.target - Main User Target.
+[  237.264770] systemd[2170]: Stopping audiosystem-passthrough-af.service - audiosystem-passthrough instance implementing AF interface...
+[  237.268376] systemd[2170]: Stopped audiosystem-passthrough-af.service - audiosystem-passthrough instance implementing AF interface.
+[  237.269042] systemd[2170]: Stopped target basic.target - Basic System.
+[  237.269172] systemd[2170]: Stopped target paths.target - Paths.
+[  237.269244] systemd[2170]: Stopped target sockets.target - Sockets.
+[  237.269364] systemd[2170]: Stopped target timers.target - Timers.
+[  237.269451] systemd[2170]: Stopped launchpadlib-cache-clean.timer - Clean up old files in the Launchpadlib cache.
+[  237.271052] systemd[2170]: Closed dbus.socket - D-Bus User Message Bus Socket.
+[  237.271661] systemd[2170]: Closed dirmngr.socket - GnuPG network certificate management daemon.
+[  237.272229] systemd[2170]: Closed gnome-keyring-daemon.socket - GNOME Keyring daemon.
+[  237.272735] systemd[2170]: Closed gpg-agent-browser.socket - GnuPG cryptographic agent and passphrase cache (access for web browsers).
+[  237.273183] systemd[2170]: Closed gpg-agent-extra.socket - GnuPG cryptographic agent and passphrase cache (restricted).
+[  237.289689] binder: undelivered death notification, 0000000000000000
+[  237.289963] systemd[2170]: Stopping gpg-agent-ssh.socket - GnuPG cryptographic agent (ssh-agent emulation)...
+[  237.292779] systemd[2170]: Stopping gpg-agent.socket - GnuPG cryptographic agent and passphrase cache...
+[  237.293229] systemd[2170]: Closed keyboxd.socket - GnuPG public key management service.
+[  237.293782] systemd[2170]: Closed pk-debconf-helper.socket - debconf communication socket.
+[  237.294368] systemd[2170]: Closed snapd.session-agent.socket - REST API socket for snapd user session agent.
+[  237.325798] systemd[2170]: Closed gpg-agent-ssh.socket - GnuPG cryptographic agent (ssh-agent emulation).
+[  237.327565] systemd[2170]: Closed gpg-agent.socket - GnuPG cryptographic agent and passphrase cache.
+[  237.330363] systemd[2170]: Closed gcr-ssh-agent.socket - GCR ssh-agent wrapper.
+[  237.333382] systemd[2170]: Stopping ssh-agent.socket - OpenSSH Agent socket...
+[  237.377516] systemd[2170]: Closed ssh-agent.socket - OpenSSH Agent socket.
+[  237.419287] systemd[2170]: Removed slice app.slice - User Application Slice.
+[  237.419464] systemd[2170]: Reached target shutdown.target - Shutdown.
+[  237.420076] systemd[2170]: Finished systemd-exit.service - Exit the Session.
+[  237.420258] systemd[2170]: Reached target exit.target - Exit the Session.
+[  237.469782] systemd[1]: user@0.service: Deactivated successfully.
+[  237.470565] systemd[1]: Stopped user@0.service - User Manager for UID 0.
+[  237.471013] systemd[1]: user@0.service: Consumed 2.690s CPU time.
+[  237.498103] systemd[1]: Stopping user-runtime-dir@0.service - User Runtime Directory /run/user/0...
+[  237.537168] systemd[1]: run-user-0.mount: Deactivated successfully.
+[  237.539279] systemd[1]: user-runtime-dir@0.service: Deactivated successfully.
+[  237.539711] systemd[1]: Stopped user-runtime-dir@0.service - User Runtime Directory /run/user/0.
+[  237.542911] systemd[1]: Removed slice user-0.slice - User Slice of UID 0.
+[  237.543186] systemd[1]: user-0.slice: Consumed 6.517s CPU time.
+[  237.878830] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  238.557752] init: starting service 'tz_service'...
+[  238.559272] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  238.559325] init: createProcessGroup(1000, 455) failed for service 'tz_service': Read-only file system
+[  238.582693] init: Service 'tz_service' (pid 455) exited with status 1
+[  238.582719] init: Sending signal 9 to service 'tz_service' (pid 455) process group...
+[  238.582780] libprocessgroup: Successfully killed process cgroup uid 1000 pid 455 in 0ms
+[  238.882697] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  239.886671] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  240.890632] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  241.894684] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  242.898612] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  243.561739] init: starting service 'tz_service'...
+[  243.563213] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  243.563268] init: createProcessGroup(1000, 461) failed for service 'tz_service': Read-only file system
+[  243.586645] init: Service 'tz_service' (pid 461) exited with status 1
+[  243.586669] init: Sending signal 9 to service 'tz_service' (pid 461) process group...
+[  243.586730] libprocessgroup: Successfully killed process cgroup uid 1000 pid 461 in 0ms
+[  243.902642] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  244.906524] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  245.910669] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  246.914764] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  247.918649] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  248.565741] init: starting service 'tz_service'...
+[  248.567245] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  248.567298] init: createProcessGroup(1000, 467) failed for service 'tz_service': Read-only file system
+[  248.590606] init: Service 'tz_service' (pid 467) exited with status 1
+[  248.590643] init: Sending signal 9 to service 'tz_service' (pid 467) process group...
+[  248.590703] libprocessgroup: Successfully killed process cgroup uid 1000 pid 467 in 0ms
+[  248.922656] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  249.926615] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  250.930620] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  251.934672] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  252.938580] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  253.569738] init: starting service 'tz_service'...
+[  253.571218] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  253.571269] init: createProcessGroup(1000, 473) failed for service 'tz_service': Read-only file system
+[  253.594754] init: Service 'tz_service' (pid 473) exited with status 1
+[  253.594779] init: Sending signal 9 to service 'tz_service' (pid 473) process group...
+[  253.594835] libprocessgroup: Successfully killed process cgroup uid 1000 pid 473 in 0ms
+[  253.942662] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  254.946570] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  255.950628] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  256.954588] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  257.958633] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  258.573738] init: starting service 'tz_service'...
+[  258.575253] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  258.575306] init: createProcessGroup(1000, 479) failed for service 'tz_service': Read-only file system
+[  258.598736] init: Service 'tz_service' (pid 479) exited with status 1
+[  258.598761] init: Sending signal 9 to service 'tz_service' (pid 479) process group...
+[  258.598818] libprocessgroup: Successfully killed process cgroup uid 1000 pid 479 in 0ms
+[  258.962701] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  259.966596] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  260.970568] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  261.505697] systemd[1]: lomiri-location-service.service: start operation timed out. Terminating.
+[  261.974709] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  262.978639] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  263.577736] init: starting service 'tz_service'...
+[  263.579234] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  263.579285] init: createProcessGroup(1000, 485) failed for service 'tz_service': Read-only file system
+[  263.602720] init: Service 'tz_service' (pid 485) exited with status 1
+[  263.602758] init: Sending signal 9 to service 'tz_service' (pid 485) process group...
+[  263.602821] libprocessgroup: Successfully killed process cgroup uid 1000 pid 485 in 0ms
+[  263.982712] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  264.986567] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  265.990661] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  266.994636] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  267.998653] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  268.581739] init: starting service 'tz_service'...
+[  268.583257] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  268.583310] init: createProcessGroup(1000, 491) failed for service 'tz_service': Read-only file system
+[  268.606816] init: Service 'tz_service' (pid 491) exited with status 1
+[  268.606853] init: Sending signal 9 to service 'tz_service' (pid 491) process group...
+[  268.606914] libprocessgroup: Successfully killed process cgroup uid 1000 pid 491 in 0ms
+[  269.002668] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  270.006635] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  271.010608] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  271.753705] systemd[1]: lomiri-location-service.service: State 'stop-sigterm' timed out. Killing.
+[  271.753838] systemd[1]: lomiri-location-service.service: Killing process 3039 (lomiri-location) with signal SIGKILL.
+[  271.764501] binder: release 3039:3042 transaction 680 out, still active
+[  271.764545] binder: undelivered TRANSACTION_COMPLETE
+[  271.765281] systemd[1]: lomiri-location-service.service: Main process exited, code=killed, status=9/KILL
+[  271.765482] systemd[1]: lomiri-location-service.service: Failed with result 'timeout'.
+[  271.766032] systemd[1]: Failed to start lomiri-location-service.service - Location Services.
+[  272.014807] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  273.018573] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  273.585717] init: starting service 'tz_service'...
+[  273.587210] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  273.587261] init: createProcessGroup(1000, 497) failed for service 'tz_service': Read-only file system
+[  273.610926] init: Service 'tz_service' (pid 497) exited with status 1
+[  273.610963] init: Sending signal 9 to service 'tz_service' (pid 497) process group...
+[  273.611018] libprocessgroup: Successfully killed process cgroup uid 1000 pid 497 in 0ms
+[  274.022699] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  275.026583] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  276.030622] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  277.007278] systemd[1]: lomiri-location-service.service: Scheduled restart job, restart counter is at 2.
+[  277.026241] systemd[1]: Starting lomiri-location-service.service - Location Services...
+[  277.034697] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  277.038564] init: sys_prop: invalid command 2
+[  277.059569] init: sys_prop: invalid command 2
+[  277.161365] init: sys_prop: invalid command 2
+[  278.038733] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  278.589741] init: starting service 'tz_service'...
+[  278.591251] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  278.591304] init: createProcessGroup(1000, 503) failed for service 'tz_service': Read-only file system
+[  278.614763] init: Service 'tz_service' (pid 503) exited with status 1
+[  278.614801] init: Sending signal 9 to service 'tz_service' (pid 503) process group...
+[  278.614857] libprocessgroup: Successfully killed process cgroup uid 1000 pid 503 in 0ms
+[  279.042674] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  280.046603] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  281.050643] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  282.054613] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  283.058624] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  283.593728] init: starting service 'tz_service'...
+[  283.595248] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  283.595298] init: createProcessGroup(1000, 509) failed for service 'tz_service': Read-only file system
+[  283.618864] init: Service 'tz_service' (pid 509) exited with status 1
+[  283.618903] init: Sending signal 9 to service 'tz_service' (pid 509) process group...
+[  283.618959] libprocessgroup: Successfully killed process cgroup uid 1000 pid 509 in 0ms
+[  284.062693] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  285.066594] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  286.070612] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  287.074625] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  288.078619] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  288.597726] init: starting service 'tz_service'...
+[  288.599217] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  288.599270] init: createProcessGroup(1000, 515) failed for service 'tz_service': Read-only file system
+[  288.622583] init: Service 'tz_service' (pid 515) exited with status 1
+[  288.622622] init: Sending signal 9 to service 'tz_service' (pid 515) process group...
+[  288.622676] libprocessgroup: Successfully killed process cgroup uid 1000 pid 515 in 0ms
+[  289.082673] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  290.086648] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  291.090567] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  292.094776] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  293.098534] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  293.601717] init: starting service 'tz_service'...
+[  293.603186] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  293.603238] init: createProcessGroup(1000, 521) failed for service 'tz_service': Read-only file system
+[  293.626620] init: Service 'tz_service' (pid 521) exited with status 1
+[  293.626658] init: Sending signal 9 to service 'tz_service' (pid 521) process group...
+[  293.626720] libprocessgroup: Successfully killed process cgroup uid 1000 pid 521 in 0ms
+[  294.102683] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  295.106579] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  296.110615] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  297.114564] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  298.118617] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  298.605729] init: starting service 'tz_service'...
+[  298.607234] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  298.607287] init: createProcessGroup(1000, 527) failed for service 'tz_service': Read-only file system
+[  298.630651] init: Service 'tz_service' (pid 527) exited with status 1
+[  298.630677] init: Sending signal 9 to service 'tz_service' (pid 527) process group...
+[  298.630733] libprocessgroup: Successfully killed process cgroup uid 1000 pid 527 in 0ms
+[  299.122647] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  300.126614] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  301.130547] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  302.134608] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  303.138559] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  303.609717] init: starting service 'tz_service'...
+[  303.611220] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  303.611273] init: createProcessGroup(1000, 533) failed for service 'tz_service': Read-only file system
+[  303.634634] init: Service 'tz_service' (pid 533) exited with status 1
+[  303.634659] init: Sending signal 9 to service 'tz_service' (pid 533) process group...
+[  303.634713] libprocessgroup: Successfully killed process cgroup uid 1000 pid 533 in 0ms
+[  304.142659] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  305.146582] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  306.150637] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  307.154682] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  308.158620] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  308.613755] init: starting service 'tz_service'...
+[  308.615244] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  308.615297] init: createProcessGroup(1000, 539) failed for service 'tz_service': Read-only file system
+[  308.638596] init: Service 'tz_service' (pid 539) exited with status 1
+[  308.638634] init: Sending signal 9 to service 'tz_service' (pid 539) process group...
+[  308.638688] libprocessgroup: Successfully killed process cgroup uid 1000 pid 539 in 0ms
+[  309.162661] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  310.166704] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  311.170566] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  312.174663] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  313.178567] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  313.617717] init: starting service 'tz_service'...
+[  313.619224] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  313.619276] init: createProcessGroup(1000, 545) failed for service 'tz_service': Read-only file system
+[  313.642733] init: Service 'tz_service' (pid 545) exited with status 1
+[  313.642758] init: Sending signal 9 to service 'tz_service' (pid 545) process group...
+[  313.642812] libprocessgroup: Successfully killed process cgroup uid 1000 pid 545 in 0ms
+[  314.182709] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  315.186535] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  316.190631] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  317.194619] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  318.198598] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  318.621723] init: starting service 'tz_service'...
+[  318.623228] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  318.623279] init: createProcessGroup(1000, 551) failed for service 'tz_service': Read-only file system
+[  318.646794] init: Service 'tz_service' (pid 551) exited with status 1
+[  318.646832] init: Sending signal 9 to service 'tz_service' (pid 551) process group...
+[  318.646887] libprocessgroup: Successfully killed process cgroup uid 1000 pid 551 in 0ms
+[  319.202666] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  320.206656] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  321.210589] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  322.214686] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  323.218625] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  323.625721] init: starting service 'tz_service'...
+[  323.627238] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  323.627289] init: createProcessGroup(1000, 557) failed for service 'tz_service': Read-only file system
+[  323.650770] init: Service 'tz_service' (pid 557) exited with status 1
+[  323.650795] init: Sending signal 9 to service 'tz_service' (pid 557) process group...
+[  323.650849] libprocessgroup: Successfully killed process cgroup uid 1000 pid 557 in 0ms
+[  324.222666] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  325.226550] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  326.230635] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  327.234653] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  328.238678] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  328.629722] init: starting service 'tz_service'...
+[  328.631216] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  328.631268] init: createProcessGroup(1000, 563) failed for service 'tz_service': Read-only file system
+[  328.654771] init: Service 'tz_service' (pid 563) exited with status 1
+[  328.654808] init: Sending signal 9 to service 'tz_service' (pid 563) process group...
+[  328.654862] libprocessgroup: Successfully killed process cgroup uid 1000 pid 563 in 0ms
+[  329.242632] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  330.246689] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  331.250563] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  332.254690] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  333.258579] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  333.633716] init: starting service 'tz_service'...
+[  333.635206] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  333.635259] init: createProcessGroup(1000, 569) failed for service 'tz_service': Read-only file system
+[  333.658760] init: Service 'tz_service' (pid 569) exited with status 1
+[  333.658793] init: Sending signal 9 to service 'tz_service' (pid 569) process group...
+[  333.658848] libprocessgroup: Successfully killed process cgroup uid 1000 pid 569 in 0ms
+[  334.262682] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  335.266547] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  336.270608] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  337.274615] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  338.278622] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  338.637724] init: starting service 'tz_service'...
+[  338.639227] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  338.639279] init: createProcessGroup(1000, 575) failed for service 'tz_service': Read-only file system
+[  338.662682] init: Service 'tz_service' (pid 575) exited with status 1
+[  338.662720] init: Sending signal 9 to service 'tz_service' (pid 575) process group...
+[  338.662775] libprocessgroup: Successfully killed process cgroup uid 1000 pid 575 in 0ms
+[  339.282668] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  340.148186] A50M64: BEGIN target=340 uptime=340.14
+[  340.148352] A50M64: CMD systemctl show mount-android-partitions.service a50-container-prepare.service lxc-android-config.service -p Id -p ActiveState -p SubState -p Result -p ExecMainStatus
+[  340.206598] A50M64: Result=success
+[  340.206777] A50M64: ExecMainStatus=0
+[  340.206946] A50M64: Id=mount-android-partitions.service
+[  340.207101] A50M64: ActiveState=active
+[  340.207265] A50M64: SubState=exited
+[  340.207405] A50M64:
+[  340.207569] A50M64: Result=success
+[  340.207720] A50M64: ExecMainStatus=0
+[  340.207897] A50M64: Id=a50-container-prepare.service
+[  340.208064] A50M64: ActiveState=active
+[  340.208214] A50M64: SubState=exited
+[  340.208352] A50M64:
+[  340.208499] A50M64: Result=success
+[  340.208648] A50M64: ExecMainStatus=0
+[  340.208807] A50M64: Id=lxc-android-config.service
+[  340.208974] A50M64: ActiveState=active
+[  340.209123] A50M64: SubState=running
+[  340.209274] A50M64: RC 0
+[  340.209413] A50M64: CMD lxc-info -n android
+[  340.234059] A50M64: Name:           android
+[  340.234242] A50M64: State:          RUNNING
+[  340.234401] A50M64: PID:            862
+[  340.234559] A50M64: IP:             10.15.19.82
+[  340.234712] A50M64: RC 0
+[  340.234855] A50M64: CMD lxc-attach -n android -- /system/bin/getprop sys.boot_completed
+[  340.259162] lxc[845]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[  340.286754] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  340.311692] A50M64: 1
+[  340.311874] A50M64: RC 0
+[  340.312018] A50M64: CMD lxc-attach -n android -- /system/bin/getprop init.svc.vendor.gralloc-2-0
+[  340.340217] lxc[845]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[  340.371904] A50M64:
+[  340.372077] A50M64: RC 0
+[  340.372224] A50M64: CMD /bin/sh -c ps -eo pid,comm,args | grep -E "graphics.allocator|/system/bin/init|lxc-start|servicemanager" | grep -v grep
+[  340.410806] A50M64:     845 lxc-start       /usr/bin/lxc-start -n android -F -- /system/bin/env -i PATH=/product/bin:/apex/com.android.runtime/bin:/apex/com.android.art/bin:/sbin:/system/sbin:/system_ext/bin:/system/bin:/system/xbin:/odm/bin:/vendor/bin:/vendor/xbin INIT_STARTED_AT=0 /init second_stage
+[  340.411035] A50M64:     883 init            /system/bin/init subcontext u:r:vendor_init:s0 14
+[  340.411231] A50M64:     951 servicemanager  /system/bin/servicemanager
+[  340.411421] A50M64:     952 hwservicemanage /system/bin/hwservicemanager
+[  340.411623] A50M64:     953 vndservicemanag /vendor/bin/vndservicemanager /dev/vndbinder
+[  340.411781] A50M64: RC 0
+[  340.411928] A50M64: CMD /bin/sh -c cat /sys/fs/cgroup/cgroup.controllers; cat /sys/fs/cgroup/cgroup.subtree_control; cat /proc/self/cgroup
+[  340.453042] A50M64: cpuset io memory
+[  340.453220] A50M64: cpuset io memory
+[  340.453372] A50M64: 0::/init.scope
+[  340.453523] A50M64: RC 0
+[  340.453680] A50M64: CMD findmnt -R /android -o TARGET,SOURCE,FSTYPE,OPTIONS
+[  340.475079] A50M64: TARGET                                 SOURCE                                            FSTYPE OPTIONS
+[  340.475324] A50M64: /android                               /dev/loop1                                        ext4   ro,relatime
+[  340.475567] A50M64: |-/android/system                      /dev/loop1[/system]                               ext4   ro,relatime
+[  340.475846] A50M64: |-/android/data                        /dev/sda32[/android-data]                         ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  340.476104] A50M64: | `-/android/data                      /dev/sda32[/android-data]                         ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  340.476360] A50M64: |-/android/cache                       /dev/sda32[/cache]                                ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  340.476616] A50M64: | `-/android/cache                     /dev/sda32[/android-data/cache]                   ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  340.476858] A50M64: |-/android/vendor                      /dev/sda26                                        ext4   ro,nosuid,nodev,relatime,nodiscard,norecovery
+[  340.477117] A50M64: |-/android/mnt                         a50-android-mnt                                   tmpfs  rw,nosuid,nodev,relatime,size=16384k,mode=755
+[  340.477336] A50M64: |-/android/apex                        android_apex                                      tmpfs  rw,relatime
+[  340.477557] A50M64: | |-/android/apex/com.android.i18n     /dev/loop1[/system/apex/com.android.i18n]         ext4   ro,relatime
+[  340.477798] A50M64: | |-/android/apex/com.android.art      /dev/loop1[/system/apex/com.android.art.release]  ext4   ro,relatime
+[  340.478022] A50M64: | |-/android/apex/com.android.runtime  /dev/loop1[/system/apex/com.android.runtime]      ext4   ro,relatime
+[  340.478244] A50M64: | `-/android/apex/com.android.vndk.v30 /dev/loop1[/system/apex/com.android.vndk.current] ext4   ro,relatime
+[  340.478463] A50M64: `-/android/linkerconfig                linkerconfig                                      tmpfs  rw,relatime
+[  340.478619] A50M64: RC 0
+[  340.478778] A50M64: CMD tail -n 35 /run/a50-m64/mount.log
+[  340.510186] A50M64: A50M64: mount vendor /dev/disk/by-partlabel/vendor ro,noload,nodev,nosuid
+[  340.510417] A50M64: A50M64: EFS, SEC_EFS, CPEFS and physical cache mounts skipped
+[  340.510611] A50M64: TARGET             SOURCE                          FSTYPE OPTIONS
+[  340.510805] A50M64: /android           /dev/loop1                      ext4   ro,relatime
+[  340.511009] A50M64: ââ/android/system  /dev/loop1[/system]             ext4   ro,relatime
+[  340.511248] A50M64: ââ/android/data    /dev/sda32[/android-data]       ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  340.511484] A50M64: â ââ/android/data  /dev/sda32[/android-data]       ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  340.511715] A50M64: ââ/android/cache   /dev/sda32[/cache]              ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  340.511953] A50M64: â ââ/android/cache /dev/sda32[/android-data/cache] ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  340.512172] A50M64: ââ/android/vendor  /dev/sda26                      ext4   ro,nosuid,nodev,relatime,nodiscard,norecovery
+[  340.512391] A50M64: ââ/android/mnt     a50-android-mnt                 tmpfs  rw,nosuid,nodev,relatime,size=16384k,mode=755
+[  340.512560] A50M64: A50M64: safe Android mounts ready
+[  340.512714] A50M64: RC 0
+[  340.512857] A50M64: CMD /bin/sh -c tail -n 70 /run/a50-m64/lxc.log
+[  340.547044] A50M64: RC 0
+[  340.547198] A50M64: CMD journalctl -b --no-pager -n 35 -u mount-android-partitions.service -u a50-container-prepare.service -u lxc-android-config.service
+[  340.621578] A50M64: -- No entries --
+[  340.621779] A50M64: RC 0
+[  340.621921] A50M64: END target=340
+[  341.290858] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  342.294634] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  343.298574] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  343.641724] init: starting service 'tz_service'...
+[  343.643228] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  343.643280] init: createProcessGroup(1000, 583) failed for service 'tz_service': Read-only file system
+[  343.666772] init: Service 'tz_service' (pid 583) exited with status 1
+[  343.666810] init: Sending signal 9 to service 'tz_service' (pid 583) process group...
+[  343.666867] libprocessgroup: Successfully killed process cgroup uid 1000 pid 583 in 0ms
+[  344.302652] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  345.306581] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  346.310664] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  347.314594] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  348.318556] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  348.645725] init: starting service 'tz_service'...
+[  348.647205] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  348.647256] init: createProcessGroup(1000, 589) failed for service 'tz_service': Read-only file system
+[  348.670698] init: Service 'tz_service' (pid 589) exited with status 1
+[  348.670734] init: Sending signal 9 to service 'tz_service' (pid 589) process group...
+[  348.670790] libprocessgroup: Successfully killed process cgroup uid 1000 pid 589 in 0ms
+[  349.322669] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  350.326599] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  351.330534] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  352.334557] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  353.338566] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  353.649723] init: starting service 'tz_service'...
+[  353.651234] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  353.651287] init: createProcessGroup(1000, 595) failed for service 'tz_service': Read-only file system
+[  353.674794] init: Service 'tz_service' (pid 595) exited with status 1
+[  353.674833] init: Sending signal 9 to service 'tz_service' (pid 595) process group...
+[  353.674896] libprocessgroup: Successfully killed process cgroup uid 1000 pid 595 in 0ms
+[  354.342645] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  355.346626] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  356.350582] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  357.354556] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  358.358519] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  358.653718] init: starting service 'tz_service'...
+[  358.655234] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  358.655287] init: createProcessGroup(1000, 601) failed for service 'tz_service': Read-only file system
+[  358.678517] init: Service 'tz_service' (pid 601) exited with status 1
+[  358.678555] init: Sending signal 9 to service 'tz_service' (pid 601) process group...
+[  358.678611] libprocessgroup: Successfully killed process cgroup uid 1000 pid 601 in 0ms
+[  359.362680] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  360.366567] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  361.370555] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  362.374576] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  363.378582] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  363.657717] init: starting service 'tz_service'...
+[  363.659254] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  363.659305] init: createProcessGroup(1000, 607) failed for service 'tz_service': Read-only file system
+[  363.682735] init: Service 'tz_service' (pid 607) exited with status 1
+[  363.682773] init: Sending signal 9 to service 'tz_servFull
+d 607) process group...
+[  363.682827] libprocessgroup: Successfully killed process cgroup uid 1000 pid 607 in 0ms
+[  364.382655] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  365.386546] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  366.390668] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  367.253695] systemd[1]: lomiri-location-service.service: start operation timed out. Terminating.
+[  367.394749] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  368.398579] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  368.661724] init: starting service 'tz_service'...
+[  368.663179] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  368.663231] init: createProcessGroup(1000, 613) failed for service 'tz_service': Read-only file system
+[  368.686645] init: Service 'tz_service' (pid 613) exited with status 1
+[  368.686682] init: Sending signal 9 to service 'tz_service' (pid 613) process group...
+[  368.686742] libprocessgroup: Successfully killed process cgroup uid 1000 pid 613 in 0ms
+[  369.402694] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  370.406660] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  371.410641] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  372.414546] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  373.418568] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  373.665718] init: starting service 'tz_service'...
+[  373.667240] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  373.667294] init: createProcessGroup(1000, 619) failed for service 'tz_service': Read-only file system
+[  373.690717] init: Service 'tz_service' (pid 619) exited with status 1
+[  373.690741] init: Sending signal 9 to service 'tz_service' (pid 619) process group...
+[  373.690803] libprocessgroup: Successfully killed process cgroup uid 1000 pid 619 in 0ms
+[  374.422655] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  375.426545] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  376.430551] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  377.434516] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  377.505699] systemd[1]: lomiri-location-service.service: State 'stop-sigterm' timed out. Killing.
+[  377.505829] systemd[1]: lomiri-location-service.service: Killing process 3473 (lomiri-location) with signal SIGKILL.
+[  377.514728] binder: release 3473:3477 transaction 1083 out, still active
+[  377.514770] binder: undelivered TRANSACTION_COMPLETE
+[  377.515521] systemd[1]: lomiri-location-service.service: Main process exited, code=killed, status=9/KILL
+[  377.515725] systemd[1]: lomiri-location-service.service: Failed with result 'timeout'.
+[  377.516385] systemd[1]: Failed to start lomiri-location-service.service - Location Services.
+[  378.438743] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  378.669717] init: starting service 'tz_service'...
+[  378.671219] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  378.671271] init: createProcessGroup(1000, 625) failed for service 'tz_service': Read-only file system
+[  378.694651] init: Service 'tz_service' (pid 625) exited with status 1
+[  378.694676] init: Sending signal 9 to service 'tz_service' (pid 625) process group...
+[  378.694731] libprocessgroup: Successfully killed process cgroup uid 1000 pid 625 in 0ms
+[  379.442678] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  380.446553] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  381.450527] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  382.454569] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  382.755344] systemd[1]: lomiri-location-service.service: Scheduled restart job, restart counter is at 3.
+[  382.786241] systemd[1]: Starting lomiri-location-service.service - Location Services...
+[  382.798579] init: sys_prop: invalid command 2
+[  382.819565] init: sys_prop: invalid command 2
+[  382.920929] init: sys_prop: invalid command 2
+[  383.458749] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  383.673713] init: starting service 'tz_service'...
+[  383.675243] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  383.675297] init: createProcessGroup(1000, 631) failed for service 'tz_service': Read-only file system
+[  383.698785] init: Service 'tz_service' (pid 631) exited with status 1
+[  383.698823] init: Sending signal 9 to service 'tz_service' (pid 631) process group...
+[  383.698879] libprocessgroup: Successfully killed process cgroup uid 1000 pid 631 in 0ms
+[  384.462660] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  385.466563] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  386.470621] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  387.474544] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  388.478550] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  388.677711] init: starting service 'tz_service'...
+[  388.679200] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  388.679251] init: createProcessGroup(1000, 637) failed for service 'tz_service': Read-only file system
+[  388.702683] init: Service 'tz_service' (pid 637) exited with status 1
+[  388.702710] init: Sending signal 9 to service 'tz_service' (pid 637) process group...
+[  388.702767] libprocessgroup: Successfully killed process cgroup uid 1000 pid 637 in 0ms
+[  389.482708] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  390.486693] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  391.490565] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  392.494554] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  393.498596] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  393.681714] init: starting service 'tz_service'...
+[  393.683174] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  393.683225] init: createProcessGroup(1000, 643) failed for service 'tz_service': Read-only file system
+[  393.706577] init: Service 'tz_service' (pid 643) exited with status 1
+[  393.706611] init: Sending signal 9 to service 'tz_service' (pid 643) process group...
+[  393.706667] libprocessgroup: Successfully killed process cgroup uid 1000 pid 643 in 0ms
+[  394.502675] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  395.506545] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  396.510575] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  397.514593] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  398.518583] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  398.685710] init: starting service 'tz_service'...
+[  398.687198] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  398.687248] init: createProcessGroup(1000, 649) failed for service 'tz_service': Read-only file system
+[  398.710610] init: Service 'tz_service' (pid 649) exited with status 1
+[  398.710646] init: Sending signal 9 to service 'tz_service' (pid 649) process group...
+[  398.710709] libprocessgroup: Successfully killed process cgroup uid 1000 pid 649 in 0ms
+[  399.522697] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  400.526561] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  401.530523] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  402.534609] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  403.538571] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  403.689710] init: starting service 'tz_service'...
+[  403.691184] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  403.691234] init: createProcessGroup(1000, 655) failed for service 'tz_service': Read-only file system
+[  403.714755] init: Service 'tz_service' (pid 655) exited with status 1
+[  403.714779] init: Sending signal 9 to service 'tz_service' (pid 655) process group...
+[  403.714834] libprocessgroup: Successfully killed process cgroup uid 1000 pid 655 in 0ms
+[  404.542689] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  405.546561] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  406.550644] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  407.554566] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  408.558579] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  408.693711] init: starting service 'tz_service'...
+[  408.695178] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  408.695228] init: createProcessGroup(1000, 661) failed for service 'tz_service': Read-only file system
+[  408.718780] init: Service 'tz_service' (pid 661) exited with status 1
+[  408.718818] init: Sending signal 9 to service 'tz_service' (pid 661) process group...
+[  408.718874] libprocessgroup: Successfully killed process cgroup uid 1000 pid 661 in 0ms
+[  409.562668] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  410.566627] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  411.570518] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  412.574511] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  413.578534] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  413.697710] init: starting service 'tz_service'...
+[  413.699205] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  413.699255] init: createProcessGroup(1000, 667) failed for service 'tz_service': Read-only file system
+[  413.722561] init: Service 'tz_service' (pid 667) exited with status 1
+[  413.722586] init: Sending signal 9 to service 'tz_service' (pid 667) process group...
+[  413.722641] libprocessgroup: Successfully killed process cgroup uid 1000 pid 667 in 0ms
+[  414.582689] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  415.586545] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  416.590559] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  417.594526] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  418.598584] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  418.701710] init: starting service 'tz_service'...
+[  418.703194] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  418.703242] init: createProcessGroup(1000, 673) failed for service 'tz_service': Read-only file system
+[  418.726698] init: Service 'tz_service' (pid 673) exited with status 1
+[  418.726731] init: Sending signal 9 to service 'tz_service' (pid 673) process group...
+[  418.726785] libprocessgroup: Successfully killed process cgroup uid 1000 pid 673 in 0ms
+[  419.602705] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  420.606574] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  421.610530] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  422.614559] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  423.618511] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  423.705709] init: starting service 'tz_service'...
+[  423.707178] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  423.707227] init: createProcessGroup(1000, 679) failed for service 'tz_service': Read-only file system
+[  423.730719] init: Service 'tz_service' (pid 679) exited with status 1
+[  423.730757] init: Sending signal 9 to service 'tz_service' (pid 679) process group...
+[  423.730812] libprocessgroup: Successfully killed process cgroup uid 1000 pid 679 in 0ms
+[  424.622690] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  425.626572] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  426.630615] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  427.634586] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  428.638687] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  428.709709] init: starting service 'tz_service'...
+[  428.711214] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  428.711265] init: createProcessGroup(1000, 685) failed for service 'tz_service': Read-only file system
+[  428.734582] init: Service 'tz_service' (pid 685) exited with status 1
+[  428.734618] init: Sending signal 9 to service 'tz_service' (pid 685) process group...
+[  428.734681] libprocessgroup: Successfully killed process cgroup uid 1000 pid 685 in 0ms
+[  429.642704] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  430.646564] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 37 (/system/bin/hwservicemanager)
+[  431.073684] A50DIAG: sync before the timed dump
+[  431.075306] A50DIAG: sync done
+===== A50 6.18 DMESG END =====

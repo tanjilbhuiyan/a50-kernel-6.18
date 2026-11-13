@@ -1,0 +1,763 @@
+commit 4fd044c7cd1dffe9b1c3244822bb6bdc4dc1882f
+Author:     tanjilbhuiyan <a50@localhost>
+AuthorDate: Sun Nov 1 18:38:14 2026 +0600
+Commit:     tanjilbhuiyan <a50@localhost>
+CommitDate: Sun Nov 1 18:38:14 2026 +0600
+
+    arm64: dts: exynos: add Samsung Galaxy A50 (exynos9610) first-light DT
+
+    SoC subset (CPUs, PSCI, GICv2, arch timer, oscillator) plus board DT with
+    memory, bootloader-reserved regions, ramoops window and a simple-framebuffer
+    at 0xca000000. Sources are cited per node. Framebuffer pixel format and the
+    ramoops persistence are unverified until M2.4/M1.5.
+
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Change-Id: I8c4081e027dbab689b5c9fa71454bc7bc6b4ef9e
+
+commit 42664a3c51a26e8acd2731faaf4d85298da59f69
+Author:     tanjilbhuiyan <a50@localhost>
+AuthorDate: Mon Nov 2 12:36:36 2026 +0600
+Commit:     tanjilbhuiyan <a50@localhost>
+CommitDate: Mon Nov 2 12:36:36 2026 +0600
+
+    arm64: dts: exynos9610-a50: add dtb-hw_rev window and document it
+
+    The stock DTB root carries dtb-hw_rev/dtb-hw_rev_end (0x00..0xff), which the
+    Samsung bootloader uses to select a DTB from the dt_table. Keep them
+    identical so selection is unchanged, and describe them in samsung-boards.yaml.
+
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Change-Id: Ibcfccc0e14f5bd9db9d40c5b66f1ab507a48af2a
+
+commit f7accc40be3d841be6a7f6921daa68b997c97f09
+Author:     tanjilbhuiyan <a50@localhost>
+AuthorDate: Wed Nov 4 02:36:30 2026 +0600
+Commit:     tanjilbhuiyan <a50@localhost>
+CommitDate: Wed Nov 4 02:36:30 2026 +0600
+
+    arm64: configs: add a50_firstlight_defconfig
+
+    Minimal first-light configuration for the Samsung Galaxy A50: Exynos platform,
+    PSCI, GIC, arch timer, simple-framebuffer + fbcon (Terminus 16x32), pstore/ramoops,
+    built-in initramfs support, magic sysrq. Everything else off. The initramfs
+    source is supplied at build time. Generated from allnoconfig plus
+    tools/m22/a50_firstlight.fragment of the A50 project repository.
+
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Change-Id: I7dbbc602514beee0309f6f52d6e9349ee6406eaf
+
+commit 1a9a67e46bb6a234ca4af4bf1848d1c13bf61d5d
+Author:     tanjilbhuiyan <a50@localhost>
+AuthorDate: Wed Nov 4 02:44:18 2026 +0600
+Commit:     tanjilbhuiyan <a50@localhost>
+CommitDate: Wed Nov 4 02:44:18 2026 +0600
+
+    arm64: dts: exynos9610-a50: move ramoops to the S-Boot sec_debug_next region
+
+    On the baseline a controlled panic left pstore/ramoops at 0xf9d10000 empty,
+    while the previous boot's log survived in Samsung's sec_debug buffer, which
+    S-Boot passes as sec_debug_next=0x800000@0x91388000. Put ramoops there
+    (2 MiB console, 512 KiB records, 128 KiB pmsg), reserve the neighbouring
+    S-Boot debug buffers (0x91202000..0x91388000), and merge the debug_snapshot
+    pieces back into one reserved block now that the log_pstore window is no
+    longer special. Unverified with mainline ramoops until first light.
+
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Change-Id: I2570e7f5fbbf25d3cdc0f06548aeca3b9a1ff0bf
+
+commit c32f1f2bc892f746296dc7e43aed7865d8a3000c
+Author:     tanjilbhuiyan <a50@localhost>
+AuthorDate: Wed Nov 4 03:29:34 2026 +0600
+Commit:     tanjilbhuiyan <a50@localhost>
+CommitDate: Wed Nov 4 03:29:34 2026 +0600
+
+    arm64: A50 first-light diagnostics (CONFIG_A50_DIAG), do not merge
+
+    Debug aid for bringing up the Galaxy A50 without a console: stage 0 in head.S
+    (MMU off), stage 1 in setup_arch, stages 2 and 3 as initcalls. Each stage paints
+    a band into the bootloader framebuffer and writes a marker into DRAM at
+    0xf9030000 (readable from the baseline kernel via /proc/last_kmsg); stage 3
+    then blinks a heartbeat band for 15 s and tries a PSCI SYSTEM_RESET.
+
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Change-Id: Ib2879626173231ca598266b836ba9f5ab497113e
+
+commit e701ba948dd676d4ebaa28e74d09f97b150fdcbd
+Author:     tanjilbhuiyan <a50@localhost>
+AuthorDate: Wed Nov 4 03:48:56 2026 +0600
+Commit:     tanjilbhuiyan <a50@localhost>
+CommitDate: Wed Nov 4 03:48:56 2026 +0600
+
+    arm64: A50 diag v2: write the DRAM markers before painting the framebuffer
+
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Change-Id: I6bb873342662cc373591749ee437ae3e8ff4c58d
+
+commit 325b639130dc5a8ae99b4665973ea79f8b9a6adb
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Sat Nov 7 01:18:34 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Sat Nov 7 01:18:34 2026 +0600
+
+    arm64: A50 diag v3: A50_DIAG_RESET_STAGE resets the SoC via PMU SWRESET at stage N
+
+    The reset (boot loop) is the only signal validated on the phone (Tests 10, 11).
+
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Change-Id: I97ae458bb519ce1207b29fb064a14584ddf8cb26
+
+commit 5bd219921a85a70ed65ab54b32ec231c408febc4
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Sat Nov 7 01:32:44 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Sat Nov 7 01:32:44 2026 +0600
+
+    arm64: A50 diag v4: reset bisection points 10-16 in start_kernel/kernel_init_freeable
+
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Change-Id: I7b7bf7a72d4515401bdd028ed4077bf963ee81ff
+
+commit 9270837322515a830bdfd1f8c0b3592ef5fd069d
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Sat Nov 7 01:52:23 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Sat Nov 7 01:52:23 2026 +0600
+
+    A50 diag v5: A50_DIAG_SKIP_MCT (stock DT MCT clocks have no 6.18 provider -> panic)
+
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Change-Id: Id8355216703b9c3e1ec0dfc3db657ba429ec0ea8
+
+commit 2d3c22c2ed84de3e796cf93adb121f718e778242
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Sat Nov 7 02:18:13 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Sat Nov 7 02:18:13 2026 +0600
+
+    A50 diag v6: A50_DIAG_DUMP_DSS - printk log to the DSS buffer, then software reboot to Download mode
+
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Change-Id: I41bf9184d73833d32407b0559e1511ca42fdb507
+
+commit 86398076ff927eebe0f9f592f1266398db063df0
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Sat Nov 7 02:30:24 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Sat Nov 7 02:30:24 2026 +0600
+
+    arm64: dts: exynos9610-a50: drop ramoops, keep sec_debug_next reserved
+
+    The M1.5 premise (warm-reset survival at 0x91388000) was wrong: /proc/last_kmsg
+    comes from the debug_snapshot log_kernel buffer. The readout is that buffer,
+    already reserved no-map (debug_snapshot@f9000000).
+
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Change-Id: I6a5729d3d8b570da189144f2388a8f89cb8ee556
+
+commit d5328459e0e218695a0d918595f91c296b5bd611
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Sat Nov 7 02:37:53 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Sat Nov 7 02:37:53 2026 +0600
+
+    A50 diag v7: DSS readout at any time (pre-mapped, panic kmsg dumper, a50_diag.dump_after=N)
+
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Change-Id: Ibb2231275dc1b8012f9fdaccc9c388abb53278d1
+
+commit df4170d653538795945314c465ba0b68638f5ca0
+Author:     Peter Griffin <peter.griffin@linaro.org>
+AuthorDate: Mon Dec 22 10:22:14 2025 +0000
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Sat Nov 7 02:54:08 2026 +0600
+
+    clk: samsung: Implement automatic clock gating mode for CMUs
+
+    Update exynos_arm64_init_clocks() so that it enables the automatic clock
+    mode bits in the CMU option register if the auto_clock_gate flag and
+    option_offset fields are set for the CMU. To ensure compatibility with
+    older DTs (that specified an incorrect CMU reg size), detect this and
+    fallback to manual clock gate mode as the auto clock mode feature depends
+    on registers in this area.
+
+    The CMU option register bits are global and effect every clock component in
+    the CMU, as such clearing the GATE_ENABLE_HWACG bit and setting GATE_MANUAL
+    bit on every gate register is only required if auto_clock_gate is false.
+
+    Additionally if auto_clock_gate is enabled the dynamic root clock gating
+    and memclk registers will be configured in the corresponding CMUs sysreg
+    bank. These registers are exposed via syscon, so the register
+    samsung_clk_save/restore paths are updated to also take a regmap.
+
+    As many gates for various Samsung SoCs are already exposed in the Samsung
+    clock drivers a new samsung_auto_clk_gate_ops is implemented. This uses
+    some CMU debug registers to report whether clocks are enabled or disabled
+    when operating in automatic mode. This allows
+    /sys/kernel/debug/clk/clk_summary to still dump the entire clock tree and
+    correctly report the status of each clock in the system.
+
+    Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+    Link: https://patch.msgid.link/20251222-automatic-clocks-v7-3-fec86fa89874@linaro.org
+    Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+commit dc52df35782c16149e8181ccd9ea1a271c70d75f
+Author:     André Draszik <andre.draszik@linaro.org>
+AuthorDate: Fri Jan 9 17:27:23 2026 +0000
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Sat Nov 7 02:54:09 2026 +0600
+
+    clk: samsung: avoid warning message on legacy Exynos (auto clock gating)
+
+    We currently print a warning message that the IO memory size is not
+    compatible with automatic clock gating for many Exynos-based boards,
+    including legacy ones, even if not requested to enable automatic clock
+    gating in the first place.
+
+    Change the test in question to avoid that warning.
+
+    Fixes: 298fac4f4b96 ("clk: samsung: Implement automatic clock gating mode for CMUs")
+    Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+    Closes: https://lore.kernel.org/all/8b2c412d-3e1e-4be0-a9d5-ef67f6f0d409@samsung.com/
+    Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+    Signed-off-by: André Draszik <andre.draszik@linaro.org>
+    Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+    Link: https://patch.msgid.link/20260109-clk-samsung-autoclk-updates-v1-1-2394dcf242a9@linaro.org
+    Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+commit bdbb5066f97e0883c583f0950cc883bdb81a41c6
+Author:     André Draszik <andre.draszik@linaro.org>
+AuthorDate: Fri Jan 9 17:27:24 2026 +0000
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Sat Nov 7 02:54:09 2026 +0600
+
+    clk: samsung: fix sysreg save/restore when PM is enabled for CMU
+
+    Currently, sysreg registers of a CMU that has PM and automatic clock
+    gating enabled are not saved / restored during runtime PM (RPM) or
+    s2idle. During normal suspend, they are accessed too late, after the
+    CMU (and potentially power domain) have been shut down, causing an
+    SError.
+
+    The reason is that these registers are registered to be saved/restored
+    via a syscore suspend handler which doesn't run during RPM or s2idle.
+    During normal suspend, this handler runs after the CMU has been shut
+    down. This registration happens as part of
+    samsung_clk_extended_sleep_init() via samsung_en_dyn_root_clk_gating().
+
+    When PM is enabled for a CMU, registers must be saved/restored via
+    exynos_arm64_cmu_suspend() / exynos_arm64_cmu_resume() respectively
+    instead. These use their own data structures and are unrelated to
+    anything that samsung_clk_extended_sleep_init() does. Calling it
+    unconditionally from samsung_en_dyn_root_clk_gating() therefore isn't
+    useful.
+
+    Update the code to prepare sysreg save / restore in a similar way to
+    how it handles other clock registers in the PM case already.
+    exynos_arm64_cmu_suspend() / exynos_arm64_cmu_resume() already handle
+    sysreg save/restore, just the setup was incorrect.
+
+    Fixes: 298fac4f4b96 ("clk: samsung: Implement automatic clock gating mode for CMUs")
+    Signed-off-by: André Draszik <andre.draszik@linaro.org>
+    Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+    Link: https://patch.msgid.link/20260109-clk-samsung-autoclk-updates-v1-2-2394dcf242a9@linaro.org
+    Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+commit 6c2060818299214751e4b53e99cb3baa99506060
+Author:     Alexandru Chimac <alex@chimac.ro>
+AuthorDate: Wed Jul 22 23:44:02 2026 +0300
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Sat Nov 7 02:54:17 2026 +0600
+
+    dt-bindings: clock: samsung: Add Exynos9610 CMU bindings
+
+    This clock management unit has a topmost block (CMU_TOP)
+    that generates top clocks for other blocks, alongside 20
+    other blocks, out of which 11 are currently implemented.
+
+    Signed-off-by: Alexandru Chimac <alex@chimac.ro>
+
+commit f32c8ad9a20b686254837cfe9f8d4af9c1c9a563
+Author:     Alexandru Chimac <alex@chimac.ro>
+AuthorDate: Wed Jul 22 23:44:03 2026 +0300
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Sat Nov 7 02:54:17 2026 +0600
+
+    dt-bindings: soc: exynos-sysreg: Add Exynos9610 SYSREG bindings
+
+    Add bindings for SYSREG nodes (required for ACG), compatible with the
+    standard syscon driver.
+
+    Signed-off-by: Alexandru Chimac <alex@chimac.ro>
+    Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+
+commit 0810ee7fd8dff85af3087c618c74eb861da2f5d2
+Author:     Alexandru Chimac <alex@chimac.ro>
+AuthorDate: Wed Jul 22 23:44:04 2026 +0300
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Sat Nov 7 02:54:18 2026 +0600
+
+    clk: samsung: clk-pll: Add support for pll_1061x
+
+    These PLLs are found in the Exynos9610 and Exynos9810 SoCs, and
+    are similar to pll_1460x (using CON3 instead of CON1), so the code
+    for that can handle this PLL with a few small adaptations.
+
+    Signed-off-by: Alexandru Chimac <alex@chimac.ro>
+
+commit 35ecc2d0793e40b96b41789bad9ca3d2229d1daf
+Author:     Alexandru Chimac <alex@chimac.ro>
+AuthorDate: Wed Jul 22 23:44:05 2026 +0300
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Sat Nov 7 02:54:18 2026 +0600
+
+    clk: samsung: Introduce Exynos9610 clock controller driver
+
+    The current implementation contains support for:
+    - CMU_TOP, which generates clocks for other blocks
+    - CMU_APM, which generates clocks for APM and CMU_CMGP
+    - CMU_CAM
+    - CMU_CMGP
+    - CMU_CORE
+    - CMU_CPUCL0, which generates clocks for the little cluster
+    - CMU_DISPAUD, which generates clocks for display and ABOX
+    - CMU_FSYS, which generates clocks for MMC/UFS
+    - CMU_G2D
+    - CMU_G3D, which generates clocks for GPU
+    - CMU_PERI, which generates clocks for peripherals
+    - CMU_USB, which generates clocks for USB
+
+    Based on drivers/soc/samsung/cal-if/exynos9610 from
+    https://gitlab.com/Linaro/96boards/e850-96/kernel, revision 3c200119457e.
+
+    Signed-off-by: Alexandru Chimac <alex@chimac.ro>
+
+commit 84432e20fe138efbe5a3830127e810bb8ac499a4
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Sat Nov 7 03:00:11 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Sat Nov 7 03:00:11 2026 +0600
+
+    arm64: dts: exynos9610: add CMU TOP, FSYS and USB nodes
+
+    Only the CMUs UFS and USB need. Addresses from Samsung's 4.14
+    cal-if/exynos9610/cmucal-sfr.c; wiring per the v3 binding. reg size
+    0x8000 keeps the CMUs in manual gating mode for the first boot.
+
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Change-Id: Idd939fadc33b897149edc6c37f49889f7bf3422c
+
+commit 57a0356298410d6c5e34bd114dbb0b8e08e96bf5
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Sat Nov 7 03:21:03 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Sat Nov 7 03:21:03 2026 +0600
+
+    clk: samsung: exynos9610: register the CMU_TOP FSYS_UFS_EMBD divider
+
+    The FSYS clock 'mout_pll_fsys_ufs_embd_user' names 'dout_cmu_fsys_ufs_embd'
+    as its parent and the binding passes CLK_DOUT_CMU_FSYS_UFS_EMBD to CMU_FSYS,
+    but CMU_TOP never registered that divider, so the UFS UniPro clock was an
+    orphan at 0 Hz on the Galaxy A50. Field per Samsung's CAL
+    (CLK_CON_DIV_CLKCMU_FSYS_UFS_EMBD_DIVRATIO, bit 0, width 4).
+
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Change-Id: I8841c9cf77da29029a0fbaf74937b1f4a411710f
+
+commit 23459da70ddbd7201da31cfb1ba2a56e2f4138a1
+Author:     Alexandru Chimac <alex@chimac.ro>
+AuthorDate: Fri Jan 2 11:29:40 2026 +0000
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Sat Nov 7 03:28:51 2026 +0600
+
+    dt-bindings: pinctrl: samsung: Add exynos9610-pinctrl compatible
+
+    Document pin controller support on Exynos9610-series SoCs.
+
+    Signed-off-by: Alexandru Chimac <alex@chimac.ro>
+    Link: https://patch.msgid.link/20260102-exynos9610-pinctrl-v3-1-3f21f2cfb651@chimac.ro
+    Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+commit 8606312eff8060ecee3c0d6ef474f5b26e057fa2
+Author:     Alexandru Chimac <alex@chimac.ro>
+AuthorDate: Fri Jan 2 11:29:59 2026 +0000
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Sat Nov 7 03:29:08 2026 +0600
+
+    pinctrl: samsung: Add Exynos9610 pinctrl configuration
+
+    Add pinctrl configuration for Exynos9610. The bank types used are the
+    same as on Exynos850 and gs101, so we can reuse the macros.
+
+    Signed-off-by: Alexandru Chimac <alex@chimac.ro>
+    Link: https://patch.msgid.link/20260102-exynos9610-pinctrl-v3-3-3f21f2cfb651@chimac.ro
+    Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+commit 2a43bf3ac36dabd64d6b921b59be0194d41cd181
+Author:     Alexandru Chimac <alex@chimac.ro>
+AuthorDate: Fri Jan 2 11:29:49 2026 +0000
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Sat Nov 7 03:30:18 2026 +0600
+
+    dt-bindings: pinctrl: samsung: Add exynos9610-wakeup-eint node
+
+    Add a dedicated compatible for the exynos9610-wakeup-eint node, which is
+    compatbile with Exynos850's implementation (and the Exynos7 fallback).
+
+    Signed-off-by: Alexandru Chimac <alex@chimac.ro>
+    Link: https://patch.msgid.link/20260102-exynos9610-pinctrl-v3-2-3f21f2cfb651@chimac.ro
+    Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+commit ccf88d2cf305097e1e2d3aeb00fdb969e1f4b244
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Sat Nov 7 03:34:46 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Sat Nov 7 03:34:46 2026 +0600
+
+    arm64: dts: exynos9610: add the six pin controllers and their banks
+
+    Controllers and aliases follow the mainline driver order (ALIVE, CMGP,
+    DISPAUD, FSYS, TOP, SHUB); bank names from the driver data, wake-up SPIs
+    and controller interrupts from the stock Samsung DT. Layout as
+    exynos850-pinctrl.dtsi.
+
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Change-Id: I6a67bface4bd5d90123099a56db63dd0faefc813
+
+commit b7d128a5709f5c2f77ead8a45bba82cebb69a415
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Sun Nov 8 14:56:46 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Sun Nov 8 14:56:46 2026 +0600
+
+    scsi: ufs: core: add A50_UFS_SAFE default-deny write guard
+
+    Galaxy A50 bring-up aid. The UFS device also holds EFS, PARAM and the
+    bootloader. Only listed non-writing SCSI opcodes and read queries, plus
+    the fDeviceInit handshake, reach the device; raw UPIU and RPMB requests
+    are refused. set_disk_ro() is not enough: bio_check_ro() only warns.
+
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Change-Id: Ief946b95a2b105561751ee7cff31d93a851747c1
+
+commit 4093eeeea8be7f00d736ef2bce11c37f520140cc
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Sun Nov 8 15:03:18 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Sun Nov 8 15:03:18 2026 +0600
+
+    phy: samsung-ufs: add Exynos9610 UFS PHY data
+
+    PMA tables and lock handling ported from Samsung's ufs-cal-9610.c.
+
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Change-Id: I97141ce606f30aa687b42f8446be5593bad044c5
+
+commit ef9821e5933b826fc459cf6b7ba684c3cf17168f
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Sun Nov 8 15:04:03 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Sun Nov 8 15:04:03 2026 +0600
+
+    scsi: ufs: exynos: add Exynos9610 variant
+
+    FSD-style sequence with the values of Samsung's ufs-cal-9610.c.
+
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Change-Id: I97350bfd1976e030a3117f47c9275130f3415be8
+
+commit b1ccc80da9ef5d44100a93b4b3d55499592fa573
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Sun Nov 8 15:05:52 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Sun Nov 8 15:05:52 2026 +0600
+
+    arm64: dts: exynos9610: add PMU syscon, FSYS sysreg, UFS host and UFS PHY
+
+    Hardware facts from the stock DT. No ref_clk or ref-clk-freq on the host
+    and no regulators, so the UFS core cannot write bRefClkFreq and the
+    bootloader's supply state is left alone.
+
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Change-Id: Ib3c90517c958ef11ef218c4e40159b3aed97561e
+
+commit e32c342cacdf4f6e6a84554dde5c008e7be1bebd
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Sun Nov 8 15:15:29 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Sun Nov 8 15:15:29 2026 +0600
+
+    scsi: ufs: core: A50_UFS_SAFE: exhaustive self-test before any UFS traffic
+
+    ufshcd_init() refuses to start if the guard's decisions differ from an
+    independent numeric list, over all SCSI opcodes and query opcode/idn pairs.
+
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Change-Id: Id5f42192eb860a178aa87370700f5b682a8d84de
+
+commit 3928dd4aed57a720468ebd3395a6a36737970c42
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Sun Nov 8 15:44:33 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Sun Nov 8 15:45:39 2026 +0600
+
+    phy: exynos5-usbdrd: add Exynos9610 USB 2.0 PHY; arm64: dts: add USB controller and PHY
+
+    Sequence and board tuning from Samsung's A50 kernel and stock DT. Peripheral
+    only, high speed only.
+
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Change-Id: I2efd01380c5114b18c00f0df6b531677bff9c2a7
+
+commit 5bb364deeabc542acd39d68b6ba64fd3929e6d7a
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Sun Nov 8 15:46:26 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Sun Nov 8 15:46:26 2026 +0600
+
+    arm64: dts: exynos9610-a50: placeholder USB supplies (PMIC not modelled yet)
+
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Change-Id: I4fe62bfbb508a35bbe4115e2894758fe50929903
+
+commit b3ba75abf8f545e05a758a9723be85f718347449
+Merge: 5bb364dee d5328459e
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Sun Nov 8 15:46:27 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Sun Nov 8 15:46:27 2026 +0600
+
+    test merge: a50-usb + a50-diag (M3.6 test only, do not push)
+
+    Change-Id: I0a1c3325f77b5176eda5c14c28980eb3bb404614
+
+commit 36fdc0b530aeef9e7d9fb3a726f6192423a716a7
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Mon Nov 9 18:01:37 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Mon Nov 9 18:18:40 2026 +0600
+
+    phy: exynos5-usbdrd: 9610: force the PIPE3 inputs of the USB 2 only link
+
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Change-Id: I38958a8d8b8685a1ce2c886aef65417e7712911d
+
+commit cb997ae2392e284572815653beb83cdffbcc0e1f
+Merge: b3ba75abf 36fdc0b53
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Mon Nov 9 18:18:41 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Mon Nov 9 18:18:41 2026 +0600
+
+    Merge branch 'a50-usb' into a50-m36-clean
+
+    Change-Id: Ia0c50bcabaf44eeaa249aa558054647ecf36693b
+
+commit 4fbb731f5666f9f241aa2abcd0867f15d4f1232e
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Tue Nov 10 01:11:46 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Tue Nov 10 01:11:46 2026 +0600
+
+    arm64: configs: a50_firstlight: boot all CPUs
+
+    All 8 CPUs come up on 6.18 through PSCI (M4.1).
+
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Change-Id: Ie3b1544a9ef58190e5a761f1a66dacc26929e23b
+
+commit 11a0a3f458f550dc31ffe33132799581484dd498
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Tue Nov 10 01:14:18 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Tue Nov 10 01:14:18 2026 +0600
+
+    firmware: samsung: acpm: add Exynos9610; mailbox: exynos: add Exynos9610
+
+    The 9610 ACPM firmware uses the same SRAM channel layout, sequence numbers
+    and PMIC commands as gs101. Only the initdata offset, the mailbox doorbell
+    register and the absence of a modelled mailbox clock differ.
+
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Change-Id: I81a2531553aba6aa369ac3b5938e3e01ef6fe56b
+
+commit 9766c0399da14c23f388e8f70ac00d2db4879e01
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Tue Nov 10 01:24:21 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Tue Nov 10 01:24:21 2026 +0600
+
+    regulator: add read-only S2MPU09 regulators over ACPM; arm64: dts: exynos9610: add them
+
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Change-Id: Id1ab775df5834562c006a6f983844c94db76eb6b
+
+commit 6e02b2548d6d77e6621f2595a7acb89abd57b16d
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Tue Nov 10 01:31:18 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Tue Nov 10 01:31:18 2026 +0600
+
+    arm64: dts: exynos9610-a50: use the real USB supplies
+
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Change-Id: Idfcdddc76a60ae35ea9432d6cb501d0aa02f8f40
+
+commit 1ce4dc3e8a7942486c271d480979b8d8264f5fed
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Tue Nov 10 12:51:59 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Tue Nov 10 12:58:20 2026 +0600
+
+    thermal: samsung: add read-only Exynos 9610 TMU driver; arm64: dts: exynos9610: add it and the thermal zones
+
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Change-Id: I7ec8cd4ec0e561b6022fd4bd545e498306722c26
+
+commit 36467384598e8d6d2a366acb4836a5f1265e8d26
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Tue Nov 10 13:04:58 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Tue Nov 10 13:04:58 2026 +0600
+
+    phy: exynos5-usbdrd: 9610: the device-only port has no VBUS supplies
+
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Change-Id: Ifa65b4e2add25cdc683b3b927b90fbc072ccde27
+
+commit 78edbb7bc8ea47c07f4436c39dd7861fdb0e91be
+Merge: cb997ae23 364673845
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Tue Nov 10 13:04:58 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Tue Nov 10 13:04:58 2026 +0600
+
+    Merge branch 'a50-core' into a50-m48-test
+
+    Change-Id: Ia92c381f95da4865afc565bbf498113459842ec2
+
+commit cd8d2a8344cd3b83073fa991734e844a32332860
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Tue Nov 10 14:01:34 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Tue Nov 10 14:01:34 2026 +0600
+
+    scsi: ufs: A50_UFS_SAFE: optional allow-list for writes inside userdata
+
+    A50_UFS_ALLOW_USERDATA lets WRITE(10)/WRITE(16) reach LUN 0 only when every
+    block lies in [A50_UFS_USERDATA_FIRST, A50_UFS_USERDATA_LAST], plus
+    SYNCHRONIZE CACHE on LUN 0. Everything else stays blocked. The decision is a
+    pure function inside the unit-tested guard block, with a boot self-test on an
+    invalid range, a synthetic range and the configured range.
+
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Change-Id: Ic55ac16c700a089dc8c2a3f2068bc07bde957642
+
+commit 88040ffc9e681cbdb36d710007256ab006568b3a
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Tue Nov 10 14:25:05 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Tue Nov 10 14:25:05 2026 +0600
+
+    A50 diag v8: sync filesystems before the timed dump
+
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Change-Id: I7018341f8a180f4a83bfd032019c374f7e9a0f02
+
+commit fb341b651edc532af79817d2a9ca483914b0d9cc
+Merge: cd8d2a834 88040ffc9
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Tue Nov 10 14:25:05 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Tue Nov 10 14:25:05 2026 +0600
+
+    Merge branch 'a50-diag' into a50-m53-test
+
+    Change-Id: I5afc107930a99653efb031ecc54d20593e4fa2aa
+
+commit f252ea8f2f9673e2e09842944f84a39b36072f7c
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Tue Nov 10 18:33:21 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Tue Nov 10 18:33:21 2026 +0600
+
+    scsi: ufs: A50_UFS_SAFE: report a denied command as DATA PROTECT
+
+    ILLEGAL REQUEST / INVALID COMMAND OPCODE on a WRITE(10) denied only by its
+    address makes the SCSI midlayer clear use_10_for_rw for the whole LUN, so
+    userdata writes fall back to WRITE(6), which the guard also denies (M5.3
+    test 2: EFS mount -> userdata journal abort). DATA PROTECT / WRITE PROTECTED
+    fails only the request. Allow-list unchanged. Tested on the phone in M5.3
+    tests 3 and 4 (log/2026-11-10-M5.3-test3-guard-sense.md).
+
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Change-Id: I18082e2e3d97cd0121366a35f9ad9323c5bfd02c
+
+commit f0618ab5947ef5adc97fae5d1b97038718034eda
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Tue Nov 10 18:43:30 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Tue Nov 10 18:43:30 2026 +0600
+
+    scsi: ufs: preserve unsupported sense for blocked discard operations
+
+    Keep DATA_PROTECT for denied WRITE(10/16) ranges so SCSI does not downgrade the entire LUN. Report ILLEGAL_REQUEST for other denied commands so sd disables unsupported UNMAP and WRITE SAME operations. The write allow-list is unchanged.
+
+    Change-Id: Ic6ef406e065b77552068676a60d83e73315391de
+
+commit e8a5a7feaa7dbb5c5fc8d8e87db6c209a770bee6
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Wed Nov 11 05:30:42 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Wed Nov 11 05:30:42 2026 +0600
+
+    tracing: guard device PM tracepoint exports with CONFIG_PM_SLEEP
+
+    The power tracepoint definitions exist only with CONFIG_PM_SLEEP. Match that guard on their exports so TRACEPOINTS can build with PM sleep disabled.
+
+    Change-Id: Ia0e4c012405626cdffdf2705099060e9e126d2cc
+
+commit f1a66edfab03eebbc7db29f969a9883db7034cde
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Wed Nov 11 05:59:06 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Wed Nov 11 05:59:06 2026 +0600
+
+    rust: initialize block KABI reservations only when enabled
+
+    The generated block operations bindings omit the reservation fields with CONFIG_ANDROID_KABI_RESERVE disabled. Match the C definitions in both Rust vtables.
+
+    Change-Id: Idca5d3c5af6ac60da32eb8da9de96c7e26928d43
+
+commit 078d5dbf171838e43dee64ecd409309113862e8f
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Wed Nov 11 06:01:53 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Wed Nov 11 06:01:53 2026 +0600
+
+    rust: build dma-buf abstractions only with DMA_SHARED_BUFFER
+
+    Without CONFIG_DMA_SHARED_BUFFER the Rust kernel crate links references to unavailable dma-buf functions. Match the config that provides the C implementation.
+
+    Change-Id: I218a95a3713a6d4ba98f45617a9393a17145c5ba
+
+commit 33c851162603f15d9d01baa4b7fba27cf19b7126
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Thu Nov 12 18:25:13 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Thu Nov 12 18:42:27 2026 +0600
+
+    staging: add Exynos ION system heap ABI on native DMA heaps
+
+    Provide the measured fixed-layout allocation and query ioctls, with cached and uncached native system heap backing and copyout-safe fd installation. Adapt Samsung tracking hints to separate counters in native task buffer accounting records.
+
+    Change-Id: Id754f153b14fe5a2c6e71e05eca6d5b1f5337ebe
+
+commit bd3fe49b2d2c3b0b04be490b3440d38d806949a3
+Author:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+AuthorDate: Thu Nov 12 19:09:16 2026 +0600
+Commit:     tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+CommitDate: Thu Nov 12 19:09:16 2026 +0600
+
+    arm64: dts: exynos9610: add isolated DPU SysMMU provider probe
+
+    Change-Id: I690433748947f4d6e4a3b8817ada0cdd7e996519

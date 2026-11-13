@@ -1,0 +1,81 @@
+=== startup process result ===
+MainPID=0
+Result=timeout
+ExecMainCode=2
+ExecMainStatus=15
+ExecStartPre={ path=/bin/sh ; argv[]=/bin/sh /run/a50-m64/prepare_policy.sh ; ignore_errors=no ; start_time=[Thu 2026-04-30 02:16:53 +06] ; stop_time=[Thu 2026-04-30 02:16:53 +06] ; pid=844 ; code=exited ; status=0 }
+ExecStart={ path=/usr/libexec/lxc-android-config/start-android-container ; argv[]=/usr/libexec/lxc-android-config/start-android-container ; ignore_errors=no ; start_time=[Thu 2026-04-30 02:16:53 +06] ; stop_time=[Thu 2026-04-30 02:18:23 +06] ; pid=849 ; code=killed ; status=15/TERM }
+ExecStartPost={ path=/usr/lib/lxc-android-config/lxc-android-ready ; argv[]=/usr/lib/lxc-android-config/lxc-android-ready ; ignore_errors=no ; start_time=[Thu 2026-04-30 02:16:53 +06] ; stop_time=[Thu 2026-04-30 02:18:23 +06] ; pid=851 ; code=killed ; status=15/TERM }
+=== entropy ===
+256
+[  111.181713] lxc[8564]: android: start - ../src/lxc/start.c:start:2205 - Exec'ing "/system/bin/env"
+[  111.182650] lxc[849]: android: start - ../src/lxc/start.c:post_start:2216 - Started "/system/bin/env" with pid "8564"
+[  111.334948] lxc[849]: android: cgfsng - ../src/lxc/cgroups/cgfsng.c:__cgroup_tree_create:747 - File exists - Creating the final cgroup 9(lxc.payload.android) failed
+[  111.335067] lxc[849]: android: cgfsng - ../src/lxc/cgroups/cgfsng.c:cgroup_tree_create:807 - File exists - Failed to create payload cgroup 9(lxc.payload.android)
+[  111.338384] lxc[849]: android: start - ../src/lxc/start.c:lxc_spawn:1843 - File exists - Failed to allocate new network namespace id
+[  111.432998] lxc[8587]: android: conf - ../src/lxc/conf.c:lxc_setup:4019 - The container "android" is set up
+[  111.434207] lxc[8587]: android: utils - ../src/lxc/utils.c:open_devnull:1343 - Operation not permitted - Can't open /dev/null
+[  111.434299] lxc[8587]: android: start - ../src/lxc/start.c:do_start:1395 - Failed to ajust stdio permissions
+[  111.434381] lxc[8587]: android: utils - ../src/lxc/utils.c:lxc_drop_groups:1479 - Dropped supplimentary groups
+[  111.434477] lxc[8587]: android: start - ../src/lxc/start.c:start:2205 - Exec'ing "/system/bin/env"
+[  111.435904] lxc[849]: android: start - ../src/lxc/start.c:post_start:2216 - Started "/system/bin/env" with pid "8587"
+[  111.658982] lxc[849]: android: cgfsng - ../src/lxc/cgroups/cgfsng.c:__cgroup_tree_create:747 - File exists - Creating the final cgroup 9(lxc.payload.android) failed
+[  111.659115] lxc[849]: android: cgfsng - ../src/lxc/cgroups/cgfsng.c:cgroup_tree_create:807 - File exists - Failed to create payload cgroup 9(lxc.payload.android)
+[  111.662450] lxc[849]: android: start - ../src/lxc/start.c:lxc_spawn:1843 - File exists - Failed to allocate new network namespace id
+[  111.743636] lxc[8612]: android: conf - ../src/lxc/conf.c:lxc_setup:4019 - The container "android" is set up
+[  111.744433] lxc[8612]: android: utils - ../src/lxc/utils.c:open_devnull:1343 - Operation not permitted - Can't open /dev/null
+[  111.744527] lxc[8612]: android: start - ../src/lxc/start.c:do_start:1395 - Failed to ajust stdio permissions
+[  111.744620] lxc[8612]: android: utils - ../src/lxc/utils.c:lxc_drop_groups:1479 - Dropped supplimentary groups
+[  111.744708] lxc[8612]: android: start - ../src/lxc/start.c:start:2205 - Exec'ing "/system/bin/env"
+[  111.746387] lxc[849]: android: start - ../src/lxc/start.c:post_start:2216 - Started "/system/bin/env" with pid "8612"
+[  111.909081] systemd[1]: lxc-android-config.service: start-post operation timed out. Terminating.
+[  111.909990] systemd[1]: lxc-android-config.service: Control process exited, code=killed, status=15/TERM
+[  111.926032] systemd[1]: lxc-android-config.service: Failed with result 'timeout'.
+[  111.926995] systemd[1]: Failed to start lxc-android-config.service - LXC Android Config and Container Initialization.
+[  111.927998] systemd[1]: lxc-android-config.service: Triggering OnFailure= dependencies.
+[  111.929518] systemd[1]: lxc-android-config.service: Consumed 8.462s CPU time, 4.8M memory peak, 0B memory swap peak.
+[  113.388703] systemd[1]: ua-timer.timer - Ubuntu Pro Timer for running repeated jobs was skipped because of an unmet condition check (ConditionPathExists=!/lib/systemd/system/lxc-android-config.service).
+[  113.588026] systemd[1]: Starting lxc-android-config-apply-sysctls.service - Apply retroactively per-network-interface sysctls...
+[  113.594485] systemd[1]: Starting lxc-android-config-cleanup-boothooks-backup.service - Cleanup backups created by boot-hooks/new-release.d/000-backup...
+[  113.595070] systemd[1]: lxc-net.service - LXC network bridge setup was skipped because of an unmet condition check (ConditionPathExists=!/lib/systemd/system/lxc-android-config.service).
+[  113.885003] systemd[1]: Finished lxc-android-config-apply-sysctls.service - Apply retroactively per-network-interface sysctls.
+[  113.886277] systemd[1]: Finished lxc-android-config-cleanup-boothooks-backup.service - Cleanup backups created by boot-hooks/new-release.d/000-backup.
+[  114.755090] systemd[1]: Started lxc-monitord.service - LXC Container Monitoring Daemon.
+[  114.755693] systemd[1]: lxc.service - LXC Container Initialization and Autoboot Code was skipped because of an unmet condition check (ConditionPathExists=!/lib/systemd/system/lxc-android-config.service).
+[  120.943870] A50M64: CMD systemctl show mount-android-partitions.service a50-container-prepare.service lxc-android-config.service -p Id -p ActiveState -p SubState -p Result -p ExecMainStatus
+[  121.001704] A50M64: Id=lxc-android-config.service
+[  121.002576] A50M64: CMD lxc-info -n android
+[  121.022808] A50M64: CMD lxc-attach -n android -- /system/bin/getprop sys.boot_completed
+[  121.047351] A50M64: lxc-attach: android: ../src/lxc/attach.c: get_attach_context: 406 Connection refused - Failed to get init pid
+[  121.047650] A50M64: lxc-attach: android: ../src/lxc/attach.c: lxc_attach: 1470 Connection refused - Failed to get attach context
+[  121.048065] A50M64: CMD lxc-attach -n android -- /system/bin/getprop init.svc.vendor.allocator-2-0
+[  121.071505] A50M64: lxc-attach: android: ../src/lxc/attach.c: get_attach_context: 406 Connection refused - Failed to get init pid
+[  121.071807] A50M64: lxc-attach: android: ../src/lxc/attach.c: lxc_attach: 1470 Connection refused - Failed to get attach context
+[  121.072225] A50M64: CMD /bin/sh -c ps -eo pid,comm,args | grep -E "graphics.allocator|/system/bin/init|lxc-start|servicemanager" | grep -v grep
+[  121.208557] A50M64: CMD /bin/sh -c tail -n 70 /run/a50-m64/lxc.log
+[  121.234572] A50M64: CMD journalctl -b --no-pager -n 35 -u mount-android-partitions.service -u a50-container-prepare.service -u lxc-android-config.service
+[  121.507375] A50STATUS: lxc-android-config.service loaded failed failed LXC Android Config and Container Initialization
+[  200.488804] A50STATUS: lxc-android-config.service                   loaded failed failed LXC Android Config and Container Initialization
+[  201.636192] A50M64: CMD systemctl show mount-android-partitions.service a50-container-prepare.service lxc-android-config.service -p Id -p ActiveState -p SubState -p Result -p ExecMainStatus
+[  201.701427] A50M64: Id=lxc-android-config.service
+[  201.702292] A50M64: CMD lxc-info -n android
+[  201.722839] A50M64: CMD lxc-attach -n android -- /system/bin/getprop sys.boot_completed
+[  201.748826] A50M64: lxc-attach: android: ../src/lxc/attach.c: get_attach_context: 406 Connection refused - Failed to get init pid
+[  201.749170] A50M64: lxc-attach: android: ../src/lxc/attach.c: lxc_attach: 1470 Connection refused - Failed to get attach context
+[  201.749613] A50M64: CMD lxc-attach -n android -- /system/bin/getprop init.svc.vendor.allocator-2-0
+[  201.768078] A50M64: lxc-attach: android: ../src/lxc/attach.c: get_attach_context: 406 Connection refused - Failed to get init pid
+[  201.768393] A50M64: lxc-attach: android: ../src/lxc/attach.c: lxc_attach: 1470 Connection refused - Failed to get attach context
+[  201.768831] A50M64: CMD /bin/sh -c ps -eo pid,comm,args | grep -E "graphics.allocator|/system/bin/init|lxc-start|servicemanager" | grep -v grep
+[  201.927735] A50M64: CMD /bin/sh -c tail -n 70 /run/a50-m64/lxc.log
+[  201.947109] A50M64: CMD journalctl -b --no-pager -n 35 -u mount-android-partitions.service -u a50-container-prepare.service -u lxc-android-config.service
+=== trace tool ===
+=== processes ===
+    100       2 I    worker_thread            [kworker/2:1-cgroup_bpf_destroy]
+    958       2 I    worker_thread            [kworker/7:2-cgroup_bpf_destroy]
+   9008       1 Ss   do_epoll_wait            /usr/libexec/lxc/lxc-monitord --daemon
+   9668    9667 Ss   do_wait                  bash -c printf "=== startup process result ===\n"; systemctl show lxc-android-config.service -p ExecStart -p ExecStartPost -p ExecStartPre -p MainPID -p ExecMainCode -p ExecMainStatus -p Result; printf "=== entropy ===\n"; cat /proc/sys/kernel/random/entropy_avail; dmesg | grep -Ei "random:|crng|lxc|bpf" | tail -n 60; printf "=== trace tool ===\n"; command -v strace; printf "=== processes ===\n"; ps -eo pid,ppid,stat,wchan:24,args | grep -E "lxc|android|init second|bpf|random" | head -n 30; printf "=== power units ===\n"; systemctl cat repowerd.service a50-enable-autosuspend.service sleep.target
+   9675    9668 S    anon_pipe_read           grep -E lxc|android|init second|bpf|random
+=== power units ===
+# Unit repowerd.service is masked.
+# Unit a50-enable-autosuspend.service is masked.
+# Unit sleep.target is masked.

@@ -1,0 +1,7 @@
+character /dev/null O_RDWR: PASS
+block O_RDONLY: fd=-1 errno=6 FAIL
+block O_WRONLY: fd=-1 errno=6 FAIL
+block O_RDWR: fd=-1 errno=6 FAIL
+block mknod: result=0 errno=6 FAIL
+FAIL: all block open modes and mknod denied; no block I/O issued
+negative_control_rc=1 (expected 1 without the M6.4 restriction)

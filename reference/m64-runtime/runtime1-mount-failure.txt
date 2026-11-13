@@ -1,0 +1,56 @@
+=== exact mount failure ===
+× mount-android-partitions.service - Mount Android partitions
+     Loaded: loaded (/usr/lib/systemd/system/mount-android-partitions.service; static)
+    Drop-In: /run/systemd/system/mount-android-partitions.service.d
+             └─90-a50-safe.conf
+     Active: failed (Result: exit-code) since Thu 2026-04-30 02:16:52 +06; 6 months 15 days ago
+    Process: 563 ExecStart=/bin/sh /run/a50-m64/mount_android_safe.sh (code=exited, status=1/FAILURE)
+   Main PID: 563 (code=exited, status=1/FAILURE)
+        CPU: 186ms
+
+Notice: journal has been rotated since unit was started, output may be incomplete.
+-- No entries --
+=== existing rootfs mount ===
+TARGET                      SOURCE     FSTYPE OPTIONS
+/var/lib/lxc/android/rootfs /dev/loop1 ext4   ro,relatime
+=== recent kernel output ===
+[   80.500224] systemd[1587]: Created slice session.slice - User Core Session Slice.
+[   80.500315] systemd[1587]: Started launchpadlib-cache-clean.timer - Clean up old files in the Launchpadlib cache.
+[   80.500367] systemd[1587]: Reached target paths.target - Paths.
+[   80.500423] systemd[1587]: Reached target timers.target - Timers.
+[   80.502922] systemd[1587]: Starting dbus.socket - D-Bus User Message Bus Socket...
+[   80.503197] systemd[1587]: Listening on dirmngr.socket - GnuPG network certificate management daemon.
+[   80.503439] systemd[1587]: Listening on gnome-keyring-daemon.socket - GNOME Keyring daemon.
+[   80.503614] systemd[1587]: Listening on gpg-agent-browser.socket - GnuPG cryptographic agent and passphrase cache (access for web browsers).
+[   80.503787] systemd[1587]: Listening on gpg-agent-extra.socket - GnuPG cryptographic agent and passphrase cache (restricted).
+[   80.506029] systemd[1587]: Starting gpg-agent.socket - GnuPG cryptographic agent and passphrase cache...
+[   80.506249] systemd[1587]: Listening on keyboxd.socket - GnuPG public key management service.
+[   80.506435] systemd[1587]: Listening on pk-debconf-helper.socket - debconf communication socket.
+[   80.506483] systemd[1587]: pulseaudio.socket - Sound System was skipped because of an unmet condition check (ConditionUser=!root).
+[   80.506672] systemd[1587]: Listening on snapd.session-agent.socket - REST API socket for snapd user session agent.
+[   80.508889] systemd[1587]: Starting ssh-agent.socket - OpenSSH Agent socket...
+[   80.555953] systemd[1587]: Listening on dbus.socket - D-Bus User Message Bus Socket.
+[   80.556223] systemd[1587]: Listening on gpg-agent.socket - GnuPG cryptographic agent and passphrase cache.
+[   80.558328] systemd[1587]: Listening on ssh-agent.socket - OpenSSH Agent socket.
+[   80.561044] systemd[1587]: Starting gcr-ssh-agent.socket - GCR ssh-agent wrapper...
+[   80.602242] systemd[1587]: Listening on gcr-ssh-agent.socket - GCR ssh-agent wrapper.
+[   80.604979] systemd[1587]: Starting gpg-agent-ssh.socket - GnuPG cryptographic agent (ssh-agent emulation)...
+[   80.646928] systemd[1587]: Listening on gpg-agent-ssh.socket - GnuPG cryptographic agent (ssh-agent emulation).
+[   80.647197] systemd[1587]: Reached target sockets.target - Sockets.
+[   80.647255] systemd[1587]: Reached target basic.target - Basic System.
+[   80.647388] systemd[1587]: mpris-proxy.service - Bluetooth mpris proxy was skipped because of an unmet condition check (ConditionUser=!@system).
+[   80.647429] systemd[1587]: pulseaudio.service - Sound Service was skipped because of an unmet condition check (ConditionUser=!root).
+[   80.647471] systemd[1587]: Reached target default.target - Main User Target.
+[   80.647946] systemd[1]: Started user@0.service - User Manager for UID 0.
+[   80.649920] systemd[1587]: Started audiosystem-passthrough-af.service - audiosystem-passthrough instance implementing AF interface.
+[   80.652559] systemd[1587]: Starting audiosystem-passthrough-qti.service - audiosystem-passthrough instance implementing IQcRilAudio interface...
+[   80.653089] systemd[1]: Started session-4.scope - Session 4 of User root.
+[   80.682963] systemd[1587]: audiosystem-passthrough-qti.service: Skipped due to 'exec-condition'.
+[   80.683396] systemd[1587]: Condition check resulted in audiosystem-passthrough-qti.service - audiosystem-passthrough instance implementing IQcRilAudio interface being skipped.
+[   80.683514] systemd[1587]: Startup finished in 1.005s.
+[   80.690418] binder: 1617:1617 cannot find target node
+[   80.690457] binder: 1617:1617 transaction call to 0:0 failed 32/29189/-22, code 1599098439 size 0-0 line 3458
+[   80.690672] binder: 1617:1617 cannot find target node
+[   80.690699] binder: 1617:1617 transaction call to 0:0 failed 33/29189/-22, code 1599098439 size 0-0 line 3458
+[   80.793839] binder: 1617:1617 cannot find target node
+[   80.793882] binder: 1617:1617 transaction call to 0:0 failed 34/29189/-22, code 1599098439 size 0-0 line 3458

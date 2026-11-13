@@ -1,0 +1,56 @@
+kernel=6.18.33-a50-diag+
+mount-android-partitions=masked
+android=STOPPED
+userdata=rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+/run/a50-m62-binderfs.k0sD2f binder binder rw,relatime,max=1048576,stats=global
+/run/a50-m62-binderfs.k0sD2f/binder-control character special file f7:0
+/run/a50-m62-binderfs.k0sD2f/binder character special file f7:1
+/run/a50-m62-binderfs.k0sD2f/hwbinder character special file f7:2
+/run/a50-m62-binderfs.k0sD2f/vndbinder character special file f7:3
+/run/a50-m62-binderfs.k0sD2f/binder: BINDER_VERSION=8
+/run/a50-m62-binderfs.k0sD2f/hwbinder: BINDER_VERSION=8
+/run/a50-m62-binderfs.k0sD2f/vndbinder: BINDER_VERSION=8
+PASS candidate: BinderFS and three Binder contexts
+ASHMEM_SET_SIZE / ASHMEM_GET_SIZE: 4096 bytes
+PASS: ashmem size ioctls and shared mmap
+merged fence: signaled=0 active=2 poll=0
+merged fence: signaled=1 active=1 poll=0
+merged fence: signaled=2 active=0 poll=1
+PASS: software timeline fences merge and signal in order
+/dev/ion character special file a:105
+heap query: ion_system_heap id=0 flags=0
+replay[0] len=9888512 mask=1 flags=64 PASS
+replay[1] len=4096 mask=1 flags=1 PASS
+replay[2] len=9888512 mask=1 flags=64 PASS
+replay[3] len=4096 mask=1 flags=1 PASS
+replay[4] len=9888512 mask=1 flags=64 PASS
+replay[5] len=4096 mask=1 flags=1 PASS
+replay[6] len=9888512 mask=1 flags=64 PASS
+replay[7] len=4096 mask=1 flags=1 PASS
+replay[8] len=9888512 mask=1 flags=64 PASS
+replay[9] len=4096 mask=1 flags=1 PASS
+replay[10] len=9888512 mask=1 flags=64 PASS
+replay[11] len=4096 mask=1 flags=1 PASS
+replay[12] len=9888512 mask=1 flags=64 PASS
+replay[13] len=4096 mask=1 flags=1 PASS
+replay[14] len=9888512 mask=1 flags=64 PASS
+replay[15] len=4096 mask=1 flags=1 PASS
+replay[16] len=9888512 mask=1 flags=64 PASS
+replay[17] len=4096 mask=1 flags=1 PASS
+replay[18] len=9888512 mask=1 flags=64 PASS
+replay[19] len=4096 mask=1 flags=1 PASS
+replay[20] len=9888512 mask=1 flags=64 PASS
+replay[21] len=4096 mask=1 flags=1 PASS
+replay[22] len=9888512 mask=1 flags=64 PASS
+replay[23] len=4096 mask=1 flags=1 PASS
+replay[24] len=9888512 mask=1 flags=64 PASS
+replay[25] len=4096 mask=1 flags=1 PASS
+replay[26] len=9888512 mask=1 flags=64 PASS
+replay[27] len=4096 mask=1 flags=1 PASS
+replay[28] len=9888512 mask=1 flags=64 PASS
+replay[29] len=4096 mask=1 flags=1 PASS
+replay[30] len=9888512 mask=1 flags=64 PASS
+replay[31] len=4096 mask=1 flags=1 PASS
+PASS: query validation, allocation bounds and copyout fd cleanup
+PASS: tracking balance, dup/close, fork and exec lifetime
+PASS: captured ION allocations and native DMA-BUF behavior

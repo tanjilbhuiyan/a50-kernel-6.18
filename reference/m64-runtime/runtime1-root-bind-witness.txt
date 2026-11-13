@@ -1,0 +1,28 @@
+=== mount assertion witness ===
+existing_rootfs_mountpoint_rc=0
+/dev/loop1 ext4 / ro,relatime
+/dev/loop1 ext4 / ro,relatime
+STOPPED
+0d74d10520075911019b6a0d6d51d6bd38cc64133e07477a16225183918f2f22  /run/a50-m64/mount_android_safe.sh
+=== protected mounts ===
+TARGET                                 SOURCE                                            FSTYPE OPTIONS
+/android                               /dev/loop1                                        ext4   ro,relatime
+├─/android/system                      /dev/loop1[/system]                               ext4   ro,relatime
+├─/android/data                        /dev/sda32[/android-data]                         ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+│ └─/android/data                      /dev/sda32[/android-data]                         ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+├─/android/cache                       /dev/sda32[/cache]                                ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+│ └─/android/cache                     /dev/sda32[/android-data/cache]                   ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+├─/android/vendor                      /dev/sda26                                        ext4   ro,nosuid,nodev,relatime,nodiscard,norecovery
+├─/android/mnt                         a50-android-mnt                                   tmpfs  rw,nosuid,nodev,relatime,size=16384k,mode=755
+└─/android/apex                        android_apex                                      tmpfs  rw,relatime
+  ├─/android/apex/com.android.i18n     /dev/loop1[/system/apex/com.android.i18n]         ext4   ro,relatime
+  ├─/android/apex/com.android.art      /dev/loop1[/system/apex/com.android.art.release]  ext4   ro,relatime
+  ├─/android/apex/com.android.runtime  /dev/loop1[/system/apex/com.android.runtime]      ext4   ro,relatime
+  └─/android/apex/com.android.vndk.v30 /dev/loop1[/system/apex/com.android.vndk.current] ext4   ro,relatime
+=== guard ===
+[    0.102317] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: self-test passed, write guard active
+[    0.102325] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: writes allowed on LUN 0 blocks 0x1c8700-0xee42ff only
+[    0.147619] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x4 idn 0xd
+[    0.147646] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x7 idn 0x4
+[    0.150842] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x4 idn 0x3
+[   19.676950] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked SCSI opcode 0x42 lun 0

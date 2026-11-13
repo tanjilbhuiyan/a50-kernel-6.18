@@ -1,0 +1,450 @@
+From 33c851162603f15d9d01baa4b7fba27cf19b7126 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Thu, 12 Nov 2026 18:25:13 +0600
+Subject: [PATCH] staging: add Exynos ION system heap ABI on native DMA heaps
+
+Provide the measured fixed-layout allocation and query ioctls, with cached and uncached native system heap backing and copyout-safe fd installation. Adapt Samsung tracking hints to separate counters in native task buffer accounting records.
+
+Change-Id: Id754f153b14fe5a2c6e71e05eca6d5b1f5337ebe
+---
+ drivers/dma-buf/dma-buf.c            |  42 +++++++
+ drivers/staging/Makefile             |   2 +-
+ drivers/staging/android/Kconfig      |  10 ++
+ drivers/staging/android/Makefile     |   1 +
+ drivers/staging/android/ion_compat.c | 120 ++++++++++++++++++
+ drivers/staging/android/uapi/ion.h   | 178 +++++++++++++++++++++++++++
+ include/linux/dma-buf.h              |   4 +
+ 7 files changed, 356 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/staging/android/ion_compat.c
+ create mode 100644 drivers/staging/android/uapi/ion.h
+
+diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+index 8e379f21b..aabc6ea40 100644
+--- a/drivers/dma-buf/dma-buf.c
++++ b/drivers/dma-buf/dma-buf.c
+@@ -358,6 +358,9 @@ static void add_task_dmabuf_record(struct task_dma_buf_info *dmabuf_info,
+ 
+ 	rec->dmabuf = dmabuf;
+ 	rec->refcnt = 1;
++#ifdef CONFIG_ION_EXYNOS_COMPAT
++	rec->ion_legacy_refs = 0;
++#endif
+ 	list_add(&rec->node, &dmabuf_info->dmabufs);
+ 	dmabuf_info->dmabuf_count++;
+ 	dmabuf_info->rss += dmabuf->size;
+@@ -1136,6 +1139,39 @@ static long dma_buf_import_sync_file(struct dma_buf *dmabuf,
+ }
+ #endif
+ 
++#ifdef CONFIG_ION_EXYNOS_COMPAT
++#define ION_DMA_BUF_TRACK _IO('b', 8)
++#define ION_DMA_BUF_UNTRACK _IO('b', 9)
++
++static int dma_buf_ion_track(struct dma_buf *dmabuf, bool track)
++{
++	struct task_dma_buf_info *info = current->dmabuf_info;
++	struct task_dma_buf_record *record;
++	int result = 0;
++
++	if (!is_dmabuf_accounting_enabled())
++		return -EOPNOTSUPP;
++	if (!info)
++		return -ESRCH;
++	spin_lock(&info->lock);
++	record = find_task_dmabuf_record(info, dmabuf);
++	if (!record) {
++		result = -ENOENT;
++	} else if (track) {
++		if (record->ion_legacy_refs == UINT_MAX)
++			result = -EOVERFLOW;
++		else
++			record->ion_legacy_refs++;
++	} else if (record->ion_legacy_refs) {
++		record->ion_legacy_refs--;
++	} else {
++		result = -ENOENT;
++	}
++	spin_unlock(&info->lock);
++	return result;
++}
++#endif
++
+ static long dma_buf_ioctl(struct file *file,
+ 			  unsigned int cmd, unsigned long arg)
+ {
+@@ -1147,6 +1183,12 @@ static long dma_buf_ioctl(struct file *file,
+ 	dmabuf = file->private_data;
+ 
+ 	switch (cmd) {
++#ifdef CONFIG_ION_EXYNOS_COMPAT
++	case ION_DMA_BUF_TRACK:
++		return dma_buf_ion_track(dmabuf, true);
++	case ION_DMA_BUF_UNTRACK:
++		return dma_buf_ion_track(dmabuf, false);
++#endif
+ 	case DMA_BUF_IOCTL_SYNC:
+ 		if (copy_from_user(&sync, (void __user *) arg, sizeof(sync)))
+ 			return -EFAULT;
+diff --git a/drivers/staging/Makefile b/drivers/staging/Makefile
+index 855245a17..636c90428 100644
+--- a/drivers/staging/Makefile
++++ b/drivers/staging/Makefile
+@@ -15,4 +15,4 @@ obj-$(CONFIG_BCM2835_VCHIQ)	+= vc04_services/
+ obj-$(CONFIG_XIL_AXIS_FIFO)	+= axis-fifo/
+ obj-$(CONFIG_GPIB)	 	+= gpib/
+ 
+-obj-$(CONFIG_ASHMEM)		+= android/
++obj-y				+= android/
+diff --git a/drivers/staging/android/Kconfig b/drivers/staging/android/Kconfig
+index b432280be..eb1d974c1 100644
+--- a/drivers/staging/android/Kconfig
++++ b/drivers/staging/android/Kconfig
+@@ -1,4 +1,14 @@
+ # SPDX-License-Identifier: GPL-2.0
++config ION_EXYNOS_COMPAT
++	bool "Exynos ION userspace compatibility on native DMA heaps"
++	depends on ARM64
++	select DMABUF_HEAPS
++	select DMABUF_HEAPS_SYSTEM
++	help
++	  Provide the ION allocation and heap-query ABI used by Exynos Android
++	  userspace. System allocations use the native cached and uncached DMA
++	  heaps. Reserved and protected Exynos heaps are not implemented.
++
+ config ASHMEM
+ 	bool "Enable the Anonymous Shared Memory Subsystem"
+ 	depends on SHMEM && RUST
+diff --git a/drivers/staging/android/Makefile b/drivers/staging/android/Makefile
+index 0732228e3..3a9335ea7 100644
+--- a/drivers/staging/android/Makefile
++++ b/drivers/staging/android/Makefile
+@@ -2,3 +2,4 @@
+ ccflags-y += -I$(src)			# needed for trace events
+ 
+ obj-$(CONFIG_ASHMEM)		+= ashmem.o ashmem_exports.o
++obj-$(CONFIG_ION_EXYNOS_COMPAT)	+= ion_compat.o
+diff --git a/drivers/staging/android/ion_compat.c b/drivers/staging/android/ion_compat.c
+new file mode 100644
+index 000000000..2e1dc211f
+--- /dev/null
++++ b/drivers/staging/android/ion_compat.c
+@@ -0,0 +1,120 @@
++// SPDX-License-Identifier: GPL-2.0-only
++#include <linux/compat.h>
++#include <linux/dma-buf.h>
++#include <linux/dma-heap.h>
++#include <linux/file.h>
++#include <linux/fs.h>
++#include <linux/miscdevice.h>
++#include <linux/mm.h>
++#include <linux/module.h>
++#include <linux/uaccess.h>
++
++#include "uapi/ion.h"
++
++static int ion_compat_allocate(struct ion_allocation_data *request,
++			       void __user *argument)
++{
++	struct dma_heap *heap;
++	struct dma_buf *buffer;
++	const char *heap_name;
++	size_t length;
++	int fd;
++
++	if (!(request->heap_id_mask & BIT(0)))
++		return -ENODEV;
++	if (request->flags & ~(ION_FLAG_CACHED | ION_FLAG_MAY_HWRENDER))
++		return -EOPNOTSUPP;
++	if (!request->len)
++		return -EINVAL;
++	if (request->len > SIZE_MAX - (PAGE_SIZE - 1))
++		return -EOVERFLOW;
++	length = PAGE_ALIGN((size_t)request->len);
++	heap_name = request->flags & ION_FLAG_CACHED ? "system" : "system-uncached";
++	heap = dma_heap_find(heap_name);
++	if (!heap)
++		return -ENODEV;
++	buffer = dma_heap_buffer_alloc(heap, length, O_RDWR | O_CLOEXEC, 0);
++	dma_heap_put(heap);
++	if (IS_ERR(buffer))
++		return PTR_ERR(buffer);
++
++	fd = get_unused_fd_flags(O_CLOEXEC);
++	if (fd < 0) {
++		dma_buf_put(buffer);
++		return fd;
++	}
++	request->fd = fd;
++	if (copy_to_user(argument, request, sizeof(*request))) {
++		put_unused_fd(fd);
++		dma_buf_put(buffer);
++		return -EFAULT;
++	}
++	fd_install(fd, buffer->file);
++	return 0;
++}
++
++static int ion_compat_query(struct ion_heap_query *query)
++{
++	const struct ion_heap_data system = {
++		.name = "ion_system_heap",
++		.type = ION_HEAP_TYPE_SYSTEM,
++		.heap_id = 0,
++	};
++
++	if (query->reserved0 || query->reserved1 || query->reserved2)
++		return -EINVAL;
++	if (query->heaps) {
++		if (!query->cnt)
++			return -EINVAL;
++		if (copy_to_user(u64_to_user_ptr(query->heaps), &system, sizeof(system)))
++			return -EFAULT;
++	}
++	query->cnt = 1;
++	return 0;
++}
++
++static long ion_compat_ioctl(struct file *file, unsigned int command,
++			     unsigned long arg)
++{
++	void __user *argument = (void __user *)arg;
++	struct ion_allocation_data allocation;
++	struct ion_heap_query query;
++	int result;
++
++	switch (command) {
++	case ION_IOC_ALLOC:
++		if (copy_from_user(&allocation, argument, sizeof(allocation)))
++			return -EFAULT;
++		return ion_compat_allocate(&allocation, argument);
++	case ION_IOC_HEAP_QUERY:
++		if (copy_from_user(&query, argument, sizeof(query)))
++			return -EFAULT;
++		result = ion_compat_query(&query);
++		if (result)
++			return result;
++		if (copy_to_user(argument, &query, sizeof(query)))
++			return -EFAULT;
++		return 0;
++	default:
++		return -ENOTTY;
++	}
++}
++
++static const struct file_operations ion_compat_fops = {
++	.owner = THIS_MODULE,
++	.unlocked_ioctl = ion_compat_ioctl,
++	.compat_ioctl = compat_ptr_ioctl,
++};
++
++static struct miscdevice ion_compat_device = {
++	.minor = MISC_DYNAMIC_MINOR,
++	.name = "ion",
++	.fops = &ion_compat_fops,
++	.mode = 0660,
++};
++
++static int __init ion_compat_init(void)
++{
++	return misc_register(&ion_compat_device);
++}
++late_initcall(ion_compat_init);
+diff --git a/drivers/staging/android/uapi/ion.h b/drivers/staging/android/uapi/ion.h
+new file mode 100644
+index 000000000..0b894f0ef
+--- /dev/null
++++ b/drivers/staging/android/uapi/ion.h
+@@ -0,0 +1,178 @@
++/*
++ * drivers/staging/android/uapi/ion.h
++ *
++ * Copyright (C) 2011 Google, Inc.
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ */
++
++#ifndef _UAPI_LINUX_ION_H
++#define _UAPI_LINUX_ION_H
++
++#include <linux/ioctl.h>
++#include <linux/types.h>
++
++/**
++ * enum ion_heap_types - list of all possible types of heaps
++ * @ION_HEAP_TYPE_SYSTEM:	 memory allocated via vmalloc
++ * @ION_HEAP_TYPE_SYSTEM_CONTIG: memory allocated via kmalloc
++ * @ION_HEAP_TYPE_CARVEOUT:	 memory allocated from a prereserved
++ *				 carveout heap, allocations are physically
++ *				 contiguous
++ * @ION_HEAP_TYPE_DMA:		 memory allocated via DMA API
++ * @ION_NUM_HEAPS:		 helper for iterating over heaps, a bit mask
++ *				 is used to identify the heaps, so only 32
++ *				 total heap types are supported
++ */
++enum ion_heap_type {
++	ION_HEAP_TYPE_SYSTEM,
++	ION_HEAP_TYPE_SYSTEM_CONTIG,
++	ION_HEAP_TYPE_CARVEOUT,
++	ION_HEAP_TYPE_CHUNK,
++	ION_HEAP_TYPE_DMA,
++	ION_HEAP_TYPE_CUSTOM, /*
++			       * must be last so device specific heaps always
++			       * are at the end of this enum
++			       */
++	ION_HEAP_TYPE_HPA = ION_HEAP_TYPE_CUSTOM,
++};
++
++#define ION_NUM_HEAP_IDS		(sizeof(unsigned int) * 8)
++
++/**
++ * allocation flags - the lower 16 bits are used by core ion, the upper 16
++ * bits are reserved for use by the heaps themselves.
++ */
++
++/*
++ * mappings of this buffer should be cached, ion will do cache maintenance
++ * when the buffer is mapped for dma
++ */
++#define ION_FLAG_CACHED 1
++/*
++ * the allocated buffer is not cleared with zeroes to avoid initialization
++ * overhead. Mapping to userspace is not allowed.
++ */
++#define ION_FLAG_NOZEROED 8
++/*
++ * the allocated buffer is not allowed to access without a proper permission.
++ * Both of mmap() and dmabuf kmap/vmap will fail. Acessing by any other mapping
++ * will generate data abort exception and get oops.
++ * ION_FLAG_PROTECTED is only applicable to the heaps with security property.
++ * Other heaps ignore this flag.
++ */
++#define ION_FLAG_PROTECTED 16
++/*
++ * the allocated buffer does not have dirty cache line allocated. In other
++ * words, ION flushes the cache even though allocation flags includes
++ * ION_FLAG_CACHED. This is required by some H/W drivers that wants to reduce
++ * overhead by explicit cache maintenance.
++ */
++#define ION_FLAG_SYNC_FORCE 32
++/*
++ * the allocated buffer is possibly written by H/W(GPU) before initializing by
++ * S/W except buffer initialization by ION on allocation.
++ */
++#define ION_FLAG_MAY_HWRENDER 64
++
++/**
++ * DOC: Ion Userspace API
++ *
++ * create a client by opening /dev/ion
++ * most operations handled via following ioctls
++ *
++ */
++
++/**
++ * struct ion_allocation_data - metadata passed from userspace for allocations
++ * @len:		size of the allocation
++ * @heap_id_mask:	mask of heap ids to allocate from
++ * @flags:		flags passed to heap
++ * @handle:		pointer that will be populated with a cookie to use to
++ *			refer to this allocation
++ *
++ * Provided by userspace as an argument to the ioctl
++ */
++struct ion_allocation_data {
++	__u64 len;
++	__u32 heap_id_mask;
++	__u32 flags;
++	__u32 fd;
++	__u32 unused;
++};
++
++#define MAX_HEAP_NAME			32
++
++/**
++ * freed buffer to the heap may not be returned to the free pool immediately
++ */
++#define ION_HEAPDATA_FLAGS_DEFER_FREE		1
++/**
++ * ION_FLAG_PROTECTED is applicable.
++ */
++#define ION_HEAPDATA_FLAGS_ALLOW_PROTECTION	2
++/**
++ * access to the buffer from this heap is not allowed in both of userland and
++ * kernel space. mmap() and dmabuf kmap/vmap always fail.
++ */
++#define ION_HEAPDATA_FLAGS_UNTOUCHABLE		4
++/**
++ * struct ion_heap_data - data about a heap
++ * @name - first 32 characters of the heap name
++ * @type - heap type
++ * @heap_id - heap id for the heap
++ * @size - size of the memory pool if the heap type is dma, carveout and chunk
++ * @heap_flags - properties of heap
++ *
++ */
++struct ion_heap_data {
++	char name[MAX_HEAP_NAME];
++	__u32 type;
++	__u32 heap_id;
++	__u32 size;       /* reserved0 */
++	__u32 heap_flags; /* reserved1 */
++	__u32 reserved2;
++};
++
++/**
++ * struct ion_heap_query - collection of data about all heaps
++ * @cnt - total number of heaps to be copied
++ * @heaps - buffer to copy heap data
++ */
++struct ion_heap_query {
++	__u32 cnt; /* Total number of heaps to be copied */
++	__u32 reserved0; /* align to 64bits */
++	__u64 heaps; /* buffer to be populated */
++	__u32 reserved1;
++	__u32 reserved2;
++};
++
++#define ION_IOC_MAGIC		'I'
++
++/**
++ * DOC: ION_IOC_ALLOC - allocate memory
++ *
++ * Takes an ion_allocation_data struct and returns it with the handle field
++ * populated with the opaque handle for the allocation.
++ */
++#define ION_IOC_ALLOC		_IOWR(ION_IOC_MAGIC, 0, \
++				      struct ion_allocation_data)
++
++/**
++ * DOC: ION_IOC_HEAP_QUERY - information about available heaps
++ *
++ * Takes an ion_heap_query structure and populates information about
++ * available Ion heaps.
++ */
++#define ION_IOC_HEAP_QUERY     _IOWR(ION_IOC_MAGIC, 8, \
++					struct ion_heap_query)
++
++#endif /* _UAPI_LINUX_ION_H */
+diff --git a/include/linux/dma-buf.h b/include/linux/dma-buf.h
+index d3bfe2346..1a6314698 100644
+--- a/include/linux/dma-buf.h
++++ b/include/linux/dma-buf.h
+@@ -643,6 +643,10 @@ struct task_dma_buf_record {
+ 	struct list_head node;
+ 	struct dma_buf *dmabuf;
+ 	unsigned long refcnt;
++#ifdef CONFIG_ION_EXYNOS_COMPAT
++	/* Legacy userspace accounting hints, independent of FD/VMA ownership. */
++	unsigned int ion_legacy_refs;
++#endif
+ };
+ 
+ /**

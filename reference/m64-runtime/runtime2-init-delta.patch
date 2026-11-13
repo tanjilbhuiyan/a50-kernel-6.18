@@ -1,0 +1,29 @@
+--- halium-init-m54
++++ halium-init-m64
+@@ -378,6 +378,26 @@
+ if [ ! -e "${rootmnt}/run/a50-status-armed" ]; then
+     echo "A50STATUS: observer did not arm before handoff" >"${rootmnt}/dev/kmsg"
+ fi
++# M6.4: runtime-only Android mount and device policy.
++mkdir -p "${rootmnt}/run/a50-m64" \
++    "${rootmnt}/run/systemd/system/mount-android-partitions.service.d" \
++    "${rootmnt}/run/systemd/system/lxc-android-config.service.d"
++busybox cp /a50/m64/*.sh "${rootmnt}/run/a50-m64/"
++cat > "${rootmnt}/run/systemd/system/mount-android-partitions.service.d/90-a50-safe.conf" <<'A50M64_UNIT'
++[Service]
++ExecStart=
++ExecStart=/bin/sh /run/a50-m64/mount_android_safe.sh
++StandardOutput=append:/run/a50-m64/mount.log
++StandardError=append:/run/a50-m64/mount.log
++A50M64_UNIT
++cat > "${rootmnt}/run/systemd/system/lxc-android-config.service.d/90-a50-policy.conf" <<'A50M64_UNIT'
++[Unit]
++Requires=a50-container-prepare.service
++After=a50-container-prepare.service
++[Service]
++ExecStartPre=/bin/sh /run/a50-m64/prepare_policy.sh
++A50M64_UNIT
++busybox chroot "${rootmnt}" /bin/sh /run/a50-m64/runtime_status.sh </dev/null >"${rootmnt}/dev/kmsg" 2>&1 &
+ exec busybox switch_root ${rootmnt} ${init} "$@" </dev/null >/dev/kmsg 2>&1
+ echo "Something went badly wrong in the initramfs."
+ panic "Please file a bug on initramfs-tools."

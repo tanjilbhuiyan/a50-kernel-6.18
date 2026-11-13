@@ -1,0 +1,78 @@
+{
+  "kernel_test_commit": "bd3fe49b2d2c3b0b04be490b3440d38d806949a3",
+  "kernel_tree": "711bc53eba04061c8892c77f52c473818ec174e3",
+  "projects": [
+    {
+      "path": "common",
+      "url": "https://android.googlesource.com/kernel/common",
+      "revision": "d9a614feddce2e8e68767df1d3421305d26a965b",
+      "subdir": null
+    },
+    {
+      "path": "prebuilts/clang/host/linux-x86",
+      "url": "https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86",
+      "revision": "4a7d0a5e443c27d8f68fbd46abfab464e1355a69",
+      "subdir": "clang-r584948c"
+    },
+    {
+      "path": "prebuilts/rust-toolchain/linux-x86",
+      "url": "https://android.googlesource.com/platform/prebuilts/rust-toolchain/linux-x86",
+      "revision": "a04f70c5179f23eff11c58cb480acee4afb1334b",
+      "subdir": "1.91.1.p3"
+    },
+    {
+      "path": "prebuilts/clang-tools",
+      "url": "https://android.googlesource.com/platform/prebuilts/clang-tools",
+      "revision": "4155cb466dcd9b53c6f873829c53aa6f905449dd",
+      "subdir": "linux-x86"
+    },
+    {
+      "path": "prebuilts/kernel-build-tools",
+      "url": "https://android.googlesource.com/kernel/prebuilts/build-tools",
+      "revision": "78af2daf5d9d36fc6e1ddb28ee0d7b6516709eb4",
+      "subdir": "linux_musl-x86"
+    },
+    {
+      "path": "prebuilts/build-tools",
+      "url": "https://android.googlesource.com/platform/prebuilts/build-tools",
+      "revision": "e25d4821f50af3f6e0b87d7751dfd27037445fe5",
+      "subdir": [
+        "linux-x86",
+        "common"
+      ]
+    }
+  ],
+  "assets": {
+    "boot-public.img": {
+      "url": "https://github.com/sadatdaniel/a50-ubuntu-touch/releases/download/inputs-20261017/boot-rf2sp.img",
+      "sha256": "dc71ee9c6cc8890847ecfe83f14cf623fe9d7155ea40c3594ae3520ee885da51"
+    },
+    "busybox.deb": {
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/b/busybox/busybox-static_1.37.0-7ubuntu1_arm64.deb",
+      "sha256": "fcf50794faf920455895d7ef103d1c54b9ebf7f18d2e52982dbf3903b7769592"
+    }
+  },
+  "tracked_inputs": {
+    "reproduce/m6/config": "18e422efc4d155921aa608ba9309828c7d3bc066be908ca2f5cfba99cc6c469b",
+    "reproduce/m6/kernel.patch": "44d0737445d6df0ed93fd94960287600f83ac59455ca8dc5c254cce56f9d37a5",
+    "reference/m54-usb-ssh/force-init.patch": "f9a94580e52d38c66d847fc10cc3fce846c1240e49e2960e8cb3c3adfdc773d2",
+    "reference/m64-runtime/runtime7-init-delta.patch": "aaaa6e1b45ad28a515206ba95b50b08e9c2fe52def6bd4af28f65f5f6d98f4b5",
+    "tools/m22/init": "eafaa65d4f4953d14b54881095cdb78d36ef35dfed19290d798ce09a2f23ea9b",
+    "tools/m37/gen_manifest.py": "9356839012af651d44f9dfe9c92206d122bd4d5e9773930870f1c196ec84175d",
+    "tools/m37/gen_embed_list.py": "ea21f2e62765a830195c5ac9a59400be42769cb44576549ff53eda8b492532e9",
+    "reference/m64-runtime/runtime7-scripts/mount_android_safe.sh": "5296761a1e83c53302f6ec431160375292c42cb7cea053f14a8bde5bf8bb9fe0",
+    "reference/m64-runtime/runtime7-scripts/prepare_policy.sh": "2ed41a910c48687eae92d80b41ebbb464333ea9ca2b57e7eed987f501aaecb33",
+    "reference/m64-runtime/runtime7-scripts/runtime_status.sh": "451d4db88e636ca03747a383af57da349b9d47742eb86812787612c331bc343f",
+    "reference/m64-runtime/runtime7-scripts/defer_tee.sh": "7197c820f326d650bc1cd3aab1c660915402d6259e33681e9a992b9d2c3e3128"
+  },
+  "expected": {
+    "ramdisk.gz": "e78e8cb8d5269e81852a1b417d0b28c98f2c4bce8bcb035e2cab19bd9cfd9ac4",
+    "busybox": "c2f279d1d5640a0f327890d41cad594c0f059f3fed3f96dd72fdcc4f5e18ec02",
+    "halium-init-runtime": "e9009eb65fa5918755dde8dcd18ec572d1d7f3165af9571209b87e9bbaa0f30b",
+    "initramfs_data.cpio": "c855bb6eee66af35fc8ae2f21f2c85407d6cd46b9bf648b80e9a81672dd192a2",
+    "tested_Image": "8da537be538c68f04019cf0a60a2c22381446c6a40394bacaec3d0bcc2bc0914",
+    "tested_config": "a9378e5063c8e6f0b877e95bb0d1bd56230db30c47de04d1cdd44df1a339cbb2",
+    "tested_BOOT": "28fb0f6bdf887ea59d2d431465d5be8c721a7c3cf2274fa4a07ae1e92ad9c680",
+    "dtb": "edd477f903c7b4f0ee68d4ed22c57f7112f15ca28c5ff7a02284dc99aedfc50d"
+  }
+}

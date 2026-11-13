@@ -1,0 +1,157 @@
+=== LXC device policy documentation ===
+=== early LXC errors ===
+[   97.024222] lxc[7351]: android: start - ../src/lxc/start.c:do_start:1395 - Failed to ajust stdio permissions
+[   97.024529] lxc[7351]: android: utils - ../src/lxc/utils.c:lxc_drop_groups:1479 - Dropped supplimentary groups
+[   97.024921] lxc[7351]: android: start - ../src/lxc/start.c:start:2205 - Exec'ing "/system/bin/env"
+[   97.025203] lxc[849]: android: start - ../src/lxc/start.c:post_start:2216 - Started "/system/bin/env" with pid "7351"
+[   97.196377] lxc[849]: android: cgfsng - ../src/lxc/cgroups/cgfsng.c:__cgroup_tree_create:747 - File exists - Creating the final cgroup 9(lxc.payload.android) failed
+[   97.196591] lxc[849]: android: cgfsng - ../src/lxc/cgroups/cgfsng.c:cgroup_tree_create:807 - File exists - Failed to create payload cgroup 9(lxc.payload.android)
+[   97.200077] lxc[849]: android: start - ../src/lxc/start.c:lxc_spawn:1843 - File exists - Failed to allocate new network namespace id
+[   97.297687] lxc[7375]: android: conf - ../src/lxc/conf.c:lxc_setup:4019 - The container "android" is set up
+[   97.298730] lxc[7375]: android: utils - ../src/lxc/utils.c:open_devnull:1343 - Operation not permitted - Can't open /dev/null
+[   97.299052] lxc[7375]: android: start - ../src/lxc/start.c:do_start:1395 - Failed to ajust stdio permissions
+[   97.299334] lxc[7375]: android: utils - ../src/lxc/utils.c:lxc_drop_groups:1479 - Dropped supplimentary groups
+[   97.299654] lxc[7375]: android: start - ../src/lxc/start.c:start:2205 - Exec'ing "/system/bin/env"
+[   97.300012] lxc[849]: android: start - ../src/lxc/start.c:post_start:2216 - Started "/system/bin/env" with pid "7375"
+[   97.490928] lxc[849]: android: cgfsng - ../src/lxc/cgroups/cgfsng.c:__cgroup_tree_create:747 - File exists - Creating the final cgroup 9(lxc.payload.android) failed
+[   97.491154] lxc[849]: android: cgfsng - ../src/lxc/cgroups/cgfsng.c:cgroup_tree_create:807 - File exists - Failed to create payload cgroup 9(lxc.payload.android)
+[   97.494087] lxc[849]: android: start - ../src/lxc/start.c:lxc_spawn:1843 - File exists - Failed to allocate new network namespace id
+[   97.607471] lxc[7399]: android: conf - ../src/lxc/conf.c:lxc_setup:4019 - The container "android" is set up
+[   97.608531] lxc[7399]: android: utils - ../src/lxc/utils.c:open_devnull:1343 - Operation not permitted - Can't open /dev/null
+[   97.608841] lxc[7399]: android: start - ../src/lxc/start.c:do_start:1395 - Failed to ajust stdio permissions
+[   97.609087] lxc[7399]: android: utils - ../src/lxc/utils.c:lxc_drop_groups:1479 - Dropped supplimentary groups
+[   97.609390] lxc[7399]: android: start - ../src/lxc/start.c:start:2205 - Exec'ing "/system/bin/env"
+[   97.609672] lxc[849]: android: start - ../src/lxc/start.c:post_start:2216 - Started "/system/bin/env" with pid "7399"
+[   97.806935] lxc[849]: android: cgfsng - ../src/lxc/cgroups/cgfsng.c:__cgroup_tree_create:747 - File exists - Creating the final cgroup 9(lxc.payload.android) failed
+[   97.807256] lxc[849]: android: cgfsng - ../src/lxc/cgroups/cgfsng.c:cgroup_tree_create:807 - File exists - Failed to create payload cgroup 9(lxc.payload.android)
+[   97.810198] lxc[849]: android: start - ../src/lxc/start.c:lxc_spawn:1843 - File exists - Failed to allocate new network namespace id
+[   97.910615] lxc[7423]: android: conf - ../src/lxc/conf.c:lxc_setup:4019 - The container "android" is set up
+[   97.912258] lxc[7423]: android: utils - ../src/lxc/utils.c:open_devnull:1343 - Operation not permitted - Can't open /dev/null
+[   97.912548] lxc[7423]: android: start - ../src/lxc/start.c:do_start:1395 - Failed to ajust stdio permissions
+[   97.912744] lxc[7423]: android: utils - ../src/lxc/utils.c:lxc_drop_groups:1479 - Dropped supplimentary groups
+[   97.912924] lxc[7423]: android: start - ../src/lxc/start.c:start:2205 - Exec'ing "/system/bin/env"
+[   97.913145] lxc[849]: android: start - ../src/lxc/start.c:post_start:2216 - Started "/system/bin/env" with pid "7423"
+[   98.072166] lxc[849]: android: cgfsng - ../src/lxc/cgroups/cgfsng.c:__cgroup_tree_create:747 - File exists - Creating the final cgroup 9(lxc.payload.android) failed
+[   98.072523] lxc[849]: android: cgfsng - ../src/lxc/cgroups/cgfsng.c:cgroup_tree_create:807 - File exists - Failed to create payload cgroup 9(lxc.payload.android)
+[   98.076811] lxc[849]: android: start - ../src/lxc/start.c:lxc_spawn:1843 - File exists - Failed to allocate new network namespace id
+[   98.166137] lxc[7447]: android: conf - ../src/lxc/conf.c:lxc_setup:4019 - The container "android" is set up
+[   98.167084] lxc[7447]: android: utils - ../src/lxc/utils.c:open_devnull:1343 - Operation not permitted - Can't open /dev/null
+[   98.167381] lxc[7447]: android: start - ../src/lxc/start.c:do_start:1395 - Failed to ajust stdio permissions
+[   98.167675] lxc[7447]: android: utils - ../src/lxc/utils.c:lxc_drop_groups:1479 - Dropped supplimentary groups
+[   98.167921] lxc[7447]: android: start - ../src/lxc/start.c:start:2205 - Exec'ing "/system/bin/env"
+[   98.168490] lxc[849]: android: start - ../src/lxc/start.c:post_start:2216 - Started "/system/bin/env" with pid "7447"
+[   98.374976] lxc[849]: android: cgfsng - ../src/lxc/cgroups/cgfsng.c:__cgroup_tree_create:747 - File exists - Creating the final cgroup 9(lxc.payload.android) failed
+[   98.375200] lxc[849]: android: cgfsng - ../src/lxc/cgroups/cgfsng.c:cgroup_tree_create:807 - File exists - Failed to create payload cgroup 9(lxc.payload.android)
+[   98.378083] lxc[849]: android: start - ../src/lxc/start.c:lxc_spawn:1843 - File exists - Failed to allocate new network namespace id
+[   98.482692] lxc[7470]: android: conf - ../src/lxc/conf.c:lxc_setup:4019 - The container "android" is set up
+[   98.483572] lxc[7470]: android: utils - ../src/lxc/utils.c:open_devnull:1343 - Operation not permitted - Can't open /dev/null
+[   98.483874] lxc[7470]: android: start - ../src/lxc/start.c:do_start:1395 - Failed to ajust stdio permissions
+[   98.484093] lxc[7470]: android: utils - ../src/lxc/utils.c:lxc_drop_groups:1479 - Dropped supplimentary groups
+[   98.484279] lxc[7470]: android: start - ../src/lxc/start.c:start:2205 - Exec'ing "/system/bin/env"
+[   98.484454] lxc[849]: android: start - ../src/lxc/start.c:post_start:2216 - Started "/system/bin/env" with pid "7470"
+[   98.634855] lxc[849]: android: cgfsng - ../src/lxc/cgroups/cgfsng.c:__cgroup_tree_create:747 - File exists - Creating the final cgroup 9(lxc.payload.android) failed
+[   98.635066] lxc[849]: android: cgfsng - ../src/lxc/cgroups/cgfsng.c:cgroup_tree_create:807 - File exists - Failed to create payload cgroup 9(lxc.payload.android)
+[   98.637876] lxc[849]: android: start - ../src/lxc/start.c:lxc_spawn:1843 - File exists - Failed to allocate new network namespace id
+[   98.744853] lxc[7494]: android: conf - ../src/lxc/conf.c:lxc_setup:4019 - The container "android" is set up
+[   98.745819] lxc[7494]: android: utils - ../src/lxc/utils.c:open_devnull:1343 - Operation not permitted - Can't open /dev/null
+[   98.746082] lxc[7494]: android: start - ../src/lxc/start.c:do_start:1395 - Failed to ajust stdio permissions
+[   98.746310] lxc[7494]: android: utils - ../src/lxc/utils.c:lxc_drop_groups:1479 - Dropped supplimentary groups
+[   98.746633] lxc[7494]: android: start - ../src/lxc/start.c:start:2205 - Exec'ing "/system/bin/env"
+[   98.747126] lxc[849]: android: start - ../src/lxc/start.c:post_start:2216 - Started "/system/bin/env" with pid "7494"
+[   98.931588] lxc[849]: android: cgfsng - ../src/lxc/cgroups/cgfsng.c:__cgroup_tree_create:747 - File exists - Creating the final cgroup 9(lxc.payload.android) failed
+[   98.931872] lxc[849]: android: cgfsng - ../src/lxc/cgroups/cgfsng.c:cgroup_tree_create:807 - File exists - Failed to create payload cgroup 9(lxc.payload.android)
+[   98.934692] lxc[849]: android: start - ../src/lxc/start.c:lxc_spawn:1843 - File exists - Failed to allocate new network namespace id
+[   99.024530] lxc[7519]: android: conf - ../src/lxc/conf.c:lxc_setup:4019 - The container "android" is set up
+[   99.025406] lxc[7519]: android: utils - ../src/lxc/utils.c:open_devnull:1343 - Operation not permitted - Can't open /dev/null
+[   99.025700] lxc[7519]: android: start - ../src/lxc/start.c:do_start:1395 - Failed to ajust stdio permissions
+[   99.025896] lxc[7519]: android: utils - ../src/lxc/utils.c:lxc_drop_groups:1479 - Dropped supplimentary groups
+[   99.026106] lxc[7519]: android: start - ../src/lxc/start.c:start:2205 - Exec'ing "/system/bin/env"
+[   99.026328] lxc[849]: android: start - ../src/lxc/start.c:post_start:2216 - Started "/system/bin/env" with pid "7519"
+[   99.150878] lxc[849]: android: cgfsng - ../src/lxc/cgroups/cgfsng.c:__cgroup_tree_create:747 - File exists - Creating the final cgroup 9(lxc.payload.android) failed
+[   99.151091] lxc[849]: android: cgfsng - ../src/lxc/cgroups/cgfsng.c:cgroup_tree_create:807 - File exists - Failed to create payload cgroup 9(lxc.payload.android)
+[   99.154099] lxc[849]: android: start - ../src/lxc/start.c:lxc_spawn:1843 - File exists - Failed to allocate new network namespace id
+[   99.258563] lxc[7542]: android: conf - ../src/lxc/conf.c:lxc_setup:4019 - The container "android" is set up
+[   99.259541] lxc[7542]: android: utils - ../src/lxc/utils.c:open_devnull:1343 - Operation not permitted - Can't open /dev/null
+[   99.259772] lxc[7542]: android: start - ../src/lxc/start.c:do_start:1395 - Failed to ajust stdio permissions
+[   99.259952] lxc[7542]: android: utils - ../src/lxc/utils.c:lxc_drop_groups:1479 - Dropped supplimentary groups
+[   99.260123] lxc[7542]: android: start - ../src/lxc/start.c:start:2205 - Exec'ing "/system/bin/env"
+[   99.260333] lxc[849]: android: start - ../src/lxc/start.c:post_start:2216 - Started "/system/bin/env" with pid "7542"
+[   99.394824] lxc[849]: android: cgfsng - ../src/lxc/cgroups/cgfsng.c:__cgroup_tree_create:747 - File exists - Creating the final cgroup 9(lxc.payload.android) failed
+[   99.395107] lxc[849]: android: cgfsng - ../src/lxc/cgroups/cgfsng.c:cgroup_tree_create:807 - File exists - Failed to create payload cgroup 9(lxc.payload.android)
+[   99.398619] lxc[849]: android: start - ../src/lxc/start.c:lxc_spawn:1843 - File exists - Failed to allocate new network namespace id
+[   99.489463] lxc[7566]: android: conf - ../src/lxc/conf.c:lxc_setup:4019 - The container "android" is set up
+[   99.490182] lxc[7566]: android: utils - ../src/lxc/utils.c:open_devnull:1343 - Operation not permitted - Can't open /dev/null
+[   99.490403] lxc[7566]: android: start - ../src/lxc/start.c:do_start:1395 - Failed to ajust stdio permissions
+[   99.490755] lxc[7566]: android: utils - ../src/lxc/utils.c:lxc_drop_groups:1479 - Dropped supplimentary groups
+[   99.491014] lxc[7566]: android: start - ../src/lxc/start.c:start:2205 - Exec'ing "/system/bin/env"
+[   99.491367] lxc[849]: android: start - ../src/lxc/start.c:post_start:2216 - Started "/system/bin/env" with pid "7566"
+[   99.698959] lxc[849]: android: cgfsng - ../src/lxc/cgroups/cgfsng.c:__cgroup_tree_create:747 - File exists - Creating the final cgroup 9(lxc.payload.android) failed
+[   99.699267] lxc[849]: android: cgfsng - ../src/lxc/cgroups/cgfsng.c:cgroup_tree_create:807 - File exists - Failed to create payload cgroup 9(lxc.payload.android)
+[   99.701935] lxc[849]: android: start - ../src/lxc/start.c:lxc_spawn:1843 - File exists - Failed to allocate new network namespace id
+[   99.813017] lxc[7590]: android: conf - ../src/lxc/conf.c:lxc_setup:4019 - The container "android" is set up
+[   99.813991] lxc[7590]: android: utils - ../src/lxc/utils.c:open_devnull:1343 - Operation not permitted - Can't open /dev/null
+[   99.814313] lxc[7590]: android: start - ../src/lxc/start.c:do_start:1395 - Failed to ajust stdio permissions
+[   99.814673] lxc[7590]: android: utils - ../src/lxc/utils.c:lxc_drop_groups:1479 - Dropped supplimentary groups
+[   99.815015] lxc[7590]: android: start - ../src/lxc/start.c:start:2205 - Exec'ing "/system/bin/env"
+[   99.815578] lxc[849]: android: start - ../src/lxc/start.c:post_start:2216 - Started "/system/bin/env" with pid "7590"
+[   99.999097] lxc[849]: android: cgfsng - ../src/lxc/cgroups/cgfsng.c:__cgroup_tree_create:747 - File exists - Creating the final cgroup 9(lxc.payload.android) failed
+[   99.999424] lxc[849]: android: cgfsng - ../src/lxc/cgroups/cgfsng.c:cgroup_tree_create:807 - File exists - Failed to create payload cgroup 9(lxc.payload.android)
+[  100.003192] lxc[849]: android: start - ../src/lxc/start.c:lxc_spawn:1843 - File exists - Failed to allocate new network namespace id
+[  100.097884] lxc[7614]: android: conf - ../src/lxc/conf.c:lxc_setup:4019 - The container "android" is set up
+[  100.098851] lxc[7614]: android: utils - ../src/lxc/utils.c:open_devnull:1343 - Operation not permitted - Can't open /dev/null
+[  100.099092] lxc[7614]: android: start - ../src/lxc/start.c:do_start:1395 - Failed to ajust stdio permissions
+=== retained power source ===
+[Unit]
+Description=monitor and control system power state
+Wants=lxc-android-config.service dbus.socket socketfwd.service
+After=lxc-android-config.service dbus.socket
+
+[Service]
+Type=dbus
+BusName=com.lomiri.Repowerd
+ExecStart=/usr/sbin/repowerd
+EnvironmentFile=-/etc/default/repowerd
+
+[Install]
+WantedBy=graphical.target
+[Unit]
+Description=A50 Android 11 automatic suspend activation
+Requires=repowerd.service
+After=repowerd.service
+PartOf=repowerd.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/sh /usr/local/bin/a50-enable-autosuspend.sh
+TimeoutStartSec=20
+
+[Install]
+WantedBy=repowerd.service
+#  SPDX-License-Identifier: LGPL-2.1-or-later
+#
+#  This file is part of systemd.
+#
+#  systemd is free software; you can redistribute it and/or modify it
+#  under the terms of the GNU Lesser General Public License as published by
+#  the Free Software Foundation; either version 2.1 of the License, or
+#  (at your option) any later version.
+
+[Unit]
+Description=Sleep
+Documentation=man:systemd.special(7)
+DefaultDependencies=no
+RefuseManualStart=yes
+StopWhenUnneeded=yes
+#!/bin/sh
+# Android 11 activation only. SystemSuspend retains wake-lock/count arbitration.
+# Run after repowerd has connected to the HIDL SystemSuspend service.
+set -eu
+sdk=$(timeout 8 lxc-attach -n android -- /system/bin/getprop ro.build.version.sdk)
+[ "$sdk" = 30 ] || { echo "Unsupported Android suspend-control ABI: SDK $sdk" >&2; exit 1; }
+reply=$(timeout 8 lxc-attach -n android -- /system/bin/service call suspend_control 1)
+case "$reply" in
+    "Result: Parcel(00000000 00000001"*) echo "Android automatic suspend activated" ;;
+    "Result: Parcel(00000000 00000000"*) echo "Android automatic suspend already active" ;;
+    *) printf 'Unexpected suspend-control reply: %s\n' "$reply" >&2; exit 1 ;;
+esac

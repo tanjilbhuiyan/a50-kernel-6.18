@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-11 (M6.2 sync fences passed; stock restore verified)
+Updated: 2026-11-14 (M6 checkpoint and portable build; stock restored; M7.1 next)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -8,10 +8,65 @@ Read this file, then the active ticket and its log. Before trusting anything her
 branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and on the phone. At the end of a session, update
 **RESUME HERE** with commits, branch, image hashes, last test and rollback result, and the next action.
 
-## RESUME HERE (2026-11-11)
-- **Milestone:** **M6.2 in progress**. Active `tasks/M6.2-binder-ashmem-core-interfaces.md`. M5 was accepted with its config
-  interpretation, four runtime HAL masks and diagnostic USB fallback/rescue mode.
-- **Latest boot log:** `log/2026-11-11-M6.2-sync.md`. Two software fences merged and became ready only after both signaled.
+## RESUME HERE (2026-11-14)
+- **Connection:** home `192.168.0.171`. Final stock restore completed 2026-11-14 at 02:57:44, baseline boot time
+  02:57:58, battery 100% Charging. DTB/DTBO/BOOT post-flight hashes passed; saved baseline fsck clean. No test active.
+  Owner confirmed presence, USB connected and Claude Code idle for this completed session; reverify live state on resumption.
+- **Milestone:** **M6.4 done; M6 startup/allocator DoD met with the limits below. M7.1 next**, not started.
+  Active next ticket `tasks/M7.1-display-gpu-abi-audit.md`. M7.1–M7.5 tickets are written; deferred M4.4/M4.3 prerequisites
+  remain relevant before display power changes. Session log `log/2026-11-14-M6.4-runtime.md`.
+- **Final M6 result:** test 7 Android RUNNING, normal `sys.boot_completed=1`, real graphics allocator guest PID 133
+  running and registered over HIDL. Both 64/32-bit ION replays passed as UID 1000/GID 1003, 64 captured allocations and
+  boundary/lifetime checks, zero exported buffers afterward. All raw block open modes and mknod denied by the guest
+  device policy, with baseline negative control. USB root SSH retained; vendor ro/norecovery; EFS/CPEFS unmounted;
+  userdata rw and guard range intact. All seven stock restores and saved fsck checks passed.
+- **Runtime fix:** stock TEEGRIS post-fs waits for an unported daemon before HAL startup. A hash-checked, read-only,
+  per-boot RC bind defers that action. Vendor contents are unchanged; no TEE readiness or secure storage is fabricated.
+  Tools `tools/m64/`; exact tested scripts/manifests and result summary under `reference/m64-runtime/`.
+- **Masks:** all four M5 HAL masks are removed. Multi-user reached at 212.21 s; late systemd state degraded with zero jobs.
+  Rild/ofono settled; bluebinder still retries, audio-route times out and LightDM fails, without blocking multi-user.
+  Hardware Bluetooth/audio/modem/display are not established. Three diagnostic masks remain: repowerd.service,
+  a50-enable-autosuspend.service, sleep.target. Their automatic-suspend paths are unvalidated; review before the existing
+  M11 zero-mask gate (full power integration remains M12; see docs/08-open-questions.md).
+- **Final test inputs:** source `a50-m63-sysmmu-test/bd3fe49b2d2c3b0b04be490b3440d38d806949a3`, unchanged during M6.4.
+  BOOT `src/m64/runtime7/boot.img`, SHA `28fb0f6bdf887ea59d2d431465d5be8c721a7c3cf2274fa4a07ae1e92ad9c680`.
+  Config/Image/cpio frozen under `src/m64/runtime7/as-built/`; workspace `out/m64-runtime2` was reused after archiving.
+  DT `src/m63/dt-sysmmu.img`, SHA `8072be7a4f3f7e588b5c547599784d2d88499c46acbbcfdd2463c1d279baf36d`.
+  Manifest `reference/m64-runtime/runtime7-inputs.json`. All overrides live in /run; timed diagnostic window 420 seconds.
+- **Remaining limits:** six reserved/secure heaps and TEE/security HALs unsupported; legacy Android cgroup profiles still
+  emit setup warnings despite native v2. Scheduling/QoS, real IOMMU translation/DMA, GPU and display remain unvalidated.
+  Do not infer their success from the allocator process or CPU ION replay.
+- **Git handoff:** this publication checkpoint includes M6.2 wakelock, M6.3, M6.4 and the next M7 tickets
+  (outer starting HEAD `a829080`). Kernel checkout remains clean on `a50-usb/4fbb731f5`; production branches unchanged.
+- **Build from a clone:** `python3 -I tools/reproduce_m6.py --jobs 16`; instructions in `reproduce/m6/README.md`.
+  Complete diagnostic source/config exported separately from clean `patches/`. Pinned public donor/toolchains replace
+  private workspace dependencies. Fresh isolated build passed, reproducing the tested source tree, cpio and raw DTB;
+  Image/BOOT hashes depend on the embedded config's absolute initramfs path. Publication evidence:
+  `log/2026-11-14-publish-m6.md`, `reference/m6-reproduce/`. No phone operations during publication.
+- **M6.3 source history:** `log/2026-11-12-M6.3-ion-design.md` maps all seven baseline heaps. A live allocator payload capture
+  found 32 successful heap-0 allocations. Source `a50-m63-ion-test/33c851162` adds a native DMA-heap-backed ION frontend
+  for that measured subset. Native and AArch32 replay/boundary/lifetime tests passed over USB. All four boots restored stock
+  and passed post-flight/fsck. The final native SysMMU provider bound and reported version 7.2. No DMA master is attached.
+  Test log `log/2026-11-12-M6.3-ion-tests.md`, evidence `reference/m63-ion/`; included in this publication checkpoint.
+- **M6.3 SysMMU history:** `log/2026-11-12-M6.3-sysmmu.md`. Config control with the old DT and provider candidate with the new DT
+  passed; both used source `a50-m63-sysmmu-test/bd3fe49b2`, config `src/ack-6.18/out/m63-sysmmu/.config`.
+  BOOT `src/m63/boot-sysmmu.img`, SHA `de28abe867bf95c65e89fc3fd5a7369ed64f899f31cf1d5a466af9fa12c92d90`;
+  provider DT `src/m63/dt-sysmmu.img`, SHA `8072be7a4f3f7e588b5c547599784d2d88499c46acbbcfdd2463c1d279baf36d`.
+  Full inputs in `reference/m63-sysmmu/inputs.json`. Seven replay-helper runs across four boots passed 224 captured allocations,
+  with zero exported buffers afterward; same four expected failed units, guard intact and userdata rw throughout.
+- **M6.3 limits:** only heap 0 is implemented and advertised. The six reserved/secure heaps remain unsupported. M6.4 verified
+  the real service running/registered and the measured heap-0 replay in the guest. DPU provider probing is verified;
+  IOVA/page tables, real DMA, other controllers, secure access and suspend/resume remain untested for consumer milestones.
+- **Wakelock boot log:** `log/2026-11-12-M6.2-wakelock.md`. Control and PM candidate passed. The native wakelock interface
+  passed acquire, release and timeout. Binder's Halium device paths, ashmem and sync also passed. All eight CPUs were online.
+  Guard and userdata stayed healthy, and stock restore plus saved baseline fsck passed after both boots.
+  Same kernel source `a50-m62-ashmem-test/078d5dbf1`. Final config `src/ack-6.18/out/m62-wakelock/.config`.
+  Image `src/m62/boot-wakelock.img` SHA `2aa56e2dc70986d4c28b5c28f4047b1697dac9a5482362fe959ff3266cc94794`.
+  Inputs/config deltas/evidence are in `reference/m62-wakelock/`. Recorded outer base `a829080`; results/tools checkpointed.
+- **Diagnostic power setup:** both wakelock builds add runtime masks for `repowerd.service`, `a50-enable-autosuspend.service`
+  and `sleep.target` to the existing M6.2 test masks. Kernel autosleep and hibernation are disabled. M6.4 reviewed and retained
+  these three masks; reassess before M11's zero-mask gate. Suspend integration remains M12.
+- **Sync boot log:** `log/2026-11-11-M6.2-sync.md`. Two software fences merged and became ready only after both signaled.
   Binder and ashmem passed again over USB root SSH. The guard passed, userdata stayed rw and baseline restore/fsck passed.
   Same kernel source as ashmem. Image `src/m62/boot-sync.img` SHA `4c77d2dc31979bf31d95f130af04589ccbc1426f9c033254ccc45c88cb9f6583`.
   Inputs, config delta and live evidence are in `reference/m62-sync/`.
@@ -53,22 +108,24 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
 - **Guard:** clean a50-userdata/c7bde3fe3, included in test source. WRITE(10/16) policy denials report DATA_PROTECT; other denied
   operations ILLEGAL_REQUEST. One UNMAP refusal, no WRITE(6)/FUA fallback or userdata errors; userdata rw at all snapshots.
 - **Checkout:** kernel clean on a50-usb/4fbb731f5. To reproduce M5 USB access, use a50-m54-test and the M5.4 build recipe below.
-- **Next action:** test native userspace wakelocks in a separate candidate from the passing sync config, with automatic
-  suspend disabled. Preserve the runtime partition mask, USB access and userdata guard.
-  M6.3 owns ION/SysMMU and M6.4 owns safe mounts, cgroups and normal Android startup.
+- **Next action:** M7.1 saved-evidence display/GPU ABI audit and implementation design. Start from the final M6 source,
+  config and runtime setup above. Preserve USB/storage and the unmasked M5 HAL units; identify real power/I2C prerequisites
+  before hardware enablement. Record new heap or DMA requirements when observed.
 
-## State of the phone (verified after M6.2 sync, 2026-11-11)
+## State of the phone (verified after M6.4 test 7, 2026-11-14)
 Baseline BOOT `7d5855efd34e01f09659c7d47ecb0773c30f2acc7443ee87181a0536804086c5`, stock DTB/DTBO verified by post-flight.
-Last verified connection **home IP 192.168.0.171**. Baseline 4.14.194, up since 06:23:54, battery 100% Charging; root SSH worked.
-Baseline init's saved fsck output clean: 6311/3440640 files, 1977812/13745152 blocks, no repairs.
-Raw proof `reference/m62-sync/sync-run.txt` and `sync-baseline-fsck.txt` in the same directory.
-M5.3 masks and the M6.2 partition mask are per-boot only. The USB watcher created no temporary host profile during the sync test.
+Home IP **192.168.0.171**, root SSH verified, kernel 4.14.194, baseline boot time 2026-11-14 02:57:58,
+battery 100% Charging. Restore completed 02:57:44. Saved baseline init fsck clean: 6321/3440640 files,
+1995384/13745152 blocks, no repairs. Evidence `reference/m64-runtime/runtime7-run.txt` and `runtime7-baseline-fsck.txt`.
+No test active. M6.4 overrides/masks were runtime-only. Recheck the actual phone before future operations.
 Userdata retains the M5.2 scratch file. Read-only backup (2026-11-10 before writes):
 `../a50-ubuntu-img-backup/ubuntu.img-2026-11-10`, sha256
-`22cb95a536489c89a738cae3105859c041a15b298c4140c6a1a018883f7bd896`; rechecked in M6.1. Restore: docs/02-baseline.md.
+`22cb95a536489c89a738cae3105859c041a15b298c4140c6a1a018883f7bd896`; rechecked 2026-11-14. Restore: docs/02-baseline.md.
 
 ## Kernel tree `src/ack-6.18/common` (not pushed; patches are exported to `reference/m*/`)
 Checkout: `a50-usb` (clean). Check it before any build: builds check out a test branch and return to `a50-usb`.
+- Portable final M6 diagnostic snapshot: `reproduce/m6/`; exact base-to-test tree export, config, toolchain/input locks.
+  Its independent build workspace does not switch this shared checkout. This is separate from the clean driver export.
 - Clean driver stack: `a50-dt -> a50-clk -> a50-pinctrl -> a50-ufs -> a50-usb -> a50-acpm -> a50-pmic -> a50-thermal -> a50-core`
   (`364673845`, M4 done) `-> a50-userdata` (`c7bde3fe3`, write allow-list + corrected denial sense split).
 - `patches/` is the public export of the clean stack (base `d9a614fed`, 35 patches, ends at `a50-userdata`). After any
@@ -80,6 +137,12 @@ Checkout: `a50-usb` (clean). Check it before any build: builds check out a test 
 - `a50-m62-binder-test` (`e8a5a7fea`) extends M5.4 with the PM tracepoint export guard. Patch under `reference/m62-binderfs/`.
 - `a50-m62-ashmem-test` (`078d5dbf1`) extends the Binder test branch with Rust KABI-field and DMA-BUF config guards.
   Patches under `reference/m62-ashmem/`.
+- `a50-m63-ion-test` (`33c851162603f15d9d01baa4b7fba27cf19b7126`) extends that source with the native DMA-heap-backed
+  legacy ION frontend and Samsung tracking hints. Native/compat builds use `out/m63-ion` and `out/m63-ion-compat`.
+- `a50-m63-sysmmu-test` (`bd3fe49b2d2c3b0b04be490b3440d38d806949a3`) adds the isolated DPU provider DTS.
+  Final test config/image under `src/ack-6.18/out/m63-sysmmu`; BOOT `src/m63/boot-sysmmu.img`, DT `src/m63/dt-sysmmu.img`.
+  Both M6.3 source changes are actual commits; patches and full input manifests are under `reference/m63-ion/` and
+  `reference/m63-sysmmu/`. Clean production branches are unchanged; do not merge diagnostic test branches into them.
 
 ## Build and test loop
 - For the working M5.4 USB access image, run `python3 -I tools/m54/make_force_init.py` to regenerate init/list.
@@ -119,6 +182,13 @@ Checkout: `a50-usb` (clean). Check it before any build: builds check out a test 
 - **M5.3** Halium init boots ubuntu.img to multi-user/degraded with approved runtime HAL masks.
 - **M5.4 / M5** USB RNDIS root SSH verified; packaged DHCP fixed by NETDEVICES, M5 DoD evaluated with accepted exceptions and clean restore.
 - **M6.1** Android runtime and ABI audit complete with BinderFS first-test plan.
+- **M6.2** Native BinderFS, Rust ashmem, sync fences and userspace wakelocks verified with diagnostic power-service masks.
+- **M6.3** Measured heap-0 legacy ION ABI on native DMA heaps, native/compat replay and lifetime checks; native DPU SysMMU
+  v7.2 provider probe. Other six heaps and actual device DMA remain explicit limits; runtime validated in M6.4.
+
+- **M6.4 / M6** Normal Android boot property 1, real allocator/HIDL registration and guest 64/32-bit ION replay verified.
+  Protected storage and USB retained; all four M5 HAL masks removed; runtime TEEGRIS deferral and three PM masks explicit.
+  Final stock restore/fsck clean. M7 tickets written; M7.1 next.
 
 ## Deferred, to work again
 - M4.4 real I2C (freezes 6.18; plan in the ticket; needed before M7/M8). Blocks M4.3 S2MPB03, keys, PL330.

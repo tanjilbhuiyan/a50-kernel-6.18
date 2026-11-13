@@ -1,0 +1,952 @@
+
+CMD: uname -r
+6.18.33-a50-diag+
+RC=0
+
+CMD: cat /proc/uptime
+68.25 487.32
+RC=0
+
+CMD: cat /run/a50-m64/kernel-early.txt
+[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x410fd034]
+[    0.000000] Linux version 6.18.33-a50-diag+ (a50@firstlight) (Android (15323222, +pgo, +bolt, +lto, +mlgo, based on r584948c) clang version 22.0.1 (https://android.googlesource.com/toolchain/llvm-project 2d65e4108033380e6fe8e08b1f1826cd2bfb0c99), LLD 22.0.1 (/mnt/disks/build-disk/src/googleplex-android/llvm-r584948-release/out/llvm-project/llvm 2d65e4108033380e6fe8e08b1f1826cd2bfb0c99)) #1 SMP Wed Nov  4 00:00:00 UTC 2026
+[    0.000000] Machine model: Samsung Galaxy A50 (SM-A505F)
+[    0.000000] printk: debug: ignoring loglevel setting.
+[    0.000000] [Firmware Bug]: Kernel image misaligned at boot, please fix your bootloader!
+[    0.000000] OF: reserved mem: 0x0000000080000000..0x0000000080000fff (4 KiB) nomap non-reusable sec_debug_magic@80000000
+[    0.000000] OF: reserved mem: 0x00000000b8000000..0x00000000b84fffff (5120 KiB) nomap non-reusable vipx_fw@b8000000
+[    0.000000] OF: reserved mem: 0x00000000c0000000..0x00000000c007ffff (512 KiB) nomap non-reusable seclog@c0000000
+[    0.000000] OF: reserved mem: 0x00000000ca000000..0x00000000ca9fffff (10240 KiB) nomap non-reusable fb_reserved@ca000000
+[    0.000000] OF: reserved mem: 0x00000000e9400000..0x00000000ebbfffff (40960 KiB) nomap non-reusable abox@e9400000
+[    0.000000] OF: reserved mem: 0x00000000ed000000..0x00000000f59fffff (141312 KiB) nomap non-reusable modem_if@ed000000
+[    0.000000] OF: reserved mem: 0x00000000f5a00000..0x00000000f77fffff (30720 KiB) nomap non-reusable cp_ram_logging@f5a00000
+[    0.000000] OF: reserved mem: 0x00000000f9000000..0x00000000fa70ffff (23616 KiB) nomap non-reusable debug_snapshot@f9000000
+[    0.000000] OF: reserved mem: 0x0000000091202000..0x0000000091387fff (1560 KiB) nomap non-reusable sec_debug_bufs@91202000
+[    0.000000] OF: reserved mem: 0x0000000091388000..0x0000000091b87fff (8192 KiB) nomap non-reusable sec_debug_next@91388000
+[    0.000000] OF: reserved mem: 0x00000000fb000000..0x00000000fb7fffff (8192 KiB) nomap non-reusable gnss_if@fb000000
+[    0.000000] OF: reserved mem: 0x00000000fd000000..0x00000000fd07ffff (512 KiB) nomap non-reusable chub@fd000000
+[    0.000000] OF: reserved mem: 0x0000000087000000..0x00000000871fffff (2048 KiB) map non-reusable el2_code
+[    0.000000] OF: reserved mem: 0x00000008fe600000..0x00000008ffffffff (26624 KiB) map non-reusable el2_earlymem
+[    0.000000] OF: reserved mem: 0x0000000080001000..0x0000000080001fff (4 KiB) map non-reusable kaslr
+[    0.000000] Zone ranges:
+[    0.000000]   DMA      [mem 0x0000000080000000-0x00000000ffffffff]
+[    0.000000]   DMA32    empty
+[    0.000000]   Normal   [mem 0x0000000100000000-0x00000008ffffffff]
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000080000000-0x0000000080000fff]
+[    0.000000]   node   0: [mem 0x0000000080001000-0x0000000091201fff]
+[    0.000000]   node   0: [mem 0x0000000091202000-0x0000000091b87fff]
+[    0.000000]   node   0: [mem 0x0000000091b88000-0x00000000b7ffffff]
+[    0.000000]   node   0: [mem 0x00000000b8000000-0x00000000b84fffff]
+[    0.000000]   node   0: [mem 0x00000000b8500000-0x00000000baafffff]
+[    0.000000]   node   0: [mem 0x00000000c0000000-0x00000000c007ffff]
+[    0.000000]   node   0: [mem 0x00000000c0080000-0x00000000c9ffffff]
+[    0.000000]   node   0: [mem 0x00000000ca000000-0x00000000ca9fffff]
+[    0.000000]   node   0: [mem 0x00000000caa00000-0x00000000dfffffff]
+[    0.000000]   node   0: [mem 0x00000000e1900000-0x00000000e93fffff]
+[    0.000000]   node   0: [mem 0x00000000e9400000-0x00000000ebbfffff]
+[    0.000000]   node   0: [mem 0x00000000ebc00000-0x00000000ecffffff]
+[    0.000000]   node   0: [mem 0x00000000ed000000-0x00000000f77fffff]
+[    0.000000]   node   0: [mem 0x00000000f7800000-0x00000000f8ffffff]
+[    0.000000]   node   0: [mem 0x00000000f9000000-0x00000000fa70ffff]
+[    0.000000]   node   0: [mem 0x00000000fa710000-0x00000000faffffff]
+[    0.000000]   node   0: [mem 0x00000000fb000000-0x00000000fb7fffff]
+[    0.000000]   node   0: [mem 0x00000000fb800000-0x00000000fcffffff]
+[    0.000000]   node   0: [mem 0x00000000fd000000-0x00000000fd07ffff]
+[    0.000000]   node   0: [mem 0x00000000fd080000-0x00000000ffffffff]
+[    0.000000]   node   0: [mem 0x0000000880000000-0x00000008ffffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000080000000-0x00000008ffffffff]
+[    0.000000] On node 0, zone DMA: 21760 pages in unavailable ranges
+[    0.000000] On node 0, zone DMA: 6400 pages in unavailable ranges
+[    0.000000] psci: probing for conduit method from DT.
+[    0.000000] psci: Using PSCI v0.1 Function IDs from DT
+[    0.000000] WARNING: x1-x3 nonzero in violation of boot protocol:
+               	x1: 0000000080000000
+               	x2: 0000000000130000
+               	x3: 0000000080130000
+               This indicates a broken bootloader or old kernel
+[    0.000000] percpu: Embedded 26 pages/cpu s74776 r0 d31720 u106496
+[    0.000000] pcpu-alloc: s74776 r0 d31720 u106496 alloc=26*4096
+[    0.000000] pcpu-alloc: [0] 0 [0] 1 [0] 2 [0] 3 [0] 4 [0] 5 [0] 6 [0] 7
+[    0.000000] Detected VIPT I-cache on CPU0
+[    0.000000] CPU features: detected: ARM erratum 845719
+[    0.000000] alternatives: applying boot alternatives
+[    0.000000] Kernel command line: console=tty0 loglevel=7 ignore_loglevel clk_ignore_unused printk.devkmsg=on systemd.log_target=kmsg systemd.journald.forward_to_kmsg=1 systemd.show_status=1 systemd.mask=rild.service systemd.mask=ofono.service systemd.mask=bluebinder.service systemd.mask=a50-audio-route.service systemd.mask=repowerd.service systemd.mask=a50-enable-autosuspend.service systemd.mask=sleep.target console=ram loglevel=4 sec_debug.pcb_offset=7346944 sec_debug.smd_offset=7348992 sec_debug.lpddr4_size=4 sec_debug.dram_info=01,06,01,4G sec_debug.pwrsrc_rs=0x0001000820000000 sec_debug.reset_reason=7 sec_reset.reset_reason=7 sec_debug.reset_rwc=1 sec_debug.level=0 sec_watchdog.sec_pet=5 androidboot.debug_level=0x4f4c androidboot.force_upload=0x0 softdog.soft_margin=100 softdog.soft_panic=1 sec_debug.dump_sink=0x0 sec_debug.upload_count=0 androidboot.dram_info=01,06,01,4G androidboot.fmm_lock=0 sec_debug.fmm_lock_offset=7340600 sec_debug.sjl=1 androidboot.sn.param.offset=7343024 \
+[    0.000000] Kernel command line: androidboot.prototype.param.offset=7351040 androidboot.recovery_offset=7355136 printk.devkmsg=on ess_setup=0xf9000000 sec_avc_log=0x40000@0x91202000 sec_tsp_log=0x40000@0x91244000 sec_disp_log=0x100000@0x91286000 sec_debug_next=0x800000@0x91388000 charging_mode=0x3000 s3cfb.bootloaderfb=0xca000000 lcdtype=9453571 androidboot.carrierid.param.offset=7340608 androidboot.carrierid=BKD consoleblank=0 ehci_hcd.park=3 oops=panic pmic_info=27 ccic_info=1 fg_reset=0 androidboot.emmc_checksum=3 androidboot.sales.param.offset=7340572 sales_code=BKD androidboot.odin_download=1 androidboot.bootloader=A505FDDS9CWA2 androidboot.selinux=enforcing androidboot.product.model=SM-A505F androidboot.ucs_mode=0 androidboot.revision=6 androidboot.hardware=exynos9610 androidboot.warranty_bit=1 androidboot.wb.hs=0e03 androidboot.rp=9 androidboot.wb.snapQB=CUSTOM sec_debug.bin=A androidboot.hmac_mismatch=0 androidboot.sec_atd.tty=/dev/ttySAC0 androidboot.serialno=<redacted> androidboot.ap_serial=<redacted> \
+[    0.000000] Kernel command line: snd_soc_core.pmdown_time=1000 androidboot.cp_reserved_mem=off skip_initramfs rootwa
+[    0.000000] Unknown kernel command line parameters "skip_initramfs rootwa ess_setup=0xf9000000 sec_avc_log=0x40000@0x91202000 sec_tsp_log=0x40000@0x91244000 sec_disp_log=0x100000@0x91286000 sec_debug_next=0x800000@0x91388000 charging_mode=0x3000 lcdtype=9453571 pmic_info=27 ccic_info=1 fg_reset=0 sales_code=BKD", will be passed to user space.
+[    0.000000] printk: log buffer data + meta data: 131072 + 458752 = 589824 bytes
+[    0.000000] Dentry cache hash table entries: 524288 (order: 10, 4194304 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 262144 (order: 9, 2097152 bytes, linear)
+[    0.000000] software IO TLB: area num 8.
+[    0.000000] software IO TLB: mapped [mem 0x00000000e5400000-0x00000000e9400000] (64MB)
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 1020416
+[    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=8, Nodes=1
+[    0.000000] rcu: Hierarchical RCU implementation.
+[    0.000000] rcu: 	RCU restricting CPUs from NR_CPUS=512 to nr_cpu_ids=8.
+[    0.000000] 	Tracing variant of Tasks RCU enabled.
+[    0.000000] rcu: RCU calculated value of scheduler-enlistment delay is 25 jiffies.
+[    0.000000] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=8
+[    0.000000] RCU Tasks Trace: Setting shift to 3 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=8.
+[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000] Root IRQ handler: gic_handle_irq
+[    0.000000] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.000000] /soc@0/clock-controller@12100000: incorrect res size for automatic clocks
+[    0.000000] /soc@0/clock-controller@12100000: incorrect res size for automatic clocks
+[    0.000000] arch_timer: cp15 timer running at 26.00MHz (virt).
+[    0.000000] clocksource: arch_sys_counter: mask: 0xffffffffffffff max_cycles: 0x5ff13d5a9, max_idle_ns: 440795202370 ns
+[    0.000000] sched_clock: 56 bits at 26MHz, resolution 38ns, wraps every 4398046511088ns
+[    0.000344] Console: colour dummy device 80x25
+[    0.000357] printk: legacy console [tty0] enabled
+[    0.001251] Calibrating delay loop (skipped), value calculated using timer frequency.. 52.00 BogoMIPS (lpj=104000)
+[    0.001276] pid_max: default: 32768 minimum: 301
+[    0.001406] LSM: initializing lsm=capability,yama,apparmor,tomoyo,evm
+[    0.001480] Yama: becoming mindful.
+[    0.001700] AppArmor: AppArmor initialized
+[    0.001762] TOMOYO Linux initialized
+[    0.001889] Mount-cache hash table entries: 8192 (order: 4, 65536 bytes, linear)
+[    0.001920] Mountpoint-cache hash table entries: 8192 (order: 4, 65536 bytes, linear)
+[    0.003035] cacheinfo: Unable to detect cache hierarchy for CPU 0
+[    0.004122] rcu: Hierarchical SRCU implementation.
+[    0.004151] rcu: 	Max phase no-delay instances is 1000.
+[    0.004807] smp: Bringing up secondary CPUs ...
+[    0.005370] Detected VIPT I-cache on CPU1
+[    0.005451] CPU1: Booted secondary processor 0x0000000001 [0x410fd034]
+[    0.006144] Detected VIPT I-cache on CPU2
+[    0.006220] CPU2: Booted secondary processor 0x0000000002 [0x410fd034]
+[    0.006928] Detected VIPT I-cache on CPU3
+[    0.007005] CPU3: Booted secondary processor 0x0000000003 [0x410fd034]
+[    0.007792] CPU features: detected: Spectre-v2
+[    0.007803] CPU features: detected: Spectre-v4
+[    0.007806] CPU features: detected: Spectre-BHB
+[    0.007809] CPU features: detected: ARM erratum 858921
+[    0.007814] Detected VIPT I-cache on CPU4
+[    0.007852] arch_timer: Enabling local workaround for ARM erratum 858921
+[    0.007864] arch_timer: CPU4: Trapping CNTVCT access
+[    0.007872] CPU4: Booted secondary processor 0x0000000100 [0x410fd092]
+[    0.008574] Detected VIPT I-cache on CPU5
+[    0.008599] arch_timer: Enabling local workaround for ARM erratum 858921
+[    0.008605] arch_timer: CPU5: Trapping CNTVCT access
+[    0.008611] CPU5: Booted secondary processor 0x0000000101 [0x410fd092]
+[    0.009239] Detected VIPT I-cache on CPU6
+[    0.009266] arch_timer: Enabling local workaround for ARM erratum 858921
+[    0.009272] arch_timer: CPU6: Trapping CNTVCT access
+[    0.009278] CPU6: Booted secondary processor 0x0000000102 [0x410fd092]
+[    0.009919] Detected VIPT I-cache on CPU7
+[    0.009946] arch_timer: Enabling local workaround for ARM erratum 858921
+[    0.009952] arch_timer: CPU7: Trapping CNTVCT access
+[    0.009958] CPU7: Booted secondary processor 0x0000000103 [0x410fd092]
+[    0.010058] smp: Brought up 1 node, 8 CPUs
+[    0.010269] SMP: Total of 8 processors activated.
+[    0.010282] CPU: All CPU(s) started at EL1
+[    0.010294] CPU features: detected: 32-bit EL0 Support
+[    0.010305] CPU features: detected: CRC32 instructions
+[    0.010320] CPU features: detected: PMUv3
+[    0.010411] alternatives: applying system-wide alternatives
+[    0.011979] Memory: 3597320K/4081664K available (10496K kernel code, 1472K rwdata, 2684K rodata, 14400K init, 567K bss, 475956K reserved, 0K cma-reserved)
+[    0.012658] devtmpfs: initialized
+[    0.017119] A50DIAG: DSS readout armed (buf 1 hdr 1 log 1 pmu 1), dump_after=420
+[    0.017452] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+[    0.017496] posixtimers hash table entries: 4096 (order: 4, 65536 bytes, linear)
+[    0.017589] futex hash table entries: 2048 (131072 bytes on 1 NUMA nodes, total 128 KiB, linear).
+[    0.017835] pinctrl core: initialized pinctrl subsystem
+[    0.019100] NET: Registered PF_NETLINK/PF_ROUTE protocol family
+[    0.020002] DMA: preallocated 512 KiB GFP_KERNEL pool for atomic allocations
+[    0.020143] DMA: preallocated 512 KiB GFP_KERNEL|GFP_DMA pool for atomic allocations
+[    0.020207] audit: initializing netlink subsys (disabled)
+[    0.020394] audit: type=2000 audit(0.020:1): state=initialized audit_enabled=0 res=1
+[    0.020658] thermal_sys: Registered thermal governor 'step_wise'
+[    0.021041] hw-breakpoint: found 6 breakpoint and 4 watchpoint registers.
+[    0.021404] ASID allocator initialised with 65536 entries
+[    0.024569] /soc@0/interrupt-controller@12301000: Fixed dependency cycle(s) with /soc@0/interrupt-controller@12301000
+[    0.029605] samsung-pinctrl 11c20000.pinctrl: irq number for muxed EINTs not found
+[    0.034018] /soc@0/clock-controller@13030000: incorrect res size for automatic clocks
+[    0.034103] /soc@0/clock-controller@13030000: incorrect res size for automatic clocks
+[    0.035410] /soc@0/clock-controller@13400000: incorrect res size for automatic clocks
+[    0.035483] /soc@0/clock-controller@13400000: incorrect res size for automatic clocks
+[    0.040452] /soc@0/clock-controller@14980000: incorrect res size for automatic clocks
+[    0.040554] /soc@0/clock-controller@14980000: incorrect res size for automatic clocks
+[    0.041407] exynos-sysmmu 14820000.iommu: hardware version: 7.2
+[    0.046478] iommu: Default domain type: Translated
+[    0.046491] iommu: DMA domain TLB invalidation policy: strict mode
+[    0.047094] SCSI subsystem initialized
+[    0.047132] pps_core: LinuxPPS API ver. 1 registered
+[    0.047138] pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti <giometti@linux.it>
+[    0.047149] PTP clock support registered
+[    0.047536] Bluetooth: Core ver 2.22
+[    0.047554] NET: Registered PF_BLUETOOTH protocol family
+[    0.047559] Bluetooth: HCI device and connection manager initialized
+[    0.047568] Bluetooth: HCI socket layer initialized
+[    0.047574] Bluetooth: L2CAP socket layer initialized
+[    0.047583] Bluetooth: SCO socket layer initialized
+[    0.047591] NetLabel: Initializing
+[    0.047595] NetLabel:  domain hash size = 128
+[    0.047600] NetLabel:  protocols = UNLABELED CIPSOv4 CALIPSO
+[    0.047631] NetLabel:  unlabeled traffic allowed by default
+[    0.047946] clocksource: Switched to clocksource arch_sys_counter
+[    0.048356] AppArmor: AppArmor Filesystem Enabled
+[    0.052000] NET: Registered PF_INET protocol family
+[    0.052131] IP idents hash table entries: 65536 (order: 7, 524288 bytes, linear)
+[    0.053980] tcp_listen_portaddr_hash hash table entries: 2048 (order: 3, 32768 bytes, linear)
+[    0.054004] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+[    0.054018] TCP established hash table entries: 32768 (order: 6, 262144 bytes, linear)
+[    0.054120] TCP bind hash table entries: 32768 (order: 8, 1048576 bytes, linear)
+[    0.054404] TCP: Hash tables configured (established 32768 bind 32768)
+[    0.054475] UDP hash table entries: 2048 (order: 5, 131072 bytes, linear)
+[    0.054534] UDP-Lite hash table entries: 2048 (order: 5, 131072 bytes, linear)
+[    0.054676] NET: Registered PF_UNIX/PF_LOCAL protocol family
+[    0.065343] workingset: timestamp_bits=46 max_order=20 bucket_order=0
+[    0.108622] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 249)
+[    0.108654] io scheduler mq-deadline registered
+[    0.110075] simple-framebuffer ca000000.framebuffer: framebuffer at 0xca000000, 0x9a3f80 bytes
+[    0.110111] simple-framebuffer ca000000.framebuffer: format=a8r8g8b8, mode=1080x2340x32, linelength=4320
+[    0.110251] simple-framebuffer ca000000.framebuffer: fb0: simplefb registered!
+[    0.116807] loop: module loaded
+[    0.117522] exynos9610-tmu 10070000.thermal-sensor: sensor 0: trim 278/338, two-point
+[    0.117554] exynos9610-tmu 10070000.thermal-sensor: sensor 1: trim 278/338, two-point
+[    0.117574] exynos9610-tmu 10070000.thermal-sensor: sensor 2: trim 279/338, two-point
+[    0.118529] exynos-ufshc 13520000.ufs: ufshcd_populate_vreg: Unable to find vdd-hba-supply regulator, assuming enabled
+[    0.118566] exynos-ufshc 13520000.ufs: ufshcd_populate_vreg: Unable to find vcc-supply regulator, assuming enabled
+[    0.118586] exynos-ufshc 13520000.ufs: ufshcd_populate_vreg: Unable to find vccq-supply regulator, assuming enabled
+[    0.118604] exynos-ufshc 13520000.ufs: ufshcd_populate_vreg: Unable to find vccq2-supply regulator, assuming enabled
+[    0.120203] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: self-test passed, write guard active
+[    0.120221] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: writes allowed on LUN 0 blocks 0x1c8700-0xee42ff only
+[    0.166004] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x4 idn 0xd
+[    0.166038] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x7 idn 0x4
+[    0.166083] exynos-ufshc 13520000.ufs: dme-set: attr-id 0x9540 val 0x1 failed 0 retries
+[    0.166110] exynos-ufshc 13520000.ufs: dme-set: attr-id 0x321 val 0x15 failed 0 retries
+[    0.166134] exynos-ufshc 13520000.ufs: dme-set: attr-id 0x9540 val 0x0 failed 0 retries
+[    0.167967] exynos-ufshc 13520000.ufs: Power mode changed to : FAST series_B G_3 L_1
+[    0.167987] scsi host0: ufshcd
+[    0.169226] ashmem_rust: Using Rust implementation.
+[    0.169473] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x4 idn 0x3
+[    0.169859] scsi 0:0:0:49488: Well-known LUN    SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.171248] xt_time: kernel timezone is -0000
+[    0.171413] Initializing XFRM netlink socket
+[    0.171478] NET: Registered PF_INET6 protocol family
+[    0.172558] Segment Routing with IPv6
+[    0.172619] In-situ OAM (IOAM) with IPv6
+[    0.172751] sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
+[    0.173234] NET: Registered PF_PACKET protocol family
+[    0.173259] NET: Registered PF_KEY protocol family
+[    0.173354] Bluetooth: RFCOMM TTY layer initialized
+[    0.173390] Bluetooth: RFCOMM socket layer initialized
+[    0.173419] Bluetooth: RFCOMM ver 1.11
+[    0.173436] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
+[    0.173448] Bluetooth: BNEP filters: protocol multicast
+[    0.173463] Bluetooth: BNEP socket layer initialized
+[    0.173474] Bluetooth: HIDP (Human Interface Emulation) ver 1.2
+[    0.173488] Bluetooth: HIDP socket layer initialized
+[    0.173543] Key type dns_resolver registered
+[    0.188828] Key type encrypted registered
+[    0.188860] AppArmor: AppArmor sha256 policy hashing enabled
+[    0.188912] evm: Initialising EVM extended attributes:
+[    0.188924] evm: security.selinux
+[    0.188934] evm: security.SMACK64
+[    0.188943] evm: security.SMACK64EXEC (disabled)
+[    0.188953] evm: security.SMACK64TRANSMUTE (disabled)
+[    0.188963] evm: security.SMACK64MMAP (disabled)
+[    0.188973] evm: security.apparmor
+[    0.188982] evm: security.ima (disabled)
+[    0.188992] evm: security.capability
+[    0.189001] evm: HMAC attrs: 0x1
+[    0.190055] scsi 0:0:0:49476: Well-known LUN    SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.191855] scsi 0:0:0:49456: Well-known LUN    SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.193744] scsi 0:0:0:0: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.195805] sd 0:0:0:0: [sda] 15616000 4096-byte logical blocks: (64.0 GB/59.6 GiB)
+[    0.195895] scsi 0:0:0:1: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.196006] sd 0:0:0:0: [sda] Write Protect is off
+[    0.196030] sd 0:0:0:0: [sda] Mode Sense: 00 32 00 10
+[    0.196198] sd 0:0:0:0: [sda] Write cache: enabled, read cache: enabled, supports DPO and FUA
+[    0.196316] sd 0:0:0:0: [sda] Preferred minimum I/O size 8192 bytes
+[    0.196335] sd 0:0:0:0: [sda] Optimal transfer size 8192 bytes
+[    0.198507] scsi 0:0:0:2: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.198795] sd 0:0:0:1: [sdb] 1024 4096-byte logical blocks: (4.19 MB/4.00 MiB)
+[    0.198891] sd 0:0:0:1: [sdb] Write Protect is on
+[    0.198908] sd 0:0:0:1: [sdb] Mode Sense: 00 32 00 90
+[    0.199043] sd 0:0:0:1: [sdb] Write cache: disabled, read cache: enabled, supports DPO and FUA
+[    0.199116] sd 0:0:0:1: [sdb] Preferred minimum I/O size 8192 bytes
+[    0.199133] sd 0:0:0:1: [sdb] Optimal transfer size 8192 bytes
+[    0.200393] scsi 0:0:0:3: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.200647] sd 0:0:0:2: [sdc] 1024 4096-byte logical blocks: (4.19 MB/4.00 MiB)
+[    0.200745] sd 0:0:0:2: [sdc] Write Protect is on
+[    0.200764] sd 0:0:0:2: [sdc] Mode Sense: 00 32 00 90
+[    0.200889] sd 0:0:0:2: [sdc] Write cache: disabled, read cache: enabled, supports DPO and FUA
+[    0.200965] sd 0:0:0:2: [sdc] Preferred minimum I/O size 8192 bytes
+[    0.200983] sd 0:0:0:2: [sdc] Optimal transfer size 8192 bytes
+[    0.202687] sd 0:0:0:3: [sdd] 2048 4096-byte logical blocks: (8.39 MB/8.00 MiB)
+[    0.202709] scsi 0:0:0:4: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.202777] sd 0:0:0:3: [sdd] Write Protect is on
+[    0.202791] sd 0:0:0:3: [sdd] Mode Sense: 00 32 00 90
+[    0.202912] sd 0:0:0:3: [sdd] Write cache: disabled, read cache: enabled, supports DPO and FUA
+[    0.202970] sd 0:0:0:3: [sdd] Preferred minimum I/O size 8192 bytes
+[    0.202978] sd 0:0:0:3: [sdd] Optimal transfer size 8192 bytes
+[    0.204722] sd 0:0:0:4: [sde] 2048 4096-byte logical blocks: (8.39 MB/8.00 MiB)
+[    0.204818] sd 0:0:0:4: [sde] Write Protect is on
+[    0.204836] sd 0:0:0:4: [sde] Mode Sense: 00 32 00 90
+[    0.204961] sd 0:0:0:4: [sde] Write cache: disabled, read cache: enabled, supports DPO and FUA
+[    0.205037] sd 0:0:0:4: [sde] Preferred minimum I/O size 8192 bytes
+[    0.205055] sd 0:0:0:4: [sde] Optimal transfer size 8192 bytes
+[    0.327519] Unpacking initramfs...
+[    0.327543] Initramfs unpacking failed: invalid magic at start of compressed archive
+[    1.224440] sd 0:0:0:2: [sdc] Attached SCSI disk
+[    1.224530] sd 0:0:0:1: [sdb] Attached SCSI disk
+[    1.226142] Alternate GPT is invalid, using primary GPT.
+[    1.226247]  sda: sda1 sda2 sda3 sda4 sda5 sda6 sda7 sda8 sda9 sda10 sda11 sda12 sda13 sda14 sda15 sda16 sda17 sda18 sda19 sda20 sda21 sda22 sda23 sda24 sda25 sda26 sda27 sda28 sda29 sda30 sda31 sda32
+[    1.229687] sd 0:0:0:0: [sda] Attached SCSI disk
+[    1.230151]  sdd: sdd1
+[    1.230264] sd 0:0:0:3: [sdd] Attached SCSI disk
+[    2.232394] sd 0:0:0:4: [sde] Attached SCSI disk
+[   10.211963] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x4 idn 0xf
+[   15.220849] clk: Not disabling unused clocks
+[   15.220867] PM: genpd: Disabling unused power domains
+[   15.225956] Freeing unused kernel memory: 14400K
+[   15.226151] Run /init as init process
+[   15.226165]   with arguments:
+[   15.226173]     /init
+[   15.226181]     skip_initramfs
+[   15.226192]     rootwa
+[   15.226200]   with environment:
+[   15.226209]     HOME=/
+[   15.226217]     TERM=linux
+[   15.226225]     ess_setup=0xf9000000
+[   15.226235]     sec_avc_log=0x40000@0x91202000
+[   15.226245]     sec_tsp_log=0x40000@0x91244000
+[   15.226255]     sec_disp_log=0x100000@0x91286000
+[   15.226265]     sec_debug_next=0x800000@0x91388000
+[   15.226276]     charging_mode=0x3000
+[   15.226286]     lcdtype=9453571
+[   15.226294]     pmic_info=27
+[   15.226304]     ccic_info=1
+[   15.226313]     fg_reset=0
+[   15.226322]     sales_code=BKD
+[   15.256831] systemd-udevd[122]: starting version 232
+[   16.259971] random: crng init done
+[   16.512353] Begin: Running /scripts/nfs-top ...
+[   16.512519] done.
+[   16.512676] Begin: Running /scripts/nfs-premount ...
+[   16.512794] done.
+[   16.512967] Begin: Running /scripts/local-top ...
+[   16.513085] done.
+[   16.513195] Begin: Running /scripts/local-premount ...
+[   16.515264] done.
+[   16.519278] initrd: Loading kernel modules from /lib/modules
+[   16.520025] cat: can't open 'modules.load': No such file or directory
+[   16.520567] /
+[   16.520667] initrd: Finished loading kernel modules
+[   17.543427] initrd: checking filesystem integrity for the userdata partition
+[   18.166028] EXT4-fs (sda32): recovery complete
+[   18.166465] EXT4-fs (sda32): mounted filesystem 6be7290a-f5e9-4537-8738-6adea31bf339 r/w with ordered data mode. Quota mode: disabled.
+[   18.168698] EXT4-fs (sda32): unmounting filesystem 6be7290a-f5e9-4537-8738-6adea31bf339.
+[   18.273546] initrd: checking filesystem for userdata took (including e2fsck) 1 seconds
+[   18.279121] dumpe2fs 1.43.4 (31-Jan-2017)
+[   18.282144] initrd: mounting /dev/sda32
+[   18.297894] EXT4-fs: Warning: mounting with data=journal disables delayed allocation, dioread_nolock, O_DIRECT and fast_commit support!
+[   18.298446] EXT4-fs: Mount option(s) incompatible with ext2
+[   18.300864] EXT4-fs (sda32): mounted filesystem 6be7290a-f5e9-4537-8738-6adea31bf339 r/w with journalled data mode. Quota mode: disabled.
+[   18.303599] initrd: Halium rootfs is /tmpmnt/ubuntu.img
+[   18.304542] initrd: mounting system rootfs at /halium-system
+[   18.305581] loop0: detected capacity change from 0 to 12582912
+[   18.354774] EXT4-fs (loop0): mounted filesystem e00143fa-d6ec-408e-b9f2-061fce1fe573 r/w with ordered data mode. Quota mode: disabled.
+[   18.366400] initrd: mounting  /tmpmnt/ubuntu.img (image developer mode)
+[   18.366690] initrd: mounting android system image (/tmpmnt/android-rootfs.img) ro, in /android-rootfs (rootfs mode)
+[   18.366785] initrd: mounting android system image from system rootfs
+[   18.369512] loop1: detected capacity change from 0 to 925296
+[   18.401523] EXT4-fs (loop1): mounted filesystem db906ff9-90b8-4ccb-bda6-79dd7205d5e0 ro without journal. Quota mode: disabled.
+[   18.415768] initrd: Android system image API level is 30
+[   18.415881] initrd: boot mode: halium
+[   18.416637] initrd: Normal boot
+[   18.445052] initrd: WARNING: Didn't find a device name. Is the Android system image mounted correctly?
+[   18.445138] initrd: device is unknown
+[   18.448794] initrd: Adding bind-mounts to /root/etc/fstab
+[   18.683351] initrd: checking fstab /root/var/lib/lxc/android/rootfs/fstab* for additional mount points
+[   18.686337] cat: can't open '/root/var/lib/lxc/android/rootfs/fstab*': No such file or directory
+[   18.690283] mkdir: can't create directory '/root/android/cache': File exists
+[   18.693268] initrd: moving Android system to /android/system
+[   18.697596] Begin: Running /scripts/local-bottom ...
+[   18.697745] done.
+[   18.697850] done.
+[   18.706509] Begin: Running /scripts/nfs-bottom ...
+[   18.706651] done.
+[   18.706948] Begin: Running /scripts/init-bottom ...
+[   18.714058] done.
+[   18.715817] Target filesystem doesn't have requested /root-rescue2.sh.
+[   18.743983] A50STATUS: observer armed in new root
+[   19.734831] A50M64: runtime observer armed
+[   19.740844] Not activating Mandatory Access Control as /sbin/tomoyo-init does not exist.
+RC=0
+
+CMD: systemctl show -p SystemState -p NFailedUnits -p NJobs
+NFailedUnits=0
+NJobs=12
+SystemState=starting
+RC=0
+
+CMD: systemctl show mount-android-partitions.service a50-container-prepare.service lxc-android-config.service -p Id -p ActiveState -p SubState -p Result -p ExecMainStatus
+Result=success
+ExecMainStatus=0
+Id=mount-android-partitions.service
+ActiveState=active
+SubState=exited
+
+Result=success
+ExecMainStatus=0
+Id=a50-container-prepare.service
+ActiveState=active
+SubState=exited
+
+Result=success
+ExecMainStatus=0
+Id=lxc-android-config.service
+ActiveState=active
+SubState=running
+RC=0
+
+CMD: systemctl --failed --no-pager --plain
+UNIT LOAD ACTIVE SUB DESCRIPTION
+
+0 loaded units listed.
+RC=0
+
+CMD: systemctl show display-manager.service android-set-boot-completion-property.service -p Id -p ActiveState -p SubState -p Result -p ExecMainStatus
+Result=success
+ExecMainStatus=0
+Id=lightdm.service
+ActiveState=inactive
+SubState=dead
+
+Result=success
+ExecMainStatus=0
+Id=android-set-boot-completion-property.service
+ActiveState=inactive
+SubState=dead
+RC=0
+
+CMD: lxc-info -n android
+Name:           android
+State:          RUNNING
+PID:            858
+IP:             10.15.19.82
+RC=0
+
+CMD: lxc-attach -n android -- /system/bin/getprop sys.boot_completed
+
+RC=0
+
+CMD: lxc-attach -n android -- /system/bin/getprop init.svc.vendor.allocator-2-0
+
+RC=0
+
+CMD: lxc-attach -n android -- /system/bin/ps -A
+USER            PID   PPID     VSZ    RSS WCHAN            ADDR S NAME
+root              1      0 10818948  9696 do_epoll_wait       0 S init
+root             18      1 10776856  7180 do_sys_poll         0 S init
+root             20      1 10777960  7340 do_sys_poll         0 S ueventd
+logd             35      1 10859732  3916 sigsuspend          0 S logd
+system           36      1 10774788  4360 do_epoll_wait       0 S servicemanager
+system           37      1 10776256  6032 do_epoll_wait       0 S hwservicemanager
+system           38      1 10774876  4244 do_epoll_wait       0 S vndservicemanager
+root             50      1 10833180  8008 binder_ioctl_write_read 0 S vold
+gps              73      1 10920576  9000 __arm64_sys_nanosleep 0 S gpsd
+system           82      1 10775096  4492 __arm64_sys_nanosleep 0 S android.hardware.gatekeeper@1.0-service
+system           89      1 10885104  9104 binder_ioctl_write_read 0 S vendor.samsung.hardware.gnss@2.0-service
+root            123      0 10773492  3980 0                   0 R ps
+RC=0
+
+CMD: lxc-attach -n android -- /system/bin/cat /proc/mounts
+/dev/loop1 / ext4 ro,nodev,relatime 0 0
+/dev/sda32 /data ext4 rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal 0 0
+/dev/sda32 /data ext4 rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal 0 0
+/dev/sda32 /cache ext4 rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal 0 0
+/dev/sda32 /cache ext4 rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal 0 0
+/dev/loop1 /system ext4 ro,relatime 0 0
+/dev/sda26 /vendor ext4 ro,nosuid,nodev,relatime,nodiscard,norecovery 0 0
+a50-android-mnt /mnt tmpfs rw,nosuid,nodev,relatime,size=16384k,mode=755 0 0
+android_apex /apex tmpfs rw,relatime 0 0
+/dev/loop1 /apex/com.android.i18n ext4 ro,relatime 0 0
+/dev/loop1 /apex/com.android.art ext4 ro,relatime 0 0
+/dev/loop1 /apex/com.android.runtime ext4 ro,relatime 0 0
+/dev/loop1 /apex/com.android.vndk.v30 ext4 ro,relatime 0 0
+tmpfs /dev tmpfs rw,nosuid,relatime,mode=755 0 0
+udev /dev/__properties__ devtmpfs rw,nosuid,relatime,size=1802852k,nr_inodes=450713,mode=755 0 0
+binder /dev/binderfs binder rw,relatime,max=1048576,stats=global 0 0
+udev /dev/socket devtmpfs rw,nosuid,relatime,size=1802852k,nr_inodes=450713,mode=755 0 0
+proc /proc proc rw,nosuid,nodev,noexec,relatime 0 0
+sys /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0
+tmpfs /vendor/etc/init/vndservicemanager.rc tmpfs rw,nosuid,noexec,relatime,size=362012k,mode=755 0 0
+tmpfs /vendor/etc/init/init.exynos9610.rc tmpfs rw,nosuid,noexec,relatime,size=362012k,mode=755 0 0
+/dev/loop0 /vendor/etc/init/init.exynos9610.usb.rc ext4 ro,relatime 0 0
+/dev/loop0 /vendor/etc/init/emservice.rc ext4 ro,relatime 0 0
+/dev/loop0 /vendor/etc/init/cass.rc ext4 ro,relatime 0 0
+tmpfs /system/etc/init/init.disabled.rc tmpfs rw,nosuid,noexec,relatime,size=362012k,mode=755 0 0
+/dev/loop1 /vendor/lib64/hw/audio.primary.default.so ext4 ro,relatime 0 0
+tmpfs /vendor/etc/mixer_paths.xml tmpfs rw,nosuid,noexec,relatime,size=362012k,mode=755 0 0
+devpts /dev/pts devpts rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666,max=1028 0 0
+devpts /dev/ptmx devpts rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666,max=1028 0 0
+devpts /dev/lxc/console devpts rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666,max=1028 0 0
+devpts /dev/console devpts rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666,max=1028 0 0
+devpts /dev/lxc/tty1 devpts rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666,max=1028 0 0
+devpts /dev/lxc/tty2 devpts rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666,max=1028 0 0
+devpts /dev/lxc/tty3 devpts rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666,max=1028 0 0
+devpts /dev/lxc/tty4 devpts rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666,max=1028 0 0
+tmpfs /linkerconfig tmpfs rw,nosuid,nodev,noexec,relatime,mode=755 0 0
+a50-android-mnt /mnt/installer tmpfs rw,nosuid,nodev,relatime,size=16384k,mode=755 0 0
+a50-android-mnt /mnt/androidwritable tmpfs rw,nosuid,nodev,relatime,size=16384k,mode=755 0 0
+/dev/loop1 /apex/com.android.adbd ext4 ro,relatime 0 0
+/dev/loop1 /apex/com.android.art ext4 ro,relatime 0 0
+/dev/loop1 /apex/com.android.conscrypt ext4 ro,relatime 0 0
+/dev/loop1 /apex/com.android.extservices ext4 ro,relatime 0 0
+/dev/loop1 /apex/com.android.i18n ext4 ro,relatime 0 0
+/dev/loop1 /apex/com.android.ipsec ext4 ro,relatime 0 0
+/dev/loop1 /apex/com.android.media ext4 ro,relatime 0 0
+/dev/loop1 /apex/com.android.media.swcodec ext4 ro,relatime 0 0
+/dev/loop1 /apex/com.android.mediaprovider ext4 ro,relatime 0 0
+/dev/loop1 /apex/com.android.neuralnetworks ext4 ro,relatime 0 0
+/dev/loop1 /apex/com.android.os.statsd ext4 ro,relatime 0 0
+/dev/loop1 /apex/com.android.permission ext4 ro,relatime 0 0
+/dev/loop1 /apex/com.android.resolv ext4 ro,relatime 0 0
+/dev/loop1 /apex/com.android.runtime ext4 ro,relatime 0 0
+/dev/loop1 /apex/com.android.sdkext ext4 ro,relatime 0 0
+/dev/loop1 /apex/com.android.tethering ext4 ro,relatime 0 0
+/dev/loop1 /apex/com.android.tzdata ext4 ro,relatime 0 0
+/dev/loop1 /apex/com.android.vndk.v30 ext4 ro,relatime 0 0
+/dev/loop1 /apex/com.android.wifi ext4 ro,relatime 0 0
+none /sys/fs/cgroup cgroup2 rw,nosuid,nodev,noexec,relatime,nsdelegate,memory_recursiveprot 0 0
+tmpfs /linkerconfig tmpfs rw,nosuid,nodev,noexec,relatime,mode=755 0 0
+tracefs /sys/kernel/tracing tracefs rw,relatime 0 0
+/sys/kernel/debug /sys/kernel/debug debugfs rw,relatime 0 0
+bpf /sys/fs/bpf bpf rw,nosuid,nodev,noexec,relatime 0 0
+none /sys/fs/pstore pstore rw,nosuid,nodev,noexec,relatime 0 0
+tracefs /sys/kernel/debug/tracing tracefs rw,relatime 0 0
+linkerconfig /linkerconfig tmpfs rw,relatime 0 0
+RC=0
+
+CMD: lxc-attach -n android -- /system/bin/logcat -b all -d -t 160
+--------- beginning of main
+11-13 19:41:57.195    89    90 I GNSS_2_0: GNSSInit: GNSS Initialization Success latency=50
+11-13 19:41:57.195    89    90 I GNSS_MEMS: TGT_MEMS TargetMemsInit: Entry mems_initialized: 0
+11-13 19:41:57.197    89    90 I GNSS_MEMS: TGT_MEMS TargetMemsInit: mems_enabled: 1, mems_initialized: 0
+11-13 19:41:57.197    89    99 I GNSS_MEMS: TGT_MEMS target_mems_thread: Entry: id:0 st: 1
+11-13 19:41:57.198    37    37 I hwservicemanager: Since android.frameworks.sensorservice@1.0::ISensorManager/default is not registered, trying to start it as a lazy HAL.
+11-13 19:41:57.198    37    37 I hwservicemanager: Since android.frameworks.sensorservice@1.0::ISensorManager/default is not registered, trying to start it as a lazy HAL.
+11-13 19:41:57.198    89    99 I HidlServiceManagement: getService: Trying again for android.frameworks.sensorservice@1.0::ISensorManager/default...
+11-13 19:41:57.198    37   100 W libc    : Unable to set property "ctl.interface_start" to "android.frameworks.sensorservice@1.0::ISensorManager/default": error code: 0x20
+11-13 19:41:57.199    37   101 W libc    : Unable to set property "ctl.interface_start" to "android.frameworks.sensorservice@1.0::ISensorManager/default": error code: 0x20
+11-13 19:41:57.299    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:41:57.403    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:41:57.460    36    36 E Parcel  : Expecting header 0x53595354 but found 0x6e0061. Mixing copies of libbinder?
+11-13 19:41:57.461    37    37 I hwservicemanager: Since android.hardware.sensors@2.1::ISensors/default is not registered, trying to start it as a lazy HAL.
+11-13 19:41:57.461    37    37 I hwservicemanager: Since android.hardware.sensors@2.0::ISensors/default is not registered, trying to start it as a lazy HAL.
+11-13 19:41:57.462    37    37 I hwservicemanager: Since android.hardware.sensors@1.0::ISensors/default is not registered, trying to start it as a lazy HAL.
+11-13 19:41:57.463    37   102 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.sensors@2.1::ISensors/default": error code: 0x20
+11-13 19:41:57.463    37   103 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.sensors@2.0::ISensors/default": error code: 0x20
+11-13 19:41:57.463    37   104 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.sensors@1.0::ISensors/default": error code: 0x20
+11-13 19:41:57.507    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:41:57.923    82    82 I chatty  : uid=1000(system) android.hardwar identical 4 lines
+11-13 19:41:58.027    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:41:58.051    36    36 E Parcel  : Expecting header 0x53595354 but found 0x6e0061. Mixing copies of libbinder?
+11-13 19:41:58.131    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:41:58.191    73    74 E gpsd    : Critical Error: lal_state_handle_transition: curST:1 pendingST:2
+11-13 19:41:58.191    73    74 E gpsd    : Critical Error: ERR: XPORT_CreateKeplerDRV [errno: 2:No such file or directory]
+11-13 19:41:58.191    73    74 E gpsd    : Critical Error: lal_state_handle_transition: curST:2 pendingST:1
+11-13 19:41:58.191    73    74 E gpsd    : Critical Error: ERR: lal_state_handle_transition [errno: 2:No such file or directory]
+11-13 19:41:58.191    73    74 E gpsd    : Critical Error: lal_state_handle_transition: tid:74 curST:1 oldST:2
+11-13 19:41:58.199    89    99 W HidlServiceManagement: Waited one second for android.frameworks.sensorservice@1.0::ISensorManager/default
+11-13 19:41:58.199    37    37 I hwservicemanager: Since android.frameworks.sensorservice@1.0::ISensorManager/default is not registered, trying to start it as a lazy HAL.
+11-13 19:41:58.199    89    99 I HidlServiceManagement: getService: Trying again for android.frameworks.sensorservice@1.0::ISensorManager/default...
+11-13 19:41:58.200    37   105 W libc    : Unable to set property "ctl.interface_start" to "android.frameworks.sensorservice@1.0::ISensorManager/default": error code: 0x20
+11-13 19:41:58.235    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:41:58.339    82    82 I chatty  : uid=1000(system) android.hardwar identical 1 line
+11-13 19:41:58.443    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:41:58.464    36    36 E Parcel  : Expecting header 0x53595354 but found 0x6e0061. Mixing copies of libbinder?
+11-13 19:41:58.465    37    37 I hwservicemanager: Since android.hardware.sensors@2.1::ISensors/default is not registered, trying to start it as a lazy HAL.
+11-13 19:41:58.465    37    37 I hwservicemanager: Since android.hardware.sensors@2.0::ISensors/default is not registered, trying to start it as a lazy HAL.
+11-13 19:41:58.465    37    37 I hwservicemanager: Since android.hardware.sensors@1.0::ISensors/default is not registered, trying to start it as a lazy HAL.
+11-13 19:41:58.465    37   106 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.sensors@2.1::ISensors/default": error code: 0x20
+11-13 19:41:58.465    37   107 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.sensors@2.0::ISensors/default": error code: 0x20
+11-13 19:41:58.466    37   108 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.sensors@1.0::ISensors/default": error code: 0x20
+11-13 19:41:58.547    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:41:58.563    36    36 E Parcel  : Expecting header 0x53595354 but found 0x6e0061. Mixing copies of libbinder?
+11-13 19:41:58.586   109   109 I teecl   : NW> Starting log for teecl
+11-13 19:41:58.586   109   109 I Tzdaemon: !@TZDaemon Log started
+11-13 19:41:58.586   109   109 E Tzdaemon: !@[m] Can't open /dev/tzdev: No such file or directory
+11-13 19:41:58.586   109   109 E Tzdaemon: !@[m] Exiting
+11-13 19:41:58.651    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:41:58.859    82    82 I chatty  : uid=1000(system) android.hardwar identical 2 lines
+11-13 19:41:58.963    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:41:59.031    73    74 D wrapperGPS: wrapperisConnected_RILD
+11-13 19:41:59.031    73    74 D wrapperGPS: wrapperConnect_RILD
+--------- beginning of radio
+11-13 19:41:59.031    73    74 E RILClient: Connect_RILD: Connecting failed. Connection refused(111)
+11-13 19:41:59.031    73    74 D wrapperGPS: wrapperisConnected_RILD
+11-13 19:41:59.031    73    74 D wrapperGPS: wrapperConnect_RILD_second
+11-13 19:41:59.031    73    74 E RILClient: Connect_RILD_Second: Connecting failed. Connection refused(111)
+11-13 19:41:59.067    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:41:59.171    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:41:59.195    73    74 E gpsd    : Critical Error: lal_state_handle_transition: curST:1 pendingST:2
+11-13 19:41:59.195    73    74 E gpsd    : Critical Error: ERR: XPORT_CreateKeplerDRV [errno: 2:No such file or directory]
+11-13 19:41:59.195    73    74 E gpsd    : Critical Error: lal_state_handle_transition: curST:2 pendingST:1
+11-13 19:41:59.195    73    74 E gpsd    : Critical Error: ERR: lal_state_handle_transition [errno: 2:No such file or directory]
+11-13 19:41:59.195    73    74 E gpsd    : Critical Error: lal_state_handle_transition: tid:74 curST:1 oldST:2
+11-13 19:41:59.203    89    99 W HidlServiceManagement: Waited one second for android.frameworks.sensorservice@1.0::ISensorManager/default
+11-13 19:41:59.203    37    37 I hwservicemanager: Since android.frameworks.sensorservice@1.0::ISensorManager/default is not registered, trying to start it as a lazy HAL.
+11-13 19:41:59.203    89    99 I HidlServiceManagement: getService: Trying again for android.frameworks.sensorservice@1.0::ISensorManager/default...
+11-13 19:41:59.204    37   110 W libc    : Unable to set property "ctl.interface_start" to "android.frameworks.sensorservice@1.0::ISensorManager/default": error code: 0x20
+11-13 19:41:59.275    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:41:59.379    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:41:59.471    36    36 E Parcel  : Expecting header 0x53595354 but found 0x6e0061. Mixing copies of libbinder?
+11-13 19:41:59.472    37    37 I hwservicemanager: Since android.hardware.sensors@2.1::ISensors/default is not registered, trying to start it as a lazy HAL.
+11-13 19:41:59.473    37    37 I hwservicemanager: Since android.hardware.sensors@2.0::ISensors/default is not registered, trying to start it as a lazy HAL.
+11-13 19:41:59.473    37    37 I hwservicemanager: Since android.hardware.sensors@1.0::ISensors/default is not registered, trying to start it as a lazy HAL.
+11-13 19:41:59.473    37   111 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.sensors@2.1::ISensors/default": error code: 0x20
+11-13 19:41:59.473    37   112 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.sensors@2.0::ISensors/default": error code: 0x20
+11-13 19:41:59.473    37   113 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.sensors@1.0::ISensors/default": error code: 0x20
+11-13 19:41:59.483    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:41:59.899    82    82 I chatty  : uid=1000(system) android.hardwar identical 4 lines
+11-13 19:42:00.003    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:42:00.055    36    36 E Parcel  : Expecting header 0x53595354 but found 0x6e0061. Mixing copies of libbinder?
+11-13 19:42:00.107    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:42:00.199    73    74 E gpsd    : Critical Error: lal_state_handle_transition: curST:1 pendingST:2
+11-13 19:42:00.199    73    74 E gpsd    : Critical Error: ERR: XPORT_CreateKeplerDRV [errno: 2:No such file or directory]
+11-13 19:42:00.199    73    74 E gpsd    : Critical Error: lal_state_handle_transition: curST:2 pendingST:1
+11-13 19:42:00.199    73    74 E gpsd    : Critical Error: ERR: lal_state_handle_transition [errno: 2:No such file or directory]
+11-13 19:42:00.199    73    74 E gpsd    : Critical Error: lal_state_handle_transition: tid:74 curST:1 oldST:2
+11-13 19:42:00.207    89    99 W HidlServiceManagement: Waited one second for android.frameworks.sensorservice@1.0::ISensorManager/default
+11-13 19:42:00.207    37    37 I hwservicemanager: Since android.frameworks.sensorservice@1.0::ISensorManager/default is not registered, trying to start it as a lazy HAL.
+11-13 19:42:00.207    89    99 I HidlServiceManagement: getService: Trying again for android.frameworks.sensorservice@1.0::ISensorManager/default...
+11-13 19:42:00.208    37   114 W libc    : Unable to set property "ctl.interface_start" to "android.frameworks.sensorservice@1.0::ISensorManager/default": error code: 0x20
+11-13 19:42:00.211    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:42:00.315    82    82 I chatty  : uid=1000(system) android.hardwar identical 1 line
+11-13 19:42:00.419    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:42:00.476    36    36 E Parcel  : Expecting header 0x53595354 but found 0x6e0061. Mixing copies of libbinder?
+11-13 19:42:00.477    37    37 I hwservicemanager: Since android.hardware.sensors@2.1::ISensors/default is not registered, trying to start it as a lazy HAL.
+11-13 19:42:00.477    37    37 I hwservicemanager: Since android.hardware.sensors@2.0::ISensors/default is not registered, trying to start it as a lazy HAL.
+11-13 19:42:00.477    37    37 I hwservicemanager: Since android.hardware.sensors@1.0::ISensors/default is not registered, trying to start it as a lazy HAL.
+11-13 19:42:00.477    37   115 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.sensors@2.1::ISensors/default": error code: 0x20
+11-13 19:42:00.477    37   116 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.sensors@2.0::ISensors/default": error code: 0x20
+11-13 19:42:00.478    37   117 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.sensors@1.0::ISensors/default": error code: 0x20
+11-13 19:42:00.523    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:42:00.567    36    36 E Parcel  : Expecting header 0x53595354 but found 0x6e0061. Mixing copies of libbinder?
+11-13 19:42:00.627    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:42:01.043    82    82 I chatty  : uid=1000(system) android.hardwar identical 4 lines
+11-13 19:42:01.147    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:42:01.203    73    74 E gpsd    : Critical Error: lal_state_handle_transition: curST:1 pendingST:2
+11-13 19:42:01.203    73    74 E gpsd    : Critical Error: ERR: XPORT_CreateKeplerDRV [errno: 2:No such file or directory]
+11-13 19:42:01.203    73    74 E gpsd    : Critical Error: lal_state_handle_transition: curST:2 pendingST:1
+11-13 19:42:01.203    73    74 E gpsd    : Critical Error: ERR: lal_state_handle_transition [errno: 2:No such file or directory]
+11-13 19:42:01.203    73    74 E gpsd    : Critical Error: lal_state_handle_transition: tid:74 curST:1 oldST:2
+11-13 19:42:01.211    89    99 W HidlServiceManagement: Waited one second for android.frameworks.sensorservice@1.0::ISensorManager/default
+11-13 19:42:01.211    37    37 I hwservicemanager: Since android.frameworks.sensorservice@1.0::ISensorManager/default is not registered, trying to start it as a lazy HAL.
+11-13 19:42:01.211    89    99 I HidlServiceManagement: getService: Trying again for android.frameworks.sensorservice@1.0::ISensorManager/default...
+11-13 19:42:01.212    37   118 W libc    : Unable to set property "ctl.interface_start" to "android.frameworks.sensorservice@1.0::ISensorManager/default": error code: 0x20
+11-13 19:42:01.251    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:42:01.875    82    82 I chatty  : uid=1000(system) android.hardwar identical 6 lines
+11-13 19:42:01.979    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:42:02.035    73    74 D wrapperGPS: wrapperisConnected_RILD
+11-13 19:42:02.035    73    74 D wrapperGPS: wrapperConnect_RILD
+11-13 19:42:02.035    73    74 E RILClient: Connect_RILD: Connecting failed. Connection refused(111)
+11-13 19:42:02.035    73    74 D wrapperGPS: wrapperisConnected_RILD
+11-13 19:42:02.035    73    74 D wrapperGPS: wrapperConnect_RILD_second
+11-13 19:42:02.035    73    74 E RILClient: Connect_RILD_Second: Connecting failed. Connection refused(111)
+11-13 19:42:02.059    36    36 E Parcel  : Expecting header 0x53595354 but found 0x6e0061. Mixing copies of libbinder?
+11-13 19:42:02.083    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:42:02.187    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:42:02.207    73    74 E gpsd    : Critical Error: lal_state_handle_transition: curST:1 pendingST:2
+11-13 19:42:02.207    73    74 E gpsd    : Critical Error: ERR: XPORT_CreateKeplerDRV [errno: 2:No such file or directory]
+11-13 19:42:02.207    73    74 E gpsd    : Critical Error: lal_state_handle_transition: curST:2 pendingST:1
+11-13 19:42:02.207    73    74 E gpsd    : Critical Error: ERR: lal_state_handle_transition [errno: 2:No such file or directory]
+11-13 19:42:02.207    73    74 E gpsd    : Critical Error: lal_state_handle_transition: tid:74 curST:1 oldST:2
+11-13 19:42:02.215    89    99 W HidlServiceManagement: Waited one second for android.frameworks.sensorservice@1.0::ISensorManager/default
+11-13 19:42:02.215    37    37 I hwservicemanager: Since android.frameworks.sensorservice@1.0::ISensorManager/default is not registered, trying to start it as a lazy HAL.
+11-13 19:42:02.215    89    99 I HidlServiceManagement: getService: Trying again for android.frameworks.sensorservice@1.0::ISensorManager/default...
+11-13 19:42:02.216    37   119 W libc    : Unable to set property "ctl.interface_start" to "android.frameworks.sensorservice@1.0::ISensorManager/default": error code: 0x20
+11-13 19:42:02.291    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:42:02.395    82    82 I chatty  : uid=1000(system) android.hardwar identical 1 line
+11-13 19:42:02.499    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:42:02.571    36    36 E Parcel  : Expecting header 0x53595354 but found 0x6e0061. Mixing copies of libbinder?
+11-13 19:42:02.603    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:42:03.019    82    82 I chatty  : uid=1000(system) android.hardwar identical 4 lines
+11-13 19:42:03.123    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:42:03.211    73    74 E gpsd    : Critical Error: lal_state_handle_transition: curST:1 pendingST:2
+11-13 19:42:03.211    73    74 E gpsd    : Critical Error: ERR: XPORT_CreateKeplerDRV [errno: 2:No such file or directory]
+11-13 19:42:03.211    73    74 E gpsd    : Critical Error: lal_state_handle_transition: curST:2 pendingST:1
+11-13 19:42:03.211    73    74 E gpsd    : Critical Error: ERR: lal_state_handle_transition [errno: 2:No such file or directory]
+11-13 19:42:03.211    73    74 E gpsd    : Critical Error: lal_state_handle_transition: tid:74 curST:1 oldST:2
+11-13 19:42:03.219    89    99 W HidlServiceManagement: Waited one second for android.frameworks.sensorservice@1.0::ISensorManager/default
+11-13 19:42:03.222    37    37 I hwservicemanager: Since android.frameworks.sensorservice@1.0::ISensorManager/default is not registered, trying to start it as a lazy HAL.
+11-13 19:42:03.222    89    99 I HidlServiceManagement: getService: Trying again for android.frameworks.sensorservice@1.0::ISensorManager/default...
+11-13 19:42:03.222    37   120 W libc    : Unable to set property "ctl.interface_start" to "android.frameworks.sensorservice@1.0::ISensorManager/default": error code: 0x20
+11-13 19:42:03.227    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:42:03.435    82    82 I chatty  : uid=1000(system) android.hardwar identical 2 lines
+11-13 19:42:03.539    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+11-13 19:42:03.601   124   124 I teecl   : NW> Starting log for teecl
+11-13 19:42:03.602   124   124 I Tzdaemon: !@TZDaemon Log started
+11-13 19:42:03.602   124   124 E Tzdaemon: !@[m] Can't open /dev/tzdev: No such file or directory
+11-13 19:42:03.602   124   124 E Tzdaemon: !@[m] Exiting
+11-13 19:42:03.643    82    82 D gatekeeper: TZTSdaemon property is not ready. waiting.. (value: )
+RC=0
+
+CMD: /bin/sh -c cat /sys/fs/cgroup/cgroup.controllers; cat /sys/fs/cgroup/cgroup.subtree_control; cat /proc/self/cgroup
+cpuset io memory
+cpuset io memory
+0::/user.slice/user-0.slice/session-3.scope
+RC=0
+
+CMD: findmnt -R /android -o TARGET,SOURCE,FSTYPE,OPTIONS
+TARGET                                 SOURCE                                            FSTYPE OPTIONS
+/android                               /dev/loop1                                        ext4   ro,relatime
+|-/android/system                      /dev/loop1[/system]                               ext4   ro,relatime
+|-/android/data                        /dev/sda32[/android-data]                         ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+| `-/android/data                      /dev/sda32[/android-data]                         ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+|-/android/cache                       /dev/sda32[/cache]                                ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+| `-/android/cache                     /dev/sda32[/android-data/cache]                   ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+|-/android/vendor                      /dev/sda26                                        ext4   ro,nosuid,nodev,relatime,nodiscard,norecovery
+|-/android/mnt                         a50-android-mnt                                   tmpfs  rw,nosuid,nodev,relatime,size=16384k,mode=755
+|-/android/apex                        android_apex                                      tmpfs  rw,relatime
+| |-/android/apex/com.android.i18n     /dev/loop1[/system/apex/com.android.i18n]         ext4   ro,relatime
+| |-/android/apex/com.android.art      /dev/loop1[/system/apex/com.android.art.release]  ext4   ro,relatime
+| |-/android/apex/com.android.runtime  /dev/loop1[/system/apex/com.android.runtime]      ext4   ro,relatime
+| `-/android/apex/com.android.vndk.v30 /dev/loop1[/system/apex/com.android.vndk.current] ext4   ro,relatime
+`-/android/linkerconfig                linkerconfig                                      tmpfs  rw,relatime
+RC=0
+
+CMD: cat /run/a50-m64/mount.log
+A50M64: mount vendor /dev/disk/by-partlabel/vendor ro,noload,nodev,nosuid
+A50M64: EFS, SEC_EFS, CPEFS and physical cache mounts skipped
+TARGET             SOURCE                          FSTYPE OPTIONS
+/android           /dev/loop1                      ext4   ro,relatime
+├─/android/system  /dev/loop1[/system]             ext4   ro,relatime
+├─/android/data    /dev/sda32[/android-data]       ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+│ └─/android/data  /dev/sda32[/android-data]       ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+├─/android/cache   /dev/sda32[/cache]              ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+│ └─/android/cache /dev/sda32[/android-data/cache] ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+├─/android/vendor  /dev/sda26                      ext4   ro,nosuid,nodev,relatime,nodiscard,norecovery
+└─/android/mnt     a50-android-mnt                 tmpfs  rw,nosuid,nodev,relatime,size=16384k,mode=755
+A50M64: safe Android mounts ready
+RC=0
+
+CMD: cat /var/lib/lxc/android/config
+lxc.rootfs.path = /var/lib/lxc/android/rootfs
+lxc.uts.name = armhf
+
+lxc.log.syslog = daemon
+# Uncomment for more debugging info.
+# lxc.log.level = 3
+
+lxc.net.0.type = none
+
+# Make it possible for the Android container to access the internet.
+# (Needed for A-GPS, VoLTE, ...)
+lxc.namespace.keep = net user
+
+lxc.tty.dir = lxc
+lxc.tty.max = 4
+lxc.pty.max = 1024
+lxc.cap.drop = mac_admin mac_override
+
+lxc.hook.pre-start = /var/lib/lxc/android/pre-start.sh
+lxc.hook.mount = /var/lib/lxc/android/mount.sh
+lxc.hook.post-stop = /var/lib/lxc/android/post-stop.sh
+
+lxc.apparmor.profile = unconfined
+lxc.autodev = 0
+
+# Doing part of Android's first stage init
+lxc.mount.entry = tmpfs dev tmpfs nosuid,mode=0755 0 0
+lxc.mount.entry = /dev/__properties__ dev/__properties__ bind bind,create=dir 0 0
+lxc.mount.entry = /dev/binderfs dev/binderfs bind bind,create=dir,optional 0 0
+lxc.mount.entry = /dev/socket dev/socket bind bind,create=dir 0 0
+lxc.mount.entry = proc proc proc nodev,noexec,nosuid 0 0
+lxc.mount.entry = sys sys sysfs nodev,noexec,nosuid 0 0
+lxc.mount.entry = selinuxfs sys/fs/selinux selinuxfs optional 0 0
+
+lxc.hook.mount = /bin/sh /var/lib/lxc/android/a50-mount-hooks.sh
+
+# M6.4: guest storage uses mounted filesystems; no raw block writes or mknod.
+lxc.cgroup2.devices.allow = a
+lxc.cgroup2.devices.deny = b *:* wm
+lxc.log.level = DEBUG
+lxc.log.file = /run/a50-m64/lxc.log
+RC=0
+
+CMD: tail -n 130 /run/a50-m64/lxc.log
+RC=0
+
+CMD: journalctl -b --no-pager -n 80 -u mount-android-partitions.service -u a50-container-prepare.service -u lxc-android-config.service
+-- No entries --
+RC=0
+
+CMD: journalctl -b --no-pager -n 50 -u lightdm.service -u android-set-boot-completion-property.service
+-- No entries --
+RC=0
+
+CMD: /bin/sh -c tail -n 60 /var/log/lightdm/lightdm.log
+[+0.00s] DEBUG: Loading configuration from /usr/share/lightdm/lightdm.conf.d/51-lomiri-greeter.conf
+[+0.00s] DEBUG: Loading configuration from /usr/share/lightdm/lightdm.conf.d/52-ubuntu-touch.conf
+[+0.00s] DEBUG: Loading configuration dirs from /usr/local/share/lightdm/lightdm.conf.d
+[+0.00s] DEBUG: Loading configuration dirs from /etc/xdg/lightdm/lightdm.conf.d
+[+0.00s] DEBUG: Loading configuration from /etc/lightdm/lightdm.conf.d/90-phablet.conf
+[+0.00s] DEBUG:   [SeatDefaults] is now called [Seat:*], please update this configuration
+[+0.00s] DEBUG: Loading configuration from /etc/lightdm/lightdm.conf
+[+0.00s] DEBUG: Registered seat module local
+[+0.00s] DEBUG: Registered seat module xremote
+[+0.00s] DEBUG: Registered seat module unity
+[+0.00s] DEBUG: Using D-Bus name org.freedesktop.DisplayManager
+[+0.00s] DEBUG: _g_io_module_get_default: Found default implementation local (GLocalVfs) for ‘gio-vfs’
+[+0.03s] DEBUG: Monitoring logind for seats
+[+0.03s] DEBUG: New seat added from logind: seat0
+[+0.03s] DEBUG: Seat seat0: Loading properties from config section Seat:*
+[+0.03s] DEBUG: Seat seat0 has property CanMultiSession=no
+[+0.03s] DEBUG: Seat seat0: Starting
+[+0.04s] DEBUG: Using VT 1
+[+0.04s] DEBUG: Unity System Compositor: Logging to /var/log/lightdm/unity-system-compositor.log
+[+0.05s] DEBUG: Launching process 4530: /usr/share/ubuntu-touch-session/lsc-wrapper --file '/run/mir_socket' --from-dm-fd 11 --to-dm-fd 14 --vt 1
+[+0.05s] DEBUG: Unity System Compositor: Waiting for system compositor for 60s
+[+0.05s] DEBUG: Acquired bus name org.freedesktop.DisplayManager
+[+0.05s] DEBUG: Registering seat with bus path /org/freedesktop/DisplayManager/Seat0
+[+0.07s] DEBUG: Loading users from org.freedesktop.Accounts
+[+0.07s] DEBUG: User /org/freedesktop/Accounts/User32011 added
+[+2.15s] DEBUG: Unity System Compositor: READY
+[+2.15s] DEBUG: Unity System Compositor: Compositor ready
+[+2.15s] DEBUG: Seat seat0: Compositor ready
+[+2.15s] DEBUG: Seat seat0: Creating user session
+[+2.17s] DEBUG: Seat seat0: Creating display server of type mir
+[+2.17s] DEBUG: Seat seat0: Display server ready, starting session authentication
+[+2.18s] DEBUG: Session pid=4798: Started with service 'lightdm-autologin', username 'phablet'
+[+2.26s] DEBUG: Session pid=4798: Authentication complete with return value 0: Success
+[+2.26s] DEBUG: Seat seat0: Session authenticated, running command
+[+2.26s] DEBUG: Registering session with bus path /org/freedesktop/DisplayManager/Session0
+[+2.26s] DEBUG: Session pid=4798: Running command /usr/sbin/ubuntu-touch-lightdm-session ubuntu-touch-session
+[+2.26s] DEBUG: Creating shared data directory /var/lib/lightdm-data/phablet
+[+2.26s] DEBUG: Session pid=4798: Logging to .xsession-errors
+[+2.33s] DEBUG: Activating login1 session c2
+[+2.34s] DEBUG: Seat seat0 changes active session to c2
+[+2.34s] DEBUG: Session c2 is already active
+[+219.80s] DEBUG: Got signal 15 from process 1
+[+219.80s] DEBUG: Caught Terminated signal, shutting down
+[+219.80s] DEBUG: Stopping display manager
+[+219.80s] DEBUG: Seat seat0: Stopping
+[+219.80s] DEBUG: Sending signal 15 to process 4530
+[+220.27s] WARNING: ../../../glib/gmain.c:6142: waitid(pid:4530, pidfd=15) failed: Invalid argument (22). See documentation of g_child_watch_source_new() for possible causes.
+[+220.27s] DEBUG: Unity System Compositor: Unity system compositor stopped
+[+220.27s] DEBUG: Releasing VT 1
+[+220.27s] DEBUG: Seat seat0: Compositor stopped
+[+220.27s] DEBUG: Seat seat0: Stopping session
+[+220.27s] DEBUG: Terminating login1 session c2
+[+220.28s] DEBUG: Session pid=4798: Sending SIGTERM
+[+220.28s] DEBUG: Seat seat0: Display server stopped
+[+220.30s] WARNING: ../../../glib/gmain.c:6142: waitid(pid:4798, pidfd=18) failed: Invalid argument (22). See documentation of g_child_watch_source_new() for possible causes.
+[+220.30s] DEBUG: Seat seat0: Session stopped
+[+220.30s] DEBUG: Seat seat0: Stopped
+[+220.30s] DEBUG: Display manager stopped
+[+220.30s] DEBUG: Stopping daemon
+[+220.30s] DEBUG: Exiting with return value 0
+RC=0
+
+CMD: /bin/sh -c dmesg | grep -E "A50_UFS_SAFE|EXT4-fs.*sda32|exynos-sysmmu|A50M64" | tail -n 90
+[   18.166028] EXT4-fs (sda32): recovery complete
+[   18.166465] EXT4-fs (sda32): mounted filesystem 6be7290a-f5e9-4537-8738-6adea31bf339 r/w with ordered data mode. Quota mode: disabled.
+[   18.168698] EXT4-fs (sda32): unmounting filesystem 6be7290a-f5e9-4537-8738-6adea31bf339.
+[   18.300864] EXT4-fs (sda32): mounted filesystem 6be7290a-f5e9-4537-8738-6adea31bf339 r/w with journalled data mode. Quota mode: disabled.
+[   19.734831] A50M64: runtime observer armed
+[   20.840518] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked SCSI opcode 0x42 lun 0
+[   60.046341] A50M64: BEGIN target=60 uptime=60.04
+[   60.046435] A50M64: CMD systemctl show mount-android-partitions.service a50-container-prepare.service lxc-android-config.service -p Id -p ActiveState -p SubState -p Result -p ExecMainStatus
+[   60.121816] A50M64: Result=success
+[   60.121934] A50M64: ExecMainStatus=0
+[   60.122063] A50M64: Id=mount-android-partitions.service
+[   60.122163] A50M64: ActiveState=active
+[   60.122249] A50M64: SubState=exited
+[   60.122308] A50M64:
+[   60.122390] A50M64: Result=success
+[   60.122481] A50M64: ExecMainStatus=0
+[   60.122601] A50M64: Id=a50-container-prepare.service
+[   60.122696] A50M64: ActiveState=active
+[   60.122784] A50M64: SubState=exited
+[   60.122840] A50M64:
+[   60.122922] A50M64: Result=success
+[   60.123009] A50M64: ExecMainStatus=0
+[   60.123122] A50M64: Id=lxc-android-config.service
+[   60.123222] A50M64: ActiveState=activating
+[   60.123316] A50M64: SubState=start-post
+[   60.123472] A50M64: RC 0
+[   60.123528] A50M64: CMD lxc-info -n android
+[   60.153675] A50M64: Name:           android
+[   60.153812] A50M64: State:          RUNNING
+[   60.153914] A50M64: PID:            858
+[   60.154004] A50M64: RC 0
+[   60.154064] A50M64: CMD lxc-attach -n android -- /system/bin/getprop sys.boot_completed
+[   60.218904] A50M64:
+[   60.219010] A50M64: RC 0
+[   60.219071] A50M64: CMD lxc-attach -n android -- /system/bin/getprop init.svc.vendor.allocator-2-0
+[   60.284996] A50M64:
+[   60.285100] A50M64: RC 0
+[   60.285165] A50M64: CMD /bin/sh -c ps -eo pid,comm,args | grep -E "graphics.allocator|/system/bin/init|lxc-start|servicemanager" | grep -v grep
+[   60.325622] A50M64:     844 lxc-start       /usr/bin/lxc-start -n android -F -- /system/bin/env -i PATH=/product/bin:/apex/com.android.runtime/bin:/apex/com.android.art/bin:/sbin:/system/sbin:/system_ext/bin:/system/bin:/system/xbin:/odm/bin:/vendor/bin:/vendor/xbin INIT_STARTED_AT=0 /init second_stage
+[   60.325887] A50M64:     877 init            /system/bin/init subcontext u:r:vendor_init:s0 14
+[   60.326052] A50M64:     942 servicemanager  /system/bin/servicemanager
+[   60.326219] A50M64:     943 hwservicemanage /system/bin/hwservicemanager
+[   60.326411] A50M64:     944 vndservicemanag /vendor/bin/vndservicemanager /dev/vndbinder
+[   60.326497] A50M64: RC 0
+[   60.326559] A50M64: CMD /bin/sh -c cat /sys/fs/cgroup/cgroup.controllers; cat /sys/fs/cgroup/cgroup.subtree_control; cat /proc/self/cgroup
+[   60.380360] A50M64: cpuset io memory
+[   60.380480] A50M64: cpuset io memory
+[   60.380568] A50M64: 0::/init.scope
+[   60.380660] A50M64: RC 0
+[   60.380717] A50M64: CMD findmnt -R /android -o TARGET,SOURCE,FSTYPE,OPTIONS
+[   60.407353] A50M64: TARGET                                 SOURCE                                            FSTYPE OPTIONS
+[   60.407671] A50M64: /android                               /dev/loop1                                        ext4   ro,relatime
+[   60.408034] A50M64: |-/android/system                      /dev/loop1[/system]                               ext4   ro,relatime
+[   60.408483] A50M64: |-/android/data                        /dev/sda32[/android-data]                         ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[   60.409014] A50M64: | `-/android/data                      /dev/sda32[/android-data]                         ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[   60.409439] A50M64: |-/android/cache                       /dev/sda32[/cache]                                ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[   60.409865] A50M64: | `-/android/cache                     /dev/sda32[/android-data/cache]                   ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[   60.410227] A50M64: |-/android/vendor                      /dev/sda26                                        ext4   ro,nosuid,nodev,relatime,nodiscard,norecovery
+[   60.410578] A50M64: |-/android/mnt                         a50-android-mnt                                   tmpfs  rw,nosuid,nodev,relatime,size=16384k,mode=755
+[   60.410851] A50M64: |-/android/apex                        android_apex                                      tmpfs  rw,relatime
+[   60.411129] A50M64: | |-/android/apex/com.android.i18n     /dev/loop1[/system/apex/com.android.i18n]         ext4   ro,relatime
+[   60.411405] A50M64: | |-/android/apex/com.android.art      /dev/loop1[/system/apex/com.android.art.release]  ext4   ro,relatime
+[   60.411688] A50M64: | |-/android/apex/com.android.runtime  /dev/loop1[/system/apex/com.android.runtime]      ext4   ro,relatime
+[   60.412020] A50M64: | `-/android/apex/com.android.vndk.v30 /dev/loop1[/system/apex/com.android.vndk.current] ext4   ro,relatime
+[   60.412324] A50M64: `-/android/linkerconfig                linkerconfig                                      tmpfs  rw,relatime
+[   60.412407] A50M64: RC 0
+[   60.412464] A50M64: CMD tail -n 35 /run/a50-m64/mount.log
+[   60.435787] A50M64: A50M64: mount vendor /dev/disk/by-partlabel/vendor ro,noload,nodev,nosuid
+[   60.436036] A50M64: A50M64: EFS, SEC_EFS, CPEFS and physical cache mounts skipped
+[   60.436248] A50M64: TARGET             SOURCE                          FSTYPE OPTIONS
+[   60.436447] A50M64: /android           /dev/loop1                      ext4   ro,relatime
+[   60.436681] A50M64: \xe2\x94\x9c\xe2\x94\x80/android/system  /dev/loop1[/system]             ext4   ro,relatime
+[   60.436992] A50M64: \xe2\x94\x9c\xe2\x94\x80/android/data    /dev/sda32[/android-data]       ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[   60.437311] A50M64: \xe2\x94\x82 \xe2\x94\x94\xe2\x94\x80/android/data  /dev/sda32[/android-data]       ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[   60.437621] A50M64: \xe2\x94\x9c\xe2\x94\x80/android/cache   /dev/sda32[/cache]              ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[   60.437933] A50M64: \xe2\x94\x82 \xe2\x94\x94\xe2\x94\x80/android/cache /dev/sda32[/android-data/cache] ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[   60.438206] A50M64: \xe2\x94\x9c\xe2\x94\x80/android/vendor  /dev/sda26                      ext4   ro,nosuid,nodev,relatime,nodiscard,norecovery
+[   60.438478] A50M64: \xe2\x94\x94\xe2\x94\x80/android/mnt     a50-android-mnt                 tmpfs  rw,nosuid,nodev,relatime,size=16384k,mode=755
+[   60.438612] A50M64: A50M64: safe Android mounts ready
+[   60.438692] A50M64: RC 0
+[   60.438749] A50M64: CMD /bin/sh -c tail -n 70 /run/a50-m64/lxc.log
+[   60.466504] A50M64: RC 0
+[   60.466646] A50M64: CMD journalctl -b --no-pager -n 35 -u mount-android-partitions.service -u a50-container-prepare.service -u lxc-android-config.service
+[   61.456799] A50M64: Failed to iterate through journal: Bad message
+[   61.456934] A50M64: RC 1
+[   61.457540] A50M64: END target=60
+RC=0
+
+CMD: /bin/sh -c dmesg | grep -F "lxc[" | tail -n 90
+[   22.782387] lxc[858]: android: conf - ../src/lxc/conf.c:lxc_setup:4019 - The container "android" is set up
+[   22.783587] lxc[858]: android: utils - ../src/lxc/utils.c:lxc_drop_groups:1479 - Dropped supplimentary groups
+[   22.783683] lxc[858]: android: start - ../src/lxc/start.c:start:2205 - Exec'ing "/system/bin/env"
+[   22.788288] lxc[844]: android: start - ../src/lxc/start.c:post_start:2216 - Started "/system/bin/env" with pid "858"
+[   60.188651] lxc[844]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[   60.246349] lxc[844]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[   60.908471] lxc[844]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[   60.944094] lxc[844]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[   61.333278] lxc[844]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[   68.492126] lxc[844]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[   68.564990] lxc[844]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[   68.632865] lxc[844]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[   68.701002] lxc[844]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[   68.782770] lxc[844]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+RC=0

@@ -1,0 +1,43 @@
+=== baseline allocator state ===
+running
+=== GSI allocator overrides ===
+=== init class triggers ===
+945-    setprop net.tcp.default_init_rwnd 60
+946-
+947-    # Start standard binderized HAL daemons
+948:    class_start hal
+949-
+950-    class_start core
+951-
+952-    # Requires keystore (currently a core service) to be ready first.
+953-    exec -- /system/bin/fsverity_init
+954-
+955-on nonencrypted
+956:    class_start main
+957-    class_start late_start
+958-
+959-on property:sys.init_log_level=*
+960-    loglevel ${sys.init_log_level}
+961-
+962-on charger
+--
+974-on property:vold.decrypt=trigger_restart_min_framework
+975-    # A/B update verifier that marks a successful boot.
+976-    exec_start update_verifier
+977:    class_start main
+978-
+979-on property:vold.decrypt=trigger_restart_framework
+980-    # A/B update verifier that marks a successful boot.
+981-    exec_start update_verifier
+982-    class_start_post_data hal
+983-    class_start_post_data core
+984:    class_start main
+985-    class_start late_start
+986-    setprop service.bootanim.exit 0
+987-    start bootanim
+988-
+989-on property:vold.decrypt=trigger_shutdown_framework
+990-    class_reset late_start
+=== baseline allocator permissions ===
+crw-rw-rw- 1 system system 10,  95 2026-11-13 20:18 /dev/ion
+crw-rw-rw- 1 system system 10,  76 2026-11-13 20:18 /dev/mali0

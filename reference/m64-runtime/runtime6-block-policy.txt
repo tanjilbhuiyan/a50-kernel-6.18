@@ -1,0 +1,6 @@
+character /dev/null O_RDWR: PASS
+block O_RDONLY: fd=-1 errno=1 PASS
+block O_WRONLY: fd=-1 errno=1 PASS
+block O_RDWR: fd=-1 errno=1 PASS
+block mknod: result=-1 errno=1 PASS
+PASS: all block open modes and mknod denied; no block I/O issued

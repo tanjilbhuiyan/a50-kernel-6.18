@@ -1,0 +1,1467 @@
+# 6.18 dump read back from /proc/last_kmsg (identifiers redacted: 7)
+===== A50 6.18 DMESG BEGIN (dump_after=420) =====
+[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x410fd034]
+[    0.000000] Linux version 6.18.33-a50-diag+ (a50@firstlight) (Android (15323222, +pgo, +bolt, +lto, +mlgo, based on r584948c) clang version 22.0.1 (https://android.googlesource.com/toolchain/llvm-project 2d65e4108033380e6fe8e08b1f1826cd2bfb0c99), LLD 22.0.1 (/mnt/disks/build-disk/src/googleplex-android/llvm-r584948-release/out/llvm-project/llvm 2d65e4108033380e6fe8e08b1f1826cd2bfb0c99)) #1 SMP Wed Nov  4 00:00:00 UTC 2026
+[    0.000000] Machine model: Samsung Galaxy A50 (SM-A505F)
+[    0.000000] printk: debug: ignoring loglevel setting.
+[    0.000000] [Firmware Bug]: Kernel image misaligned at boot, please fix your bootloader!
+[    0.000000] OF: reserved mem: 0x0000000080000000..0x0000000080000fff (4 KiB) nomap non-reusable sec_debug_magic@80000000
+[    0.000000] OF: reserved mem: 0x00000000b8000000..0x00000000b84fffff (5120 KiB) nomap non-reusable vipx_fw@b8000000
+[    0.000000] OF: reserved mem: 0x00000000c0000000..0x00000000c007ffff (512 KiB) nomap non-reusable seclog@c0000000
+[    0.000000] OF: reserved mem: 0x00000000ca000000..0x00000000ca9fffff (10240 KiB) nomap non-reusable fb_reserved@ca000000
+[    0.000000] OF: reserved mem: 0x00000000e9400000..0x00000000ebbfffff (40960 KiB) nomap non-reusable abox@e9400000
+[    0.000000] OF: reserved mem: 0x00000000ed000000..0x00000000f59fffff (141312 KiB) nomap non-reusable modem_if@ed000000
+[    0.000000] OF: reserved mem: 0x00000000f5a00000..0x00000000f77fffff (30720 KiB) nomap non-reusable cp_ram_logging@f5a00000
+[    0.000000] OF: reserved mem: 0x00000000f9000000..0x00000000fa70ffff (23616 KiB) nomap non-reusable debug_snapshot@f9000000
+[    0.000000] OF: reserved mem: 0x0000000091202000..0x0000000091387fff (1560 KiB) nomap non-reusable sec_debug_bufs@91202000
+[    0.000000] OF: reserved mem: 0x0000000091388000..0x0000000091b87fff (8192 KiB) nomap non-reusable sec_debug_next@91388000
+[    0.000000] OF: reserved mem: 0x00000000fb000000..0x00000000fb7fffff (8192 KiB) nomap non-reusable gnss_if@fb000000
+[    0.000000] OF: reserved mem: 0x00000000fd000000..0x00000000fd07ffff (512 KiB) nomap non-reusable chub@fd000000
+[    0.000000] OF: reserved mem: 0x0000000087000000..0x00000000871fffff (2048 KiB) map non-reusable el2_code
+[    0.000000] OF: reserved mem: 0x00000008fe600000..0x00000008ffffffff (26624 KiB) map non-reusable el2_earlymem
+[    0.000000] OF: reserved mem: 0x0000000080001000..0x0000000080001fff (4 KiB) map non-reusable kaslr
+[    0.000000] Zone ranges:
+[    0.000000]   DMA      [mem 0x0000000080000000-0x00000000ffffffff]
+[    0.000000]   DMA32    empty
+[    0.000000]   Normal   [mem 0x0000000100000000-0x00000008ffffffff]
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000080000000-0x0000000080000fff]
+[    0.000000]   node   0: [mem 0x0000000080001000-0x0000000091201fff]
+[    0.000000]   node   0: [mem 0x0000000091202000-0x0000000091b87fff]
+[    0.000000]   node   0: [mem 0x0000000091b88000-0x00000000b7ffffff]
+[    0.000000]   node   0: [mem 0x00000000b8000000-0x00000000b84fffff]
+[    0.000000]   node   0: [mem 0x00000000b8500000-0x00000000baafffff]
+[    0.000000]   node   0: [mem 0x00000000c0000000-0x00000000c007ffff]
+[    0.000000]   node   0: [mem 0x00000000c0080000-0x00000000c9ffffff]
+[    0.000000]   node   0: [mem 0x00000000ca000000-0x00000000ca9fffff]
+[    0.000000]   node   0: [mem 0x00000000caa00000-0x00000000dfffffff]
+[    0.000000]   node   0: [mem 0x00000000e1900000-0x00000000e93fffff]
+[    0.000000]   node   0: [mem 0x00000000e9400000-0x00000000ebbfffff]
+[    0.000000]   node   0: [mem 0x00000000ebc00000-0x00000000ecffffff]
+[    0.000000]   node   0: [mem 0x00000000ed000000-0x00000000f77fffff]
+[    0.000000]   node   0: [mem 0x00000000f7800000-0x00000000f8ffffff]
+[    0.000000]   node   0: [mem 0x00000000f9000000-0x00000000fa70ffff]
+[    0.000000]   node   0: [mem 0x00000000fa710000-0x00000000faffffff]
+[    0.000000]   node   0: [mem 0x00000000fb000000-0x00000000fb7fffff]
+[    0.000000]   node   0: [mem 0x00000000fb800000-0x00000000fcffffff]
+[    0.000000]   node   0: [mem 0x00000000fd000000-0x00000000fd07ffff]
+[    0.000000]   node   0: [mem 0x00000000fd080000-0x00000000ffffffff]
+[    0.000000]   node   0: [mem 0x0000000880000000-0x00000008ffffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000080000000-0x00000008ffffffff]
+[    0.000000] On node 0, zone DMA: 21760 pages in unavailable ranges
+[    0.000000] On node 0, zone DMA: 6400 pages in unavailable ranges
+[    0.000000] psci: probing for conduit method from DT.
+[    0.000000] psci: Using PSCI v0.1 Function IDs from DT
+[    0.000000] WARNING: x1-x3 nonzero in violation of boot protocol:
+[    0.000000] 	x1: 0000000080000000
+[    0.000000] 	x2: 0000000000098000
+[    0.000000] 	x3: 0000000080098000
+[    0.000000] This indicates a broken bootloader or old kernel
+[    0.000000] percpu: Embedded 26 pages/cpu s74776 r0 d31720 u106496
+[    0.000000] pcpu-alloc: s74776 r0 d31720 u106496 alloc=26*4096
+[    0.000000] pcpu-alloc: [0] 0 [0] 1 [0] 2 [0] 3 [0] 4 [0] 5 [0] 6 [0] 7
+[    0.000000] Detected VIPT I-cache on CPU0
+[    0.000000] CPU features: detected: ARM erratum 845719
+[    0.000000] alternatives: applying boot alternatives
+[    0.000000] Kernel command line: console=tty0 loglevel=7 ignore_loglevel clk_ignore_unused printk.devkmsg=on systemd.log_target=kmsg systemd.journald.forward_to_kmsg=1 systemd.show_status=1 systemd.mask=rild.service systemd.mask=ofono.service systemd.mask=bluebinder.service systemd.mask=a50-audio-route.service systemd.mask=repowerd.service systemd.mask=a50-enable-autosuspend.service systemd.mask=sleep.target console=ram loglevel=4 sec_debug.pcb_offset=7346944 sec_debug.smd_offset=7348992 sec_debug.lpddr4_size=4 sec_debug.dram_info=01,06,01,4G sec_debug.pwrsrc_rs=0x0001000820000000 sec_debug.reset_reason=7 sec_reset.reset_reason=7 sec_debug.reset_rwc=1 sec_debug.level=0 sec_watchdog.sec_pet=5 androidboot.debug_level=0x4f4c androidboot.force_upload=0x0 softdog.soft_margin=100 softdog.soft_panic=1 sec_debug.dump_sink=0x0 sec_debug.upload_count=0 androidboot.dram_info=01,06,01,4G androidboot.fmm_lock=0 sec_debug.fmm_lock_offset=7340600 sec_debug.sjl=1 androidboot.sn.param.offset=7343024 \
+[    0.000000] Kernel command line: androidboot.prototype.param.offset=7351040 androidboot.recovery_offset=7355136 printk.devkmsg=on ess_setup=0xf9000000 sec_avc_log=0x40000@0x91202000 sec_tsp_log=0x40000@0x91244000 sec_disp_log=0x100000@0x91286000 sec_debug_next=0x800000@0x91388000 charging_mode=0x3000 s3cfb.bootloaderfb=0xca000000 lcdtype=9453571 androidboot.carrierid.param.offset=7340608 androidboot.carrierid=BKD consoleblank=0 ehci_hcd.park=3 oops=panic pmic_info=27 ccic_info=1 fg_reset=0 androidboot.emmc_checksum=3 androidboot.sales.param.offset=7340572 sales_code=BKD androidboot.odin_download=1 androidboot.bootloader=A505FDDS9CWA2 androidboot.selinux=enforcing androidboot.product.model=SM-A505F androidboot.ucs_mode=0 androidboot.revision=6 androidboot.hardware=exynos9610 androidboot.warranty_bit=1 androidboot.wb.hs=0e03 androidboot.rp=9 androidboot.wb.snapQB=CUSTOM sec_debug.bin=A androidboot.hmac_mismatch=0 androidboot.sec_atd.tty=/dev/ttySAC0 androidboot.serialno=<redacted> androidboot.ap_serial=<redacted> \
+[    0.000000] Kernel command line: snd_soc_core.pmdown_time=1000 androidboot.cp_reserved_mem=off skip_initramfs rootwa
+[    0.000000] Unknown kernel command line parameters "skip_initramfs rootwa ess_setup=0xf9000000 sec_avc_log=0x40000@0x91202000 sec_tsp_log=0x40000@0x91244000 sec_disp_log=0x100000@0x91286000 sec_debug_next=0x800000@0x91388000 charging_mode=0x3000 lcdtype=9453571 pmic_info=27 ccic_info=1 fg_reset=0 sales_code=BKD", will be passed to user space.
+[    0.000000] printk: log buffer data + meta data: 131072 + 458752 = 589824 bytes
+[    0.000000] Dentry cache hash table entries: 524288 (order: 10, 4194304 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 262144 (order: 9, 2097152 bytes, linear)
+[    0.000000] software IO TLB: area num 8.
+[    0.000000] software IO TLB: mapped [mem 0x00000000e5400000-0x00000000e9400000] (64MB)
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 1020416
+[    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=8, Nodes=1
+[    0.000000] rcu: Hierarchical RCU implementation.
+[    0.000000] rcu: 	RCU restricting CPUs from NR_CPUS=512 to nr_cpu_ids=8.
+[    0.000000] 	Tracing variant of Tasks RCU enabled.
+[    0.000000] rcu: RCU calculated value of scheduler-enlistment delay is 25 jiffies.
+[    0.000000] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=8
+[    0.000000] RCU Tasks Trace: Setting shift to 3 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=8.
+[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000] Root IRQ handler: gic_handle_irq
+[    0.000000] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.000000] /soc@0/clock-controller@12100000: incorrect res size for automatic clocks
+[    0.000000] /soc@0/clock-controller@12100000: incorrect res size for automatic clocks
+[    0.000000] arch_timer: cp15 timer running at 26.00MHz (virt).
+[    0.000000] clocksource: arch_sys_counter: mask: 0xffffffffffffff max_cycles: 0x5ff13d5a9, max_idle_ns: 440795202370 ns
+[    0.000000] sched_clock: 56 bits at 26MHz, resolution 38ns, wraps every 4398046511088ns
+[    0.000350] Console: colour dummy device 80x25
+[    0.000362] printk: legacy console [tty0] enabled
+[    0.001256] Calibrating delay loop (skipped), value calculated using timer frequency.. 52.00 BogoMIPS (lpj=104000)
+[    0.001280] pid_max: default: 32768 minimum: 301
+[    0.001410] LSM: initializing lsm=capability,yama,apparmor,tomoyo,evm
+[    0.001485] Yama: becoming mindful.
+[    0.001706] AppArmor: AppArmor initialized
+[    0.001768] TOMOYO Linux initialized
+[    0.001896] Mount-cache hash table entries: 8192 (order: 4, 65536 bytes, linear)
+[    0.001927] Mountpoint-cache hash table entries: 8192 (order: 4, 65536 bytes, linear)
+[    0.003052] cacheinfo: Unable to detect cache hierarchy for CPU 0
+[    0.004143] rcu: Hierarchical SRCU implementation.
+[    0.004171] rcu: 	Max phase no-delay instances is 1000.
+[    0.004834] smp: Bringing up secondary CPUs ...
+[    0.005401] Detected VIPT I-cache on CPU1
+[    0.005483] CPU1: Booted secondary processor 0x0000000001 [0x410fd034]
+[    0.006174] Detected VIPT I-cache on CPU2
+[    0.006252] CPU2: Booted secondary processor 0x0000000002 [0x410fd034]
+[    0.006949] Detected VIPT I-cache on CPU3
+[    0.007028] CPU3: Booted secondary processor 0x0000000003 [0x410fd034]
+[    0.007814] CPU features: detected: Spectre-v2
+[    0.007824] CPU features: detected: Spectre-v4
+[    0.007827] CPU features: detected: Spectre-BHB
+[    0.007831] CPU features: detected: ARM erratum 858921
+[    0.007835] Detected VIPT I-cache on CPU4
+[    0.007875] arch_timer: Enabling local workaround for ARM erratum 858921
+[    0.007888] arch_timer: CPU4: Trapping CNTVCT access
+[    0.007896] CPU4: Booted secondary processor 0x0000000100 [0x410fd092]
+[    0.008584] Detected VIPT I-cache on CPU5
+[    0.008610] arch_timer: Enabling local workaround for ARM erratum 858921
+[    0.008616] arch_timer: CPU5: Trapping CNTVCT access
+[    0.008622] CPU5: Booted secondary processor 0x0000000101 [0x410fd092]
+[    0.009231] Detected VIPT I-cache on CPU6
+[    0.009258] arch_timer: Enabling local workaround for ARM erratum 858921
+[    0.009265] arch_timer: CPU6: Trapping CNTVCT access
+[    0.009270] CPU6: Booted secondary processor 0x0000000102 [0x410fd092]
+[    0.009917] Detected VIPT I-cache on CPU7
+[    0.009943] arch_timer: Enabling local workaround for ARM erratum 858921
+[    0.009950] arch_timer: CPU7: Trapping CNTVCT access
+[    0.009955] CPU7: Booted secondary processor 0x0000000103 [0x410fd092]
+[    0.010038] smp: Brought up 1 node, 8 CPUs
+[    0.010257] SMP: Total of 8 processors activated.
+[    0.010268] CPU: All CPU(s) started at EL1
+[    0.010280] CPU features: detected: 32-bit EL0 Support
+[    0.010291] CPU features: detected: CRC32 instructions
+[    0.010307] CPU features: detected: PMUv3
+[    0.010379] alternatives: applying system-wide alternatives
+[    0.011962] Memory: 3597316K/4081664K available (10496K kernel code, 1472K rwdata, 2684K rodata, 14400K init, 567K bss, 475960K reserved, 0K cma-reserved)
+[    0.012649] devtmpfs: initialized
+[    0.017141] A50DIAG: DSS readout armed (buf 1 hdr 1 log 1 pmu 1), dump_after=420
+[    0.017508] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+[    0.017553] posixtimers hash table entries: 4096 (order: 4, 65536 bytes, linear)
+[    0.017655] futex hash table entries: 2048 (131072 bytes on 1 NUMA nodes, total 128 KiB, linear).
+[    0.017905] pinctrl core: initialized pinctrl subsystem
+[    0.019129] NET: Registered PF_NETLINK/PF_ROUTE protocol family
+[    0.020035] DMA: preallocated 512 KiB GFP_KERNEL pool for atomic allocations
+[    0.020180] DMA: preallocated 512 KiB GFP_KERNEL|GFP_DMA pool for atomic allocations
+[    0.020241] audit: initializing netlink subsys (disabled)
+[    0.020434] audit: type=2000 audit(0.020:1): state=initialized audit_enabled=0 res=1
+[    0.020702] thermal_sys: Registered thermal governor 'step_wise'
+[    0.021075] hw-breakpoint: found 6 breakpoint and 4 watchpoint registers.
+[    0.021444] ASID allocator initialised with 65536 entries
+[    0.024579] /soc@0/interrupt-controller@12301000: Fixed dependency cycle(s) with /soc@0/interrupt-controller@12301000
+[    0.029611] samsung-pinctrl 11c20000.pinctrl: irq number for muxed EINTs not found
+[    0.033949] /soc@0/clock-controller@13030000: incorrect res size for automatic clocks
+[    0.034031] /soc@0/clock-controller@13030000: incorrect res size for automatic clocks
+[    0.035315] /soc@0/clock-controller@13400000: incorrect res size for automatic clocks
+[    0.035383] /soc@0/clock-controller@13400000: incorrect res size for automatic clocks
+[    0.040376] /soc@0/clock-controller@14980000: incorrect res size for automatic clocks
+[    0.040477] /soc@0/clock-controller@14980000: incorrect res size for automatic clocks
+[    0.041353] exynos-sysmmu 14820000.iommu: hardware version: 7.2
+[    0.044394] iommu: Default domain type: Translated
+[    0.044407] iommu: DMA domain TLB invalidation policy: strict mode
+[    0.044925] SCSI subsystem initialized
+[    0.044969] pps_core: LinuxPPS API ver. 1 registered
+[    0.044975] pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti <giometti@linux.it>
+[    0.044987] PTP clock support registered
+[    0.045386] Bluetooth: Core ver 2.22
+[    0.045405] NET: Registered PF_BLUETOOTH protocol family
+[    0.045411] Bluetooth: HCI device and connection manager initialized
+[    0.045420] Bluetooth: HCI socket layer initialized
+[    0.045426] Bluetooth: L2CAP socket layer initialized
+[    0.045436] Bluetooth: SCO socket layer initialized
+[    0.045444] NetLabel: Initializing
+[    0.045448] NetLabel:  domain hash size = 128
+[    0.045453] NetLabel:  protocols = UNLABELED CIPSOv4 CALIPSO
+[    0.045483] NetLabel:  unlabeled traffic allowed by default
+[    0.045767] clocksource: Switched to clocksource arch_sys_counter
+[    0.046186] AppArmor: AppArmor Filesystem Enabled
+[    0.048968] NET: Registered PF_INET protocol family
+[    0.049092] IP idents hash table entries: 65536 (order: 7, 524288 bytes, linear)
+[    0.050951] tcp_listen_portaddr_hash hash table entries: 2048 (order: 3, 32768 bytes, linear)
+[    0.050975] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+[    0.050991] TCP established hash table entries: 32768 (order: 6, 262144 bytes, linear)
+[    0.051094] TCP bind hash table entries: 32768 (order: 8, 1048576 bytes, linear)
+[    0.051377] TCP: Hash tables configured (established 32768 bind 32768)
+[    0.051447] UDP hash table entries: 2048 (order: 5, 131072 bytes, linear)
+[    0.051506] UDP-Lite hash table entries: 2048 (order: 5, 131072 bytes, linear)
+[    0.051649] NET: Registered PF_UNIX/PF_LOCAL protocol family
+[    0.061784] workingset: timestamp_bits=46 max_order=20 bucket_order=0
+[    0.086271] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 249)
+[    0.086294] io scheduler mq-deadline registered
+[    0.094741] simple-framebuffer ca000000.framebuffer: framebuffer at 0xca000000, 0x9a3f80 bytes
+[    0.094763] simple-framebuffer ca000000.framebuffer: format=a8r8g8b8, mode=1080x2340x32, linelength=4320
+[    0.094857] simple-framebuffer ca000000.framebuffer: fb0: simplefb registered!
+[    0.100632] loop: module loaded
+[    0.101065] exynos9610-tmu 10070000.thermal-sensor: sensor 0: trim 278/338, two-point
+[    0.101080] exynos9610-tmu 10070000.thermal-sensor: sensor 1: trim 278/338, two-point
+[    0.101091] exynos9610-tmu 10070000.thermal-sensor: sensor 2: trim 279/338, two-point
+[    0.101628] exynos-ufshc 13520000.ufs: ufshcd_populate_vreg: Unable to find vdd-hba-supply regulator, assuming enabled
+[    0.101644] exynos-ufshc 13520000.ufs: ufshcd_populate_vreg: Unable to find vcc-supply regulator, assuming enabled
+[    0.101653] exynos-ufshc 13520000.ufs: ufshcd_populate_vreg: Unable to find vccq-supply regulator, assuming enabled
+[    0.101661] exynos-ufshc 13520000.ufs: ufshcd_populate_vreg: Unable to find vccq2-supply regulator, assuming enabled
+[    0.102317] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: self-test passed, write guard active
+[    0.102325] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: writes allowed on LUN 0 blocks 0x1c8700-0xee42ff only
+[    0.147619] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x4 idn 0xd
+[    0.147646] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x7 idn 0x4
+[    0.147696] exynos-ufshc 13520000.ufs: dme-set: attr-id 0x9540 val 0x1 failed 0 retries
+[    0.147715] exynos-ufshc 13520000.ufs: dme-set: attr-id 0x321 val 0x15 failed 0 retries
+[    0.147733] exynos-ufshc 13520000.ufs: dme-set: attr-id 0x9540 val 0x0 failed 0 retries
+[    0.149782] exynos-ufshc 13520000.ufs: Power mode changed to : FAST series_B G_3 L_1
+[    0.149793] scsi host0: ufshcd
+[    0.150511] ashmem_rust: Using Rust implementation.
+[    0.150842] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x4 idn 0x3
+[    0.151544] xt_time: kernel timezone is -0000
+[    0.151641] Initializing XFRM netlink socket
+[    0.151669] NET: Registered PF_INET6 protocol family
+[    0.151819] scsi 0:0:0:49488: Well-known LUN    SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.152234] Segment Routing with IPv6
+[    0.152261] In-situ OAM (IOAM) with IPv6
+[    0.152325] sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
+[    0.152588] NET: Registered PF_PACKET protocol family
+[    0.152599] NET: Registered PF_KEY protocol family
+[    0.152679] Bluetooth: RFCOMM TTY layer initialized
+[    0.152689] Bluetooth: RFCOMM socket layer initialized
+[    0.152705] Bluetooth: RFCOMM ver 1.11
+[    0.152713] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
+[    0.152718] Bluetooth: BNEP filters: protocol multicast
+[    0.152731] Bluetooth: BNEP socket layer initialized
+[    0.152736] Bluetooth: HIDP (Human Interface Emulation) ver 1.2
+[    0.152742] Bluetooth: HIDP socket layer initialized
+[    0.152764] Key type dns_resolver registered
+[    0.160175] Key type encrypted registered
+[    0.160199] AppArmor: AppArmor sha256 policy hashing enabled
+[    0.160215] evm: Initialising EVM extended attributes:
+[    0.160221] evm: security.selinux
+[    0.160227] evm: security.SMACK64
+[    0.160231] evm: security.SMACK64EXEC (disabled)
+[    0.160237] evm: security.SMACK64TRANSMUTE (disabled)
+[    0.160241] evm: security.SMACK64MMAP (disabled)
+[    0.160246] evm: security.apparmor
+[    0.160250] evm: security.ima (disabled)
+[    0.160255] evm: security.capability
+[    0.160259] evm: HMAC attrs: 0x1
+[    0.176220] scsi 0:0:0:49476: Well-known LUN    SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.177870] scsi 0:0:0:49456: Well-known LUN    SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.210240] scsi 0:0:0:0: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.211929] sd 0:0:0:0: [sda] 15616000 4096-byte logical blocks: (64.0 GB/59.6 GiB)
+[    0.212023] scsi 0:0:0:1: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.212065] sd 0:0:0:0: [sda] Write Protect is off
+[    0.212090] sd 0:0:0:0: [sda] Mode Sense: 00 32 00 10
+[    0.212213] sd 0:0:0:0: [sda] Write cache: enabled, read cache: enabled, supports DPO and FUA
+[    0.212307] sd 0:0:0:0: [sda] Preferred minimum I/O size 8192 bytes
+[    0.212333] sd 0:0:0:0: [sda] Optimal transfer size 8192 bytes
+[    0.214430] sd 0:0:0:1: [sdb] 1024 4096-byte logical blocks: (4.19 MB/4.00 MiB)
+[    0.214513] scsi 0:0:0:2: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.214559] sd 0:0:0:1: [sdb] Write Protect is on
+[    0.214586] sd 0:0:0:1: [sdb] Mode Sense: 00 32 00 90
+[    0.214710] sd 0:0:0:1: [sdb] Write cache: disabled, read cache: enabled, supports DPO and FUA
+[    0.214785] sd 0:0:0:1: [sdb] Preferred minimum I/O size 8192 bytes
+[    0.214802] sd 0:0:0:1: [sdb] Optimal transfer size 8192 bytes
+[    0.216816] scsi 0:0:0:3: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.216944] sd 0:0:0:2: [sdc] 1024 4096-byte logical blocks: (4.19 MB/4.00 MiB)
+[    0.217030] sd 0:0:0:2: [sdc] Write Protect is on
+[    0.217047] sd 0:0:0:2: [sdc] Mode Sense: 00 32 00 90
+[    0.217170] sd 0:0:0:2: [sdc] Write cache: disabled, read cache: enabled, supports DPO and FUA
+[    0.217235] sd 0:0:0:2: [sdc] Preferred minimum I/O size 8192 bytes
+[    0.217260] sd 0:0:0:2: [sdc] Optimal transfer size 8192 bytes
+[    0.219232] scsi 0:0:0:4: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.219351] sd 0:0:0:3: [sdd] 2048 4096-byte logical blocks: (8.39 MB/8.00 MiB)
+[    0.219437] sd 0:0:0:3: [sdd] Write Protect is on
+[    0.219455] sd 0:0:0:3: [sdd] Mode Sense: 00 32 00 90
+[    0.219577] sd 0:0:0:3: [sdd] Write cache: disabled, read cache: enabled, supports DPO and FUA
+[    0.219644] sd 0:0:0:3: [sdd] Preferred minimum I/O size 8192 bytes
+[    0.219669] sd 0:0:0:3: [sdd] Optimal transfer size 8192 bytes
+[    0.221493] sd 0:0:0:4: [sde] 2048 4096-byte logical blocks: (8.39 MB/8.00 MiB)
+[    0.221579] sd 0:0:0:4: [sde] Write Protect is on
+[    0.221596] sd 0:0:0:4: [sde] Mode Sense: 00 32 00 90
+[    0.221701] sd 0:0:0:4: [sde] Write cache: disabled, read cache: enabled, supports DPO and FUA
+[    0.221781] sd 0:0:0:4: [sde] Preferred minimum I/O size 8192 bytes
+[    0.221798] sd 0:0:0:4: [sde] Optimal transfer size 8192 bytes
+[    0.326147] Unpacking initramfs...
+[    8.180758] sd 0:0:0:2: [sdc] Attached SCSI disk
+[    8.180988] sd 0:0:0:1: [sdb] Attached SCSI disk
+[    8.181079] sd 0:0:0:4: [sde] Attached SCSI disk
+[   12.181924] Alternate GPT is invalid, using primary GPT.
+[   12.182050]  sda: sda1 sda2 sda3 sda4 sda5 sda6 sda7 sda8 sda9 sda10 sda11 sda12 sda13 sda14 sda15 sda16 sda17 sda18 sda19 sda20 sda21 sda22 sda23 sda24 sda25 sda26 sda27 sda28 sda29 sda30 sda31 sda32
+[   12.185373] sd 0:0:0:0: [sda] Attached SCSI disk
+[   15.182954] clk: Not disabling unused clocks
+[   15.182959]  sdd: sdd1
+[   15.182993] PM: genpd: Disabling unused power domains
+[   15.183174] sd 0:0:0:3: [sdd] Attached SCSI disk
+[   15.188353] Freeing unused kernel memory: 14400K
+[   15.188631] Run /init as init process
+[   15.188649]   with arguments:
+[   15.188657]     /init
+[   15.188665]     skip_initramfs
+[   15.188675]     rootwa
+[   15.188684]   with environment:
+[   15.188691]     HOME=/
+[   15.188700]     TERM=linux
+[   15.188709]     ess_setup=0xf9000000
+[   15.188719]     sec_avc_log=0x40000@0x91202000
+[   15.188729]     sec_tsp_log=0x40000@0x91244000
+[   15.188739]     sec_disp_log=0x100000@0x91286000
+[   15.188749]     sec_debug_next=0x800000@0x91388000
+[   15.188759]     charging_mode=0x3000
+[   15.188769]     lcdtype=9453571
+[   15.188778]     pmic_info=27
+[   15.188787]     ccic_info=1
+[   15.188796]     fg_reset=0
+[   15.188805]     sales_code=BKD
+[   15.223213] systemd-udevd[125]: starting version 232
+[   16.213783] random: crng init done
+[   16.359363] Begin: Running /scripts/nfs-top ...
+[   16.359531] done.
+[   16.359686] Begin: Running /scripts/nfs-premount ...
+[   16.359804] done.
+[   16.359986] Begin: Running /scripts/local-top ...
+[   16.360100] done.
+[   16.360210] Begin: Running /scripts/local-premount ...
+[   16.362366] done.
+[   16.366005] initrd: Loading kernel modules from /lib/modules
+[   16.366663] cat: can't open 'modules.load': No such file or directory
+[   16.367300] /
+[   16.367403] initrd: Finished loading kernel modules
+[   17.388760] initrd: checking filesystem integrity for the userdata partition
+[   17.531850] EXT4-fs (sda32): recovery complete
+[   17.532397] EXT4-fs (sda32): mounted filesystem 6be7290a-f5e9-4537-8738-6adea31bf339 r/w with ordered data mode. Quota mode: disabled.
+[   17.534504] EXT4-fs (sda32): unmounting filesystem 6be7290a-f5e9-4537-8738-6adea31bf339.
+[   17.586808] initrd: checking filesystem for userdata took (including e2fsck) 0 seconds
+[   17.593019] dumpe2fs 1.43.4 (31-Jan-2017)
+[   17.597475] initrd: mounting /dev/sda32
+[   17.616166] EXT4-fs: Warning: mounting with data=journal disables delayed allocation, dioread_nolock, O_DIRECT and fast_commit support!
+[   17.616580] EXT4-fs: Mount option(s) incompatible with ext2
+[   17.619080] EXT4-fs (sda32): mounted filesystem 6be7290a-f5e9-4537-8738-6adea31bf339 r/w with journalled data mode. Quota mode: disabled.
+[   17.620619] initrd: Halium rootfs is /tmpmnt/ubuntu.img
+[   17.621392] initrd: mounting system rootfs at /halium-system
+[   17.622848] loop0: detected capacity change from 0 to 12582912
+[   17.672214] EXT4-fs (loop0): mounted filesystem e00143fa-d6ec-408e-b9f2-061fce1fe573 r/w with ordered data mode. Quota mode: disabled.
+[   17.679425] initrd: mounting  /tmpmnt/ubuntu.img (image developer mode)
+[   17.679564] initrd: mounting android system image (/tmpmnt/android-rootfs.img) ro, in /android-rootfs (rootfs mode)
+[   17.679606] initrd: mounting android system image from system rootfs
+[   17.682240] loop1: detected capacity change from 0 to 925296
+[   17.751866] EXT4-fs (loop1): mounted filesystem db906ff9-90b8-4ccb-bda6-79dd7205d5e0 ro without journal. Quota mode: disabled.
+[   17.761585] initrd: Android system image API level is 30
+[   17.761643] initrd: boot mode: halium
+[   17.762164] initrd: Normal boot
+[   17.786200] initrd: WARNING: Didn't find a device name. Is the Android system image mounted correctly?
+[   17.786246] initrd: device is unknown
+[   17.791250] initrd: Adding bind-mounts to /root/etc/fstab
+[   18.026780] initrd: checking fstab /root/var/lib/lxc/android/rootfs/fstab* for additional mount points
+[   18.030019] cat: can't open '/root/var/lib/lxc/android/rootfs/fstab*': No such file or directory
+[   18.033623] mkdir: can't create directory '/root/android/cache': File exists
+[   18.035582] initrd: moving Android system to /android/system
+[   18.039538] Begin: Running /scripts/local-bottom ...
+[   18.039613] done.
+[   18.039678] done.
+[   18.043120] Begin: Running /scripts/nfs-bottom ...
+[   18.043176] done.
+[   18.043331] Begin: Running /scripts/init-bottom ...
+[   18.051553] done.
+[   18.053014] Target filesystem doesn't have requested /root-rescue2.sh.
+[   18.086102] A50STATUS: observer armed in new root
+[   19.068042] A50M64: runtime observer armed
+[   19.075686] Not activating Mandatory Access Control as /sbin/tomoyo-init does not exist.
+[   19.128188] systemd[1]: System time before build time, advancing clock.
+[   19.138607] systemd[1]: systemd 255.4-1ubuntu8.15+0~20260429201649.9+ubports26.04.1~1.gbp732c4b running in system mode (+PAM +AUDIT +SELINUX +APPARMOR +IMA +SMACK +SECCOMP +GCRYPT -GNUTLS +OPENSSL +ACL +BLKID +CURL +ELFUTILS +FIDO2 +IDN2 -IDN +IPTC +KMOD +LIBCRYPTSETUP +LIBFDISK +PCRE2 -PWQUALITY +P11KIT +QRENCODE +TPM2 +BZIP2 +LZ4 +XZ +ZLIB +ZSTD -BPF_FRAMEWORK -XKBCOMMON +UTMP +SYSVINIT default-hierarchy=unified)
+[   19.138646] systemd[1]: Detected architecture arm64.
+[   19.141162] systemd[1]: Hostname set to <ubuntu-phablet>.
+[   19.582800] systemd[1]: Queued start job for default target graphical.target.
+[   19.587244] systemd[1]: Created slice system-modprobe.slice - Slice /system/modprobe.
+[   19.588093] systemd[1]: Created slice user.slice - User and Session Slice.
+[   19.588354] systemd[1]: Started systemd-ask-password-wall.path - Forward Password Requests to Wall Directory Watch.
+[   19.588615] systemd[1]: proc-sys-fs-binfmt_misc.automount - Arbitrary Executable File Formats File System Automount Point was skipped because of an unmet condition check (ConditionPathExists=/proc/sys/fs/binfmt_misc).
+[   19.588711] systemd[1]: Reached target integritysetup.target - Local Integrity Protected Volumes.
+[   19.588879] systemd[1]: Reached target remote-fs.target - Remote File Systems.
+[   19.588986] systemd[1]: Reached target slices.target - Slice Units.
+[   19.589096] systemd[1]: Reached target snapd.mounts-pre.target - Mounting snaps.
+[   19.589198] systemd[1]: Reached target snapd.mounts.target - Mounted snaps.
+[   19.589335] systemd[1]: Reached target veritysetup.target - Local Verity Protected Volumes.
+[   19.589598] systemd[1]: Listening on systemd-initctl.socket - initctl Compatibility Named Pipe.
+[   19.590005] systemd[1]: Listening on systemd-journald-dev-log.socket - Journal Socket (/dev/log).
+[   19.590395] systemd[1]: Listening on systemd-journald.socket - Journal Socket.
+[   19.590585] systemd[1]: systemd-pcrextend.socket - TPM2 PCR Extension (Varlink) was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
+[   19.591210] systemd[1]: Listening on systemd-udevd-control.socket - udev Control Socket.
+[   19.591522] systemd[1]: Listening on systemd-udevd-kernel.socket - udev Kernel Socket.
+[   19.591914] systemd[1]: dev-hugepages.mount - Huge Pages File System was skipped because of an unmet condition check (ConditionPathExists=/sys/kernel/mm/hugepages).
+[   19.592100] systemd[1]: dev-mqueue.mount - POSIX Message Queue File System was skipped because of an unmet condition check (ConditionPathExists=/proc/sys/fs/mqueue).
+[   19.594136] systemd[1]: Mounting sys-kernel-debug.mount - Kernel Debug File System...
+[   19.596096] systemd[1]: Mounting sys-kernel-tracing.mount - Kernel Trace File System...
+[   19.601790] systemd[1]: Starting systemd-journald.service - Journal Service...
+[   19.604855] systemd[1]: Starting keyboard-setup.service - Set the console keyboard layout...
+[   19.605059] systemd[1]: kmod-static-nodes.service - Create List of Static Device Nodes was skipped because of an unmet condition check (ConditionFileNotEmpty=/lib/modules/6.18.33-a50-diag+/modules.devname).
+[   19.607634] systemd[1]: Starting modprobe@configfs.service - Load Kernel Module configfs...
+[   19.610644] systemd[1]: Starting modprobe@dm_mod.service - Load Kernel Module dm_mod...
+[   19.613563] systemd[1]: Starting modprobe@drm.service - Load Kernel Module drm...
+[   19.618278] systemd[1]: Starting modprobe@efi_pstore.service - Load Kernel Module efi_pstore...
+[   19.621261] systemd[1]: Starting modprobe@fuse.service - Load Kernel Module fuse...
+[   19.630636] systemd[1]: Starting modprobe@loop.service - Load Kernel Module loop...
+[   19.630890] systemd[1]: mount-android-system.service - Find the Android's system or root image was skipped because of an unmet condition check (ConditionPathIsMountPoint=!/android).
+[   19.631364] systemd[1]: systemd-pcrmachine.service - TPM2 PCR Machine ID Measurement was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
+[   19.634147] systemd[1]: Starting systemd-remount-fs.service - Remount Root and Kernel File Systems...
+[   19.637156] systemd[1]: Starting systemd-tmpfiles-setup-dev-early.service - Create Static Device Nodes in /dev gracefully...
+[   19.637446] systemd[1]: systemd-tpm2-setup-early.service - TPM2 SRK Setup (Early) was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
+[   19.651097] systemd[1]: Mounted sys-kernel-debug.mount - Kernel Debug File System.
+[   19.651652] systemd[1]: Mounted sys-kernel-tracing.mount - Kernel Trace File System.
+[   19.652320] systemd[1]: modprobe@configfs.service: Deactivated successfully.
+[   19.652815] systemd[1]: Finished modprobe@configfs.service - Load Kernel Module configfs.
+[   19.653932] systemd[1]: modprobe@dm_mod.service: Deactivated successfully.
+[   19.654299] systemd[1]: Finished modprobe@dm_mod.service - Load Kernel Module dm_mod.
+[   19.655140] systemd[1]: modprobe@drm.service: Deactivated successfully.
+[   19.655504] systemd[1]: Finished modprobe@drm.service - Load Kernel Module drm.
+[   19.656206] systemd[1]: modprobe@efi_pstore.service: Deactivated successfully.
+[   19.656517] systemd[1]: Finished modprobe@efi_pstore.service - Load Kernel Module efi_pstore.
+[   19.657127] systemd[1]: modprobe@fuse.service: Deactivated successfully.
+[   19.657435] systemd[1]: Finished modprobe@fuse.service - Load Kernel Module fuse.
+[   19.658253] systemd[1]: sys-fs-fuse-connections.mount - FUSE Control File System was skipped because of an unmet condition check (ConditionPathExists=/sys/fs/fuse/connections).
+[   19.659973] systemd[1]: Mounting sys-kernel-config.mount - Kernel Configuration File System...
+[   19.663460] systemd[1]: modprobe@loop.service: Deactivated successfully.
+[   19.664023] systemd[1]: Finished modprobe@loop.service - Load Kernel Module loop.
+[   19.664655] systemd[1]: systemd-repart.service - Repartition Root Disk was skipped because no trigger condition checks were met.
+[   19.676950] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked SCSI opcode 0x42 lun 0
+[   19.677026] sd 0:0:0:0: [sda] tag#2 UNKNOWN(0x2003) Result: hostbyte=0x00 driverbyte=DRIVER_OK cmd_age=0s
+[   19.677054] sd 0:0:0:0: [sda] tag#2 Sense Key : 0x5 [current]
+[   19.677071] sd 0:0:0:0: [sda] tag#2 ASC=0x20 ASCQ=0x0
+[   19.677089] sd 0:0:0:0: [sda] tag#2 CDB: opcode=0x42 42 00 00 00 00 00 00 00 18 00
+[   19.677107] critical target error, dev sda, sector 111855616 op 0x3:(DISCARD) flags 0x800 phys_seg 1 prio class 2
+[   19.681432] systemd[1]: Mounted sys-kernel-config.mount - Kernel Configuration File System.
+[   19.707851] EXT4-fs (loop0): re-mounted e00143fa-d6ec-408e-b9f2-061fce1fe573 ro.
+[   19.722857] systemd[1]: Finished systemd-remount-fs.service - Remount Root and Kernel File Systems.
+[   19.723614] systemd[1]: Finished systemd-tmpfiles-setup-dev-early.service - Create Static Device Nodes in /dev gracefully.
+[   19.723922] systemd[1]: userdata-SWAP.img.swap - /userdata/SWAP.img was skipped because of an unmet condition check (ConditionPathExists=/userdata/SWAP.img).
+[   19.723981] systemd[1]: Reached target swap.target - Swaps.
+[   19.725300] systemd[1]: systemd-hwdb-update.service - Rebuild Hardware Database was skipped because of an unmet condition check (ConditionNeedsUpdate=/etc).
+[   19.725568] systemd[1]: systemd-sysusers.service - Create System Users was skipped because no trigger condition checks were met.
+[   19.726760] systemd-journald[455]: Collecting audit messages is disabled.
+[   19.727764] systemd[1]: Starting systemd-tmpfiles-setup-dev.service - Create Static Device Nodes in /dev...
+[   19.735013] systemd[1]: Started systemd-journald.service - Journal Service.
+[   19.742885] systemd[1]: Finished keyboard-setup.service - Set the console keyboard layout.
+[   19.755248] systemd[1]: Finished systemd-tmpfiles-setup-dev.service - Create Static Device Nodes in /dev.
+[   19.756000] systemd[1]: Reached target local-fs-pre.target - Preparation for Local File Systems.
+[   19.756706] systemd[1]: home.mount: Directory /home to mount over is not empty, mounting anyway.
+[   19.758789] systemd[1]: Mounting home.mount - /home...
+[   19.761352] systemd[1]: Mounting media.mount - /media...
+[   19.764704] systemd[1]: Mounting nix.mount - /nix...
+[   19.768214] systemd[1]: Mounting opt-click.ubuntu.com.mount - /opt/click.ubuntu.com...
+[   19.769009] systemd[1]: root.mount: Directory /root to mount over is not empty, mounting anyway.
+[   19.771685] systemd[1]: Mounting root.mount - /root...
+[   19.774571] systemd[1]: Mounting snap.mount - /snap...
+[   19.777467] systemd[1]: Mounting tmp.mount - /tmp...
+[   19.778200] systemd[1]: var-cache-apparmor.mount: Directory /var/cache/apparmor to mount over is not empty, mounting anyway.
+[   19.780708] systemd[1]: Mounting var-cache-apparmor.mount - /var/cache/apparmor...
+[   19.784541] systemd[1]: Mounting var-cache-snapd.mount - /var/cache/snapd...
+[   19.785524] systemd[1]: var-lib-AccountsService.mount: Directory /var/lib/AccountsService to mount over is not empty, mounting anyway.
+[   19.788355] systemd[1]: Mounting var-lib-AccountsService.mount - /var/lib/AccountsService...
+[   19.791863] systemd[1]: Mounting var-lib-NetworkManager.mount - /var/lib/NetworkManager...
+[   19.794771] systemd[1]: Mounting var-lib-PackageKit.mount - /var/lib/PackageKit...
+[   19.797547] systemd[1]: Mounting var-lib-aethercast.mount - /var/lib/aethercast...
+[   19.801472] systemd[1]: Mounting var-lib-android\x2ddata.mount - /var/lib/android-data...
+[   19.802090] systemd[1]: var-lib-apparmor.mount: Directory /var/lib/apparmor to mount over is not empty, mounting anyway.
+[   19.804890] systemd[1]: Mounting var-lib-apparmor.mount - /var/lib/apparmor...
+[   19.810108] systemd[1]: Mounting var-lib-bluetooth.mount - /var/lib/bluetooth...
+[   19.810650] systemd[1]: var-lib-extrausers.mount: Directory /var/lib/extrausers to mount over is not empty, mounting anyway.
+[   19.816771] systemd[1]: Mounting var-lib-extrausers.mount - /var/lib/extrausers...
+[   19.822673] systemd[1]: Mounting var-lib-lightdm.mount - /var/lib/lightdm...
+[   19.828388] systemd[1]: Mounting var-lib-lightdm\x2ddata.mount - /var/lib/lightdm-data...
+[   19.833685] systemd[1]: Mounting var-lib-logrotate.mount - /var/lib/logrotate...
+[   19.840256] systemd[1]: Mounting var-lib-lomiri\x2dlocation\x2dservice.mount - /var/lib/lomiri-location-service...
+[   19.845921] systemd[1]: Mounting var-lib-misc.mount - /var/lib/misc...
+[   19.851857] systemd[1]: Mounting var-lib-nfcd.mount - /var/lib/nfcd...
+[   19.857882] systemd[1]: Mounting var-lib-ofono.mount - /var/lib/ofono...
+[   19.859020] systemd[1]: var-lib-snapd.mount: Directory /var/lib/snapd to mount over is not empty, mounting anyway.
+[   19.863825] systemd[1]: Mounting var-lib-snapd.mount - /var/lib/snapd...
+[   19.864936] systemd[1]: var-lib-sudo.mount: Directory /var/lib/sudo to mount over is not empty, mounting anyway.
+[   19.869705] systemd[1]: Mounting var-lib-sudo.mount - /var/lib/sudo...
+[   19.870777] systemd[1]: var-lib-system\x2dimage.mount: Directory /var/lib/system-image to mount over is not empty, mounting anyway.
+[   19.875485] systemd[1]: Mounting var-lib-system\x2dimage.mount - /var/lib/system-image...
+[   19.876306] systemd[1]: var-lib-systemd.mount: Directory /var/lib/systemd to mount over is not empty, mounting anyway.
+[   19.881092] systemd[1]: Mounting var-lib-systemd.mount - /var/lib/systemd...
+[   19.887158] systemd[1]: Mounting var-lib-upower.mount - /var/lib/upower...
+[   19.893179] systemd[1]: Mounting var-lib-urfkill.mount - /var/lib/urfkill...
+[   19.898935] systemd[1]: Mounting var-lib-usb\x2dmoded.mount - /var/lib/usb-moded...
+[   19.904897] systemd[1]: Mounting var-lib-usermetrics.mount - /var/lib/usermetrics...
+[   19.910502] systemd[1]: Mounting var-lib-waydroid.mount - /var/lib/waydroid...
+[   19.911571] systemd[1]: var-log.mount: Directory /var/log to mount over is not empty, mounting anyway.
+[   19.916410] systemd[1]: Mounting var-log.mount - /var/log...
+[   19.922244] systemd[1]: Mounting var-snap.mount - /var/snap...
+[   19.928179] systemd[1]: Mounting var-tmp.mount - /var/tmp...
+[   20.063641] systemd[1]: Mounted home.mount - /home.
+[   20.064609] systemd[1]: Mounted media.mount - /media.
+[   20.065547] systemd[1]: Mounted nix.mount - /nix.
+[   20.066490] systemd[1]: Mounted opt-click.ubuntu.com.mount - /opt/click.ubuntu.com.
+[   20.067426] systemd[1]: Mounted root.mount - /root.
+[   20.068360] systemd[1]: Mounted snap.mount - /snap.
+[   20.069295] systemd[1]: Mounted tmp.mount - /tmp.
+[   20.070261] systemd[1]: Mounted var-cache-apparmor.mount - /var/cache/apparmor.
+[   20.071230] systemd[1]: Mounted var-cache-snapd.mount - /var/cache/snapd.
+[   20.072173] systemd[1]: Mounted var-lib-AccountsService.mount - /var/lib/AccountsService.
+[   20.073130] systemd[1]: Mounted var-lib-NetworkManager.mount - /var/lib/NetworkManager.
+[   20.074101] systemd[1]: Mounted var-lib-PackageKit.mount - /var/lib/PackageKit.
+[   20.075060] systemd[1]: Mounted var-lib-aethercast.mount - /var/lib/aethercast.
+[   20.076016] systemd[1]: Mounted var-lib-android\x2ddata.mount - /var/lib/android-data.
+[   20.076975] systemd[1]: Mounted var-lib-apparmor.mount - /var/lib/apparmor.
+[   20.077942] systemd[1]: Mounted var-lib-bluetooth.mount - /var/lib/bluetooth.
+[   20.078883] systemd[1]: Mounted var-lib-extrausers.mount - /var/lib/extrausers.
+[   20.079845] systemd[1]: Mounted var-lib-lightdm.mount - /var/lib/lightdm.
+[   20.080812] systemd[1]: Mounted var-lib-lightdm\x2ddata.mount - /var/lib/lightdm-data.
+[   20.081774] systemd[1]: Mounted var-lib-logrotate.mount - /var/lib/logrotate.
+[   20.082736] systemd[1]: Mounted var-lib-lomiri\x2dlocation\x2dservice.mount - /var/lib/lomiri-location-service.
+[   20.083695] systemd[1]: Mounted var-lib-misc.mount - /var/lib/misc.
+[   20.084631] systemd[1]: Mounted var-lib-nfcd.mount - /var/lib/nfcd.
+[   20.085594] systemd[1]: Mounted var-lib-ofono.mount - /var/lib/ofono.
+[   20.086543] systemd[1]: Mounted var-lib-snapd.mount - /var/lib/snapd.
+[   20.087492] systemd[1]: Mounted var-lib-sudo.mount - /var/lib/sudo.
+[   20.088443] systemd[1]: Mounted var-lib-system\x2dimage.mount - /var/lib/system-image.
+[   20.089390] systemd[1]: Mounted var-lib-systemd.mount - /var/lib/systemd.
+[   20.090385] systemd[1]: Mounted var-lib-upower.mount - /var/lib/upower.
+[   20.091347] systemd[1]: Mounted var-lib-urfkill.mount - /var/lib/urfkill.
+[   20.092289] systemd[1]: Mounted var-lib-usb\x2dmoded.mount - /var/lib/usb-moded.
+[   20.093232] systemd[1]: Mounted var-lib-usermetrics.mount - /var/lib/usermetrics.
+[   20.094422] systemd[1]: Mounted var-lib-waydroid.mount - /var/lib/waydroid.
+[   20.095360] systemd[1]: Mounted var-log.mount - /var/log.
+[   20.096298] systemd[1]: Mounted var-snap.mount - /var/snap.
+[   20.097214] systemd[1]: Mounted var-tmp.mount - /var/tmp.
+[   20.174453] systemd[1]: Reached target local-fs.target - Local File Systems.
+[   20.181322] systemd[1]: Listening on systemd-sysext.socket - System Extension Image Management (Varlink).
+[   20.187557] systemd[1]: Starting console-setup.service - Set console font and keymap...
+[   20.188496] systemd[1]: ldconfig.service - Rebuild Dynamic Linker Cache was skipped because no trigger condition checks were met.
+[   20.193365] systemd[1]: Starting mount-android-partitions.service - Mount Android partitions...
+[   20.198903] systemd[1]: Starting plymouth-read-write.service - Tell Plymouth To Write Out Runtime Data...
+[   20.200505] systemd[1]: systemd-binfmt.service - Set Up Additional Binary Formats was skipped because of an unmet condition check (ConditionPathIsMountPoint=/proc/sys/fs/binfmt_misc).
+[   20.205740] systemd[1]: Starting systemd-journal-flush.service - Flush Journal to Persistent Storage...
+[   20.206353] systemd[1]: systemd-pstore.service - Platform Persistent Storage Archival was skipped because of an unmet condition check (ConditionDirectoryNotEmpty=/sys/fs/pstore).
+[   20.212073] systemd[1]: Starting systemd-random-seed.service - Load/Save OS Random Seed...
+[   20.212556] systemd[1]: systemd-tpm2-setup.service - TPM2 SRK Setup was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
+[   20.218052] systemd[1]: Starting ufw.service - Uncomplicated firewall...
+[   20.227974] systemd-journald[455]: Received client request to flush runtime journal.
+[   20.235255] systemd[1]: Finished console-setup.service - Set console font and keymap.
+[   20.240475] systemd[1]: Finished ufw.service - Uncomplicated firewall.
+[   20.244200] systemd[1]: Finished plymouth-read-write.service - Tell Plymouth To Write Out Runtime Data.
+[   20.246973] systemd[1]: Reached target network-pre.target - Preparation for Network.
+[   20.248657] systemd-journald[455]: /var/log/journal/8b7a4ea163e84f4f89218e4a86aedb78/system.journal: Realtime clock jumped backwards relative to last journal entry, rotating.
+[   20.248693] systemd-journald[455]: Rotating system journal.
+[   20.277740] EXT4-fs (sda26): mounting with "discard" option, but the device does not support discard
+[   20.277845] EXT4-fs (sda26): mounted filesystem 07373cec-6e3e-5f97-9250-62eb356c889e ro without journal. Quota mode: disabled.
+[   20.280274] systemd[1]: Finished systemd-random-seed.service - Load/Save OS Random Seed.
+[   20.352601] systemd[1]: Finished systemd-journal-flush.service - Flush Journal to Persistent Storage.
+[   20.386336] systemd[1]: Starting systemd-tmpfiles-setup.service - Create Volatile Files and Directories...
+[   20.400488] systemd[1]: mount-android-partitions.service: Main process exited, code=exited, status=1/FAILURE
+[   20.401244] systemd[1]: mount-android-partitions.service: Failed with result 'exit-code'.
+[   20.402290] systemd[1]: Failed to start mount-android-partitions.service - Mount Android partitions.
+[   20.402808] systemd[1]: Dependency failed for a50-container-prepare.service - A50: generate the Android container overrides this port needs.
+[   20.403076] systemd[1]: Dependency failed for lxc-android-config.service - LXC Android Config and Container Initialization.
+[   20.403354] systemd[1]: Dependency failed for lomiri-location-service.service - Location Services.
+[   20.403636] systemd[1]: lomiri-location-service.service: Job lomiri-location-service.service/start failed with result 'dependency'.
+[   20.403738] systemd[1]: lxc-android-config.service: Job lxc-android-config.service/start failed with result 'dependency'.
+[   20.403770] systemd[1]: lxc-android-config.service: Triggering OnFailure= dependencies.
+[   20.405328] systemd[1]: a50-container-prepare.service: Job a50-container-prepare.service/start failed with result 'dependency'.
+[   20.406868] systemd[1]: mount-android-system.service - Find the Android's system or root image was skipped because of an unmet condition check (ConditionPathIsMountPoint=!/android).
+[   20.411703] systemd[1]: Starting lxc-android-config-mount-apexes.service - Mount Android APEXes...
+[   20.416595] systemd[1]: Starting mount-halium-overlay.service - Bind-mount Halium overlay from Android image...
+[   20.422000] systemd[1]: Starting systemd-udev-trigger-real.service - Coldplug All udev Devices...
+[   20.427404] systemd[1]: Starting timekeeper.service - Timekeeper is a utility to keep/restore RTC offset for Qualcomm devices...
+[   20.440918] systemd[1]: Finished mount-halium-overlay.service - Bind-mount Halium overlay from Android image.
+[   20.451027] systemd[1]: Starting systemd-modules-load.service - Load Kernel Modules...
+[   20.451234] systemd-tmpfiles[600]: fchmod() of /var failed: Read-only file system
+[   20.451497] systemd-tmpfiles[600]: fchmod() of /var/lib failed: Read-only file system
+[   20.456426] systemd-tmpfiles[600]: symlink(../locale.conf, /etc/default/locale) failed: Read-only file system
+[   20.459280] systemd[1]: Starting systemd-udevd.service - Rule-based Manager for Device Events and Files...
+[   20.468800] systemd[1]: Finished timekeeper.service - Timekeeper is a utility to keep/restore RTC offset for Qualcomm devices.
+[   20.482216] systemd[1]: Finished systemd-tmpfiles-setup.service - Create Volatile Files and Directories.
+[   20.484555] systemd[1]: systemd-firstboot.service - First Boot Wizard was skipped because of an unmet condition check (ConditionFirstBoot=yes).
+[   20.484783] systemd[1]: first-boot-complete.target - First Boot Complete was skipped because of an unmet condition check (ConditionFirstBoot=yes).
+[   20.485643] systemd[1]: systemd-journal-catalog-update.service - Rebuild Journal Catalog was skipped because of an unmet condition check (ConditionNeedsUpdate=/var).
+[   20.486023] systemd[1]: systemd-machine-id-commit.service - Commit a transient machine-id on disk was skipped because of an unmet condition check (ConditionPathIsReadWrite=/etc).
+[   20.495283] systemd[1]: Starting systemd-timesyncd.service - Network Time Synchronization...
+[   20.496534] systemd[1]: systemd-update-done.service - Update is Completed was skipped because no trigger condition checks were met.
+[   20.501629] systemd[1]: Starting systemd-update-utmp.service - Record System Boot/Shutdown in UTMP...
+[   20.504242] systemd[1]: Finished systemd-modules-load.service - Load Kernel Modules.
+[   20.513156] systemd[1]: Starting systemd-sysctl.service - Apply Kernel Variables...
+[   20.538070] systemd-sysctl[623]: Couldn't write '1' to 'kernel/apparmor_restrict_unprivileged_userns', ignoring: No such file or directory
+[   20.543759] systemd[1]: Finished systemd-sysctl.service - Apply Kernel Variables.
+[   20.552477] systemd[1]: Too many messages being logged to kmsg, ignoring
+[   20.561062] systemd-udevd[617]: Using default interface naming scheme 'v255'.
+[   20.681427] audit: type=1400 audit(1777493812.547:2): apparmor="STATUS" operation="profile_load" profile="unconfined" name="1password" pid=673 comm="apparmor_parser"
+[   20.685462] audit: type=1400 audit(1777493812.551:3): apparmor="STATUS" operation="profile_load" profile="unconfined" name="Discord" pid=674 comm="apparmor_parser"
+[   20.686684] audit: type=1400 audit(1777493812.555:4): apparmor="STATUS" operation="profile_load" profile="unconfined" name="alsamixer" pid=678 comm="apparmor_parser"
+[   20.689255] audit: type=1400 audit(1777493812.555:5): apparmor="STATUS" operation="profile_load" profile="unconfined" name=4D6F6E676F444220436F6D70617373 pid=675 comm="apparmor_parser"
+[   20.689289] audit: type=1400 audit(1777493812.555:6): apparmor="STATUS" operation="profile_load" profile="unconfined" name="bfdd" pid=685 comm="apparmor_parser"
+[   20.702758] audit: type=1400 audit(1777493812.567:7): apparmor="STATUS" operation="profile_load" profile="unconfined" name="brave" pid=687 comm="apparmor_parser"
+[   20.702798] audit: type=1400 audit(1777493812.571:8): apparmor="STATUS" operation="profile_load" profile="unconfined" name="balena-etcher" pid=680 comm="apparmor_parser"
+[   20.706887] audit: type=1400 audit(1777493812.575:9): apparmor="STATUS" operation="profile_load" profile="unconfined" name="babeld" pid=679 comm="apparmor_parser"
+[   20.708094] audit: type=1400 audit(1777493812.575:10): apparmor="STATUS" operation="profile_load" profile="unconfined" name="bwrap" pid=689 comm="apparmor_parser"
+[   20.708125] audit: type=1400 audit(1777493812.575:11): apparmor="STATUS" operation="profile_load" profile="unconfined" name="unpriv_bwrap" pid=689 comm="apparmor_parser"
+[   21.521516] udevadm[867]: systemd-udev-settle.service is deprecated. Please fix usb-moded.service not to pull it in.
+[   21.910592] binder: 908:908 cannot find target node
+[   21.910613] binder: 908:908 transaction call to 0:0 failed 1/29189/-22, code 1599098439 size 0-0 line 3458
+[   21.916548] binder: 908:908 cannot find target node
+[   21.916579] binder: 908:908 transaction call to 0:0 failed 2/29189/-22, code 256921159 size 32-0 line 3458
+[   21.950975] configfs-gadget.g1 gadget.0: HOST MAC <redacted-mac>
+[   21.951017] configfs-gadget.g1 gadget.0: MAC <redacted-mac>
+[   21.984070] binder: 908:908 cannot find target node
+[   21.984102] binder: 908:908 transaction call to 0:0 failed 3/29189/-22, code 256921159 size 32-0 line 3458
+[   22.036628] URfkill[946]: No configured profile found
+[   22.036917] URfkill[946]: <warning> No dmi devices found.
+[   22.037085] URfkill[946]: <warning> Failed to get DMI information
+[   22.041297] URfkill[946]: Starting urfkilld version 0.6.0
+[   22.301559] usb_moded[1052]: /etc/usb-moded/usb-moded.ini: has reappeared after settings migration
+[   22.310990] wpa_supplicant[1064]: Successfully initialized wpa_supplicant
+[   22.315095] usb_moded[1052]: Failed to write mac address to /etc/modprobe.d/g_ether.conf
+[   22.324098] usb_moded[1052]: CONFIGFS detected
+[   22.331695] usb_moded[1052]: /sys/kernel/config/usb_gadget/g1//functions/mass_storage.usb0: mkdir failed: Function not implemented
+[   22.332126] usb_moded[1052]: /sys/kernel/config/usb_gadget/g1//functions/mtp.mtp: mkdir failed: Function not implemented
+[   22.332496] usb_moded[1052]: Failed to read mac address from /etc/modprobe.d/g_ether.conf
+[   22.332890] usb_moded[1052]: /sys/kernel/config/usb_gadget/g1//functions/rndis.usb0/wceis: can't open for writing: No such file or directory
+[   22.340665] usb_moded[1052]: Unable to find $charger device '/sys/class/power_supply/usb'
+[   22.354136] usb_moded[1052]: Forcing USB state to connected always. ASK mode non functional!
+[   22.377916] usb_moded[1052]: no network gateway
+[   22.407693] binder: 917:917 cannot find target node
+[   22.407730] binder: 917:917 transaction call to 0:0 failed 4/29189/-22, code 1599098439 size 0-0 line 3458
+[   22.409454] binder: 917:917 cannot find target node
+[   22.409492] binder: 917:917 transaction call to 0:0 failed 5/29189/-22, code 256921159 size 32-0 line 3458
+[   22.666845] udisksd[943]: Error creating directory /var/lib/udisks2: Read-only file system
+[   22.670859] URfkill[946]: <warning> Error opening RFKILL control device, please verify your installation
+[   22.671054] URfkill[946]: Setting WLAN devices to unblocked
+[   22.671719] URfkill[946]: Setting BLUETOOTH devices to blocked
+[   22.671933] URfkill[946]: Setting UWB devices to unblocked
+[   22.672183] URfkill[946]: Setting WIMAX devices to unblocked
+[   22.672413] URfkill[946]: Setting WWAN devices to unblocked
+[   22.672607] URfkill[946]: Setting GPS devices to unblocked
+[   22.672735] URfkill[946]: Setting FM devices to unblocked
+[   22.672830] URfkill[946]: Setting NFC devices to unblocked
+[   22.779130] NetworkManager[1081]: ((../src/core/devices/nm-device.c:5820)): assertion '<dropped>' failed
+[   22.800533] NetworkManager[1081]: ((../src/core/devices/nm-device.c:5820)): assertion '<dropped>' failed
+[   22.805256] NetworkManager[1081]: ((../src/core/devices/nm-device.c:5820)): assertion '<dropped>' failed
+[   22.890995] root[1154]: 02default_route_workaround: (lo): up: flushing routing table (proto boot)
+[   23.171269] loop2: detected capacity change from 0 to 8
+[   24.647965] systemd[1]: Started systemd-timedated.service - Time & Date Service.
+[   24.668416] systemd[1]: Finished snapd.seeded.service - Wait until snapd is fully seeded.
+[   24.670701] systemd[1]: snapd.autoimport.service - Auto import assertions from block devices was skipped because no trigger condition checks were met.
+[   25.346870] sshd-session[1252]: pam_extrausers(sshd:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[   25.373899] systemd[1]: Created slice user-0.slice - User Slice of UID 0.
+[   25.394264] systemd[1]: Starting user-runtime-dir@0.service - User Runtime Directory /run/user/0...
+[   25.496619] systemd[1]: Finished user-runtime-dir@0.service - User Runtime Directory /run/user/0.
+[   25.518501] systemd[1]: Starting user@0.service - User Manager for UID 0...
+[   25.525395] (systemd)[1264]: pam_extrausers(systemd-user:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[   26.370631] systemd[1264]: Queued start job for default target default.target.
+[   26.387429] systemd[1264]: Created slice app.slice - User Application Slice.
+[   26.388056] systemd[1264]: Created slice session.slice - User Core Session Slice.
+[   26.388125] systemd[1264]: Started launchpadlib-cache-clean.timer - Clean up old files in the Launchpadlib cache.
+[   26.388180] systemd[1264]: Reached target paths.target - Paths.
+[   26.388230] systemd[1264]: Reached target timers.target - Timers.
+[   26.390237] systemd[1264]: Starting dbus.socket - D-Bus User Message Bus Socket...
+[   26.390628] systemd[1264]: Listening on dirmngr.socket - GnuPG network certificate management daemon.
+[   26.390911] systemd[1264]: Listening on gnome-keyring-daemon.socket - GNOME Keyring daemon.
+[   26.391129] systemd[1264]: Listening on gpg-agent-browser.socket - GnuPG cryptographic agent and passphrase cache (access for web browsers).
+[   26.391342] systemd[1264]: Listening on gpg-agent-extra.socket - GnuPG cryptographic agent and passphrase cache (restricted).
+[   26.393578] systemd[1264]: Starting gpg-agent.socket - GnuPG cryptographic agent and passphrase cache...
+[   26.394404] systemd[1264]: Listening on keyboxd.socket - GnuPG public key management service.
+[   26.394811] systemd[1264]: Listening on pk-debconf-helper.socket - debconf communication socket.
+[   26.394892] systemd[1264]: pulseaudio.socket - Sound System was skipped because of an unmet condition check (ConditionUser=!root).
+[   26.395149] systemd[1264]: Listening on snapd.session-agent.socket - REST API socket for snapd user session agent.
+[   26.398054] systemd[1264]: Starting ssh-agent.socket - OpenSSH Agent socket...
+[   26.419368] systemd[1264]: Listening on gpg-agent.socket - GnuPG cryptographic agent and passphrase cache.
+[   26.421609] systemd[1264]: Listening on dbus.socket - D-Bus User Message Bus Socket.
+[   26.440169] systemd[1264]: Listening on ssh-agent.socket - OpenSSH Agent socket.
+[   26.442598] systemd[1264]: Starting gcr-ssh-agent.socket - GCR ssh-agent wrapper...
+[   26.466125] systemd[1264]: Listening on gcr-ssh-agent.socket - GCR ssh-agent wrapper.
+[   26.468448] systemd[1264]: Starting gpg-agent-ssh.socket - GnuPG cryptographic agent (ssh-agent emulation)...
+[   26.508238] systemd[1264]: Listening on gpg-agent-ssh.socket - GnuPG cryptographic agent (ssh-agent emulation).
+[   26.508538] systemd[1264]: Reached target sockets.target - Sockets.
+[   26.508604] systemd[1264]: Reached target basic.target - Basic System.
+[   26.508746] systemd[1264]: mpris-proxy.service - Bluetooth mpris proxy was skipped because of an unmet condition check (ConditionUser=!@system).
+[   26.508790] systemd[1264]: pulseaudio.service - Sound Service was skipped because of an unmet condition check (ConditionUser=!root).
+[   26.508836] systemd[1264]: Reached target default.target - Main User Target.
+[   26.508919] systemd[1]: Started user@0.service - User Manager for UID 0.
+[   26.511361] systemd[1]: Started session-1.scope - Session 1 of User root.
+[   26.512094] systemd[1264]: Started audiosystem-passthrough-af.service - audiosystem-passthrough instance implementing AF interface.
+[   26.514241] systemd[1264]: Starting audiosystem-passthrough-qti.service - audiosystem-passthrough instance implementing IQcRilAudio interface...
+[   26.534354] systemd[1264]: audiosystem-passthrough-qti.service: Skipped due to 'exec-condition'.
+[   26.534844] systemd[1264]: Condition check resulted in audiosystem-passthrough-qti.service - audiosystem-passthrough instance implementing IQcRilAudio interface being skipped.
+[   26.535013] systemd[1264]: Startup finished in 991ms.
+[   26.705968] systemd[1]: session-1.scope: Deactivated successfully.
+[   26.858619] sshd-session[1322]: pam_extrausers(sshd:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[   26.910333] systemd[1]: Started session-3.scope - Session 3 of User root.
+[   27.173850] binder_debug: 24 callbacks suppressed
+[   27.173864] binder: 1297:1297 cannot find target node
+[   27.173903] binder: 1297:1297 transaction call to 0:0 failed 18/29189/-22, code 1599098439 size 0-0 line 3458
+[   27.442689] systemd[1]: Started sensorfwd.service - Sensor daemon for the sensor framework.
+[   27.577907] binder: 1297:1297 cannot find target node
+[   27.577948] binder: 1297:1297 transaction call to 0:0 failed 19/29189/-22, code 1599098439 size 0-0 line 3458
+[   28.081872] binder: 1297:1297 cannot find target node
+[   28.081913] binder: 1297:1297 transaction call to 0:0 failed 20/29189/-22, code 1599098439 size 0-0 line 3458
+[   28.542067] systemd[1]: session-3.scope: Deactivated successfully.
+[   28.685852] binder: 1297:1297 cannot find target node
+[   28.685894] binder: 1297:1297 transaction call to 0:0 failed 21/29189/-22, code 1599098439 size 0-0 line 3458
+[   29.389819] binder: 1297:1297 cannot find target node
+[   29.389855] binder: 1297:1297 transaction call to 0:0 failed 22/29189/-22, code 1599098439 size 0-0 line 3458
+[   32.910084] systemd[1]: NetworkManager-dispatcher.service: Deactivated successfully.
+[   33.105849] binder_debug: 6 callbacks suppressed
+[   33.105862] binder: 1297:1297 cannot find target node
+[   33.105901] binder: 1297:1297 transaction call to 0:0 failed 26/29189/-22, code 1599098439 size 0-0 line 3458
+[   34.109819] binder: 1297:1297 cannot find target node
+[   34.109855] binder: 1297:1297 transaction call to 0:0 failed 27/29189/-22, code 1599098439 size 0-0 line 3458
+[   35.113833] binder: 1297:1297 cannot find target node
+[   35.113871] binder: 1297:1297 transaction call to 0:0 failed 28/29189/-22, code 1599098439 size 0-0 line 3458
+[   36.117814] binder: 1297:1297 cannot find target node
+[   36.117848] binder: 1297:1297 transaction call to 0:0 failed 29/29189/-22, code 1599098439 size 0-0 line 3458
+[   37.121839] binder: 1297:1297 cannot find target node
+[   37.121875] binder: 1297:1297 transaction call to 0:0 failed 30/29189/-22, code 1599098439 size 0-0 line 3458
+[   38.125848] binder: 1297:1297 cannot find target node
+[   38.125887] binder: 1297:1297 transaction call to 0:0 failed 31/29189/-22, code 1599098439 size 0-0 line 3458
+[   38.662086] systemd[1]: Stopping user@0.service - User Manager for UID 0...
+[   38.663897] systemd[1264]: Activating special unit exit.target...
+[   38.664503] systemd[1264]: Removed slice session.slice - User Core Session Slice.
+[   38.664574] systemd[1264]: Stopped target default.target - Main User Target.
+[   38.664921] systemd[1264]: Stopping audiosystem-passthrough-af.service - audiosystem-passthrough instance implementing AF interface...
+[   38.667201] systemd[1264]: Stopped audiosystem-passthrough-af.service - audiosystem-passthrough instance implementing AF interface.
+[   38.667600] systemd[1264]: Stopped target basic.target - Basic System.
+[   38.667646] systemd[1264]: Stopped target paths.target - Paths.
+[   38.667678] systemd[1264]: Stopped target sockets.target - Sockets.
+[   38.667728] systemd[1264]: Stopped target timers.target - Timers.
+[   38.667763] systemd[1264]: Stopped launchpadlib-cache-clean.timer - Clean up old files in the Launchpadlib cache.
+[   38.668352] systemd[1264]: Closed dbus.socket - D-Bus User Message Bus Socket.
+[   38.668548] systemd[1264]: Closed dirmngr.socket - GnuPG network certificate management daemon.
+[   38.668736] systemd[1264]: Closed gnome-keyring-daemon.socket - GNOME Keyring daemon.
+[   38.668906] systemd[1264]: Closed gpg-agent-browser.socket - GnuPG cryptographic agent and passphrase cache (access for web browsers).
+[   38.669078] systemd[1264]: Closed gpg-agent-extra.socket - GnuPG cryptographic agent and passphrase cache (restricted).
+[   38.685958] systemd[1264]: Stopping gpg-agent-ssh.socket - GnuPG cryptographic agent (ssh-agent emulation)...
+[   38.687388] systemd[1264]: Stopping gpg-agent.socket - GnuPG cryptographic agent and passphrase cache...
+[   38.687599] systemd[1264]: Closed keyboxd.socket - GnuPG public key management service.
+[   38.687810] systemd[1264]: Closed pk-debconf-helper.socket - debconf communication socket.
+[   38.687995] systemd[1264]: Closed snapd.session-agent.socket - REST API socket for snapd user session agent.
+[   38.710882] systemd[1264]: Closed gpg-agent.socket - GnuPG cryptographic agent and passphrase cache.
+[   38.713032] systemd[1264]: Closed gpg-agent-ssh.socket - GnuPG cryptographic agent (ssh-agent emulation).
+[   38.714037] systemd[1264]: Closed gcr-ssh-agent.socket - GCR ssh-agent wrapper.
+[   38.715806] systemd[1264]: Stopping ssh-agent.socket - OpenSSH Agent socket...
+[   38.758422] systemd[1264]: Closed ssh-agent.socket - OpenSSH Agent socket.
+[   38.773146] systemd[1264]: Removed slice app.slice - User Application Slice.
+[   38.773240] systemd[1264]: Reached target shutdown.target - Shutdown.
+[   38.773486] systemd[1264]: Finished systemd-exit.service - Exit the Session.
+[   38.773569] systemd[1264]: Reached target exit.target - Exit the Session.
+[   38.802348] systemd[1]: user@0.service: Deactivated successfully.
+[   38.803788] systemd[1]: Stopped user@0.service - User Manager for UID 0.
+[   38.804882] systemd[1]: user@0.service: Consumed 1.246s CPU time.
+[   38.830714] systemd[1]: Stopping user-runtime-dir@0.service - User Runtime Directory /run/user/0...
+[   38.919186] systemd[1]: run-user-0.mount: Deactivated successfully.
+[   38.923771] systemd[1]: user-runtime-dir@0.service: Deactivated successfully.
+[   38.924674] systemd[1]: Stopped user-runtime-dir@0.service - User Runtime Directory /run/user/0.
+[   38.931428] systemd[1]: Removed slice user-0.slice - User Slice of UID 0.
+[   38.932298] systemd[1]: user-0.slice: Consumed 2.413s CPU time.
+[   52.652073] systemd[1]: systemd-hostnamed.service: Deactivated successfully.
+[   54.669839] systemd[1]: systemd-timedated.service: Deactivated successfully.
+[   60.190839] systemd[1]: Starting enable-cpu-hotplug.service - Enable CPU hotplugging after Ubuntu Touch boot...
+[   60.275027] systemd[1]: enable-cpu-hotplug.service: Deactivated successfully.
+[   60.275947] systemd[1]: Finished enable-cpu-hotplug.service - Enable CPU hotplugging after Ubuntu Touch boot.
+[   60.460072] A50STATUS: BEGIN uptime=60.45 target=60
+[   60.460149] A50STATUS: CMD uname -r
+[   60.482957] A50STATUS: 6.18.33-a50-diag+
+[   60.483061] A50STATUS: RC 0
+[   60.483117] A50STATUS: CMD systemctl is-system-running
+[   60.521955] A50STATUS: starting
+[   60.522061] A50STATUS: RC 1
+[   60.522121] A50STATUS: CMD systemctl --failed --no-pager --plain --no-legend
+[   60.547933] A50STATUS: a50-gnss-unblock.service         loaded failed failed A50: unblock Samsung gpsd (waits for a boot animation that never runs)
+[   60.548179] A50STATUS: mount-android-partitions.service loaded failed failed Mount Android partitions
+[   60.548262] A50STATUS: RC 0
+[   60.548324] A50STATUS: CMD systemctl list-jobs --no-pager --plain --no-legend
+[   60.587714] A50STATUS: 210 usb-rescue-mode-off.service                  start waiting
+[   60.587928] A50STATUS: 190 android-set-boot-completion-property.service start waiting
+[   60.588112] A50STATUS: 1   graphical.target                             start waiting
+[   60.588295] A50STATUS: 217 lightdm.service                              start waiting
+[   60.588476] A50STATUS: 189 a50-audio-hidl-compat.service                start running
+[   60.588659] A50STATUS: 216 factory-wipe.service                         start waiting
+[   60.588839] A50STATUS: 2   multi-user.target                            start waiting
+[   60.589019] A50STATUS: 221 aethercast.service                           start waiting
+[   60.589199] A50STATUS: 211 force-adb.service                            start waiting
+[   60.589382] A50STATUS: 201 systemd-update-utmp-runlevel.service         start waiting
+[   60.589471] A50STATUS: RC 0
+[   60.589536] A50STATUS: CMD systemctl show multi-user.target graphical.target -p Id -p ActiveState -p SubState -p Job
+[   60.645504] A50STATUS: Id=multi-user.target
+[   60.645630] A50STATUS: ActiveState=inactive
+[   60.645720] A50STATUS: SubState=dead
+[   60.645831] A50STATUS: Job=2
+[   60.645892] A50STATUS:
+[   60.645985] A50STATUS: Id=graphical.target
+[   60.646080] A50STATUS: ActiveState=inactive
+[   60.646161] A50STATUS: SubState=dead
+[   60.646227] A50STATUS: Job=1
+[   60.646302] A50STATUS: RC 0
+[   60.646367] A50STATUS: CMD systemctl show -p SystemState -p NFailedUnits -p NJobs
+[   60.688238] A50STATUS: NFailedUnits=2
+[   60.688342] A50STATUS: NJobs=10
+[   60.688437] A50STATUS: SystemState=starting
+[   60.688517] A50STATUS: RC 0
+[   60.688578] A50STATUS: CMD findmnt -no TARGET,OPTIONS /userdata
+[   60.701397] A50STATUS: /userdata rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[   60.701502] A50STATUS: RC 0
+[   60.701563] A50STATUS: CMD ip -brief address
+[   60.720469] A50STATUS: lo               UNKNOWN        127.0.0.1/8 ::1/128
+[   60.720621] A50STATUS: sit0@NONE        DOWN
+[   60.720829] A50STATUS: usb0             UP             10.15.19.82/24 <redacted-linklocal>/64
+[   60.720917] A50STATUS: RC 0
+[   60.720991] A50STATUS: CMD systemctl show usb-moded.service usb-tethering.service usb-moded-udhcpd.service usb-moded-ssh.service -p Id -p ActiveState -p SubState
+[   60.809119] A50STATUS: Id=usb-moded.service
+[   60.809245] A50STATUS: ActiveState=active
+[   60.809335] A50STATUS: SubState=running
+[   60.809392] A50STATUS:
+[   60.809497] A50STATUS: Id=usb-tethering.service
+[   60.809588] A50STATUS: ActiveState=active
+[   60.809678] A50STATUS: SubState=running
+[   60.809735] A50STATUS:
+[   60.809902] A50STATUS: Id=usb-moded-udhcpd.service
+[   60.810003] A50STATUS: ActiveState=active
+[   60.810091] A50STATUS: SubState=running
+[   60.810147] A50STATUS:
+[   60.810253] A50STATUS: Id=usb-moded-ssh.service
+[   60.810346] A50STATUS: ActiveState=active
+[   60.810435] A50STATUS: SubState=running
+[   60.810516] A50STATUS: RC 0
+[   60.810662] A50STATUS: CMD /bin/sh -c for u in /sys/class/udc/*; do echo "UDC ${u##*/}"; cat "$u/state"; done; for g in /sys/kernel/config/usb_gadget/*; do echo "gadget ${g##*/}"; cat "$g/UDC"; find "$g/configs" -maxdepth 2 -type l -printf "%f -> %l\n"; done
+[   60.849278] A50STATUS: UDC 13200000.usb
+[   60.849390] A50STATUS: configured
+[   60.849468] A50STATUS: gadget g1
+[   60.849547] A50STATUS: 13200000.usb
+[   60.849722] A50STATUS: rndis.usb0 -> ../../../../usb_gadget/g1/functions/rndis.usb0
+[   60.849850] A50STATUS: RC 0
+[   60.849900] A50STATUS: END target=60
+[   61.323978] A50M64: BEGIN target=60 uptime=61.32
+[   61.324036] A50M64: CMD systemctl show mount-android-partitions.service a50-container-prepare.service lxc-android-config.service -p Id -p ActiveState -p SubState -p Result -p ExecMainStatus
+[   61.386139] A50M64: Result=exit-code
+[   61.386199] A50M64: ExecMainStatus=1
+[   61.386253] A50M64: Id=mount-android-partitions.service
+[   61.386293] A50M64: ActiveState=failed
+[   61.386330] A50M64: SubState=failed
+[   61.386356] A50M64:
+[   61.386390] A50M64: Result=success
+[   61.386426] A50M64: ExecMainStatus=0
+[   61.386474] A50M64: Id=a50-container-prepare.service
+[   61.386514] A50M64: ActiveState=inactive
+[   61.386548] A50M64: SubState=dead
+[   61.386572] A50M64:
+[   61.386605] A50M64: Result=success
+[   61.386641] A50M64: ExecMainStatus=0
+[   61.386686] A50M64: Id=lxc-android-config.service
+[   61.386725] A50M64: ActiveState=inactive
+[   61.386759] A50M64: SubState=dead
+[   61.386803] A50M64: RC 0
+[   61.386828] A50M64: CMD lxc-info -n android
+[   61.407533] A50M64: Name:           android
+[   61.407595] A50M64: State:          STOPPED
+[   61.407636] A50M64: RC 0
+[   61.407667] A50M64: CMD lxc-attach -n android -- /system/bin/getprop sys.boot_completed
+[   61.432557] A50M64: lxc-attach: android: ../src/lxc/attach.c: get_attach_context: 406 Connection refused - Failed to get init pid
+[   61.432677] A50M64: lxc-attach: android: ../src/lxc/attach.c: lxc_attach: 1470 Connection refused - Failed to get attach context
+[   61.432721] A50M64: RC 1
+[   61.432750] A50M64: CMD lxc-attach -n android -- /system/bin/getprop init.svc.vendor.allocator-2-0
+[   61.457922] A50M64: lxc-attach: android: ../src/lxc/attach.c: get_attach_context: 406 Connection refused - Failed to get init pid
+[   61.458045] A50M64: lxc-attach: android: ../src/lxc/attach.c: lxc_attach: 1470 Connection refused - Failed to get attach context
+[   61.458088] A50M64: RC 1
+[   61.458121] A50M64: CMD /bin/sh -c ps -eo pid,comm,args | grep -E "graphics.allocator|/system/bin/init|lxc-start|servicemanager" | grep -v grep
+[   61.500851] A50M64: RC 1
+[   61.500903] A50M64: CMD /bin/sh -c cat /sys/fs/cgroup/cgroup.controllers; cat /sys/fs/cgroup/cgroup.subtree_control; cat /proc/self/cgroup
+[   61.553313] A50M64: cpuset io memory
+[   61.553368] A50M64: cpuset io memory
+[   61.553405] A50M64: 0::/init.scope
+[   61.553443] A50M64: RC 0
+[   61.553470] A50M64: CMD findmnt -R /android -o TARGET,SOURCE,FSTYPE,OPTIONS
+[   61.566769] A50M64: TARGET                                 SOURCE                                            FSTYPE OPTIONS
+[   61.566893] A50M64: /android                               /dev/loop1                                        ext4   ro,relatime
+[   61.567002] A50M64: |-/android/system                      /dev/loop1[/system]                               ext4   ro,relatime
+[   61.567154] A50M64: |-/android/data                        /dev/sda32[/android-data]                         ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[   61.567300] A50M64: | `-/android/data                      /dev/sda32[/android-data]                         ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[   61.567445] A50M64: |-/android/cache                       /dev/sda32[/cache]                                ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[   61.567591] A50M64: | `-/android/cache                     /dev/sda32[/android-data/cache]                   ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[   61.567720] A50M64: |-/android/vendor                      /dev/sda26                                        ext4   ro,nosuid,nodev,relatime,nodiscard,norecovery
+[   61.567848] A50M64: |-/android/mnt                         a50-android-mnt                                   tmpfs  rw,nosuid,nodev,relatime,size=16384k,mode=755
+[   61.567950] A50M64: `-/android/apex                        android_apex                                      tmpfs  rw,relatime
+[   61.568055] A50M64:   |-/android/apex/com.android.i18n     /dev/loop1[/system/apex/com.android.i18n]         ext4   ro,relatime
+[   61.568161] A50M64:   |-/android/apex/com.android.art      /dev/loop1[/system/apex/com.android.art.release]  ext4   ro,relatime
+[   61.568267] A50M64:   |-/android/apex/com.android.runtime  /dev/loop1[/system/apex/com.android.runtime]      ext4   ro,relatime
+[   61.568370] A50M64:   `-/android/apex/com.android.vndk.v30 /dev/loop1[/system/apex/com.android.vndk.current] ext4   ro,relatime
+[   61.568412] A50M64: RC 0
+[   61.568441] A50M64: CMD /bin/sh -c tail -n 70 /run/a50-m64/lxc.log
+[   61.592611] A50M64: tail: cannot open '/run/a50-m64/lxc.log' for reading: No such file or directory
+[   61.592673] A50M64: RC 1
+[   61.592708] A50M64: CMD journalctl -b --no-pager -n 35 -u mount-android-partitions.service -u a50-container-prepare.service -u lxc-android-config.service
+[   61.687215] A50M64: -- No entries --
+[   61.687255] A50M64: RC 0
+[   61.687278] A50M64: END target=60
+[   62.100942] systemd[1]: snapd.service: Deactivated successfully.
+[   62.102210] systemd[1]: snapd.service: Consumed 1.930s CPU time.
+[   79.466864] sshd-session[1577]: pam_extrausers(sshd:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[   79.516898] systemd[1]: Created slice user-0.slice - User Slice of UID 0.
+[   79.530937] systemd[1]: Starting user-runtime-dir@0.service - User Runtime Directory /run/user/0...
+[   79.636637] systemd[1]: Finished user-runtime-dir@0.service - User Runtime Directory /run/user/0.
+[   79.654860] systemd[1]: Starting user@0.service - User Manager for UID 0...
+[   79.660187] (systemd)[1587]: pam_extrausers(systemd-user:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[   80.477886] systemd[1587]: Queued start job for default target default.target.
+[   80.499423] systemd[1587]: Created slice app.slice - User Application Slice.
+[   80.500224] systemd[1587]: Created slice session.slice - User Core Session Slice.
+[   80.500315] systemd[1587]: Started launchpadlib-cache-clean.timer - Clean up old files in the Launchpadlib cache.
+[   80.500367] systemd[1587]: Reached target paths.target - Paths.
+[   80.500423] systemd[1587]: Reached target timers.target - Timers.
+[   80.502922] systemd[1587]: Starting dbus.socket - D-Bus User Message Bus Socket...
+[   80.503197] systemd[1587]: Listening on dirmngr.socket - GnuPG network certificate management daemon.
+[   80.503439] systemd[1587]: Listening on gnome-keyring-daemon.socket - GNOME Keyring daemon.
+[   80.503614] systemd[1587]: Listening on gpg-agent-browser.socket - GnuPG cryptographic agent and passphrase cache (access for web browsers).
+[   80.503787] systemd[1587]: Listening on gpg-agent-extra.socket - GnuPG cryptographic agent and passphrase cache (restricted).
+[   80.506029] systemd[1587]: Starting gpg-agent.socket - GnuPG cryptographic agent and passphrase cache...
+[   80.506249] systemd[1587]: Listening on keyboxd.socket - GnuPG public key management service.
+[   80.506435] systemd[1587]: Listening on pk-debconf-helper.socket - debconf communication socket.
+[   80.506483] systemd[1587]: pulseaudio.socket - Sound System was skipped because of an unmet condition check (ConditionUser=!root).
+[   80.506672] systemd[1587]: Listening on snapd.session-agent.socket - REST API socket for snapd user session agent.
+[   80.508889] systemd[1587]: Starting ssh-agent.socket - OpenSSH Agent socket...
+[   80.555953] systemd[1587]: Listening on dbus.socket - D-Bus User Message Bus Socket.
+[   80.556223] systemd[1587]: Listening on gpg-agent.socket - GnuPG cryptographic agent and passphrase cache.
+[   80.558328] systemd[1587]: Listening on ssh-agent.socket - OpenSSH Agent socket.
+[   80.561044] systemd[1587]: Starting gcr-ssh-agent.socket - GCR ssh-agent wrapper...
+[   80.602242] systemd[1587]: Listening on gcr-ssh-agent.socket - GCR ssh-agent wrapper.
+[   80.604979] systemd[1587]: Starting gpg-agent-ssh.socket - GnuPG cryptographic agent (ssh-agent emulation)...
+[   80.646928] systemd[1587]: Listening on gpg-agent-ssh.socket - GnuPG cryptographic agent (ssh-agent emulation).
+[   80.647197] systemd[1587]: Reached target sockets.target - Sockets.
+[   80.647255] systemd[1587]: Reached target basic.target - Basic System.
+[   80.647388] systemd[1587]: mpris-proxy.service - Bluetooth mpris proxy was skipped because of an unmet condition check (ConditionUser=!@system).
+[   80.647429] systemd[1587]: pulseaudio.service - Sound Service was skipped because of an unmet condition check (ConditionUser=!root).
+[   80.647471] systemd[1587]: Reached target default.target - Main User Target.
+[   80.647946] systemd[1]: Started user@0.service - User Manager for UID 0.
+[   80.649920] systemd[1587]: Started audiosystem-passthrough-af.service - audiosystem-passthrough instance implementing AF interface.
+[   80.652559] systemd[1587]: Starting audiosystem-passthrough-qti.service - audiosystem-passthrough instance implementing IQcRilAudio interface...
+[   80.653089] systemd[1]: Started session-4.scope - Session 4 of User root.
+[   80.682963] systemd[1587]: audiosystem-passthrough-qti.service: Skipped due to 'exec-condition'.
+[   80.683396] systemd[1587]: Condition check resulted in audiosystem-passthrough-qti.service - audiosystem-passthrough instance implementing IQcRilAudio interface being skipped.
+[   80.683514] systemd[1587]: Startup finished in 1.005s.
+[   80.690418] binder: 1617:1617 cannot find target node
+[   80.690457] binder: 1617:1617 transaction call to 0:0 failed 32/29189/-22, code 1599098439 size 0-0 line 3458
+[   80.690672] binder: 1617:1617 cannot find target node
+[   80.690699] binder: 1617:1617 transaction call to 0:0 failed 33/29189/-22, code 1599098439 size 0-0 line 3458
+[   80.793839] binder: 1617:1617 cannot find target node
+[   80.793882] binder: 1617:1617 transaction call to 0:0 failed 34/29189/-22, code 1599098439 size 0-0 line 3458
+[   80.931526] systemd[1]: session-4.scope: Deactivated successfully.
+[   80.997848] binder: 1617:1617 cannot find target node
+[   80.997892] binder: 1617:1617 transaction call to 0:0 failed 35/29189/-22, code 1599098439 size 0-0 line 3458
+[   81.301824] binder: 1617:1617 cannot find target node
+[   81.301862] binder: 1617:1617 transaction call to 0:0 failed 36/29189/-22, code 1599098439 size 0-0 line 3458
+[   82.222010] systemd[1]: Finished a50-audio-hidl-compat.service - A50: present the 64-bit audio HIDL compat wrapper to PulseAudio.
+[   82.262565] systemd[1]: Starting lightdm.service - Light Display Manager...
+[   82.344143] systemd[1]: Started lightdm.service - Light Display Manager.
+[   82.349575] systemd[1]: Starting aethercast.service - Aethercast Wireless Display...
+[   82.354174] systemd[1]: Starting android-set-boot-completion-property.service - Set boot completion property in Android container...
+[   82.354431] systemd[1]: factory-wipe.service - Factory Wipe Watcher was skipped because of an unmet condition check (ConditionPathExists=/userdata/.factory_wipe).
+[   82.358312] systemd[1]: Starting usb-rescue-mode-off.service - Turn usb-moded rescue mode off...
+[   82.437472] usb_moded[1052]: init_done -> reached
+[   82.438371] systemd[1]: Finished usb-rescue-mode-off.service - Turn usb-moded rescue mode off.
+[   82.443098] systemd[1]: Starting force-adb.service - Force enable or disable ADB as appropriate...
+[   82.457915] systemd[1]: Started aethercast.service - Aethercast Wireless Display.
+[   82.465100] systemd[1]: android-set-boot-completion-property.service: Main process exited, code=exited, status=1/FAILURE
+[   82.465438] systemd[1]: android-set-boot-completion-property.service: Failed with result 'exit-code'.
+[   82.466063] systemd[1]: Failed to start android-set-boot-completion-property.service - Set boot completion property in Android container.
+[   82.467771] systemd[1]: Reached target multi-user.target - Multi-User System.
+[   82.468340] systemd[1]: Reached target graphical.target - Graphical Interface.
+[   82.488317] systemd[1]: Starting systemd-update-utmp-runlevel.service - Record Runlevel Change in UTMP...
+[   82.518376] systemd[1]: lightdm.service: Main process exited, code=exited, status=1/FAILURE
+[   82.518582] systemd[1]: lightdm.service: Failed with result 'exit-code'.
+[   82.537251] systemd[1]: force-adb.service: Deactivated successfully.
+[   82.537666] systemd[1]: Finished force-adb.service - Force enable or disable ADB as appropriate.
+[   82.542876] systemd[1]: systemd-update-utmp-runlevel.service: Deactivated successfully.
+[   82.543362] systemd[1]: Finished systemd-update-utmp-runlevel.service - Record Runlevel Change in UTMP.
+[   82.543989] systemd[1]: Startup finished in 19.115s (kernel) + 1min 3.426s (userspace) = 1min 22.542s.
+[   82.659289] systemd[1]: lightdm.service: Scheduled restart job, restart counter is at 1.
+[   82.686186] systemd[1]: Starting lightdm.service - Light Display Manager...
+[   82.763367] systemd[1]: Started lightdm.service - Light Display Manager.
+[   82.859154] systemd[1]: lightdm.service: Main process exited, code=exited, status=1/FAILURE
+[   82.859370] systemd[1]: lightdm.service: Failed with result 'exit-code'.
+[   83.159465] systemd[1]: lightdm.service: Scheduled restart job, restart counter is at 2.
+[   83.178199] systemd[1]: Starting lightdm.service - Light Display Manager...
+[   83.266123] systemd[1]: Started lightdm.service - Light Display Manager.
+[   83.355106] systemd[1]: lightdm.service: Main process exited, code=exited, status=1/FAILURE
+[   83.355315] systemd[1]: lightdm.service: Failed with result 'exit-code'.
+[   83.659423] systemd[1]: lightdm.service: Scheduled restart job, restart counter is at 3.
+[   83.686195] systemd[1]: Starting lightdm.service - Light Display Manager...
+[   83.775872] systemd[1]: Started lightdm.service - Light Display Manager.
+[   83.851944] systemd[1]: lightdm.service: Main process exited, code=exited, status=1/FAILURE
+[   83.852148] systemd[1]: lightdm.service: Failed with result 'exit-code'.
+[   84.159436] systemd[1]: lightdm.service: Scheduled restart job, restart counter is at 4.
+[   84.178192] systemd[1]: Starting lightdm.service - Light Display Manager...
+[   84.268049] systemd[1]: Started lightdm.service - Light Display Manager.
+[   84.357793] systemd[1]: lightdm.service: Main process exited, code=exited, status=1/FAILURE
+[   84.358013] systemd[1]: lightdm.service: Failed with result 'exit-code'.
+[   84.659436] systemd[1]: lightdm.service: Scheduled restart job, restart counter is at 5.
+[   84.659894] systemd[1]: lightdm.service: Start request repeated too quickly.
+[   84.659913] systemd[1]: lightdm.service: Failed with result 'exit-code'.
+[   84.660054] systemd[1]: Failed to start lightdm.service - Light Display Manager.
+[   86.229832] binder_debug: 12 callbacks suppressed
+[   86.229847] binder: 1617:1617 cannot find target node
+[   86.229885] binder: 1617:1617 transaction call to 0:0 failed 43/29189/-22, code 1599098439 size 0-0 line 3458
+[   87.233842] binder: 1617:1617 cannot find target node
+[   87.233880] binder: 1617:1617 transaction call to 0:0 failed 44/29189/-22, code 1599098439 size 0-0 line 3458
+[   88.237838] binder: 1617:1617 cannot find target node
+[   88.237877] binder: 1617:1617 transaction call to 0:0 failed 45/29189/-22, code 1599098439 size 0-0 line 3458
+[   89.241820] binder: 1617:1617 cannot find target node
+[   89.241857] binder: 1617:1617 transaction call to 0:0 failed 46/29189/-22, code 1599098439 size 0-0 line 3458
+[   90.245832] binder: 1617:1617 cannot find target node
+[   90.245871] binder: 1617:1617 transaction call to 0:0 failed 47/29189/-22, code 1599098439 size 0-0 line 3458
+[   91.160890] systemd[1]: Stopping user@0.service - User Manager for UID 0...
+[   91.163287] systemd[1587]: Activating special unit exit.target...
+[   91.164261] systemd[1587]: Removed slice session.slice - User Core Session Slice.
+[   91.164337] systemd[1587]: Stopped target default.target - Main User Target.
+[   91.164701] systemd[1587]: Stopping audiosystem-passthrough-af.service - audiosystem-passthrough instance implementing AF interface...
+[   91.166963] systemd[1587]: Stopped audiosystem-passthrough-af.service - audiosystem-passthrough instance implementing AF interface.
+[   91.167294] systemd[1587]: Stopped target basic.target - Basic System.
+[   91.167341] systemd[1587]: Stopped target paths.target - Paths.
+[   91.167373] systemd[1587]: Stopped target sockets.target - Sockets.
+[   91.167423] systemd[1587]: Stopped target timers.target - Timers.
+[   91.167459] systemd[1587]: Stopped launchpadlib-cache-clean.timer - Clean up old files in the Launchpadlib cache.
+[   91.168079] systemd[1587]: Closed dbus.socket - D-Bus User Message Bus Socket.
+[   91.168299] systemd[1587]: Closed dirmngr.socket - GnuPG network certificate management daemon.
+[   91.168487] systemd[1587]: Closed gnome-keyring-daemon.socket - GNOME Keyring daemon.
+[   91.168665] systemd[1587]: Closed gpg-agent-browser.socket - GnuPG cryptographic agent and passphrase cache (access for web browsers).
+[   91.168843] systemd[1587]: Closed gpg-agent-extra.socket - GnuPG cryptographic agent and passphrase cache (restricted).
+[   91.194104] systemd[1587]: Stopping gpg-agent-ssh.socket - GnuPG cryptographic agent (ssh-agent emulation)...
+[   91.195589] systemd[1587]: Stopping gpg-agent.socket - GnuPG cryptographic agent and passphrase cache...
+[   91.195806] systemd[1587]: Closed keyboxd.socket - GnuPG public key management service.
+[   91.196023] systemd[1587]: Closed pk-debconf-helper.socket - debconf communication socket.
+[   91.196207] systemd[1587]: Closed snapd.session-agent.socket - REST API socket for snapd user session agent.
+[   91.217445] systemd[1587]: Closed gpg-agent-ssh.socket - GnuPG cryptographic agent (ssh-agent emulation).
+[   91.218743] systemd[1587]: Closed gcr-ssh-agent.socket - GCR ssh-agent wrapper.
+[   91.220779] systemd[1587]: Stopping ssh-agent.socket - OpenSSH Agent socket...
+[   91.224709] systemd[1587]: Closed gpg-agent.socket - GnuPG cryptographic agent and passphrase cache.
+[   91.245421] systemd[1587]: Closed ssh-agent.socket - OpenSSH Agent socket.
+[   91.260358] systemd[1587]: Removed slice app.slice - User Application Slice.
+[   91.260454] systemd[1587]: Reached target shutdown.target - Shutdown.
+[   91.260714] systemd[1587]: Finished systemd-exit.service - Exit the Session.
+[   91.260793] systemd[1587]: Reached target exit.target - Exit the Session.
+[   91.297349] systemd[1]: user@0.service: Deactivated successfully.
+[   91.298118] systemd[1]: Stopped user@0.service - User Manager for UID 0.
+[   91.298585] systemd[1]: user@0.service: Consumed 1.291s CPU time.
+[   91.314245] systemd[1]: Stopping user-runtime-dir@0.service - User Runtime Directory /run/user/0...
+[   91.358277] systemd[1]: run-user-0.mount: Deactivated successfully.
+[   91.360388] systemd[1]: user-runtime-dir@0.service: Deactivated successfully.
+[   91.360825] systemd[1]: Stopped user-runtime-dir@0.service - User Runtime Directory /run/user/0.
+[   91.363848] systemd[1]: Removed slice user-0.slice - User Slice of UID 0.
+[   91.364147] systemd[1]: user-0.slice: Consumed 1.604s CPU time.
+[  120.050814] A50M64: BEGIN target=120 uptime=120.04
+[  120.050869] A50M64: CMD systemctl show mount-android-partitions.service a50-container-prepare.service lxc-android-config.service -p Id -p ActiveState -p SubState -p Result -p ExecMainStatus
+[  120.107674] A50M64: Result=exit-code
+[  120.107732] A50M64: ExecMainStatus=1
+[  120.107787] A50M64: Id=mount-android-partitions.service
+[  120.107829] A50M64: ActiveState=failed
+[  120.107867] A50M64: SubState=failed
+[  120.107895] A50M64:
+[  120.107931] A50M64: Result=success
+[  120.107971] A50M64: ExecMainStatus=0
+[  120.108019] A50M64: Id=a50-container-prepare.service
+[  120.108060] A50M64: ActiveState=inactive
+[  120.108097] A50M64: SubState=dead
+[  120.108123] A50M64:
+[  120.108158] A50M64: Result=success
+[  120.108195] A50M64: ExecMainStatus=0
+[  120.108244] A50M64: Id=lxc-android-config.service
+[  120.108284] A50M64: ActiveState=inactive
+[  120.108320] A50M64: SubState=dead
+[  120.108362] A50M64: RC 0
+[  120.108388] A50M64: CMD lxc-info -n android
+[  120.127977] A50M64: Name:           android
+[  120.128041] A50M64: State:          STOPPED
+[  120.128080] A50M64: RC 0
+[  120.128109] A50M64: CMD lxc-attach -n android -- /system/bin/getprop sys.boot_completed
+[  120.163422] A50M64: lxc-attach: android: ../src/lxc/attach.c: get_attach_context: 406 Connection refused - Failed to get init pid
+[  120.163535] A50M64: lxc-attach: android: ../src/lxc/attach.c: lxc_attach: 1470 Connection refused - Failed to get attach context
+[  120.163575] A50M64: RC 1
+[  120.163604] A50M64: CMD lxc-attach -n android -- /system/bin/getprop init.svc.vendor.allocator-2-0
+[  120.192010] A50M64: lxc-attach: android: ../src/lxc/attach.c: get_attach_context: 406 Connection refused - Failed to get init pid
+[  120.192137] A50M64: lxc-attach: android: ../src/lxc/attach.c: lxc_attach: 1470 Connection refused - Failed to get attach context
+[  120.192180] A50M64: RC 1
+[  120.192211] A50M64: CMD /bin/sh -c ps -eo pid,comm,args | grep -E "graphics.allocator|/system/bin/init|lxc-start|servicemanager" | grep -v grep
+[  120.229308] A50M64: RC 1
+[  120.229361] A50M64: CMD /bin/sh -c cat /sys/fs/cgroup/cgroup.controllers; cat /sys/fs/cgroup/cgroup.subtree_control; cat /proc/self/cgroup
+[  120.269873] A50M64: cpuset io memory
+[  120.269931] A50M64: cpuset io memory
+[  120.269969] A50M64: 0::/init.scope
+[  120.270005] A50M64: RC 0
+[  120.270036] A50M64: CMD findmnt -R /android -o TARGET,SOURCE,FSTYPE,OPTIONS
+[  120.283272] A50M64: TARGET                                 SOURCE                                            FSTYPE OPTIONS
+[  120.283399] A50M64: /android                               /dev/loop1                                        ext4   ro,relatime
+[  120.283508] A50M64: |-/android/system                      /dev/loop1[/system]                               ext4   ro,relatime
+[  120.283653] A50M64: |-/android/data                        /dev/sda32[/android-data]                         ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  120.283798] A50M64: | `-/android/data                      /dev/sda32[/android-data]                         ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  120.283941] A50M64: |-/android/cache                       /dev/sda32[/cache]                                ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  120.284087] A50M64: | `-/android/cache                     /dev/sda32[/android-data/cache]                   ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  120.284216] A50M64: |-/android/vendor                      /dev/sda26                                        ext4   ro,nosuid,nodev,relatime,nodiscard,norecovery
+[  120.284344] A50M64: |-/android/mnt                         a50-android-mnt                                   tmpfs  rw,nosuid,nodev,relatime,size=16384k,mode=755
+[  120.284448] A50M64: `-/android/apex                        android_apex                                      tmpfs  rw,relatime
+[  120.284553] A50M64:   |-/android/apex/com.android.i18n     /dev/loop1[/system/apex/com.android.i18n]         ext4   ro,relatime
+[  120.284658] A50M64:   |-/android/apex/com.android.art      /dev/loop1[/system/apex/com.android.art.release]  ext4   ro,relatime
+[  120.284764] A50M64:   |-/android/apex/com.android.runtime  /dev/loop1[/system/apex/com.android.runtime]      ext4   ro,relatime
+[  120.284871] A50M64:   `-/android/apex/com.android.vndk.v30 /dev/loop1[/system/apex/com.android.vndk.current] ext4   ro,relatime
+[  120.284910] A50M64: RC 0
+[  120.284939] A50M64: CMD /bin/sh -c tail -n 70 /run/a50-m64/lxc.log
+[  120.311179] A50M64: tail: cannot open '/run/a50-m64/lxc.log' for reading: No such file or directory
+[  120.311238] A50M64: RC 1
+[  120.311276] A50M64: CMD journalctl -b --no-pager -n 35 -u mount-android-partitions.service -u a50-container-prepare.service -u lxc-android-config.service
+[  120.386161] A50M64: -- No entries --
+[  120.386216] A50M64: RC 0
+[  120.386240] A50M64: END target=120
+[  121.316052] A50STATUS: BEGIN uptime=121.31 target=120
+[  121.316123] A50STATUS: CMD uname -r
+[  121.345638] A50STATUS: 6.18.33-a50-diag+
+[  121.345732] A50STATUS: RC 0
+[  121.345813] A50STATUS: CMD systemctl is-system-running
+[  121.372289] A50STATUS: degraded
+[  121.372392] A50STATUS: RC 1
+[  121.372451] A50STATUS: CMD systemctl --failed --no-pager --plain --no-legend
+[  121.399806] A50STATUS: a50-gnss-unblock.service                     loaded failed failed A50: unblock Samsung gpsd (waits for a boot animation that never runs)
+[  121.400136] A50STATUS: android-set-boot-completion-property.service loaded failed failed Set boot completion property in Android container
+[  121.400373] A50STATUS: lightdm.service                              loaded failed failed Light Display Manager
+[  121.400608] A50STATUS: mount-android-partitions.service             loaded failed failed Mount Android partitions
+[  121.400696] A50STATUS: RC 0
+[  121.400756] A50STATUS: CMD systemctl list-jobs --no-pager --plain --no-legend
+[  121.433958] A50STATUS: RC 0
+[  121.434053] A50STATUS: CMD systemctl show multi-user.target graphical.target -p Id -p ActiveState -p SubState -p Job
+[  121.471918] A50STATUS: Id=multi-user.target
+[  121.472040] A50STATUS: ActiveState=active
+[  121.472133] A50STATUS: SubState=active
+[  121.472202] A50STATUS: Job=
+[  121.472259] A50STATUS:
+[  121.472351] A50STATUS: Id=graphical.target
+[  121.472443] A50STATUS: ActiveState=active
+[  121.472529] A50STATUS: SubState=active
+[  121.472597] A50STATUS: Job=
+[  121.472691] A50STATUS: RC 0
+[  121.472751] A50STATUS: CMD systemctl show -p SystemState -p NFailedUnits -p NJobs
+[  121.493497] A50STATUS: NFailedUnits=4
+[  121.493594] A50STATUS: NJobs=0
+[  121.493692] A50STATUS: SystemState=degraded
+[  121.493795] A50STATUS: RC 0
+[  121.493853] A50STATUS: CMD findmnt -no TARGET,OPTIONS /userdata
+[  121.519241] A50STATUS: /userdata rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  121.519351] A50STATUS: RC 0
+[  121.519409] A50STATUS: CMD ip -brief address
+[  121.531417] A50STATUS: lo               UNKNOWN        127.0.0.1/8 ::1/128
+[  121.531572] A50STATUS: sit0@NONE        DOWN
+[  121.531780] A50STATUS: usb0             UP             10.15.19.82/24 <redacted-linklocal>/64
+[  121.531867] A50STATUS: RC 0
+[  121.531935] A50STATUS: CMD systemctl show usb-moded.service usb-tethering.service usb-moded-udhcpd.service usb-moded-ssh.service -p Id -p ActiveState -p SubState
+[  121.574935] A50STATUS: Id=usb-moded.service
+[  121.575057] A50STATUS: ActiveState=active
+[  121.575150] A50STATUS: SubState=running
+[  121.575210] A50STATUS:
+[  121.575317] A50STATUS: Id=usb-tethering.service
+[  121.575408] A50STATUS: ActiveState=active
+[  121.575499] A50STATUS: SubState=running
+[  121.575557] A50STATUS:
+[  121.575666] A50STATUS: Id=usb-moded-udhcpd.service
+[  121.575758] A50STATUS: ActiveState=active
+[  121.575849] A50STATUS: SubState=running
+[  121.575905] A50STATUS:
+[  121.576012] A50STATUS: Id=usb-moded-ssh.service
+[  121.576104] A50STATUS: ActiveState=active
+[  121.576192] A50STATUS: SubState=running
+[  121.576289] A50STATUS: RC 0
+[  121.576394] A50STATUS: CMD /bin/sh -c for u in /sys/class/udc/*; do echo "UDC ${u##*/}"; cat "$u/state"; done; for g in /sys/kernel/config/usb_gadget/*; do echo "gadget ${g##*/}"; cat "$g/UDC"; find "$g/configs" -maxdepth 2 -type l -printf "%f -> %l\n"; done
+[  121.614506] A50STATUS: UDC 13200000.usb
+[  121.614621] A50STATUS: configured
+[  121.614700] A50STATUS: gadget g1
+[  121.614783] A50STATUS: 13200000.usb
+[  121.614958] A50STATUS: rndis.usb0 -> ../../../../usb_gadget/g1/functions/rndis.usb0
+[  121.615040] A50STATUS: RC 0
+[  121.615092] A50STATUS: END target=120
+[  144.007344] systemd[1]: aethercast.service: Deactivated successfully.
+[  200.231887] A50STATUS: BEGIN uptime=200.23 target=200
+[  200.231966] A50STATUS: CMD uname -r
+[  200.261721] A50STATUS: 6.18.33-a50-diag+
+[  200.261855] A50STATUS: RC 0
+[  200.261917] A50STATUS: CMD systemctl is-system-running
+[  200.295543] A50STATUS: degraded
+[  200.295647] A50STATUS: RC 1
+[  200.295720] A50STATUS: CMD systemctl --failed --no-pager --plain --no-legend
+[  200.323542] A50STATUS: a50-gnss-unblock.service                     loaded failed failed A50: unblock Samsung gpsd (waits for a boot animation that never runs)
+[  200.323866] A50STATUS: android-set-boot-completion-property.service loaded failed failed Set boot completion property in Android container
+[  200.324106] A50STATUS: lightdm.service                              loaded failed failed Light Display Manager
+[  200.324344] A50STATUS: mount-android-partitions.service             loaded failed failed Mount Android partitions
+[  200.324433] A50STATUS: RC 0
+[  200.324491] A50STATUS: CMD systemctl list-jobs --no-pager --plain --no-legend
+[  200.351562] A50STATUS: RC 0
+[  200.351665] A50STATUS: CMD systemctl show multi-user.target graphical.target -p Id -p ActiveState -p SubState -p Job
+[  200.381059] A50STATUS: Id=multi-user.target
+[  200.381188] A50STATUS: ActiveState=active
+[  200.381277] A50STATUS: SubState=active
+[  200.381341] A50STATUS: Job=
+[  200.381398] A50STATUS:
+[  200.381493] A50STATUS: Id=graphical.target
+[  200.381585] A50STATUS: ActiveState=active
+[  200.381671] A50STATUS: SubState=active
+[  200.381737] A50STATUS: Job=
+[  200.381857] A50STATUS: RC 0
+[  200.381921] A50STATUS: CMD systemctl show -p SystemState -p NFailedUnits -p NJobs
+[  200.417571] A50STATUS: NFailedUnits=4
+[  200.417664] A50STATUS: NJobs=0
+[  200.417846] A50STATUS: SystemState=degraded
+[  200.417934] A50STATUS: RC 0
+[  200.417993] A50STATUS: CMD findmnt -no TARGET,OPTIONS /userdata
+[  200.430902] A50STATUS: /userdata rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  200.431006] A50STATUS: RC 0
+[  200.431065] A50STATUS: CMD ip -brief address
+[  200.453473] A50STATUS: lo               UNKNOWN        127.0.0.1/8 ::1/128
+[  200.453630] A50STATUS: sit0@NONE        DOWN
+[  200.453881] A50STATUS: usb0             UP             10.15.19.82/24 <redacted-linklocal>/64
+[  200.453966] A50STATUS: RC 0
+[  200.454037] A50STATUS: CMD systemctl show usb-moded.service usb-tethering.service usb-moded-udhcpd.service usb-moded-ssh.service -p Id -p ActiveState -p SubState
+[  200.496887] A50STATUS: Id=usb-moded.service
+[  200.497011] A50STATUS: ActiveState=active
+[  200.497100] A50STATUS: SubState=running
+[  200.497159] A50STATUS:
+[  200.497266] A50STATUS: Id=usb-tethering.service
+[  200.497358] A50STATUS: ActiveState=active
+[  200.497446] A50STATUS: SubState=running
+[  200.497503] A50STATUS:
+[  200.497613] A50STATUS: Id=usb-moded-udhcpd.service
+[  200.497706] A50STATUS: ActiveState=active
+[  200.497851] A50STATUS: SubState=running
+[  200.497909] A50STATUS:
+[  200.498016] A50STATUS: Id=usb-moded-ssh.service
+[  200.498107] A50STATUS: ActiveState=active
+[  200.498194] A50STATUS: SubState=running
+[  200.498276] A50STATUS: RC 0
+[  200.498375] A50STATUS: CMD /bin/sh -c for u in /sys/class/udc/*; do echo "UDC ${u##*/}"; cat "$u/state"; done; for g in /sys/kernel/config/usb_gadget/*; do echo "gadget ${g##*/}"; cat "$g/UDC"; find "$g/configs" -maxdepth 2 -type l -printf "%f -> %l\n"; done
+[  200.535052] A50STATUS: UDC 13200000.usb
+[  200.535163] A50STATUS: configured
+[  200.535241] A50STATUS: gadget g1
+[  200.535325] A50STATUS: 13200000.usb
+[  200.535507] A50STATUS: rndis.usb0 -> ../../../../usb_gadget/g1/functions/rndis.usb0
+[  200.535597] A50STATUS: RC 0
+[  200.535649] A50STATUS: END target=200
+[  200.931884] A50M64: BEGIN target=200 uptime=200.93
+[  200.931940] A50M64: CMD systemctl show mount-android-partitions.service a50-container-prepare.service lxc-android-config.service -p Id -p ActiveState -p SubState -p Result -p ExecMainStatus
+[  200.980967] A50M64: Result=exit-code
+[  200.981026] A50M64: ExecMainStatus=1
+[  200.981081] A50M64: Id=mount-android-partitions.service
+[  200.981122] A50M64: ActiveState=failed
+[  200.981159] A50M64: SubState=failed
+[  200.981186] A50M64:
+[  200.981220] A50M64: Result=success
+[  200.981258] A50M64: ExecMainStatus=0
+[  200.981305] A50M64: Id=a50-container-prepare.service
+[  200.981345] A50M64: ActiveState=inactive
+[  200.981382] A50M64: SubState=dead
+[  200.981407] A50M64:
+[  200.981442] A50M64: Result=success
+[  200.981479] A50M64: ExecMainStatus=0
+[  200.981526] A50M64: Id=lxc-android-config.service
+[  200.981567] A50M64: ActiveState=inactive
+[  200.981604] A50M64: SubState=dead
+[  200.981639] A50M64: RC 0
+[  200.981664] A50M64: CMD lxc-info -n android
+[  201.008520] A50M64: Name:           android
+[  201.008569] A50M64: State:          STOPPED
+[  201.008605] A50M64: RC 0
+[  201.008634] A50M64: CMD lxc-attach -n android -- /system/bin/getprop sys.boot_completed
+[  201.037265] A50M64: lxc-attach: android: ../src/lxc/attach.c: get_attach_context: 406 Connection refused - Failed to get init pid
+[  201.037387] A50M64: lxc-attach: android: ../src/lxc/attach.c: lxc_attach: 1470 Connection refused - Failed to get attach context
+[  201.037428] A50M64: RC 1
+[  201.037458] A50M64: CMD lxc-attach -n android -- /system/bin/getprop init.svc.vendor.allocator-2-0
+[  201.063131] A50M64: lxc-attach: android: ../src/lxc/attach.c: get_attach_context: 406 Connection refused - Failed to get init pid
+[  201.063252] A50M64: lxc-attach: android: ../src/lxc/attach.c: lxc_attach: 1470 Connection refused - Failed to get attach context
+[  201.063298] A50M64: RC 1
+[  201.063329] A50M64: CMD /bin/sh -c ps -eo pid,comm,args | grep -E "graphics.allocator|/system/bin/init|lxc-start|servicemanager" | grep -v grep
+[  201.093025] A50M64: RC 1
+[  201.093077] A50M64: CMD /bin/sh -c cat /sys/fs/cgroup/cgroup.controllers; cat /sys/fs/cgroup/cgroup.subtree_control; cat /proc/self/cgroup
+[  201.133981] A50M64: cpuset io memory
+[  201.134036] A50M64: cpuset io memory
+[  201.134073] A50M64: 0::/init.scope
+[  201.134110] A50M64: RC 0
+[  201.134138] A50M64: CMD findmnt -R /android -o TARGET,SOURCE,FSTYPE,OPTIONS
+[  201.153546] A50M64: TARGET                                 SOURCE                                            FSTYPE OPTIONS
+[  201.153672] A50M64: /android                               /dev/loop1                                        ext4   ro,relatime
+[  201.153802] A50M64: |-/android/system                      /dev/loop1[/system]                               ext4   ro,relatime
+[  201.153949] A50M64: |-/android/data                        /dev/sda32[/android-data]                         ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  201.154097] A50M64: | `-/android/data                      /dev/sda32[/android-data]                         ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  201.154242] A50M64: |-/android/cache                       /dev/sda32[/cache]                                ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  201.154384] A50M64: | `-/android/cache                     /dev/sda32[/android-data/cache]                   ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  201.154513] A50M64: |-/android/vendor                      /dev/sda26                                        ext4   ro,nosuid,nodev,relatime,nodiscard,norecovery
+[  201.154639] A50M64: |-/android/mnt                         a50-android-mnt                                   tmpfs  rw,nosuid,nodev,relatime,size=16384k,mode=755
+[  201.154742] A50M64: `-/android/apex                        android_apex                                      tmpfs  rw,relatime
+[  201.154848] A50M64:   |-/android/apex/com.android.i18n     /dev/loop1[/system/apex/com.android.i18n]         ext4   ro,relatime
+[  201.154955] A50M64:   |-/android/apex/com.android.art      /dev/loop1[/system/apex/com.android.art.release]  ext4   ro,relatime
+[  201.155064] A50M64:   |-/android/apex/com.android.runtime  /dev/loop1[/system/apex/com.android.runtime]      ext4   ro,relatime
+[  201.155171] A50M64:   `-/android/apex/com.android.vndk.v30 /dev/loop1[/system/apex/com.android.vndk.current] ext4   ro,relatime
+[  201.155210] A50M64: RC 0
+[  201.155238] A50M64: CMD /bin/sh -c tail -n 70 /run/a50-m64/lxc.log
+[  201.181065] A50M64: tail: cannot open '/run/a50-m64/lxc.log' for reading: No such file or directory
+[  201.181128] A50M64: RC 1
+[  201.181162] A50M64: CMD journalctl -b --no-pager -n 35 -u mount-android-partitions.service -u a50-container-prepare.service -u lxc-android-config.service
+[  201.230736] A50M64: -- No entries --
+[  201.230796] A50M64: RC 0
+[  201.230820] A50M64: END target=200
+[  282.515946] sshd-session[2023]: pam_extrausers(sshd:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  282.559127] systemd[1]: Created slice user-0.slice - User Slice of UID 0.
+[  282.594807] systemd[1]: Starting user-runtime-dir@0.service - User Runtime Directory /run/user/0...
+[  282.751749] systemd[1]: Finished user-runtime-dir@0.service - User Runtime Directory /run/user/0.
+[  282.791097] systemd[1]: Starting user@0.service - User Manager for UID 0...
+[  282.799685] (systemd)[2033]: pam_extrausers(systemd-user:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[  283.611825] systemd[2033]: Queued start job for default target default.target.
+[  283.623395] systemd[2033]: Created slice app.slice - User Application Slice.
+[  283.624009] systemd[2033]: Created slice session.slice - User Core Session Slice.
+[  283.624076] systemd[2033]: Started launchpadlib-cache-clean.timer - Clean up old files in the Launchpadlib cache.
+[  283.624125] systemd[2033]: Reached target paths.target - Paths.
+[  283.624173] systemd[2033]: Reached target timers.target - Timers.
+[  283.626270] systemd[2033]: Starting dbus.socket - D-Bus User Message Bus Socket...
+[  283.626616] systemd[2033]: Listening on dirmngr.socket - GnuPG network certificate management daemon.
+[  283.626898] systemd[2033]: Listening on gnome-keyring-daemon.socket - GNOME Keyring daemon.
+[  283.627092] systemd[2033]: Listening on gpg-agent-browser.socket - GnuPG cryptographic agent and passphrase cache (access for web browsers).
+[  283.627294] systemd[2033]: Listening on gpg-agent-extra.socket - GnuPG cryptographic agent and passphrase cache (restricted).
+[  283.629971] systemd[2033]: Starting gpg-agent.socket - GnuPG cryptographic agent and passphrase cache...
+[  283.630348] systemd[2033]: Listening on keyboxd.socket - GnuPG public key management service.
+[  283.630574] systemd[2033]: Listening on pk-debconf-helper.socket - debconf communication socket.
+[  283.630624] systemd[2033]: pulseaudio.socket - Sound System was skipped because of an unmet condition check (ConditionUser=!root).
+[  283.630826] systemd[2033]: Listening on snapd.session-agent.socket - REST API socket for snapd user session agent.
+[  283.633476] systemd[2033]: Starting ssh-agent.socket - OpenSSH Agent socket...
+[  283.658315] systemd[2033]: Listening on dbus.socket - D-Bus User Message Bus Socket.
+[  283.669369] systemd[2033]: Listening on gpg-agent.socket - GnuPG cryptographic agent and passphrase cache.
+[  283.669816] systemd[2033]: Listening on ssh-agent.socket - OpenSSH Agent socket.
+[  283.673884] systemd[2033]: Starting gcr-ssh-agent.socket - GCR ssh-agent wrapper...
+[  283.697594] systemd[2033]: Listening on gcr-ssh-agent.socket - GCR ssh-agent wrapper.
+[  283.700396] systemd[2033]: Starting gpg-agent-ssh.socket - GnuPG cryptographic agent (ssh-agent emulation)...
+[  283.741625] systemd[2033]: Listening on gpg-agent-ssh.socket - GnuPG cryptographic agent (ssh-agent emulation).
+[  283.741897] systemd[2033]: Reached target sockets.target - Sockets.
+[  283.741955] systemd[2033]: Reached target basic.target - Basic System.
+[  283.742088] systemd[2033]: mpris-proxy.service - Bluetooth mpris proxy was skipped because of an unmet condition check (ConditionUser=!@system).
+[  283.742127] systemd[2033]: pulseaudio.service - Sound Service was skipped because of an unmet condition check (ConditionUser=!root).
+[  283.742171] systemd[2033]: Reached target default.target - Main User Target.
+[  283.742876] systemd[1]: Started user@0.service - User Manager for UID 0.
+[  283.744477] systemd[2033]: Started audiosystem-passthrough-af.service - audiosystem-passthrough instance implementing AF interface.
+[  283.746671] systemd[2033]: Starting audiosystem-passthrough-qti.service - audiosystem-passthrough instance implementing IQcRilAudio interface...
+[  283.747732] systemd[1]: Started session-6.scope - Session 6 of User root.
+[  283.765550] systemd[2033]: audiosystem-passthrough-qti.service: Skipped due to 'exec-condition'.
+[  283.766102] systemd[2033]: Condition check resulted in audiosystem-passthrough-qti.service - audiosystem-passthrough instance implementing IQcRilAudio interface being skipped.
+[  283.766273] systemd[2033]: Startup finished in 951ms.
+[  283.802137] binder: 2062:2062 cannot find target node
+[  283.802179] binder: 2062:2062 transaction call to 0:0 failed 48/29189/-22, code 1599098439 size 0-0 line 3458
+[  283.802391] binder: 2062:2062 cannot find target node
+[  283.802428] binder: 2062:2062 transaction call to 0:0 failed 49/29189/-22, code 1599098439 size 0-0 line 3458
+[  283.905843] binder: 2062:2062 cannot find target node
+[  283.905882] binder: 2062:2062 transaction call to 0:0 failed 50/29189/-22, code 1599098439 size 0-0 line 3458
+[  283.935761] systemd[1]: session-6.scope: Deactivated successfully.
+[  284.109837] binder: 2062:2062 cannot find target node
+[  284.109880] binder: 2062:2062 transaction call to 0:0 failed 51/29189/-22, code 1599098439 size 0-0 line 3458
+[  284.413818] binder: 2062:2062 cannot find target node
+[  284.413856] binder: 2062:2062 transaction call to 0:0 failed 52/29189/-22, code 1599098439 size 0-0 line 3458
+[  289.341799] binder_debug: 12 callbacks suppressed
+[  289.341812] binder: 2062:2062 cannot find target node
+[  289.341848] binder: 2062:2062 transaction call to 0:0 failed 59/29189/-22, code 1599098439 size 0-0 line 3458
+[  290.345815] binder: 2062:2062 cannot find target node
+[  290.345850] binder: 2062:2062 transaction call to 0:0 failed 60/29189/-22, code 1599098439 size 0-0 line 3458
+[  291.349813] binder: 2062:2062 cannot find target node
+[  291.349844] binder: 2062:2062 transaction call to 0:0 failed 61/29189/-22, code 1599098439 size 0-0 line 3458
+[  292.353819] binder: 2062:2062 cannot find target node
+[  292.353855] binder: 2062:2062 transaction call to 0:0 failed 62/29189/-22, code 1599098439 size 0-0 line 3458
+[  293.357803] binder: 2062:2062 cannot find target node
+[  293.357821] binder: 2062:2062 transaction call to 0:0 failed 63/29189/-22, code 1599098439 size 0-0 line 3458
+[  294.160915] systemd[1]: Stopping user@0.service - User Manager for UID 0...
+[  294.162891] systemd[2033]: Activating special unit exit.target...
+[  294.163430] systemd[2033]: Removed slice session.slice - User Core Session Slice.
+[  294.163503] systemd[2033]: Stopped target default.target - Main User Target.
+[  294.163855] systemd[2033]: Stopping audiosystem-passthrough-af.service - audiosystem-passthrough instance implementing AF interface...
+[  294.166291] systemd[2033]: Stopped audiosystem-passthrough-af.service - audiosystem-passthrough instance implementing AF interface.
+[  294.166759] systemd[2033]: Stopped target basic.target - Basic System.
+[  294.166809] systemd[2033]: Stopped target paths.target - Paths.
+[  294.166842] systemd[2033]: Stopped target sockets.target - Sockets.
+[  294.166898] systemd[2033]: Stopped target timers.target - Timers.
+[  294.166936] systemd[2033]: Stopped launchpadlib-cache-clean.timer - Clean up old files in the Launchpadlib cache.
+[  294.167630] systemd[2033]: Closed dbus.socket - D-Bus User Message Bus Socket.
+[  294.167846] systemd[2033]: Closed dirmngr.socket - GnuPG network certificate management daemon.
+[  294.168030] systemd[2033]: Closed gnome-keyring-daemon.socket - GNOME Keyring daemon.
+[  294.168208] systemd[2033]: Closed gpg-agent-browser.socket - GnuPG cryptographic agent and passphrase cache (access for web browsers).
+[  294.168380] systemd[2033]: Closed gpg-agent-extra.socket - GnuPG cryptographic agent and passphrase cache (restricted).
+[  294.182021] systemd[2033]: Stopping gpg-agent-ssh.socket - GnuPG cryptographic agent (ssh-agent emulation)...
+[  294.183864] systemd[2033]: Stopping gpg-agent.socket - GnuPG cryptographic agent and passphrase cache...
+[  294.184064] systemd[2033]: Closed keyboxd.socket - GnuPG public key management service.
+[  294.184279] systemd[2033]: Closed pk-debconf-helper.socket - debconf communication socket.
+[  294.184452] systemd[2033]: Closed snapd.session-agent.socket - REST API socket for snapd user session agent.
+[  294.200409] systemd[2033]: Closed gpg-agent-ssh.socket - GnuPG cryptographic agent (ssh-agent emulation).
+[  294.201488] systemd[2033]: Closed gcr-ssh-agent.socket - GCR ssh-agent wrapper.
+[  294.203024] systemd[2033]: Stopping ssh-agent.socket - OpenSSH Agent socket...
+[  294.230154] systemd[2033]: Closed ssh-agent.socket - OpenSSH Agent socket.
+[  294.231334] systemd[2033]: Closed gpg-agent.socket - GnuPG cryptographic agent and passphrase cache.
+[  294.248749] systemd[2033]: Removed slice app.slice - User Application Slice.
+[  294.248848] systemd[2033]: Reached target shutdown.target - Shutdown.
+[  294.249113] systemd[2033]: Finished systemd-exit.service - Exit the Session.
+[  294.249192] systemd[2033]: Reached target exit.target - Exit the Session.
+[  294.285116] systemd[1]: user@0.service: Deactivated successfully.
+[  294.285861] systemd[1]: Stopped user@0.service - User Manager for UID 0.
+[  294.286356] systemd[1]: user@0.service: Consumed 1.247s CPU time.
+[  294.289873] systemd[1]: Stopping user-runtime-dir@0.service - User Runtime Directory /run/user/0...
+[  294.398234] systemd[1]: run-user-0.mount: Deactivated successfully.
+[  294.402768] systemd[1]: user-runtime-dir@0.service: Deactivated successfully.
+[  294.403577] systemd[1]: Stopped user-runtime-dir@0.service - User Runtime Directory /run/user/0.
+[  294.409957] systemd[1]: Removed slice user-0.slice - User Slice of UID 0.
+[  294.410593] systemd[1]: user-0.slice: Consumed 1.492s CPU time.
+[  340.118817] A50M64: BEGIN target=340 uptime=340.11
+[  340.118871] A50M64: CMD systemctl show mount-android-partitions.service a50-container-prepare.service lxc-android-config.service -p Id -p ActiveState -p SubState -p Result -p ExecMainStatus
+[  340.191303] A50M64: Result=exit-code
+[  340.191348] A50M64: ExecMainStatus=1
+[  340.191404] A50M64: Id=mount-android-partitions.service
+[  340.191445] A50M64: ActiveState=failed
+[  340.191482] A50M64: SubState=failed
+[  340.191511] A50M64:
+[  340.191546] A50M64: Result=success
+[  340.191585] A50M64: ExecMainStatus=0
+[  340.191632] A50M64: Id=a50-container-prepare.service
+[  340.191673] A50M64: ActiveState=inactive
+[  340.191709] A50M64: SubState=dead
+[  340.191735] A50M64:
+[  340.191771] A50M64: Result=success
+[  340.191808] A50M64: ExecMainStatus=0
+[  340.191854] A50M64: Id=lxc-android-config.service
+[  340.191896] A50M64: ActiveState=inactive
+[  340.191931] A50M64: SubState=dead
+[  340.191966] A50M64: RC 0
+[  340.191991] A50M64: CMD lxc-info -n android
+[  340.211692] A50M64: Name:           android
+[  340.211755] A50M64: State:          STOPPED
+[  340.211796] A50M64: RC 0
+[  340.211829] A50M64: CMD lxc-attach -n android -- /system/bin/getprop sys.boot_completed
+[  340.247558] A50M64: lxc-attach: android: ../src/lxc/attach.c: get_attach_context: 406 Connection refused - Failed to get init pid
+[  340.247671] A50M64: lxc-attach: android: ../src/lxc/attach.c: lxc_attach: 1470 Connection refused - Failed to get attach context
+[  340.247709] A50M64: RC 1
+[  340.247737] A50M64: CMD lxc-attach -n android -- /system/bin/getprop init.svc.vendor.allocator-2-0
+[  340.276151] A50M64: lxc-attach: android: ../src/lxc/attach.c: get_attach_context: 406 Connection refused - Failed to get init pid
+[  340.276276] A50M64: lxc-attach: android: ../src/lxc/attach.c: lxc_attach: 1470 Connection refused - Failed to get attach context
+[  340.276320] A50M64: RC 1
+[  340.276351] A50M64: CMD /bin/sh -c ps -eo pid,comm,args | grep -E "graphics.allocator|/system/bin/init|lxc-start|servicemanager" | grep -v grep
+[  340.310770] A50M64: RC 1
+[  340.310823] A50M64: CMD /bin/sh -c cat /sys/fs/cgroup/cgroup.controllers; cat /sys/fs/cgroup/cgroup.subtree_control; cat /proc/self/cgroup
+[  340.351342] A50M64: cpuset io memory
+[  340.351400] A50M64: cpuset io memory
+[  340.351436] A50M64: 0::/init.scope
+[  340.351472] A50M64: RC 0
+[  340.351501] A50M64: CMD findmnt -R /android -o TARGET,SOURCE,FSTYPE,OPTIONS
+[  340.372300] A50M64: TARGET                                 SOURCE                                            FSTYPE OPTIONS
+[  340.372425] A50M64: /android                               /dev/loop1                                        ext4   ro,relatime
+[  340.372538] A50M64: |-/android/system                      /dev/loop1[/system]                               ext4   ro,relatime
+[  340.372681] A50M64: |-/android/data                        /dev/sda32[/android-data]                         ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  340.372829] A50M64: | `-/android/data                      /dev/sda32[/android-data]                         ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  340.372970] A50M64: |-/android/cache                       /dev/sda32[/cache]                                ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  340.373113] A50M64: | `-/android/cache                     /dev/sda32[/android-data/cache]                   ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[  340.373240] A50M64: |-/android/vendor                      /dev/sda26                                        ext4   ro,nosuid,nodev,relatime,nodiscard,norecovery
+[  340.373371] A50M64: |-/android/mnt                         a50-android-mnt                                   tmpfs  rw,nosuid,nodev,relatime,size=16384k,mode=755
+[  340.373473] A50M64: `-/android/apex                        android_apex                                      tmpfs  rw,relatime
+[  340.373580] A50M64:   |-/android/apex/com.android.i18n     /dev/loop1[/system/apex/com.android.i18n]         ext4   ro,relatime
+[  340.373687] A50M64:   |-/android/apex/com.android.art      /dev/loop1[/system/apex/com.android.art.release]  ext4   ro,relatime
+[  340.373820] A50M64:   |-/android/apex/com.android.runtime  /dev/loop1[/system/apex/com.android.runtime]      ext4   ro,relatime
+[  340.373926] A50M64:   `-/android/apex/com.android.vndk.v30 /dev/loop1[/system/apex/com.android.vndk.current] ext4   ro,relatime
+[  340.373968] A50M64: RC 0
+[  340.373997] A50M64: CMD /bin/sh -c tail -n 70 /run/a50-m64/lxc.log
+[  340.400252] A50M64: tail: cannot open '/run/a50-m64/lxc.log' for reading: No such file or directory
+[  340.400316] A50M64: RC 1
+[  340.400349] A50M64: CMD journalctl -b --no-pager -n 35 -u mount-android-partitions.service -u a50-container-prepare.service -u lxc-android-config.service
+[  340.473887] A50M64: -- No entries --
+[  340.473943] A50M64: RC 0
+[  340.473967] A50M64: END target=340
+[  431.073791] A50DIAG: sync before the timed dump
+[  431.074070] A50DIAG: sync done
+===== A50 6.18 DMESG END =====

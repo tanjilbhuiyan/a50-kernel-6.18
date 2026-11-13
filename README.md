@@ -17,7 +17,8 @@ needs `openat2`, for example). Goal, success criteria and non-goals: [docs/00-go
 ## Status
 
 The 6.18 kernel boots on the phone, runs Halium's init and brings Ubuntu Touch up to systemd multi-user. Root SSH works
-over USB networking (RNDIS). Current state and the next action: [STATUS.md](STATUS.md).
+over USB networking (RNDIS). The Android container boots, its real graphics allocator registers over HIDL, and 64/32-bit
+ION replay passes as Android's system user. Current state and next action: [STATUS.md](STATUS.md).
 
 | Milestone | What | State |
 |---|---|---|
@@ -26,12 +27,16 @@ over USB networking (RNDIS). Current state and the next action: [STATUS.md](STAT
 | M3 | Storage (UFS) and USB gadget | done |
 | M4 | Core SoC: 8 CPUs, ACPM, PMIC regulators, power domains, thermal | done; I2C and CPU frequency deferred |
 | M5 | Ubuntu Touch userspace: systemd multi-user, SSH over USB | done, with limits below |
-| M6 | Android container: binder, ashmem, ION | next |
-| M7-M12 | Display/GPU, input, Wi-Fi/Bluetooth, audio, modem, power/charging | planned |
+| M6 | Android container: binder, ashmem, ION and real allocator startup | done, with runtime limits below |
+| M7 | Display/GPU | next: ABI audit and implementation design |
+| M8-M12 | Input, Wi-Fi/Bluetooth, audio, modem, power/charging | planned |
 
-Limits of what M5 proves (details in [log/2026-11-10-M5.4-usb-ssh.md](log/2026-11-10-M5.4-usb-ssh.md)):
-- Four services that need Android's hardware layer (`rild`, `ofono`, `bluebinder`, `a50-audio-route`) are masked for the
-  test boot. They return in M9-M11.
+Current bring-up limits (details in [the M6.4 log](log/2026-11-14-M6.4-runtime.md)):
+
+- The four M5 HAL masks are removed. Bluetooth/audio/display services still fail or retry while their drivers are unported.
+- A per-boot read-only RC bind defers unported TEEGRIS startup, with vendor unchanged and no fake readiness. Secure heaps
+  and security-dependent HALs are unsupported; only the measured normal system heap is implemented.
+- Three diagnostic power-service masks remain; automatic suspend and legacy Android task-profile migration are unvalidated.
 - USB networking needs a one-boot override (`usb-moded -f -r`), because cable and charger detection don't work yet (M12).
 - All test boots used the diagnostic kernel build, which dumps its log and reboots after a fixed time.
 
@@ -52,6 +57,11 @@ Full plan with each milestone's Definition of Done: [docs/05-plan.md](docs/05-pl
 
 ## Kernel source
 
+- **Build the latest tested M6 snapshot:** [reproduce/m6/](reproduce/m6/README.md).
+  After cloning, run `python3 -I tools/reproduce_m6.py --jobs 16`. This fetches pinned public
+  inputs and builds the kernel, embedded runtime, raw DTB and BOOT image without private backups.
+  It includes the complete diagnostic source and final M6 configuration; build prerequisites and
+  remaining runtime limits are documented there.
 - **Base:** [ACK](https://android.googlesource.com/kernel/common) branch `android17-6.18`, commit `d9a614fed`
   (2026-10-31), Linux 6.18.33. Built with ACK's clang prebuilt (`clang-r584948c`) via `tools/m22_build.sh`.
 - **A50 changes:** [patches/](patches/README.md), 35 patches that apply to that base with `git am`: device tree and
@@ -73,7 +83,8 @@ No prebuilt images are published.
 | [tasks/](tasks/README.md) | One ticket per task, with acceptance criteria |
 | [log/](log/) | One file per test session: what changed, what was flashed, the result |
 | [reference/](reference/README.md) | Evidence: live device tree, vendor ABI captures, stock vendor extracts, dumps, exported kernel patches |
-| [patches/](patches/README.md) | The A50 kernel patch series on top of ACK `android17-6.18` (GPL-2.0-only) |
+| [patches/](patches/README.md) | The clean A50 kernel patch series on top of ACK `android17-6.18` (GPL-2.0-only) |
+| [reproduce/m6/](reproduce/m6/README.md) | Complete tested M6 diagnostic source/config, pinned dependencies and build instructions |
 | [tools/](tools/) | Scripts that build, pack, test and produce the evidence, grouped by milestone |
 | `baseline/` | Hashes and sources of the known-good 4.14 system; the images themselves are not committed |
 | `src/` | Local kernel trees and build output; ignored by Git |
@@ -92,7 +103,7 @@ Before working on something:
 
 The project is licensed under the [Apache License 2.0](LICENSE), with these exceptions:
 - **Kernel code is GPL-2.0-only** ([LICENSES/GPL-2.0-only.txt](LICENSES/GPL-2.0-only.txt)), like the Linux kernel it
-  modifies: the patch series in [patches/](patches/), every other `.patch` file under `reference/`, and the kernel
+  modifies: the patch series in [patches/](patches/), the kernel snapshot in [reproduce/m6/](reproduce/m6/), every other `.patch` file under `reference/`, and the kernel
   modules in `tools/` that carry a `SPDX-License-Identifier: GPL-2.0` header. Device-tree files are kernel sources
   too: the `.dtb` files under `reference/` are compiled from this project's DT patches, and `reference/stock-dt/` holds
   Samsung's stock DTB/DTBO, built from Samsung's GPL kernel source, with decompiled `.dts` next to each.

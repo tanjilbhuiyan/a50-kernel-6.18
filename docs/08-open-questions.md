@@ -21,3 +21,28 @@ by Busybox udhcpd. Native cable/charger detection and single-owner gadget/DHCP
 integration remain M12. Before disabling legacy usb-tethering, establish which
 component creates the initial configfs scaffold. Evidence:
 log/2026-11-10-M5.4-usb-ssh.md and reference/m54-usb-ssh/netdevices-live-dhcp.txt.
+
+## M6 runtime follow-up (2026-11-14)
+
+- **TEEGRIS/TZDEV and secure services:** the stock TEEGRIS post-fs action
+  waits for a daemon that cannot become ready on the current port. M6.4
+  defers that RC through a read-only per-boot bind, without modifying vendor
+  or faking readiness. TEE-dependent security/DRM functionality and the six
+  reserved/secure heaps remain unsupported. Schedule a real driver/storage
+  design before a consumer requires them; normal allocator startup does
+  not establish secure allocation support.
+- **Android task profiles on cgroup v2:** the container uses native v2,
+  but the Android 11 legacy cgroups/profile configuration still emits
+  setup errors for paths such as /acct and /dev/cpuset. Current boot and
+  allocator checks do not prove scheduling/QoS compatibility. Review
+  consumer requirements during M7 and native controller/uclamp/profile
+  mapping during power/performance work; do not re-enable v1 as a shortcut.
+- **Power masks and the M11 gate:** repowerd, a50-enable-autosuspend and
+  sleep.target remain diagnostic masks. The existing activation script
+  explicitly enables Android automatic suspend, which the interface-only
+  M6.2 tests did not validate. Reassess with real power/suspend prerequisites
+  before M11's existing zero-mask gate. If removal requires M12 work, pull
+  those prerequisites forward or obtain an explicit plan amendment; no
+  automatic exception to the M11 requirement is assumed.
+
+Evidence: `log/2026-11-14-M6.4-runtime.md`, `reference/m64-runtime/`.

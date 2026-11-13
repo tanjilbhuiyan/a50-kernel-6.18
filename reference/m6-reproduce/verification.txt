@@ -1,0 +1,32 @@
+Selected output from the isolated full compile (not the complete compiler log).
+Command: python3 -I tools/reproduce_m6.py --cache src/ack-6.18 --assets src/reproduce-assets
+
+real guard code: read guard 0, invalid range 0, synthetic range 0, userdata 0x1c8700-0xee42ff 0 wrong decisions
+mutant any LUN may write              ->     96 wrong decisions  caught
+mutant start off by one               ->      8 wrong decisions  caught
+mutant end off by one                 ->      4 wrong decisions  caught
+mutant length ignored                 ->      8 wrong decisions  caught
+mutant upper bound ignored            ->     12 wrong decisions  caught
+mutant invalid range allowed          ->     10 wrong decisions  caught
+mutant allow WRITE(6)                 ->      2 wrong decisions  caught
+mutant allow UNMAP                    ->      2 wrong decisions  caught
+mutant allow WRITE SAME(16)           ->      2 wrong decisions  caught
+mutant write default allows           ->    504 wrong decisions  caught
+mutant WRITE(10) LBA bytes swapped    ->      9 wrong decisions  caught
+mutant WRITE(10) length byte wrong    ->      1 wrong decisions  caught
+mutant no flush (over-strict)         ->      4 wrong decisions  caught
+mutant read guard: allow WRITE(10)    ->      1 wrong decisions  caught
+RESULT: PASS
+Guard + real SCSI sense switch: PASS
+  DTC     arch/arm64/boot/dts/exynos/exynos9610-a50-sysmmu.dtb
+/home/bs01808/Development/RnD/ubuntu-touch/a50-kernel-6.18/src/reproduce-m6/ack/common/arch/arm64/kernel/a50_diag.c:64:13: warning: no previous prototype for function 'a50_diag_point' [-Wmissing-prototypes]
+/home/bs01808/Development/RnD/ubuntu-touch/a50-kernel-6.18/src/reproduce-m6/ack/common/arch/arm64/kernel/a50_diag.c:74:13: warning: no previous prototype for function 'a50_diag_stage1' [-Wmissing-prototypes]
+  LD      vmlinux.o
+  LD      vmlinux.unstripped
+  OBJCOPY arch/arm64/boot/Image
+
+Exit status: 0
+Generated /init, cpio and raw DTB hashes matched the lock.
+Public donor + original tested Image reproduced exact original BOOT hash.
+Historical M6.4 as-run snapshots verified: 62.
+Tracked-only index export rebuild: PASS, identical output hash manifest.
