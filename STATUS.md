@@ -26,8 +26,8 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
 - **Masks:** all four M5 HAL masks are removed. Multi-user reached at 212.21 s; late systemd state degraded with zero jobs.
   Rild/ofono settled; bluebinder still retries, audio-route times out and LightDM fails, without blocking multi-user.
   Hardware Bluetooth/audio/modem/display are not established. Three diagnostic masks remain: repowerd.service,
-  a50-enable-autosuspend.service, sleep.target. Their automatic-suspend paths are unvalidated; review before the existing
-  M11 zero-mask gate (full power integration remains M12; see docs/08-open-questions.md).
+  a50-enable-autosuspend.service, sleep.target. Their automatic-suspend paths are unvalidated; owner approved keeping
+  them until M12, whose DoD removes them (2026-11-14; owner rules below).
 - **Final test inputs:** source `a50-m63-sysmmu-test/bd3fe49b2d2c3b0b04be490b3440d38d806949a3`, unchanged during M6.4.
   BOOT `src/m64/runtime7/boot.img`, SHA `28fb0f6bdf887ea59d2d431465d5be8c721a7c3cf2274fa4a07ae1e92ad9c680`.
   Config/Image/cpio frozen under `src/m64/runtime7/as-built/`; workspace `out/m64-runtime2` was reused after archiving.
@@ -65,7 +65,7 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
   Inputs/config deltas/evidence are in `reference/m62-wakelock/`. Recorded outer base `a829080`; results/tools checkpointed.
 - **Diagnostic power setup:** both wakelock builds add runtime masks for `repowerd.service`, `a50-enable-autosuspend.service`
   and `sleep.target` to the existing M6.2 test masks. Kernel autosleep and hibernation are disabled. M6.4 reviewed and retained
-  these three masks; reassess before M11's zero-mask gate. Suspend integration remains M12.
+  these three masks; approved until M12 (2026-11-14). Suspend integration remains M12.
 - **Sync boot log:** `log/2026-11-11-M6.2-sync.md`. Two software fences merged and became ready only after both signaled.
   Binder and ashmem passed again over USB root SSH. The guard passed, userdata stayed rw and baseline restore/fsck passed.
   Same kernel source as ashmem. Image `src/m62/boot-sync.img` SHA `4c77d2dc31979bf31d95f130af04589ccbc1426f9c033254ccc45c88cb9f6583`.
@@ -171,6 +171,12 @@ Checkout: `a50-usb` (clean). Check it before any build: builds check out a test 
   the rest listed with reasons. To revisit later.
 - M5 runtime masks are temporary (2026-11-10): M6.4 boots once without them and records what still blocks; bluebinder is
   removed in M9, a50-audio-route in M10, rild/ofono in M11 (each milestone's DoD in `docs/05-plan.md`).
+  M6.4 removed all four. Power masks approved (2026-11-14): repowerd.service, a50-enable-autosuspend.service and sleep.target
+  stay masked per boot until suspend is validated; removed in M12 (M11's gate covers only the M5 HAL masks).
+- TEEGRIS deferral approved (2026-11-14): `docs/decisions/ADR-0004-defer-teegris-runtime.md`. Per-boot, hash-checked, read-only
+  overlay of `teegris_v3.rc` only; security HALs/DRM/secure heaps stay unsupported. Any other vendor-file overlay needs its own ADR.
+- Flashing (2026-11-14): Heimdall flashes BOOT, DTB and DTBO; DTB/DTBO only through `tools/m32_run_test.sh` (or a wrapper),
+  which restores stock in the same cycle. No per-test approval needed beyond rule 7 (owner present). CLAUDE.md rule 3.
 
 ## Done (details in each log; index `tasks/README.md`)
 - **M0** baseline locked and measured; **M1** reproducible builds, vendor ABI captured; **M2** first light on 6.18.

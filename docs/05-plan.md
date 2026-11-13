@@ -111,8 +111,11 @@ Mask removal (2026-11-10, owner): M6.4 re-tests without the masks; bluebinder go
 a50-audio-route in M10, rild/ofono in M11 (each milestone's DoD).
 M6.4 result (2026-11-14): all four M5 masks were removed; Android and the real allocator
 run, multi-user is reached and systemd settles degraded with zero jobs. Keep the units
-unmasked through their hardware milestones. Three separate diagnostic power masks remain;
-the existing M11 zero-mask gate still applies (follow-up in `08-open-questions.md`).
+unmasked through their hardware milestones. Three separate diagnostic power masks remain.
+Power masks (2026-11-14, owner approved): `repowerd.service`, `a50-enable-autosuspend.service`
+and `sleep.target` stay masked per boot until suspend is validated; they keep the untested kernel
+from entering automatic suspend. M11's gate covers the M5 HAL masks only; these three are
+removed in M12 (see the M12 DoD).
 M5.3 result (2026-11-10): test 5 reached multi-user at 84.17 s and degraded
 with zero jobs at 122/201 s; Android/device-helper failures reviewed and baseline
 restored clean (`log/2026-11-10-M5.3-split-control-test5.md`).
@@ -133,7 +136,7 @@ Result (2026-11-14): DoD met in M6.4 test 7. Real allocator registered over HIDL
 preserved; stock restore/fsck clean. Runtime TEEGRIS action is deferred without fake
 readiness. Only measured heap 0 is implemented; secure heaps/security HALs, legacy
 task-profile migration and actual graphics DMA remain explicit limits. Three power
-masks remain until power prerequisites and the M11 zero-mask gate are resolved.
+masks remain until M12 (owner approved 2026-11-14). TEEGRIS deferral: ADR-0004.
 Evidence: `log/2026-11-14-M6.4-runtime.md`, `reference/m64-runtime/results.json`.
 
 ## M7 — Display + GPU (Lomiri UI)
@@ -152,10 +155,12 @@ DoD: S6. The M5 runtime mask of `a50-audio-route` is removed and multi-user is s
 
 ## M11 — Modem (modem_v1, mcu_ipc, shm_ipc)
 DoD: S7. The M5 runtime masks of `rild` and `ofono` are removed and multi-user is still reached;
-no `systemd.mask=` remains in the built-in command line.
+none of the four M5 HAL masks remains in the built-in command line (the power masks go in M12).
 
 ## M12 — Power: battery/charger, suspend, devfreq, USB modes
-DoD: S5, S9; 10 suspend/resume cycles; charge state correct.
+DoD: S5, S9; 10 suspend/resume cycles; charge state correct. The runtime masks of `repowerd.service`,
+`a50-enable-autosuspend.service` and `sleep.target` are removed with automatic suspend working, and
+no `systemd.mask=` remains in the built-in command line.
 
 ## M13 — Stretch: camera, MFC, sensors, GNSS, Waydroid
 DoD per item, optional.

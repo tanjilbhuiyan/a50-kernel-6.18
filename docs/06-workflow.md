@@ -24,7 +24,9 @@ rootfs/chroot step needs it.
 ## Flashing rules
 
 - BOOT: `heimdall flash --BOOT boot.img --no-reboot` (≤ ~67 MB OK).
-- DTB / DTBO / VENDOR / SYSTEM / anything ≥ 100 MB: TWRP → `adb push` →
+- DTB + DTBO + BOOT for a 6.18 test: only through `tools/m32_run_test.sh`, which flashes the
+  test set and then restores stock DTB/DTBO and the baseline BOOT (owner approved 2026-11-14).
+- VENDOR / SYSTEM / any other DTB/DTBO change / anything ≥ 100 MB: TWRP → `adb push` →
   `dd` to `/dev/block/by-name/<part>` → read back sha256 must equal source.
 - After a failed Heimdall session the phone needs re-entry into Download mode;
   the "emergency recovery" screen is still Download mode and is flashable.

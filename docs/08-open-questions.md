@@ -41,8 +41,7 @@ log/2026-11-10-M5.4-usb-ssh.md and reference/m54-usb-ssh/netdevices-live-dhcp.tx
   sleep.target remain diagnostic masks. The existing activation script
   explicitly enables Android automatic suspend, which the interface-only
   M6.2 tests did not validate. Reassess with real power/suspend prerequisites
-  before M11's existing zero-mask gate. If removal requires M12 work, pull
-  those prerequisites forward or obtain an explicit plan amendment; no
-  automatic exception to the M11 requirement is assumed.
+  before removal. Resolved 2026-11-14 (owner): the three masks are approved
+  until M12, whose DoD now removes them; M11's gate covers the M5 HAL masks only.
 
 Evidence: `log/2026-11-14-M6.4-runtime.md`, `reference/m64-runtime/`.

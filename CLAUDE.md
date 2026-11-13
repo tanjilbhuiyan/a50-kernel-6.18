@@ -23,7 +23,7 @@ unchanged. Full definition: `docs/00-goal.md`.
 | `docs/05-plan.md` | milestones M0–M13 with tasks and Definition of Done |
 | `docs/06-workflow.md` | build / flash / test / recover loop and rules |
 | `docs/07-risks.md` | known risks and mitigations |
-| `docs/decisions/` | ADRs (0001 base kernel, 0002 keep stock vendor, 0003 newer Halium — deferred); a decision changes only through a new ADR |
+| `docs/decisions/` | ADRs (0001 base kernel, 0002 keep stock vendor, 0003 newer Halium — deferred, 0004 TEEGRIS runtime deferral); a decision changes only through a new ADR |
 | `tasks/` | tickets (one file per task) for the current + next milestone; index in `tasks/README.md` |
 | `log/` | one file per test session (what changed, what was flashed, result) |
 | `reference/` | evidence: live DT dump, gap matrix TSV, stock vendor extracts, measurements |
@@ -38,8 +38,10 @@ unchanged. Full definition: `docs/00-goal.md`.
 1. **Evidence over assumption.** Every claim in docs cites a file, command
    output, or URL. Unknown = write "unverified", never guess.
 2. **One variable per boot test.** Change one thing, flash, record in `log/`.
-3. **Only BOOT is flashed with Heimdall** (≤ ~67 MB works; ≥ 800 MB fails on
-   this host). Large images go through TWRP + adb + dd with read-back hash.
+3. **Heimdall flashes BOOT, DTB and DTBO only** (≤ ~67 MB works; ≥ 800 MB fails on
+   this host). DTB/DTBO go only through the test runner (`tools/m32_run_test.sh`, directly or via a wrapper), which
+   restores stock DTB/DTBO and the baseline BOOT in the same cycle (owner approved
+   2026-11-14). Large images go through TWRP + adb + dd with read-back hash.
 4. **A known-good fallback must exist before every flash**: `baseline/…/boot.img`
    (sha256 `7d5855ef…`). Recovery path is in `docs/06-workflow.md`.
 5. **Never touch** EFS, SEC_EFS, CPEFS, PARAM, bootloader, or the vendor
