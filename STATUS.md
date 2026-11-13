@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-14 (M6 checkpoint and portable build; stock restored; M7.1 next)
+Updated: 2026-11-14 (M6 complete with portable build; M7.1 audit done; M7.2 D0 next)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -12,9 +12,12 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
 - **Connection:** home `192.168.0.171`. Final stock restore completed 2026-11-14 at 02:57:44, baseline boot time
   02:57:58, battery 100% Charging. DTB/DTBO/BOOT post-flight hashes passed; saved baseline fsck clean. No test active.
   Owner confirmed presence, USB connected and Claude Code idle for this completed session; reverify live state on resumption.
-- **Milestone:** **M6.4 done; M6 startup/allocator DoD met with the limits below. M7.1 next**, not started.
-  Active next ticket `tasks/M7.1-display-gpu-abi-audit.md`. M7.1–M7.5 tickets are written; deferred M4.4/M4.3 prerequisites
-  remain relevant before display power changes. Session log `log/2026-11-14-M6.4-runtime.md`.
+- **Milestone:** M6 done. **M7.1 done (host audit, 2026-11-14, Claude Code); next M7.2 boot D0** (read-only display state
+  probe), not started. M7.3 may start in parallel with G0 (read-only GPU ID probe). Audit and boot ladder:
+  `log/2026-11-14-M7.1-display-gpu-audit.md`. Display needs neither M4.4 nor M4.3 (panel power is GPIO-only; S2MPB03
+  feeds cameras). The composer already starts on simplefb, so check ioctls and the panel, not the process.
+  Vendor display libraries read as phablet (no root) into ignored `src/m71/vendor/` (proprietary; never commit).
+  M6.4 session log: `log/2026-11-14-M6.4-runtime.md`.
 - **Final M6 result:** test 7 Android RUNNING, normal `sys.boot_completed=1`, real graphics allocator guest PID 133
   running and registered over HIDL. Both 64/32-bit ION replays passed as UID 1000/GID 1003, 64 captured allocations and
   boundary/lifetime checks, zero exported buffers afterward. All raw block open modes and mknod denied by the guest

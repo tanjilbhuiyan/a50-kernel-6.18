@@ -53,8 +53,8 @@ later milestones get tickets when we reach them (evidence first, Rule 1).
 | M6.2 | Binder, ACK ashmem, sync/wakelock interfaces | build no / test yes | M6.1 | done |
 | M6.3 | ION ABI, Exynos heaps and SysMMU preparation | build no / test yes | M6.1 | done (measured heap 0; DPU provider probe; limits in ticket) |
 | M6.4 | Android container and allocator; M6 DoD | yes | M6.2, M6.3 | done (runtime TEEGRIS deferral; limits in ticket) |
-| M7.1 | Display/GPU ABI audit and implementation design | saved evidence first | M6.4 | todo |
-| M7.2 | DPU20 display pipeline and panel | build no / test yes | M7.1, required M4 prerequisites | todo |
+| M7.1 | Display/GPU ABI audit and implementation design | saved evidence first | M6.4 | done (log/2026-11-14-M7.1-display-gpu-audit.md) |
+| M7.2 | DPU20 display pipeline and panel | build no / test yes | M7.1 | todo |
 | M7.3 | Mali kbase r26p0 port | build no / test yes | M7.1 | todo |
 | M7.4 | G2D if required | if required | M7.1 | todo (conditional) |
 | M7.5 | Accelerated Lomiri integration and soak; M7 DoD | yes | M7.2, M7.3, M7.4 decision | todo |
