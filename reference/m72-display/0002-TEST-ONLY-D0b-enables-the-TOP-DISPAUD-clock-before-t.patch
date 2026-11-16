@@ -1,0 +1,54 @@
+From 67b6523b810a5adaa26afcb89bc35c660bcf36d0 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Mon, 16 Nov 2026 13:01:52 +0600
+Subject: [PATCH] TEST ONLY: D0b enables the TOP DISPAUD clock before the
+ read-only probe (do not merge)
+
+M7.2 boot D0b. D0 found gout_cmu_dispaud_disp manual-off after the 6.18
+CMU init. Enable only that gate through the clock framework, log it
+before and after with its rate and parent, then run the unchanged
+read-only DECON/DSIM/DMA/IDMA reads.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: Ifd9e7d7060a0330c37066939200318cc74e34f75
+---
+ drivers/soc/samsung/a50-dpu-status.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/drivers/soc/samsung/a50-dpu-status.c b/drivers/soc/samsung/a50-dpu-status.c
+index 249ea2926..27d9c7bf3 100644
+--- a/drivers/soc/samsung/a50-dpu-status.c
++++ b/drivers/soc/samsung/a50-dpu-status.c
+@@ -14,7 +14,13 @@
+  * read (DECON/DMA can report a slave error for undefined offsets), and
+  * registers with read side effects are skipped (DSIM RX FIFO and payload).
+  * The probe runs from a work item so a stall would not block kernel_init.
++ *
++ * M7.2 boot D0b adds one write path: the TOP gate gout_cmu_dispaud_disp is
++ * enabled through the clock framework before the reads (D0 found it
++ * manual-off after the 6.18 CMU init). It is left enabled.
+  */
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+@@ -125,6 +131,15 @@ static void a50_dpu_status(struct work_struct *w)
+ 	p = ioremap(TOP_BASE, 0x3000);
+ 	if (!p)
+ 		return;
++	pr_info("a50-dpu: top GATE before enable=0x%08x\n", readl(p + 0x2040));
++	{
++		struct clk *c = __clk_lookup("gout_cmu_dispaud_disp");
++		int ret = c ? clk_prepare_enable(c) : -ENOENT;
++
++		pr_info("a50-dpu: enable gout_cmu_dispaud_disp ret=%d rate=%lu parent=%s\n",
++			ret, c ? clk_get_rate(c) : 0,
++			c && clk_get_parent(c) ? __clk_get_name(clk_get_parent(c)) : "-");
++	}
+ 	top_gate = readl(p + 0x2040);
+ 	pr_info("a50-dpu: top MUX_CLKCMU_DISPAUD_DISP=0x%08x DIV=0x%08x GATE=0x%08x\n",
+ 		readl(p + 0x1038), readl(p + 0x1840), top_gate);
+-- 
+2.56.1
+
