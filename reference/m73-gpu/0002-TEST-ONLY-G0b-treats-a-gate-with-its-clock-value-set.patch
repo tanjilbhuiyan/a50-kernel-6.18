@@ -1,0 +1,44 @@
+From 88ece9a15ce98b76bed5b284d478a2c2ba473cbc Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Mon, 16 Nov 2026 19:02:00 +0600
+Subject: [PATCH] TEST ONLY: G0b treats a gate with its clock value set as
+ usable (do not merge)
+
+M7.3 boot G0b. G0 found the CMU_CORE G3D bridge gates at 0x00200000:
+clock value set, manual bit clear, no automatic gating. With the manual bit
+clear a gate follows the CMU's global mode and the value bit still enables
+the clock, so the G0 rule (automatic gating, or manual mode with the value
+set) declined a clocked path. Usable now means value set or automatic
+gating. Everything else is unchanged.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I96aa464c9630194a2b931d443eec4a253aa50561
+---
+ drivers/soc/samsung/a50-g3d-status.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/soc/samsung/a50-g3d-status.c b/drivers/soc/samsung/a50-g3d-status.c
+index cbbf91cd0..47aebe9f1 100644
+--- a/drivers/soc/samsung/a50-g3d-status.c
++++ b/drivers/soc/samsung/a50-g3d-status.c
+@@ -80,9 +80,16 @@ static __printf(1, 2) void say(const char *fmt, ...)
+ 	a50_len += scnprintf(a50_log + a50_len, sizeof(a50_log) - a50_len, "%s", line);
+ }
+ 
++/*
++ * G0b: a gate with the manual bit clear follows the CMU's global mode
++ * (clk-exynos-arm64.c: GATE_MANUAL overrides it); its clock value bit still
++ * enables the clock. G0 found the CMU_CORE G3D bridge gates at 0x00200000
++ * (value set, manual clear), which the stricter G0 rule declined. Usable:
++ * clock value set, or hardware automatic gating.
++ */
+ static bool gate_on(u32 v)
+ {
+-	return (v & GATE_HWACG) || ((v & GATE_MANUAL) && (v & GATE_CG_VALUE));
++	return (v & GATE_HWACG) || (v & GATE_CG_VALUE);
+ }
+ 
+ static void dump(const char *blk, void __iomem *p, const struct reg *r, unsigned int n)
+-- 
+2.56.1
+

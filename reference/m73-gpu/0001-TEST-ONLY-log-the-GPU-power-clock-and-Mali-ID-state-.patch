@@ -1,0 +1,215 @@
+From 793f1ab7cc1c4473d9a3d6002b7077733dae75a1 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Mon, 16 Nov 2026 18:53:30 +0600
+Subject: [PATCH] TEST ONLY: log the GPU power, clock and Mali ID state left by
+ S-Boot (do not merge)
+
+M7.3 boot G0. Reads the PMU G3D status, the TOP CORE_G3D and G3D_SWITCH
+gates, the CMU_CORE G3D bus gates, CMU_G3D's PLL_G3D and gates, and, only
+when the domain is on and every gate on the register path is usable, the
+Mali GPU_CONTROL ID registers. If the TOP gate gout_cmu_core_g3d reads
+manual-off (6.18 CMU init, see M7.2 D0), it is enabled through the clock
+framework first. Lines are repeated at about 405 s for the timed dump.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I7333cd2ea239f335372496de6a63f12c7906f539
+---
+ drivers/soc/samsung/Makefile         |   1 +
+ drivers/soc/samsung/a50-g3d-status.c | 176 +++++++++++++++++++++++++++
+ 2 files changed, 177 insertions(+)
+ create mode 100644 drivers/soc/samsung/a50-g3d-status.c
+
+diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
+index 248a33d77..46b5da510 100644
+--- a/drivers/soc/samsung/Makefile
++++ b/drivers/soc/samsung/Makefile
+@@ -13,3 +13,4 @@ obj-$(CONFIG_EXYNOS_PMU_ARM_DRIVERS)	+= exynos3250-pmu.o exynos4-pmu.o \
+ obj-$(CONFIG_EXYNOS_REGULATOR_COUPLER) += exynos-regulator-coupler.o
+ 
+ obj-$(CONFIG_SAMSUNG_PM_CHECK)	+= s3c-pm-check.o
++obj-y				+= a50-g3d-status.o
+diff --git a/drivers/soc/samsung/a50-g3d-status.c b/drivers/soc/samsung/a50-g3d-status.c
+new file mode 100644
+index 000000000..cbbf91cd0
+--- /dev/null
++++ b/drivers/soc/samsung/a50-g3d-status.c
+@@ -0,0 +1,176 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * TEST ONLY (M7.3 boot G0), do not merge: log the GPU (G3D) power, clock and
++ * Mali ID state that S-Boot leaves behind.
++ *
++ * Reads: PMU G3D status (stock DT gpu_pmu_status_reg_offset 0x4064), TOP gates
++ * for CORE_G3D and G3D_SWITCH, CMU_CORE G3D bus gates, CMU_G3D PLL_G3D and
++ * gates (base addresses: 4.14 cal-if/exynos9610/cmucal-sfr.c; offsets: 6.18
++ * clk-exynos9610.c), then the Mali GPU_CONTROL ID registers at 0x11500000
++ * (4.14 b_r26p0/gpu/mali_kbase_gpu_regmap.h) only if the G3D domain is on and
++ * every gate on the register path is usable; CMU_G3D is read only after the
++ * CORE LHS_AXI_P_G3D bridge gate is usable (gate bits as in the M7.2 probe:
++ * 20 manual, 21 manual clock value, 28 hardware automatic gating).
++ *
++ * The only write: if the TOP gate gout_cmu_core_g3d reads manual-off (the
++ * 6.18 CMU init forces TOP gates to manual mode, M7.2 D0), it is enabled
++ * through the clock framework before the CMU_CORE/G3D reads, as D0b did for
++ * the display. Every line is also printed again at about 405 s so it lands in
++ * the timed dump.
++ */
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/init.h>
++#include <linux/io.h>
++#include <linux/kernel.h>
++#include <linux/printk.h>
++#include <linux/string.h>
++#include <linux/workqueue.h>
++
++#define PMU_BASE	0x11860000
++#define PMU_G3D_STATUS	0x4064
++#define TOP_BASE	0x12100000
++#define CORE_BASE	0x120f0000
++#define G3D_CMU_BASE	0x11430000
++#define MALI_BASE	0x11500000
++
++#define GATE_MANUAL	BIT(20)
++#define GATE_CG_VALUE	BIT(21)
++#define GATE_HWACG	BIT(28)
++
++struct reg { const char *name; u16 off; };
++
++static const struct reg top_regs[] = {
++	{ "MUX_CORE_G3D", 0x1020 }, { "DIV_CORE_G3D", 0x1828 }, { "GAT_CORE_G3D", 0x2028 },
++	{ "MUX_G3D_SWITCH", 0x1054 }, { "DIV_G3D_SWITCH", 0x185c }, { "GAT_G3D_SWITCH", 0x205c },
++};
++static const struct reg core_regs[] = {
++	{ "PLL_CON0_CORE_G3D_USER", 0x0140 }, { "GAT_LHM_AXI_D_G3D", 0x2098 },
++	{ "GAT_LHS_AXI_P_G3D", 0x20e4 }, { "GAT_PPCFW_G3D_ACLK", 0x2124 },
++	{ "GAT_PPCFW_G3D_PCLK", 0x2128 }, { "GAT_G3D_CLK", 0x2160 },
++};
++static const struct reg g3d_regs[] = {
++	{ "PLL_LOCKTIME_PLL_G3D", 0x0000 }, { "PLL_CON0_PLL_G3D", 0x0120 },
++	{ "MUX_G3D_BUSD", 0x1004 }, { "DIV_G3D_BUSD", 0x1800 }, { "DIV_G3D_BUSP", 0x1804 },
++	{ "GAT_CMU_PCLK", 0x2000 }, { "GAT_G3D_CLK", 0x2004 }, { "GAT_OSCCLK", 0x200c },
++	{ "GAT_BTM_ACLK", 0x2014 }, { "GAT_BTM_PCLK", 0x2018 }, { "GAT_LHM_AXI_G3DSFR", 0x2024 },
++	{ "GAT_LHM_AXI_P", 0x2028 }, { "GAT_LHS_AXI_D", 0x202c }, { "GAT_LHS_AXI_G3DSFR", 0x2030 },
++	{ "GAT_BUSD", 0x2038 }, { "GAT_BUSP", 0x203c }, { "GAT_SYSREG_PCLK", 0x2040 },
++};
++static const struct reg mali_regs[] = {
++	{ "GPU_ID", 0x000 }, { "L2_FEATURES", 0x004 }, { "TILER_FEATURES", 0x00c },
++	{ "MEM_FEATURES", 0x010 }, { "MMU_FEATURES", 0x014 }, { "AS_PRESENT", 0x018 },
++	{ "GPU_IRQ_RAWSTAT", 0x020 }, { "GPU_STATUS", 0x034 }, { "THREAD_MAX_THREADS", 0x0a0 },
++	{ "SHADER_PRESENT_LO", 0x100 }, { "TILER_PRESENT_LO", 0x110 }, { "L2_PRESENT_LO", 0x120 },
++	{ "SHADER_READY_LO", 0x140 }, { "L2_READY_LO", 0x160 },
++};
++
++static char a50_log[8192];
++static size_t a50_len;
++
++static __printf(1, 2) void say(const char *fmt, ...)
++{
++	char line[160];
++	va_list ap;
++
++	va_start(ap, fmt);
++	vscnprintf(line, sizeof(line), fmt, ap);
++	va_end(ap);
++	pr_info("a50-g3d: %s", line);
++	a50_len += scnprintf(a50_log + a50_len, sizeof(a50_log) - a50_len, "%s", line);
++}
++
++static bool gate_on(u32 v)
++{
++	return (v & GATE_HWACG) || ((v & GATE_MANUAL) && (v & GATE_CG_VALUE));
++}
++
++static void dump(const char *blk, void __iomem *p, const struct reg *r, unsigned int n)
++{
++	unsigned int i;
++
++	for (i = 0; i < n; i++)
++		say("%s %s [+0x%04x] = 0x%08x\n", blk, r[i].name, r[i].off, readl(p + r[i].off));
++}
++
++static void a50_g3d_status(struct work_struct *w)
++{
++	void __iomem *pmu, *top, *core, *g3d, *mali;
++	u32 pd;
++
++	pmu = ioremap(PMU_BASE, 0x5000);
++	top = ioremap(TOP_BASE, 0x3000);
++	core = ioremap(CORE_BASE, 0x3000);
++	g3d = ioremap(G3D_CMU_BASE, 0x3000);
++	if (!pmu || !top || !core || !g3d) {
++		say("ioremap failed\n");
++		goto out;
++	}
++	pd = readl(pmu + PMU_G3D_STATUS);
++	say("g3d pd status=0x%08x\n", pd);
++	dump("top", top, top_regs, ARRAY_SIZE(top_regs));
++	if (!gate_on(readl(top + 0x2028))) {
++		struct clk *c = __clk_lookup("gout_cmu_core_g3d");
++		int ret = c ? clk_prepare_enable(c) : -ENOENT;
++
++		say("enable gout_cmu_core_g3d ret=%d rate=%lu, GAT_CORE_G3D now 0x%08x\n",
++		    ret, c ? clk_get_rate(c) : 0, readl(top + 0x2028));
++	}
++	dump("core", core, core_regs, ARRAY_SIZE(core_regs));
++	if ((pd & 0xf) != 0xf) {
++		say("G3D domain not on, CMU_G3D and Mali not read\n");
++		goto out;
++	}
++	/* CMU_G3D and Mali registers are reached over CORE's P-bus bridge to G3D. */
++	if (!gate_on(readl(core + 0x20e4))) {
++		say("CORE LHS_AXI_P_G3D gate off, CMU_G3D and Mali not read\n");
++		goto out;
++	}
++	dump("cmu_g3d", g3d, g3d_regs, ARRAY_SIZE(g3d_regs));
++	if (!gate_on(readl(core + 0x20e4)) || !gate_on(readl(g3d + 0x2000)) ||
++	    !gate_on(readl(g3d + 0x2004)) || !gate_on(readl(g3d + 0x2028)) ||
++	    !gate_on(readl(g3d + 0x203c)) || !(readl(g3d + 0x0120) & BIT(31))) {
++		say("G3D register path not clocked (gate or PLL_G3D off), Mali not read\n");
++		goto out;
++	}
++	mali = ioremap(MALI_BASE, 0x1000);
++	if (mali) {
++		dump("mali", mali, mali_regs, ARRAY_SIZE(mali_regs));
++		iounmap(mali);
++	}
++	say("done\n");
++out:
++	if (g3d)
++		iounmap(g3d);
++	if (core)
++		iounmap(core);
++	if (top)
++		iounmap(top);
++	if (pmu)
++		iounmap(pmu);
++}
++
++static DECLARE_WORK(a50_g3d_work, a50_g3d_status);
++
++static void a50_g3d_late(struct work_struct *w)
++{
++	char *p = a50_log, *nl;
++
++	pr_info("a50-g3d-late: repeat of the boot-time probe (%zu bytes)\n", a50_len);
++	while (*p && (nl = strchr(p, '\n'))) {
++		*nl = '\0';
++		pr_info("a50-g3d-late: %s\n", p);
++		p = nl + 1;
++	}
++	pr_info("a50-g3d-late: end\n");
++}
++
++static DECLARE_DELAYED_WORK(a50_g3d_late_work, a50_g3d_late);
++
++static int __init a50_g3d_status_init(void)
++{
++	queue_work(system_unbound_wq, &a50_g3d_work);
++	queue_delayed_work(system_unbound_wq, &a50_g3d_late_work, 405 * HZ);
++	return 0;
++}
++late_initcall(a50_g3d_status_init);
+-- 
+2.56.1
+

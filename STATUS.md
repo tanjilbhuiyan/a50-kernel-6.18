@@ -31,7 +31,9 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
   `log/2026-11-16-M7.2-d3b-dma-scanout.md`). **D4a PASS; M7.2 DONE**
   (2026-11-16): blank/unblank via DCS sleep commands; acceptance in `log/2026-11-16-M7.2-d4a-blank-and-close.md`. Latest
   display kernel `a50-m72-d4a-test` `6c1151fb6`, DT `src/m72/dt-d3a.img`. Limits: handover design, single-window
-  scanout, test branches. Next: M7.3 (Mali kbase), starting with read-only G0. Confirm owner presence before every flash. Office network: phone `192.168.181.225`. Log `log/2026-11-14-M7.2-d0-display-probe.md`; kernel test branch `a50-m72-d0-test`
+  scanout, test branches. **M7.3 started:** G0b
+  read the GPU: Mali-G72 r0p1, 3 cores, PLL_G3D fixed at 260 MHz, register path clocked
+  (`log/2026-11-16-M7.3-g0-gpu-probe.md`, kernel `a50-m73-g0b-test` `88ece9a15`). Next: G1, the kbase r26p0 port. Confirm owner presence before every flash. Office network: phone `192.168.181.225`. Log `log/2026-11-14-M7.2-d0-display-probe.md`; kernel test branch `a50-m72-d0-test`
   (`e5b86c629`). Phone restored, post-flight passed, fsck clean. The warning screen is normal during 6.18 boots: don't
   key-recover inside the runner window. M7.3 may start in parallel with G0 (read-only GPU ID probe; check the TOP G3D
   gate first). M7.1 audit and boot ladder:

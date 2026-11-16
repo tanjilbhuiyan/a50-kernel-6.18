@@ -1,0 +1,48 @@
+{
+ "test": "M7.3 G0: read-only GPU power/clock/Mali ID probe",
+ "kernel_branch": "a50-m73-g0-test",
+ "kernel_commit": "793f1ab7c",
+ "base": "bd3fe49b2 (M6.4 test-7 source)",
+ "single_variable": "drivers/soc/samsung/a50-g3d-status.c (reads; enables gout_cmu_core_g3d only if manual-off)",
+ "config_identical_to": "src/m64/runtime7/as-built/.config",
+ "dt": "src/m63/dt-sysmmu.img (M6.4 test 7)",
+ "runner": "DT_IMG=src/m63/dt-sysmmu.img tools/m32_run_test.sh src/m73/boot-g0.img reference/m73-gpu/g0-dump.txt 192.168.0.171 540",
+ "files": {
+  "src/m73/boot-g0.img": {
+   "size": 29890560,
+   "sha256": "993d18d3a06ef87580b6b9a69c86855c22504193042c42b75e0f8d6406f157f6"
+  },
+  "src/ack-6.18/out/m73-g0/arch/arm64/boot/Image": {
+   "size": 29884424,
+   "sha256": "675cd51295831f278fbb209995184f790b6d8084a056fdbd525cb7273cac19fb"
+  },
+  "src/ack-6.18/out/m73-g0/.config": {
+   "size": 92738,
+   "sha256": "a9378e5063c8e6f0b877e95bb0d1bd56230db30c47de04d1cdd44df1a339cbb2"
+  },
+  "src/ack-6.18/out/m73-g0/usr/initramfs_data.cpio": {
+   "size": 25954816,
+   "sha256": "c855bb6eee66af35fc8ae2f21f2c85407d6cd46b9bf648b80e9a81672dd192a2"
+  },
+  "src/m63/dt-sysmmu.img": {
+   "size": 8388608,
+   "sha256": "8072be7a4f3f7e588b5c547599784d2d88499c46acbbcfdd2463c1d279baf36d"
+  },
+  "reference/dt-6.18/images/dtbo.img": {
+   "size": 8388608,
+   "sha256": "6d81cce87faca914d75f024f36e183ae6592e61adc786bbb6c7c47cdd3a151fe"
+  },
+  "reference/stock-images/dt.img": {
+   "size": 8388608,
+   "sha256": "59209aa52dc3b35e2c7cc025c465ed1cdb48dadaa13cf5d1f50324b3bf503547"
+  },
+  "reference/stock-images/dtbo.img": {
+   "size": 8388608,
+   "sha256": "40e47ed1477a8ffb6cbb34e5cb59a1af786c2552544f3b556373f3c553d40d21"
+  },
+  "baseline/ut-26.04-2026-10-19-aa17rf2/boot.img": {
+   "size": 53624832,
+   "sha256": "7d5855efd34e01f09659c7d47ecb0773c30f2acc7443ee87181a0536804086c5"
+  }
+ }
+}
