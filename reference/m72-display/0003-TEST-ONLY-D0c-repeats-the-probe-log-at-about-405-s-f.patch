@@ -1,0 +1,170 @@
+From 6680c9674277f83b7ebde842d8d917639dabb1a1 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Mon, 16 Nov 2026 13:26:44 +0600
+Subject: [PATCH] TEST ONLY: D0c repeats the probe log at about 405 s for the
+ timed dump (do not merge)
+
+M7.2 boot D0c. Logging-only change on top of D0b: every probe line is also
+kept in a buffer and printed again at about 405 s, so it lands inside the
+420 s timed dump. D0b's dump held only the last ~50 s of the log. No extra
+hardware access.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I70cddcce35d7fadf75c8ba4dfb1a5a888a6bb753
+---
+ drivers/soc/samsung/a50-dpu-status.c | 62 ++++++++++++++++++++++------
+ 1 file changed, 49 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/soc/samsung/a50-dpu-status.c b/drivers/soc/samsung/a50-dpu-status.c
+index 27d9c7bf3..d5d5f9367 100644
+--- a/drivers/soc/samsung/a50-dpu-status.c
++++ b/drivers/soc/samsung/a50-dpu-status.c
+@@ -18,6 +18,10 @@
+  * M7.2 boot D0b adds one write path: the TOP gate gout_cmu_dispaud_disp is
+  * enabled through the clock framework before the reads (D0 found it
+  * manual-off after the 6.18 CMU init). It is left enabled.
++ *
++ * M7.2 boot D0c changes logging only: every line is also kept in a buffer
++ * and printed again at about 405 s, so it lands in the 420 s timed dump
++ * (D0b's dump held only the last ~50 s of the log). No extra hardware access.
+  */
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+@@ -25,6 +29,7 @@
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+ #include <linux/printk.h>
++#include <linux/string.h>
+ #include <linux/workqueue.h>
+ 
+ #define PMU_BASE	0x11860000
+@@ -88,6 +93,21 @@ static const struct reg idma_regs[] = {
+ 	{ "IN_BASE_ADDR_C", 0x0044 }, { "CFG_ERR_STATE", 0x0870 },
+ };
+ 
++static char a50_log[12288];
++static size_t a50_len;
++
++static __printf(1, 2) void say(const char *fmt, ...)
++{
++	char line[160];
++	va_list ap;
++
++	va_start(ap, fmt);
++	vscnprintf(line, sizeof(line), fmt, ap);
++	va_end(ap);
++	pr_info("a50-dpu: %s", line);
++	a50_len += scnprintf(a50_log + a50_len, sizeof(a50_log) - a50_len, "%s", line);
++}
++
+ static void dump(const char *blk, phys_addr_t base, size_t size,
+ 		 const struct reg *r, unsigned int n)
+ {
+@@ -95,12 +115,12 @@ static void dump(const char *blk, phys_addr_t base, size_t size,
+ 	unsigned int i;
+ 
+ 	if (!p) {
+-		pr_info("a50-dpu: %s ioremap failed\n", blk);
++		say("%s ioremap failed\n", blk);
+ 		return;
+ 	}
+-	pr_info("a50-dpu: reading %s @0x%08llx\n", blk, (u64)base);
++	say("reading %s @0x%08llx\n", blk, (u64)base);
+ 	for (i = 0; i < n; i++)
+-		pr_info("a50-dpu: %s %s [+0x%04x] = 0x%08x\n", blk, r[i].name,
++		say("%s %s [+0x%04x] = 0x%08x\n", blk, r[i].name,
+ 			r[i].off, readl(p + r[i].off));
+ 	iounmap(p);
+ }
+@@ -122,30 +142,30 @@ static void a50_dpu_status(struct work_struct *w)
+ 		return;
+ 	pd = readl(p + 0x4004);
+ 	iounmap(p);
+-	pr_info("a50-dpu: dispaud pd status=0x%08x\n", pd);
++	say("dispaud pd status=0x%08x\n", pd);
+ 	if ((pd & 0xf) != 0xf) {
+-		pr_info("a50-dpu: dispaud domain not on, nothing read\n");
++		say("dispaud domain not on, nothing read\n");
+ 		return;
+ 	}
+ 
+ 	p = ioremap(TOP_BASE, 0x3000);
+ 	if (!p)
+ 		return;
+-	pr_info("a50-dpu: top GATE before enable=0x%08x\n", readl(p + 0x2040));
++	say("top GATE before enable=0x%08x\n", readl(p + 0x2040));
+ 	{
+ 		struct clk *c = __clk_lookup("gout_cmu_dispaud_disp");
+ 		int ret = c ? clk_prepare_enable(c) : -ENOENT;
+ 
+-		pr_info("a50-dpu: enable gout_cmu_dispaud_disp ret=%d rate=%lu parent=%s\n",
++		say("enable gout_cmu_dispaud_disp ret=%d rate=%lu parent=%s\n",
+ 			ret, c ? clk_get_rate(c) : 0,
+ 			c && clk_get_parent(c) ? __clk_get_name(clk_get_parent(c)) : "-");
+ 	}
+ 	top_gate = readl(p + 0x2040);
+-	pr_info("a50-dpu: top MUX_CLKCMU_DISPAUD_DISP=0x%08x DIV=0x%08x GATE=0x%08x\n",
++	say("top MUX_CLKCMU_DISPAUD_DISP=0x%08x DIV=0x%08x GATE=0x%08x\n",
+ 		readl(p + 0x1038), readl(p + 0x1840), top_gate);
+ 	iounmap(p);
+ 	if (!gate_on(top_gate)) {
+-		pr_info("a50-dpu: TOP gate to DISPAUD off, nothing more read\n");
++		say("TOP gate to DISPAUD off, nothing more read\n");
+ 		return;
+ 	}
+ 
+@@ -161,14 +181,14 @@ static void a50_dpu_status(struct work_struct *w)
+ 	iounmap(p);
+ 
+ 	if (!gate_on(g_disp) || !gate_on(g_lhm)) {
+-		pr_info("a50-dpu: DISPAUD bus clock off, DPU blocks not read\n");
++		say("DISPAUD bus clock off, DPU blocks not read\n");
+ 		return;
+ 	}
+ 	if (gate_on(g_decon)) {
+ 		dump("decon", DECON_BASE, 0x2000, decon_regs, ARRAY_SIZE(decon_regs));
+ 		dump("dsim", DSIM_BASE, 0x100, dsim_regs, ARRAY_SIZE(dsim_regs));
+ 	} else {
+-		pr_info("a50-dpu: DECON clock off, decon/dsim not read\n");
++		say("DECON clock off, decon/dsim not read\n");
+ 	}
+ 	if (gate_on(g_dma) && gate_on(g_dpp)) {
+ 		dump("dma_com", DMA_COM_BASE, 0x110, dma_com_regs, ARRAY_SIZE(dma_com_regs));
+@@ -177,16 +197,32 @@ static void a50_dpu_status(struct work_struct *w)
+ 			dump(name, IDMA_BASE(ch), 0x1000, idma_regs, ARRAY_SIZE(idma_regs));
+ 		}
+ 	} else {
+-		pr_info("a50-dpu: DMA/DPP clock off, idma not read\n");
++		say("DMA/DPP clock off, idma not read\n");
+ 	}
+-	pr_info("a50-dpu: done\n");
++	say("done\n");
+ }
+ 
+ static DECLARE_WORK(a50_dpu_work, a50_dpu_status);
+ 
++static void a50_dpu_late(struct work_struct *w)
++{
++	char *p = a50_log, *nl;
++
++	pr_info("a50-dpu-late: repeat of the boot-time probe (%zu bytes)\n", a50_len);
++	while (*p && (nl = strchr(p, '\n'))) {
++		*nl = '\0';
++		pr_info("a50-dpu-late: %s\n", p);
++		p = nl + 1;
++	}
++	pr_info("a50-dpu-late: end\n");
++}
++
++static DECLARE_DELAYED_WORK(a50_dpu_late_work, a50_dpu_late);
++
+ static int __init a50_dpu_status_init(void)
+ {
+ 	queue_work(system_unbound_wq, &a50_dpu_work);
++	queue_delayed_work(system_unbound_wq, &a50_dpu_late_work, 405 * HZ);
+ 	return 0;
+ }
+ late_initcall(a50_dpu_status_init);
+-- 
+2.56.1
+

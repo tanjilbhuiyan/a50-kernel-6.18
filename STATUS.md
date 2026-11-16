@@ -15,8 +15,9 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
 - **Milestone:** M6 done, M7.1 done. **M7.2 in progress: D0 ran (2026-11-14, Claude Code)**. The TOP→DISPAUD clock is
   manual-off because of the 6.18 CMU init (range 0x8000, so every gate is forced to manual). D0b (2026-11-16):
   enabling only `gout_cmu_dispaud_disp` ran to the timed dump with no logged fault, but no USB gadget came up and the dump
-  window missed the probe lines (`log/2026-11-16-M7.2-d0b-display-clock.md`). Next: D0c re-prints the probe at about 400 s,
-  optionally after a D0 control on this setup. Office network: phone `192.168.181.225`. Log `log/2026-11-14-M7.2-d0-display-probe.md`; kernel test branch `a50-m72-d0-test`
+  window missed the probe lines (`log/2026-11-16-M7.2-d0b-display-clock.md`). D0c (2026-11-16) captured the display state:
+  DECON enabled in command mode, TE trigger masked, window 3/IDMA0 reading `0xca000000`, DSI configured, DPU SysMMU
+  clock off (`log/2026-11-16-M7.2-d0c-display-state.md`). Next: D1, the first frame update (design in that log). Office network: phone `192.168.181.225`. Log `log/2026-11-14-M7.2-d0-display-probe.md`; kernel test branch `a50-m72-d0-test`
   (`e5b86c629`). Phone restored, post-flight passed, fsck clean. The warning screen is normal during 6.18 boots: don't
   key-recover inside the runner window. M7.3 may start in parallel with G0 (read-only GPU ID probe; check the TOP G3D
   gate first). M7.1 audit and boot ladder:
