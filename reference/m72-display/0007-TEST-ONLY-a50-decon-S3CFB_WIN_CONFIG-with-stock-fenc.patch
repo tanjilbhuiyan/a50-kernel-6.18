@@ -1,0 +1,414 @@
+From b7e58452f19a40829618f18c635e3e3a15c9019d Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Mon, 16 Nov 2026 15:23:56 +0600
+Subject: [PATCH] TEST ONLY: a50-decon S3CFB_WIN_CONFIG with stock fences and a
+ CPU bridge (do not merge)
+
+M7.2 boot D2b. Accept the stock 1040-byte S3CFB_WIN_CONFIG argument
+(0x441046d1). As in the 4.14 dpu20 driver, each call creates one fence,
+returned as retire_fence and as rel_fence of every BUFFER window, and takes
+references to the buffer and acquire-fence fds without closing them. A
+call without BUFFER windows returns retire_fence -1.
+
+Until the DPU SysMMU attach (D3), BUFFER windows are not scanned out by
+DMA: an ordered worker waits for the acquire fences, copies each 8888
+layer into the boot framebuffer with the CPU (no scaling or blending;
+other formats and geometries are logged and skipped), sends one frame and
+signals the fence after frame done or 100 ms.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: Iab7bd83fecc6167005628a2ce6d7adfc95e1fd5e
+---
+ drivers/video/fbdev/a50-decon.c | 307 +++++++++++++++++++++++++++++++-
+ 1 file changed, 304 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/video/fbdev/a50-decon.c b/drivers/video/fbdev/a50-decon.c
+index a4562e860..01db86f09 100644
+--- a/drivers/video/fbdev/a50-decon.c
++++ b/drivers/video/fbdev/a50-decon.c
+@@ -18,7 +18,13 @@
+  *    (148b0000.decon_f), notified while S3CFB_SET_VSYNC_INT is on, as the
+  *    stock composer expects;
+  *  - S3CFB_POWER_MODE and FBIOBLANK accepted as no-ops (the panel stays on).
+- * S3CFB_WIN_CONFIG is not implemented yet (D2b).
++ *  - S3CFB_WIN_CONFIG (M7.2 D2b) with the stock 1040-byte argument and the
++ *    stock fence model: one fence per call, returned as retire_fence and as
++ *    rel_fence of every BUFFER window, signalled when the frame is out.
++ *    Until the SysMMU attach (D3), BUFFER windows are not scanned out by
++ *    DMA: after their acquire fences, the driver copies them with the CPU
++ *    into the boot framebuffer (8888 formats, no scaling or blending) and
++ *    sends one frame. Other formats are logged and skipped.
+  *
+  * Register writes: SHADOW_REG_UPDATE_REQ, HW_SW_TRIG_CONTROL and the W1C
+  * INTERRUPT_PENDING/EXTRA_INTERRUPT_PENDING. The panel, DSI, DPP/IDMA and
+@@ -26,17 +32,24 @@
+  */
+ #include <linux/clk.h>
+ #include <linux/delay.h>
++#include <linux/dma-buf.h>
++#include <linux/dma-fence.h>
+ #include <linux/fb.h>
++#include <linux/file.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
++#include <linux/iosys-map.h>
+ #include <linux/ktime.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_reserved_mem.h>
+ #include <linux/platform_device.h>
++#include <linux/slab.h>
+ #include <linux/spinlock.h>
++#include <linux/sync_file.h>
+ #include <linux/uaccess.h>
++#include <linux/wait.h>
+ #include <linux/workqueue.h>
+ 
+ #define FB_W			1080
+@@ -60,6 +73,70 @@
+ #define S3CFB_SET_VSYNC_INT	_IOW('F', 206, __u32)
+ #define S3CFB_POWER_MODE	_IOW('F', 223, __u32)
+ 
++/*
++ * S3CFB_WIN_CONFIG argument, laid out as 4.14 dpu20/decon.h and
++ * cal_9610/decon_cal.h (enums as 32-bit fields, dma_addr_t 64-bit).
++ * 1040 bytes on arm64, ioctl 0x441046d1 as captured in M1.3.
++ */
++#define A50_MAX_WIN		4
++#define A50_MAX_PLANE		3
++#define WIN_STATE_DISABLED	0
++#define WIN_STATE_COLOR		1
++#define WIN_STATE_BUFFER	2
++#define FMT_ARGB_8888		0	/* word 0xAARRGGBB, as the boot window */
++#define FMT_ABGR_8888		1	/* word 0xAABBGGRR, bytes R,G,B,A */
++#define FMT_XRGB_8888		4
++#define FMT_XBGR_8888		5
++
++struct a50_win_rect { s32 x, y; u32 w, h; };
++struct a50_frame { s32 x, y; u32 w, h, f_w, f_h; };
++struct a50_dpp_params {
++	u64 addr[A50_MAX_PLANE];
++	u32 rot, eq_mode, comp_src, hdr_std, min_luminance, max_luminance;
++};
++struct a50_win_config {
++	u32 state;
++	union {
++		u32 color;
++		struct {
++			s32 fd_idma[A50_MAX_PLANE];
++			s32 acq_fence;
++			s32 rel_fence;
++			s32 plane_alpha;
++			u32 blending, idma_type, format;
++			struct a50_dpp_params dpp_parm;
++			struct a50_win_rect block_area, transparent_area, opaque_area;
++			struct a50_frame src;
++		};
++	};
++	struct a50_frame dst;
++	bool protection;
++	bool compression;
++};
++struct a50_win_config_data {
++	s32 retire_fence;
++	s32 fd_odma;
++	struct a50_win_config config[A50_MAX_WIN + 1];
++	struct { s32 remained_frames; u32 reserved[7]; } extra;
++};
++static_assert(sizeof(struct a50_win_config_data) == 1040);
++#define S3CFB_WIN_CONFIG	_IOW('F', 209, struct a50_win_config_data)
++
++struct a50_layer {
++	struct dma_buf *buf;
++	struct dma_fence *acq;
++	u32 format;
++	struct a50_frame src, dst;
++};
++
++struct a50_update {
++	struct work_struct work;
++	struct a50_decon *d;
++	struct dma_fence *fence;
++	struct a50_layer layer[A50_MAX_WIN];
++	int nlayer;
++};
++
+ struct a50_decon {
+ 	struct device *dev;
+ 	void __iomem *regs;
+@@ -70,6 +147,12 @@ struct a50_decon {
+ 	ktime_t vsync_ts;
+ 	u32 frames_req, frames_done, frame_start, extra_irq, te_count, timeouts;
+ 	struct delayed_work timeout_work, report_work, late_work;
++	wait_queue_head_t frame_wq;
++	struct workqueue_struct *update_wq;
++	spinlock_t fence_lock;
++	u64 fence_ctx, fence_seq;
++	atomic_t remaining;
++	u32 win_configs, copied, skipped, acq_timeouts, frame_waits_timed_out;
+ 	u32 pseudo_palette[16];
+ };
+ 
+@@ -123,6 +206,7 @@ static irqreturn_t a50_decon_irq(int irq, void *data)
+ 	if (pend & FRAME_DONE_PEND) {
+ 		writel(FRAME_DONE_PEND, d->regs + INTERRUPT_PENDING);
+ 		d->frames_done++;
++		wake_up(&d->frame_wq);
+ 		if (d->frame_pending)
+ 			a50_decon_mask_locked(d);
+ 	}
+@@ -196,6 +280,214 @@ static int a50_fb_setcolreg(unsigned int regno, unsigned int red, unsigned int g
+ 	return 0;
+ }
+ 
++static const char *a50_fence_driver(struct dma_fence *f)
++{
++	return "a50-decon";
++}
++
++static const char *a50_fence_timeline(struct dma_fence *f)
++{
++	return "decon_f";
++}
++
++static const struct dma_fence_ops a50_fence_ops = {
++	.get_driver_name = a50_fence_driver,
++	.get_timeline_name = a50_fence_timeline,
++};
++
++/* Copy one layer into the boot framebuffer (CPU bridge until D3). */
++static void a50_copy_layer(struct a50_decon *d, struct a50_layer *l)
++{
++	struct iosys_map map;
++	u32 __iomem *fb = (u32 __iomem *)d->info->screen_base;
++	const u32 *src;
++	bool swap = l->format == FMT_ABGR_8888 || l->format == FMT_XBGR_8888;
++	bool opaque = l->format == FMT_XRGB_8888 || l->format == FMT_XBGR_8888;
++	u32 x, y, v;
++
++	if (l->format != FMT_ARGB_8888 && l->format != FMT_ABGR_8888 &&
++	    l->format != FMT_XRGB_8888 && l->format != FMT_XBGR_8888) {
++		dev_info_ratelimited(d->dev, "win_config: format %u not bridged\n", l->format);
++		d->skipped++;
++		return;
++	}
++	if (l->src.w != l->dst.w || l->src.h != l->dst.h || l->src.x < 0 || l->src.y < 0 ||
++	    l->dst.x < 0 || l->dst.y < 0 || l->dst.x + l->dst.w > FB_W || l->dst.y + l->dst.h > FB_H ||
++	    l->src.x + l->src.w > l->src.f_w || l->src.y + l->src.h > l->src.f_h ||
++	    (u64)l->src.f_w * l->src.f_h * 4 > l->buf->size) {
++		dev_info_ratelimited(d->dev, "win_config: geometry not bridged src %ux%u+%d+%d/%ux%u dst %ux%u+%d+%d\n",
++				     l->src.w, l->src.h, l->src.x, l->src.y, l->src.f_w, l->src.f_h,
++				     l->dst.w, l->dst.h, l->dst.x, l->dst.y);
++		d->skipped++;
++		return;
++	}
++	if (dma_buf_begin_cpu_access(l->buf, DMA_FROM_DEVICE) || dma_buf_vmap(l->buf, &map)) {
++		dev_info_ratelimited(d->dev, "win_config: buffer not mappable\n");
++		d->skipped++;
++		dma_buf_end_cpu_access(l->buf, DMA_FROM_DEVICE);
++		return;
++	}
++	src = map.vaddr;
++	for (y = 0; y < l->dst.h; y++) {
++		const u32 *s = src + (u64)(l->src.y + y) * l->src.f_w + l->src.x;
++		u32 __iomem *o = fb + (u64)(l->dst.y + y) * FB_W + l->dst.x;
++
++		for (x = 0; x < l->dst.w; x++) {
++			v = s[x];
++			if (swap)
++				v = (v & 0xff00ff00) | ((v >> 16) & 0xff) | ((v & 0xff) << 16);
++			if (opaque)
++				v |= 0xff000000;
++			writel_relaxed(v, o + x);
++		}
++	}
++	wmb();
++	dma_buf_vunmap(l->buf, &map);
++	dma_buf_end_cpu_access(l->buf, DMA_FROM_DEVICE);
++	d->copied++;
++}
++
++static void a50_update_work(struct work_struct *w)
++{
++	struct a50_update *u = container_of(w, struct a50_update, work);
++	struct a50_decon *d = u->d;
++	u32 before;
++	int i;
++
++	for (i = 0; i < u->nlayer; i++) {
++		if (u->layer[i].acq && dma_fence_wait_timeout(u->layer[i].acq, false, HZ) <= 0)
++			d->acq_timeouts++;
++		a50_copy_layer(d, &u->layer[i]);
++	}
++	before = d->frames_done;
++	a50_decon_trigger(d);
++	if (!wait_event_timeout(d->frame_wq, d->frames_done != before, msecs_to_jiffies(100)))
++		d->frame_waits_timed_out++;
++	dma_fence_signal(u->fence);
++	dma_fence_put(u->fence);
++	for (i = 0; i < u->nlayer; i++) {
++		if (u->layer[i].acq)
++			dma_fence_put(u->layer[i].acq);
++		dma_buf_put(u->layer[i].buf);
++	}
++	atomic_dec(&d->remaining);
++	kfree(u);
++}
++
++static int a50_win_config(struct a50_decon *d, void __user *argp)
++{
++	struct a50_win_config_data *wd;
++	struct a50_update *u;
++	struct sync_file *sf = NULL;
++	int fds[A50_MAX_WIN + 1], nfd = 0, i, ret;
++
++	wd = kmalloc(sizeof(*wd), GFP_KERNEL);
++	u = kzalloc(sizeof(*u), GFP_KERNEL);
++	if (!wd || !u) {
++		ret = -ENOMEM;
++		goto out_free;
++	}
++	if (copy_from_user(wd, argp, sizeof(*wd))) {
++		ret = -EFAULT;
++		goto out_free;
++	}
++	d->win_configs++;
++	u->d = d;
++	INIT_WORK(&u->work, a50_update_work);
++
++	for (i = 0; i < A50_MAX_WIN; i++) {
++		struct a50_win_config *c = &wd->config[i];
++		struct a50_layer *l;
++
++		c->rel_fence = -1;
++		if (c->state != WIN_STATE_BUFFER)
++			continue;
++		l = &u->layer[u->nlayer];
++		l->buf = dma_buf_get(c->fd_idma[0]);
++		if (IS_ERR(l->buf)) {
++			ret = PTR_ERR(l->buf);
++			l->buf = NULL;
++			goto out_put;
++		}
++		if (c->acq_fence >= 0) {
++			l->acq = sync_file_get_fence(c->acq_fence);
++			if (!l->acq) {
++				ret = -EINVAL;
++				dma_buf_put(l->buf);
++				l->buf = NULL;
++				goto out_put;
++			}
++		}
++		l->format = c->format;
++		l->src = c->src;
++		l->dst = c->dst;
++		u->nlayer++;
++	}
++
++	wd->retire_fence = -1;
++	if (!u->nlayer) {
++		/* stock driver: no active window, no retire fence */
++		ret = copy_to_user(argp, wd, sizeof(*wd)) ? -EFAULT : 0;
++		goto out_free;
++	}
++
++	u->fence = kzalloc(sizeof(*u->fence), GFP_KERNEL);
++	if (!u->fence) {
++		ret = -ENOMEM;
++		goto out_put;
++	}
++	dma_fence_init(u->fence, &a50_fence_ops, &d->fence_lock, d->fence_ctx, ++d->fence_seq);
++	sf = sync_file_create(u->fence);
++	if (!sf) {
++		ret = -ENOMEM;
++		goto out_put;
++	}
++	/* one fd for retire, one per BUFFER window for release, all on the same fence */
++	for (nfd = 0; nfd < 1 + u->nlayer; nfd++) {
++		fds[nfd] = get_unused_fd_flags(O_CLOEXEC);
++		if (fds[nfd] < 0) {
++			ret = fds[nfd];
++			goto out_fds;
++		}
++	}
++	wd->retire_fence = fds[0];
++	for (i = 0, nfd = 1; i < A50_MAX_WIN; i++)
++		if (wd->config[i].state == WIN_STATE_BUFFER)
++			wd->config[i].rel_fence = fds[nfd++];
++	wd->extra.remained_frames = atomic_inc_return(&d->remaining);
++	if (copy_to_user(argp, wd, sizeof(*wd))) {
++		atomic_dec(&d->remaining);
++		ret = -EFAULT;
++		goto out_fds;
++	}
++	for (i = 1; i < nfd; i++)
++		fd_install(fds[i], get_file(sf->file));
++	fd_install(fds[0], sf->file);
++	dma_fence_get(u->fence);	/* reference for the worker */
++	queue_work(d->update_wq, &u->work);
++	dma_fence_put(u->fence);	/* creator's reference; sync_file holds its own */
++	kfree(wd);
++	return 0;
++
++out_fds:
++	while (nfd-- > 0)
++		put_unused_fd(fds[nfd]);
++	fput(sf->file);
++	sf = NULL;
++out_put:
++	if (u->fence && !sf)
++		dma_fence_put(u->fence);
++	for (i = 0; i < u->nlayer; i++) {
++		if (u->layer[i].acq)
++			dma_fence_put(u->layer[i].acq);
++		dma_buf_put(u->layer[i].buf);
++	}
++out_free:
++	kfree(u);
++	kfree(wd);
++	return ret;
++}
++
+ static int a50_fb_ioctl(struct fb_info *info, unsigned int cmd, unsigned long arg)
+ {
+ 	struct a50_decon *d = info->par;
+@@ -207,6 +499,8 @@ static int a50_fb_ioctl(struct fb_info *info, unsigned int cmd, unsigned long ar
+ 			return -EFAULT;
+ 		d->vsync_on = !!v;
+ 		return 0;
++	case S3CFB_WIN_CONFIG:
++		return a50_win_config(d, (void __user *)arg);
+ 	case S3CFB_POWER_MODE:
+ 		if (get_user(v, (u32 __user *)arg))
+ 			return -EFAULT;
+@@ -230,10 +524,11 @@ static const struct fb_ops a50_fb_ops = {
+ 
+ static void a50_decon_log(struct a50_decon *d, const char *when)
+ {
+-	dev_info(d->dev, "%s: frames req=%u done=%u start=%u timeouts=%u extra=%u te=%u FRAME_COUNT=%u GLOBAL=0x%08x TRIG=0x%08x vsync_on=%d\n",
++	dev_info(d->dev, "%s: frames req=%u done=%u start=%u timeouts=%u extra=%u te=%u FRAME_COUNT=%u GLOBAL=0x%08x TRIG=0x%08x vsync_on=%d win_configs=%u copied=%u skipped=%u acq_timeouts=%u frame_wait_timeouts=%u\n",
+ 		 when, d->frames_req, d->frames_done, d->frame_start, d->timeouts, d->extra_irq,
+ 		 d->te_count, readl(d->regs + FRAME_COUNT), readl(d->regs + GLOBAL_CONTROL),
+-		 readl(d->regs + TRIG_CTRL), d->vsync_on);
++		 readl(d->regs + TRIG_CTRL), d->vsync_on, d->win_configs, d->copied, d->skipped,
++		 d->acq_timeouts, d->frame_waits_timed_out);
+ }
+ 
+ static void a50_decon_report(struct work_struct *w)
+@@ -263,6 +558,12 @@ static int a50_decon_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	d->dev = dev;
+ 	spin_lock_init(&d->lock);
++	spin_lock_init(&d->fence_lock);
++	init_waitqueue_head(&d->frame_wq);
++	d->fence_ctx = dma_fence_context_alloc(1);
++	d->update_wq = alloc_ordered_workqueue("a50-decon-update", WQ_HIGHPRI);
++	if (!d->update_wq)
++		return -ENOMEM;
+ 	INIT_DELAYED_WORK(&d->timeout_work, a50_decon_timeout);
+ 	INIT_DELAYED_WORK(&d->report_work, a50_decon_report);
+ 	INIT_DELAYED_WORK(&d->late_work, a50_decon_late);
+-- 
+2.56.1
+

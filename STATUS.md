@@ -22,8 +22,9 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
   (`log/2026-11-16-M7.2-d1-first-frame.md`, kernel `a50-m72-d1-test` `3a9d3da33`). **D2a PASS (2026-11-16):**
   the `a50-decon` fbdev driver (kernel `a50-m72-d2a2-test` `cd08e9304`, DT `src/m72/dt-d2.img`) gives `/dev/fb0` with
   frames on pan and 60 Hz TE vsync; the owner saw the test pattern. It needed a 9610 TOP pinctrl GPIO-interrupt fix
-  (bound for the clean stack). `log/2026-11-16-M7.2-d2a-fbdev-driver.md`. Next: D2b (`S3CFB_WIN_CONFIG` and fences),
-  then D3 (SysMMU scanout). Confirm owner presence before every flash. Office network: phone `192.168.181.225`. Log `log/2026-11-14-M7.2-d0-display-probe.md`; kernel test branch `a50-m72-d0-test`
+  (bound for the clean stack). `log/2026-11-16-M7.2-d2a-fbdev-driver.md`. **D2b PASS:** `S3CFB_WIN_CONFIG` with stock
+  fences works (kernel `a50-m72-d2b-test` `b7e58452f`, CPU-copy bridge, ~300 ms/frame;
+  `log/2026-11-16-M7.2-d2b-win-config.md`). Next: D3 (SysMMU attach, DMA scanout). Confirm owner presence before every flash. Office network: phone `192.168.181.225`. Log `log/2026-11-14-M7.2-d0-display-probe.md`; kernel test branch `a50-m72-d0-test`
   (`e5b86c629`). Phone restored, post-flight passed, fsck clean. The warning screen is normal during 6.18 boots: don't
   key-recover inside the runner window. M7.3 may start in parallel with G0 (read-only GPU ID probe; check the TOP G3D
   gate first). M7.1 audit and boot ladder:
