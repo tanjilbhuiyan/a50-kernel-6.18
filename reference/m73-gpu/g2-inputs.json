@@ -1,0 +1,54 @@
+{
+ "test": "M7.3 G2: kbase without the probe-only restriction; stock GLES via libhybris tests",
+ "kernel_branch": "a50-m73-g1-wip",
+ "kernel_commit": "c04d5ada5 (tree 2c8ab17e16c6, as G1b)",
+ "single_variable": "CONFIG_CMDLINE without mali_kbase.a50_g1_probe_only=1",
+ "dt": "src/m73/dt-g1.img (DTB identical to G1b)",
+ "runner": "DT_IMG=src/m73/dt-g1.img tools/m32_run_test.sh src/m73/boot-g2.img reference/m73-gpu/g2-dump.txt 192.168.0.171 540",
+ "files": {
+  "src/m73/boot-g2.img": {
+   "size": 30302208,
+   "sha256": "bf0934e7f727502e615be471d1fec9c93ab0c83b2b369c72dc3c59a87276e93a"
+  },
+  "src/m73/g2-as-built/Image": {
+   "size": 30296072,
+   "sha256": "89e4c1668cf59701581231aefb28ff2f89f596f6f1cba94da9a0245dd36f141c"
+  },
+  "src/m73/g2-as-built/.config": {
+   "size": 94166,
+   "sha256": "638b7ff228fc42ac420fbf88df89987301385ea49cc26649524fa4997e617a58"
+  },
+  "src/m73/g2-as-built/initramfs_data.cpio": {
+   "size": 25954816,
+   "sha256": "c855bb6eee66af35fc8ae2f21f2c85407d6cd46b9bf648b80e9a81672dd192a2"
+  },
+  "reference/m73-gpu/g2.config": {
+   "size": 94079,
+   "sha256": "259bf6e8b9a74a66ebef181f60cbf8dbfac6d9fc2d042316d34b861f990fc70c"
+  },
+  "src/m73/dt-g1.img": {
+   "size": 8388608,
+   "sha256": "dee291ace91ab19f9d241d3c7cd42557e109f066ddf0c38eb69a6a7b1f97625c"
+  },
+  "reference/dt-6.18/images/dtbo.img": {
+   "size": 8388608,
+   "sha256": "6d81cce87faca914d75f024f36e183ae6592e61adc786bbb6c7c47cdd3a151fe"
+  },
+  "reference/stock-images/dt.img": {
+   "size": 8388608,
+   "sha256": "59209aa52dc3b35e2c7cc025c465ed1cdb48dadaa13cf5d1f50324b3bf503547"
+  },
+  "reference/stock-images/dtbo.img": {
+   "size": 8388608,
+   "sha256": "40e47ed1477a8ffb6cbb34e5cb59a1af786c2552544f3b556373f3c553d40d21"
+  },
+  "baseline/ut-26.04-2026-10-19-aa17rf2/boot.img": {
+   "size": 53624832,
+   "sha256": "7d5855efd34e01f09659c7d47ecb0773c30f2acc7443ee87181a0536804086c5"
+  },
+  "tools/m73/build_g2.sh": {
+   "size": 2814,
+   "sha256": "021ab682b855d968581d26e5e9a081ecfec4a8c8ddf91281c86338aeeba2bc83"
+  }
+ }
+}

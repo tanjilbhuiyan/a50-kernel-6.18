@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-17 (M7.3 G1b native/compat metadata passed; baseline restored)
+Updated: 2026-11-17 (G2b cancellation/fence diagnosis complete; baseline restored)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -11,19 +11,32 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
 ## RESUME HERE (2026-11-17)
 - **Active ticket:** `tasks/M7.3-mali-kbase.md`, in progress. M7.1 and M7.2 are done.
   G1b now exposes `/dev/mali0`; native and AArch32 VERSION_CHECK 11.27 and GET_GPUPROPS pass (82 properties each).
-  These establish metadata only; allocation/import/cache/fences/GPU jobs/rendering are still unvalidated.
-- **Phone:** baseline restored 01:04:24, boot 01:04:38 on 2026-11-17. Home Wi-Fi `192.168.0.171`, kernel 4.14.194,
-  battery 99% Charging. Stock DTB/DTBO/BOOT hashes passed; saved fsck clean (6523/3440640 files, 1986158/13745152 blocks).
-  No test active. G1b had USB root SSH at `10.15.19.82` and passed metadata probes before its timed dump/restore.
-  Owner confirmed present/USB/Claude idle separately for G1 and G1b. Both restores/fsck passed. Reverify on resumption.
+  G2 removed the metadata restriction: client `4021_7` queued work but stalled on active fence context 1 (300 warnings),
+  then panicked in `kbase_cancel_soft_job()` during cancellation. Rendering/completion remains unverified.
+- **Latest G2b result:** cancellation fix survived the GLES timeout; no kernel panic, normal timed dump and clean restore.
+  Display context 1 is confirmed as `a50-decon`/`decon_f`. All 1800 buffer updates are single-layer format 2 (RGBA_8888),
+  unsupported by the current display path: 1800 skipped, zero CPU copies, zero DMA scanouts. The queue progresses and
+  drains to pending zero/1800 completions despite 603 fence-wait warnings. Slow CPU pixel copying is not demonstrated.
+  `test_egl` exits 139 (userspace SIGSEGV); `test_glesv2` times out 124. Owner saw black/flicker, no recognizable scene.
+  Rendering remains unverified. Log `log/2026-11-17-M7.3-g2b.md`; results `reference/m73-gpu/g2b-results.json`.
+  Config/DTB/cpio are identical to G2; full build/link and host regression controls pass.
+  BOOT `src/m73/boot-g2b.img`, SHA `56da9fe40fe969fe643ce0e77446ca895a244126722af0cf36b539b9ed27dc42`.
+  Exact inputs and frozen scripts: `reference/m73-gpu/g2b-inputs.json`, `g2b-scripts/`. Recipe `tools/m73/G2b.md`.
+- **Owner screen observation:** G2 blackened/flickered then returned to baseline UI; G2b also black/flicker only, no scene.
+  G2's observation is in `log/2026-11-17-M7.3-g2-observation.md`; G2b now identifies the presentation format gap.
+- **Phone:** baseline restored 01:59:18, boot 01:59:33 on 2026-11-17. Home Wi-Fi `192.168.0.171`, kernel 4.14.194,
+  battery 100% Charging. Stock DTB/DTBO/BOOT hashes passed; saved fsck clean (6518/3440640 files, 1989376/13745152 blocks).
+  No test active. Owner confirmed presence/USB/Claude idle for the completed G2b cycle. Reverify on resumption.
 - **Fix:** G1 failed before GPU initialization: legacy raw IORESOURCE_IRQ lookup returned no IRQ 0.
   G1b changes only IRQ acquisition to `platform_get_irq_byname()` and `irq_get_trigger_type()`. Config/DTB/cpio identical.
   The GPU identifies as Mali-G72 r0p1 MP3 at the measured fixed 260 MHz. No DVFS, power-domain switching or secure calls.
-- **Diagnostic restriction:** built-in `mali_kbase.a50_g1_probe_only=1` permits only VERSION_CHECK, SET_FLAGS and GET_GPUPROPS.
-  Allocation/job requests return EOPNOTSUPP; the tests verify this. Keep the restriction explicit for future tests.
-- **Git handoff:** outer starting HEAD `6793249`; current G1/G1b tools/evidence/docs are uncommitted.
-  Shared kernel is **dirty on `a50-m73-g1-wip/6df856849`**, with inherited Claude port edits plus this continuation.
-  Preserve the WIP; do not switch to `a50-usb` with these changes. No source commit or production-branch changes this session.
+- **Diagnostic restriction:** G1/G1b used `mali_kbase.a50_g1_probe_only=1`; G2 removes it. The source defaults to unrestricted
+  ioctls without that parameter. Keep this config distinction explicit for future tests.
+- **Git handoff:** outer HEAD `dbbc6a8` records G1/G1b. G2 tools/evidence, observation follow-up and completed G2b work are uncommitted.
+  Shared kernel is **clean on `a50-usb/4fbb731f5`**; GPU base/G2 source is committed on `a50-m73-g1-wip/c04d5ada5`.
+  G2b uses isolated worktree `src/m73/g2b-kernel`, dirty on `a50-m73-g2b-wip/c04d5ada5` (no source commit made).
+  Candidate tree `89009e6d9e9170360d724a9e6258c2a917e66389`, exported as `g2b-cancel.patch` and `g2b-display-diagnostics.patch`.
+  Build output `src/ack-6.18/out/m73-g2b`; all artifacts frozen under `src/m73/g2b-as-built/`.
   Exact G1b source tree `2c8ab17e16c68ae7a72ed3c814f08d39894e5413`; reconstruct from M6 source using
   `reference/m73-gpu/g1-kernel.patch` then `g1b-irq.patch` (both verified by tree hash).
 - **Build/artifacts:** tools/recipe `tools/m73/README.md`; full config `reference/m73-gpu/g1.config`.
@@ -31,8 +44,12 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
   `g1b-as-built/`. G1b BOOT `src/m73/boot-g1b.img`, SHA `1c545ebc84c1daea807dd7dc935aebfb3ae1be6c15d4193d529ba96bc06edd43`.
   DT `src/m73/dt-g1.img`, SHA `dee291ace91ab19f9d241d3c7cd42557e109f066ddf0c38eb69a6a7b1f97625c`.
   Exact manifests/as-run scripts under `reference/m73-gpu/g1*-inputs.json`, `g1*-scripts/`; log `log/2026-11-17-M7.3-g1-kbase.md`.
-- **Next action:** prepare controlled allocation/import/sync and real GPU execution tests with the metadata restriction
-  removed in a separate boot. M7.3 is not done. Confirm owner presence before every flash.
+- **Latest G2 inputs:** `reference/m73-gpu/g2-inputs.json`, config `g2.config`; BOOT `src/m73/boot-g2.img`, SHA
+  `bf0934e7f727502e615be471d1fec9c93ab0c83b2b369c72dc3c59a87276e93a`. DTB/cpio unchanged from G1b.
+- **Next action:** address observed display format 2 (RGBA_8888) before judging visible rendering. Audit stock ABI-to-DPP
+  byte-order translation and geometry/stride, then test known colors and GLES. Source evidence:
+  `reference/m73-gpu/g2b-format-analysis.md`. Track the separate EGL userspace SIGSEGV. M7.3 is not done.
+  Confirm owner presence/exclusive access before any new phone test.
 
 ## Earlier handoff (2026-11-14–16; historical)
 - **Connection:** home `192.168.0.171`. Final stock restore completed 2026-11-14 at 02:57:44, baseline boot time

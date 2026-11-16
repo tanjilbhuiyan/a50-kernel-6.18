@@ -1,0 +1,177 @@
+diff --git a/drivers/video/fbdev/a50-decon.c b/drivers/video/fbdev/a50-decon.c
+index 47e724ab5..3b08e2852 100644
+--- a/drivers/video/fbdev/a50-decon.c
++++ b/drivers/video/fbdev/a50-decon.c
+@@ -196,8 +196,39 @@ struct a50_decon {
+ 	bool blanked;
+ 	u32 dcs_sent, dcs_timeouts, blanks, unblanks;
+ 	u32 pseudo_palette[16];
++	/* TEST ONLY G2b: passive snapshots, never used to control the worker. */
++	const char *g2b_stage;
++	u64 g2b_worker_seq;
++	u32 g2b_worker_layers, g2b_completed;
++	u32 g2b_layer_counts[A50_MAX_WIN + 1], g2b_formats[A50_MAX_WIN];
+ };
+ 
++static ssize_t g2b_stats_show(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	struct a50_decon *d = dev_get_drvdata(dev);
++	ssize_t len;
++	int i;
++
++	if (!d)
++		return -ENODEV;
++	/* No hw_lock: reads must remain available when the update worker is blocked. */
++	len = sysfs_emit(buf, "fence_ctx=%llu fence_seq=%llu pending=%d win_configs=%u scanned=%u copied=%u dma_fallbacks=%u skipped=%u acq_timeouts=%u completed=%u stage=%s worker_seq=%llu worker_layers=%u\n",
++		 (unsigned long long)READ_ONCE(d->fence_ctx),
++		 (unsigned long long)READ_ONCE(d->fence_seq), atomic_read(&d->remaining),
++		 READ_ONCE(d->win_configs), READ_ONCE(d->scanned), READ_ONCE(d->copied),
++		 READ_ONCE(d->dma_fallbacks), READ_ONCE(d->skipped), READ_ONCE(d->acq_timeouts),
++		 READ_ONCE(d->g2b_completed), READ_ONCE(d->g2b_stage),
++		 (unsigned long long)READ_ONCE(d->g2b_worker_seq), READ_ONCE(d->g2b_worker_layers));
++	for (i = 0; i <= A50_MAX_WIN; i++)
++		len += sysfs_emit_at(buf, len, "layers%d=%u ", i, READ_ONCE(d->g2b_layer_counts[i]));
++	for (i = 0; i < A50_MAX_WIN; i++)
++		len += sysfs_emit_at(buf, len, "worker_format%d=%u ", i, READ_ONCE(d->g2b_formats[i]));
++	return len + sysfs_emit_at(buf, len, "\n");
++}
++static DEVICE_ATTR_RO(g2b_stats);
++static struct attribute *g2b_attrs[] = { &dev_attr_g2b_stats.attr, NULL };
++static const struct attribute_group g2b_group = { .attrs = g2b_attrs };
++
+ static void a50_decon_mask_locked(struct a50_decon *d)
+ {
+ 	u32 v = readl(d->regs + TRIG_CTRL);
+@@ -419,12 +450,14 @@ static void a50_copy_layer(struct a50_decon *d, struct a50_layer *l)
+ 		d->skipped++;
+ 		return;
+ 	}
++	WRITE_ONCE(d->g2b_stage, "cpu-access-or-vmap");
+ 	if (dma_buf_begin_cpu_access(l->buf, DMA_FROM_DEVICE) || dma_buf_vmap(l->buf, &map)) {
+ 		dev_info_ratelimited(d->dev, "win_config: buffer not mappable\n");
+ 		d->skipped++;
+ 		dma_buf_end_cpu_access(l->buf, DMA_FROM_DEVICE);
+ 		return;
+ 	}
++	WRITE_ONCE(d->g2b_stage, "cpu-pixels");
+ 	src = map.vaddr;
+ 	for (y = 0; y < l->dst.h; y++) {
+ 		const u32 *s = src + (u64)(l->src.y + y) * l->src.f_w + l->src.x;
+@@ -440,6 +473,7 @@ static void a50_copy_layer(struct a50_decon *d, struct a50_layer *l)
+ 		}
+ 	}
+ 	wmb();
++	WRITE_ONCE(d->g2b_stage, "cpu-vunmap-or-end");
+ 	dma_buf_vunmap(l->buf, &map);
+ 	dma_buf_end_cpu_access(l->buf, DMA_FROM_DEVICE);
+ 	d->copied++;
+@@ -552,11 +586,25 @@ static void a50_update_work(struct work_struct *w)
+ 	u32 iova = 0;
+ 	int i;
+ 
++	WRITE_ONCE(d->g2b_worker_seq, u->fence->seqno);
++	WRITE_ONCE(d->g2b_worker_layers, u->nlayer);
++	for (i = 0; i < A50_MAX_WIN; i++)
++		WRITE_ONCE(d->g2b_formats[i], i < u->nlayer ? u->layer[i].format : ~0U);
++	WRITE_ONCE(d->g2b_stage, "hw-lock");
+ 	mutex_lock(&d->hw_lock);
+-	for (i = 0; i < u->nlayer; i++)
++	WRITE_ONCE(d->g2b_stage, "acquire-fences");
++	for (i = 0; i < u->nlayer; i++) {
++		if (u->layer[i].acq && (u->fence->seqno <= 8 || !(u->fence->seqno & 127)))
++			dev_info(d->dev, "G2b acquire: out=%llu#%llu layer=%d in=%llu#%llu signaled_bit=%d\n",
++				 (unsigned long long)u->fence->context, (unsigned long long)u->fence->seqno, i,
++				 (unsigned long long)u->layer[i].acq->context,
++				 (unsigned long long)u->layer[i].acq->seqno,
++				 test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &u->layer[i].acq->flags));
+ 		if (u->layer[i].acq && dma_fence_wait_timeout(u->layer[i].acq, false, HZ) <= 0)
+ 			d->acq_timeouts++;
++	}
+ 
++	WRITE_ONCE(d->g2b_stage, "dma-map");
+ 	if (u->nlayer == 1 && a50_dma_eligible(&u->layer[0]))
+ 		iova = a50_scan_map(d, &u->layer[0], &att, &sgt);
+ 
+@@ -572,6 +620,7 @@ static void a50_update_work(struct work_struct *w)
+ 		d->scan_att = att;
+ 		d->scan_sgt = sgt;
+ 		d->scanned++;
++		WRITE_ONCE(d->g2b_stage, "dma-frame-sync");
+ 		a50_frame_sync(d);
+ 		a50_scan_release(ob, oa, os);
+ 	} else {
+@@ -579,11 +628,14 @@ static void a50_update_work(struct work_struct *w)
+ 			d->dma_fallbacks++;
+ 		for (i = 0; i < u->nlayer; i++)
+ 			a50_copy_layer(d, &u->layer[i]);
++		WRITE_ONCE(d->g2b_stage, "bootfb-frame-sync");
+ 		a50_show_bootfb_locked(d);
+ 	}
+ 	mutex_unlock(&d->hw_lock);
+ 
++	WRITE_ONCE(d->g2b_stage, "signal-release");
+ 	dma_fence_signal(u->fence);
++	d->g2b_completed++;
+ 	dma_fence_put(u->fence);
+ 	for (i = 0; i < u->nlayer; i++) {
+ 		if (u->layer[i].acq)
+@@ -591,6 +643,7 @@ static void a50_update_work(struct work_struct *w)
+ 		dma_buf_put(u->layer[i].buf);
+ 	}
+ 	atomic_dec(&d->remaining);
++	WRITE_ONCE(d->g2b_stage, "idle");
+ 	kfree(u);
+ }
+ 
+@@ -644,6 +697,7 @@ static int a50_win_config(struct a50_decon *d, void __user *argp)
+ 		u->nlayer++;
+ 	}
+ 
++	d->g2b_layer_counts[u->nlayer]++;
+ 	wd->retire_fence = -1;
+ 	if (!u->nlayer) {
+ 		/* stock driver: no active window, no retire fence */
+@@ -680,6 +734,12 @@ static int a50_win_config(struct a50_decon *d, void __user *argp)
+ 		ret = -EFAULT;
+ 		goto out_fds;
+ 	}
++	if (u->fence->seqno <= 8 || !(u->fence->seqno & 127))
++		for (i = 0; i < u->nlayer; i++)
++			dev_info(d->dev, "G2b WIN_CONFIG: fence=%llu#%llu layers=%d layer=%d format=%u dma_eligible=%d pending=%d\n",
++				 (unsigned long long)u->fence->context, (unsigned long long)u->fence->seqno,
++				 u->nlayer, i, u->layer[i].format, a50_dma_eligible(&u->layer[i]),
++				 atomic_read(&d->remaining));
+ 	for (i = 1; i < nfd; i++)
+ 		fd_install(fds[i], get_file(sf->file));
+ 	fd_install(fds[0], sf->file);
+@@ -748,6 +808,11 @@ static const struct fb_ops a50_fb_ops = {
+ 
+ static void a50_decon_log(struct a50_decon *d, const char *when)
+ {
++	dev_info(d->dev, "G2b fence owner: context=%llu driver=a50-decon timeline=decon_f seq=%llu pending=%d stage=%s worker_seq=%llu worker_layers=%u completed=%u\n",
++		 (unsigned long long)READ_ONCE(d->fence_ctx), (unsigned long long)READ_ONCE(d->fence_seq),
++		 atomic_read(&d->remaining), READ_ONCE(d->g2b_stage),
++		 (unsigned long long)READ_ONCE(d->g2b_worker_seq), READ_ONCE(d->g2b_worker_layers),
++		 READ_ONCE(d->g2b_completed));
+ 	dev_info(d->dev, "%s: frames req=%u done=%u start=%u timeouts=%u extra=%u te=%u FRAME_COUNT=%u GLOBAL=0x%08x TRIG=0x%08x vsync_on=%d win_configs=%u copied=%u skipped=%u acq_timeouts=%u frame_wait_timeouts=%u scanned=%u dma_fallbacks=%u shadow_wait_timeouts=%u IDMA0=0x%08x blanks=%u unblanks=%u dcs=%u dcs_timeouts=%u\n",
+ 		 when, d->frames_req, d->frames_done, d->frame_start, d->timeouts, d->extra_irq,
+ 		 d->te_count, readl(d->regs + FRAME_COUNT), readl(d->regs + GLOBAL_CONTROL),
+@@ -783,6 +848,7 @@ static int a50_decon_probe(struct platform_device *pdev)
+ 	if (!d)
+ 		return -ENOMEM;
+ 	d->dev = dev;
++	d->g2b_stage = "idle";
+ 	spin_lock_init(&d->lock);
+ 	spin_lock_init(&d->fence_lock);
+ 	mutex_init(&d->hw_lock);
+@@ -895,6 +961,10 @@ static int a50_decon_probe(struct platform_device *pdev)
+ 		return dev_err_probe(dev, ret, "register_framebuffer\n");
+ 	}
+ 	dev_info(dev, "fb%d on the boot framebuffer %pR\n", info->node, fbres);
++	/* Diagnostics may be absent if sysfs setup fails; never alter the display path. */
++	ret = devm_device_add_group(dev, &g2b_group);
++	if (ret)
++		dev_warn(dev, "G2b stats creation failed: %d\n", ret);
+ 	{
+ 		/* M7.2 D3a diagnostics: IOMMU domain and the boot framebuffer mapping. */
+ 		struct iommu_domain *dom = iommu_get_domain_for_dev(dev);

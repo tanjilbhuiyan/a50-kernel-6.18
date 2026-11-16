@@ -1,0 +1,149 @@
+{
+  "test": "M7.3 G2b: cancellation fix and passive display/fence diagnostics",
+  "outer_base": "dbbc6a8f82069eaa5dc325e8e0919b6eceece220",
+  "kernel_base_commit": "c04d5ada5e58173d61e2bbf634b0a17cea98c0a6",
+  "kernel_source_tree": "89009e6d9e9170360d724a9e6258c2a917e66389",
+  "worktree": "src/m73/g2b-kernel",
+  "branch": "a50-m73-g2b-wip",
+  "source_uncommitted": true,
+  "config_dtb_cpio_identical_to_G2": true,
+  "build_workspace": "src/ack-6.18/out/m73-g2b",
+  "functional_change": "remove vendor process page-table walk from soft-job cancellation",
+  "diagnostics": "read-only display fence context, WIN_CONFIG layer/format/path counters and worker stage; no fence behavior changed",
+  "backup_sha256": "22cb95a536489c89a738cae3105859c041a15b298c4140c6a1a018883f7bd896",
+  "files": {
+    "src/m73/g2b-as-built/.config": {
+      "size": 94166,
+      "sha256": "638b7ff228fc42ac420fbf88df89987301385ea49cc26649524fa4997e617a58"
+    },
+    "src/m73/g2b-as-built/Image": {
+      "size": 30296072,
+      "sha256": "63389f79eaf861cc98431cd61a7583f55bc89f3cb68d316ecfe2d74b1dcc4508"
+    },
+    "src/m73/g2b-as-built/vmlinux": {
+      "size": 34073176,
+      "sha256": "7ba9c792122641d14fd76f1c567731f1a6cfad8d1b24fb8c06d3c18fa5b5bdba"
+    },
+    "src/m73/g2b-as-built/System.map": {
+      "size": 3023339,
+      "sha256": "b4e2eddf17b113c510767e38eddaae7744749d5ed126b3c16973dee339ac79e2"
+    },
+    "src/m73/g2b-as-built/initramfs_data.cpio": {
+      "size": 25954816,
+      "sha256": "c855bb6eee66af35fc8ae2f21f2c85407d6cd46b9bf648b80e9a81672dd192a2"
+    },
+    "src/m73/g2b-as-built/exynos9610-a50-g1.dtb": {
+      "size": 17929,
+      "sha256": "c30e8fb32689b12726ac56581432de2ad9bde55e4017b2afc168b299ccd2ef1a"
+    },
+    "tools/m73/build_g2b.sh": {
+      "size": 2953,
+      "sha256": "a66d2b30f7ba5c0c70ee8623f08de25821f5471e9b9f8f532b553663c95219b3"
+    },
+    "tools/m73/cancel_unittest.py": {
+      "size": 4307,
+      "sha256": "01bcd0a080eb2b5a797611c890e8cafc36eb440aed23b32966a4405e78a34119"
+    },
+    "tools/m73/collect_g2b.sh": {
+      "size": 1904,
+      "sha256": "7a206286fa207a86a8b846723ccdf1fa5d3bcc888afcb2dfb07b8cc970d1d19f"
+    },
+    "tools/m73/run_g2b.sh": {
+      "size": 3466,
+      "sha256": "516a0441e7ac7f41acf8702fec926870324613390e1b1878acd1fcc0c3de0e7a"
+    },
+    "tools/m54/watch_ssh.py": {
+      "size": 4321,
+      "sha256": "f656a6f1092266c2214ba0f3afee37ac81b0b62620b7feb57cadf6a71db52bfd"
+    },
+    "tools/m32_run_test.sh": {
+      "size": 4209,
+      "sha256": "0de47c72a2bada4b792214211b32d6bdad03bc24a4a0446fdc383418f20e8d87"
+    },
+    "tools/m22_pack.sh": {
+      "size": 1098,
+      "sha256": "08212aa1743ed07df3447dc8414d634e775a4bc224e945b570a86be1c3757097"
+    },
+    "src/a50-halium/build/pack-boot-image.py": {
+      "size": 2058,
+      "sha256": "b685295db12c167bd804a3801c595f4d3b26812c62906f187e869e3b39f0cb74"
+    },
+    "src/m73/boot-g2b.img": {
+      "size": 30302208,
+      "sha256": "56da9fe40fe969fe643ce0e77446ca895a244126722af0cf36b539b9ed27dc42"
+    },
+    "src/m73/dt-g1.img": {
+      "size": 8388608,
+      "sha256": "dee291ace91ab19f9d241d3c7cd42557e109f066ddf0c38eb69a6a7b1f97625c"
+    },
+    "reference/dt-6.18/images/dtbo.img": {
+      "size": 8388608,
+      "sha256": "6d81cce87faca914d75f024f36e183ae6592e61adc786bbb6c7c47cdd3a151fe"
+    },
+    "reference/stock-images/dt.img": {
+      "size": 8388608,
+      "sha256": "59209aa52dc3b35e2c7cc025c465ed1cdb48dadaa13cf5d1f50324b3bf503547"
+    },
+    "reference/stock-images/dtbo.img": {
+      "size": 8388608,
+      "sha256": "40e47ed1477a8ffb6cbb34e5cb59a1af786c2552544f3b556373f3c553d40d21"
+    },
+    "baseline/ut-26.04-2026-10-19-aa17rf2/boot.img": {
+      "size": 53624832,
+      "sha256": "7d5855efd34e01f09659c7d47ecb0773c30f2acc7443ee87181a0536804086c5"
+    },
+    "reference/m73-gpu/g2.config": {
+      "size": 94079,
+      "sha256": "259bf6e8b9a74a66ebef181f60cbf8dbfac6d9fc2d042316d34b861f990fc70c"
+    },
+    "reference/m73-gpu/g2b-cancel.patch": {
+      "size": 1005,
+      "sha256": "8fceeb83bb26260cde136b2a2beaa2377123c31085bdf70ea7191ca867911e45"
+    },
+    "reference/m73-gpu/g2b-display-diagnostics.patch": {
+      "size": 7701,
+      "sha256": "f0722666e3f9da1cf14bb1cc97696fd1ad27182fb1093a5314ba8ecc080a7d7d"
+    },
+    "src/m73/g2b-backup-hash.txt": {
+      "size": 113,
+      "sha256": "2b9e1952c14a7ac9f9e8a63d62bf2930ca43f1013f024939af4b8b7a9bd95e36"
+    }
+  },
+  "source_snapshots": {
+    "tools/m73/build_g2b.sh": "reference/m73-gpu/g2b-scripts/build_g2b.sh",
+    "tools/m73/cancel_unittest.py": "reference/m73-gpu/g2b-scripts/cancel_unittest.py",
+    "tools/m73/collect_g2b.sh": "reference/m73-gpu/g2b-scripts/collect_g2b.sh",
+    "tools/m73/run_g2b.sh": "reference/m73-gpu/g2b-scripts/run_g2b.sh",
+    "tools/m54/watch_ssh.py": "reference/m73-gpu/g2b-scripts/watch_ssh.py",
+    "tools/m32_run_test.sh": "reference/m73-gpu/g2b-scripts/m32_run_test.sh",
+    "tools/m22_pack.sh": "reference/m73-gpu/g2b-scripts/m22_pack.sh",
+    "src/a50-halium/build/pack-boot-image.py": "reference/m73-gpu/g2b-scripts/pack-boot-image.py"
+  },
+  "toolchain_revisions": [
+    {
+      "path": "prebuilts/clang/host/linux-x86",
+      "url": "https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86",
+      "revision": "4a7d0a5e443c27d8f68fbd46abfab464e1355a69"
+    },
+    {
+      "path": "prebuilts/rust-toolchain/linux-x86",
+      "url": "https://android.googlesource.com/platform/prebuilts/rust-toolchain/linux-x86",
+      "revision": "a04f70c5179f23eff11c58cb480acee4afb1334b"
+    },
+    {
+      "path": "prebuilts/clang-tools",
+      "url": "https://android.googlesource.com/platform/prebuilts/clang-tools",
+      "revision": "4155cb466dcd9b53c6f873829c53aa6f905449dd"
+    },
+    {
+      "path": "prebuilts/kernel-build-tools",
+      "url": "https://android.googlesource.com/kernel/prebuilts/build-tools",
+      "revision": "78af2daf5d9d36fc6e1ddb28ee0d7b6516709eb4"
+    },
+    {
+      "path": "prebuilts/build-tools",
+      "url": "https://android.googlesource.com/platform/prebuilts/build-tools",
+      "revision": "e25d4821f50af3f6e0b87d7751dfd27037445fe5"
+    }
+  ]
+}

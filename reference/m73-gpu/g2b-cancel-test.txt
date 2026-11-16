@@ -1,0 +1,5 @@
+fixed real source: PASS: fence/event cancellation with NULL mm and empty user page table
+original vendor source: signal 11
+early return on NULL mm: lost cancellation: fences=1 events=1
+omit fence cancellation: lost cancellation: fences=0 events=2
+RESULT: PASS (original crash reproduced; both lost-cleanup regressions caught)

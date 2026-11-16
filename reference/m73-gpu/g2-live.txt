@@ -1,0 +1,29 @@
+6.18.33-a50-diag+
+50.70
+crw-rw-rw- 1 root root 10, 257 Apr 30  2026 /dev/mali0
+--- display/GPU services
+failed
+1498 lomiri-location-serviced --bus system --provider gps::Provider --provider remote::Provider
+2671 bash -c uname -r; cat /proc/uptime | cut -d" " -f1; ls -l /dev/mali0; dmesg | grep -i -E "mali|kbase" | tail -8; echo "--- display/GPU services"; systemctl is-active lightdm 2>&1; pgrep -a -f "lomiri|unity-system-compositor|mir" | head -5
+=== test_egl 01:20:43
+ERROR: Failed to load hybris linker for Android SDK version 30: /usr/lib/aarch64-linux-gnu/libhybris/linker/q.so: cannot allocate memory in static TLS block
+exit=0
+[   50.428071] systemd[2578]: Listening on pk-debconf-helper.socket - debconf communication socket.
+/etc/systemd/system.conf.d/lxc-android-config.conf
+/etc/systemd/user.conf.d/lxc-android-config.conf
+/etc/profile.d/ld_preload_tls_padding.sh
+/etc/profile.d/hybris-static-tls.sh
+/etc/ld.so.cache
+DefaultEnvironment=GLIBC_TUNABLES=glibc.rtld.optional_static_tls=4096
+DefaultEnvironment=GLIBC_TUNABLES=glibc.rtld.optional_static_tls=4096
+case ":${GLIBC_TUNABLES}:" in
+=== test_egl (login shell) 01:21:10
+78.62
+GLIBC_TUNABLES=glibc.rtld.optional_static_tls=4096
+exit=0
+[   50.428071] systemd[2578]: Listening on pk-debconf-helper.socket - debconf communication socket.
+[   61.375772] systemd[2578]: Closed pk-debconf-helper.socket - debconf communication socket.
+[   66.709220] systemd[3143]: Listening on pk-debconf-helper.socket - debconf communication socket.
+[   77.358548] systemd[3143]: Closed pk-debconf-helper.socket - debconf communication socket.
+[   78.409002] systemd[3502]: Listening on pk-debconf-helper.socket - debconf communication socket.
+=== test_egl rc, then test_glesv2 01:21:22

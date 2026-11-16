@@ -1,0 +1,1936 @@
+
+CMD: uname -r
+6.18.33-a50-diag+
+RC=0
+
+CMD: cat /proc/uptime
+35.11 206.73
+RC=0
+
+CMD: cat /sys/module/mali_kbase/parameters/a50_g1_probe_only
+N
+RC=0
+
+CMD: ls -l /dev/mali0 /dev/fb0
+crw-rw---- 1 root video 29,   0 Apr 30  2026 /dev/fb0
+crw-rw-rw- 1 root root  10, 257 Apr 30  2026 /dev/mali0
+RC=0
+
+CMD: sha256sum /usr/bin/test_egl /usr/bin/test_glesv2
+45a7127a417e80458476c306b37fbad430ee1921799c26ecec6f5a6ab2288b41  /usr/bin/test_egl
+b255d57ba197542e3d3b778149186610b4e081f135470a957a13c170186d59bd  /usr/bin/test_glesv2
+RC=0
+
+CMD: cat /sys/devices/platform/148b0000.decon_f/g2b_stats
+fence_ctx=1 fence_seq=0 pending=0 win_configs=2 scanned=0 copied=0 dma_fallbacks=0 skipped=0 acq_timeouts=0 completed=0 stage=idle worker_seq=0 worker_layers=0
+layers0=2 layers1=0 layers2=0 layers3=0 layers4=0 worker_format0=0 worker_format1=0 worker_format2=0 worker_format3=0
+RC=0
+
+CMD: /bin/sh -c grep -E "mali|decon" /proc/interrupts
+ 58:          3          0          0          0          0          0          0          0 GIC-0 231 Level     148b0000.decon_f
+ 59:          2          0          0          0          0          0          0          0 GIC-0 232 Level     148b0000.decon_f
+ 60:          0          0          0          0          0          0          0          0 GIC-0 235 Level     148b0000.decon_f
+ 61:       1934          0          0          0          0          0          0          0     gpc2   3 Edge      a50-decon-te
+ 62:          0          0          0          0          0          0          0          0 GIC-0  98 Level     11500000.mali
+ 63:          0          0          0          0          0          0          0          0 GIC-0  99 Level     11500000.mali
+ 64:         13          0          0          0          0          0          0          0 GIC-0  97 Level     11500000.mali
+RC=0
+
+G2B_EGL_BEGIN 2026-11-17T01:51:15+06:00
+GLIBC_TUNABLES=glibc.rtld.optional_static_tls=4096
+G2B_EGL_RC=139
+
+CMD: cat /sys/devices/platform/148b0000.decon_f/g2b_stats
+Segmentation fault
+fence_ctx=1 fence_seq=0 pending=0 win_configs=2 scanned=0 copied=0 dma_fallbacks=0 skipped=0 acq_timeouts=0 completed=0 stage=idle worker_seq=0 worker_layers=0
+layers0=2 layers1=0 layers2=0 layers3=0 layers4=0 worker_format0=0 worker_format1=0 worker_format2=0 worker_format3=0
+RC=0
+
+G2B_GLES_BEGIN 2026-11-17T01:51:15+06:00
+GLIBC_TUNABLES=glibc.rtld.optional_static_tls=4096
+G2B_GLES_RC=124
+G2B_POST_CANCEL 2026-11-17T01:51:45+06:00
+
+CMD: cat /proc/uptime
+68.77 403.94
+RC=0
+
+CMD: cat /sys/devices/platform/148b0000.decon_f/g2b_stats
+fence_ctx=1 fence_seq=1800 pending=41 win_configs=1803 scanned=0 copied=0 dma_fallbacks=1760 skipped=1760 acq_timeouts=0 completed=1759 stage=bootfb-frame-sync worker_seq=1760 worker_layers=1
+layers0=3 layers1=1800 layers2=0 layers3=0 layers4=0 worker_format0=2 worker_format1=4294967295 worker_format2=4294967295 worker_format3=4294967295
+RC=0
+
+CMD: /bin/sh -c grep -E "mali|decon" /proc/interrupts
+ 58:       1759          0          0          0          0          0          0          0 GIC-0 231 Level     148b0000.decon_f
+ 59:       1758          0          0          0          0          0          0          0 GIC-0 232 Level     148b0000.decon_f
+ 60:          0          0          0          0          0          0          0          0 GIC-0 235 Level     148b0000.decon_f
+ 61:       3724          0          0          0          0          0          0          0     gpc2   3 Edge      a50-decon-te
+ 62:          2          0          0          0          0          0          0          0 GIC-0  98 Level     11500000.mali
+ 63:          0          0          0          0          0          0          0          0 GIC-0  99 Level     11500000.mali
+ 64:        149          0          0          0          0          0          0          0 GIC-0  97 Level     11500000.mali
+RC=0
+
+CMD: ps -eo pid,stat,wchan:32,comm
+    PID STAT WCHAN                            COMMAND
+      1 Ss   do_epoll_wait                    systemd
+      2 S    kthreadd                         kthreadd
+      3 S    kthread_worker_fn                pool_workqueue_release
+      4 I<   rescuer_thread                   kworker/R-rcu_gp
+      5 I<   rescuer_thread                   kworker/R-sync_wq
+      6 I<   rescuer_thread                   kworker/R-kvfree_rcu_reclaim
+      7 I<   rescuer_thread                   kworker/R-slub_flushwq
+      8 I<   rescuer_thread                   kworker/R-netns
+      9 I    worker_thread                    kworker/0:0-rcu_gp
+     10 I<   worker_thread                    kworker/0:0H-events_highpri
+     11 I    worker_thread                    kworker/0:1-mm_percpu_wq
+     12 I    worker_thread                    kworker/u32:0-ipv6_addrconf
+     13 I<   rescuer_thread                   kworker/R-mm_percpu_wq
+     14 S    smpboot_thread_fn                ksoftirqd/0
+     15 I    rcu_gp_fqs_loop                  rcu_sched
+     16 S    kthread_worker_fn                rcu_exp_par_gp_kthread_worker/0
+     17 S    kthread_worker_fn                rcu_exp_gp_kthread_worker
+     18 S    smpboot_thread_fn                migration/0
+     19 S    smpboot_thread_fn                cpuhp/0
+     20 S    smpboot_thread_fn                cpuhp/1
+     21 S    smpboot_thread_fn                migration/1
+     22 S    smpboot_thread_fn                ksoftirqd/1
+     23 I    worker_thread                    kworker/1:0-events
+     24 I<   worker_thread                    kworker/1:0H-events_highpri
+     25 S    smpboot_thread_fn                cpuhp/2
+     26 S    smpboot_thread_fn                migration/2
+     27 S    smpboot_thread_fn                ksoftirqd/2
+     28 I    worker_thread                    kworker/2:0-cgroup_release
+     29 I<   worker_thread                    kworker/2:0H-events_highpri
+     30 S    smpboot_thread_fn                cpuhp/3
+     31 S    smpboot_thread_fn                migration/3
+     32 S    smpboot_thread_fn                ksoftirqd/3
+     33 I    worker_thread                    kworker/3:0-cgroup_bpf_destroy
+     34 I<   worker_thread                    kworker/3:0H-events_highpri
+     35 S    smpboot_thread_fn                cpuhp/4
+     36 S    smpboot_thread_fn                migration/4
+     37 S    smpboot_thread_fn                ksoftirqd/4
+     38 I    worker_thread                    kworker/4:0-cgroup_free
+     39 I<   worker_thread                    kworker/4:0H-events_highpri
+     40 S    smpboot_thread_fn                cpuhp/5
+     41 S    smpboot_thread_fn                migration/5
+     42 S    smpboot_thread_fn                ksoftirqd/5
+     43 I    worker_thread                    kworker/5:0-mm_percpu_wq
+     44 I<   worker_thread                    kworker/5:0H-events_highpri
+     45 S    smpboot_thread_fn                cpuhp/6
+     46 S    smpboot_thread_fn                migration/6
+     47 S    smpboot_thread_fn                ksoftirqd/6
+     48 I    worker_thread                    kworker/6:0-mm_percpu_wq
+     49 I<   worker_thread                    kworker/6:0H-events_highpri
+     50 S    smpboot_thread_fn                cpuhp/7
+     51 S    smpboot_thread_fn                migration/7
+     52 S    smpboot_thread_fn                ksoftirqd/7
+     53 I    worker_thread                    kworker/7:0-events
+     54 I<   worker_thread                    kworker/7:0H-events_highpri
+     55 I    worker_thread                    kworker/u33:0-events_unbound
+     56 I    worker_thread                    kworker/u34:0-kvfree_rcu_reclaim
+     57 I    worker_thread                    kworker/u35:0-events_unbound
+     58 I    worker_thread                    kworker/u36:0-events_unbound
+     59 I    worker_thread                    kworker/u37:0-loop0
+     60 I    worker_thread                    kworker/u38:0-loop0
+     61 I    worker_thread                    kworker/u39:0-loop0
+     62 I    worker_thread                    kworker/u40:0-events_unbound
+     63 S    devtmpfs_work_loop               kdevtmpfs
+     64 I<   rescuer_thread                   kworker/R-inet_frag_wq
+     65 I    rcu_tasks_one_gp                 rcu_tasks_trace_kthread
+     66 S    kauditd_thread                   kauditd
+     67 D<   a50_show_bootfb_locked           kworker/u41:0+a50-decon-update
+     68 S    oom_reaper                       oom_reaper
+     69 I    worker_thread                    kworker/u33:1-events_unbound
+     70 I<   rescuer_thread                   kworker/R-writeback
+     71 I<   rescuer_thread                   kworker/R-kblockd
+     72 I    worker_thread                    kworker/2:1-mm_percpu_wq
+     73 I<   rescuer_thread                   kworker/R-devfreq_wq
+     74 I    worker_thread                    kworker/u35:1-loop1
+     75 I    worker_thread                    kworker/6:1-cgroup_free
+     76 I    worker_thread                    kworker/u39:1-loop0
+     77 I<   worker_thread                    kworker/6:1H-kblockd
+     78 S    kswapd                           kswapd0
+     79 S    ecryptfs_threadfn                ecryptfs-kthread
+     80 S    irq_thread                       irq/61-a50-decon-te
+     81 I<   worker_thread                    kworker/u42:0-kbase_pm_poweroff_wait
+     82 I<   worker_thread                    kworker/u43:0
+     83 I<   worker_thread                    kworker/u44:0-kbase_pm_shader_poweroff
+     84 I<   worker_thread                    kworker/u45:0-kbase_pm_shader_poweroff
+     85 I<   worker_thread                    kworker/u46:0-kbase_pm_shader_poweroff
+     86 I<   worker_thread                    kworker/u47:0
+     87 I<   worker_thread                    kworker/u48:0
+     88 I<   worker_thread                    kworker/u49:0-kbase_pm_shader_poweroff
+     89 I<   rescuer_thread                   kworker/R-kbase_job_fault_resume_work_que
+     90 I<   worker_thread                    kworker/u42:1
+     91 S    kthread_worker_fn                mali_jd_thread
+     92 S    kthread_worker_fn                mali_event_thread
+     93 S    scsi_error_handler               scsi_eh_0
+     94 I<   rescuer_thread                   kworker/R-scsi_tmf_0
+     95 I<   rescuer_thread                   kworker/R-ufs_eh_wq_0
+     96 S    irq_thread                       irq/65-ufshcd
+     97 I<   rescuer_thread                   kworker/R-mld
+     98 I<   rescuer_thread                   kworker/R-ipv6_addrconf
+     99 I<   worker_thread                    kworker/0:1H-kblockd
+    100 S<   wait_woken                       krfcommd
+    101 I    worker_thread                    kworker/u32:1-netns
+    102 I    worker_thread                    kworker/u33:2-events_unbound
+    103 I    worker_thread                    kworker/u33:3-events_unbound
+    106 I    worker_thread                    kworker/u33:4-loop0
+    107 I    worker_thread                    kworker/u37:1-loop1
+    108 I    worker_thread                    kworker/u33:5
+    109 I    worker_thread                    kworker/u33:6-loop0
+    110 I    worker_thread                    kworker/u37:2-loop0
+    111 I    worker_thread                    kworker/4:1-mm_percpu_wq
+    112 I    worker_thread                    kworker/4:2-cgroup_offline
+    113 I    worker_thread                    kworker/1:1-events
+    114 I    worker_thread                    kworker/5:1-mm_percpu_wq
+    115 I    worker_thread                    kworker/7:1-cgroup_offline
+    116 I    worker_thread                    kworker/3:1-cgroup_offline
+    136 I<   worker_thread                    kworker/4:1H-kblockd
+    142 I<   worker_thread                    kworker/7:1H-kblockd
+    143 I<   worker_thread                    kworker/5:1H-kblockd
+    144 I<   worker_thread                    kworker/2:1H-kblockd
+    145 I<   worker_thread                    kworker/3:1H-kblockd
+    151 I<   worker_thread                    kworker/1:1H-kblockd
+    215 S    kjournald2                       jbd2/sda32-8
+    216 I<   rescuer_thread                   kworker/R-ext4-rsv-conversion
+    221 I    worker_thread                    kworker/u35:2-events_unbound
+    222 I    worker_thread                    kworker/u39:2-flush-8:0
+    225 S    kjournald2                       jbd2/loop0-8
+    226 I<   rescuer_thread                   kworker/R-ext4-rsv-conversion
+    229 I    worker_thread                    kworker/u34:1
+    230 I    worker_thread                    kworker/u34:2-loop0
+    232 I    worker_thread                    kworker/u36:1-loop0
+    234 I    worker_thread                    kworker/u36:2
+    235 I    worker_thread                    kworker/u36:3-kvfree_rcu_reclaim
+    238 I<   rescuer_thread                   kworker/R-ext4-rsv-conversion
+    245 I    worker_thread                    kworker/u37:3-kvfree_rcu_reclaim
+    269 I    worker_thread                    kworker/u38:1
+    416 I    worker_thread                    kworker/u34:3
+    430 S    do_wait                          sh
+    437 S    do_wait                          sh
+    439 I    worker_thread                    kworker/u38:2-kvfree_rcu_reclaim
+    440 I    worker_thread                    kworker/u40:1-loop0
+    441 I    worker_thread                    kworker/u40:2-loop0
+    442 S    devkmsg_read                     dmesg
+    466 S    psi_rtpoll_worker                psimon
+    469 S<s  do_epoll_wait                    systemd-journal
+    487 I    worker_thread                    kworker/2:2-events
+    578 D    synchronize_rcu_normal           kworker/7:2+events
+    598 I<   rescuer_thread                   kworker/R-ext4-rsv-conversion
+    648 Ss   do_epoll_wait                    systemd-udevd
+    731 S    psi_rtpoll_worker                psimon
+    842 I    worker_thread                    kworker/4:3
+    846 I    worker_thread                    kworker/u35:3-events_unbound
+    863 Ss   do_epoll_wait                    lxc-start
+    869 I    worker_thread                    kworker/1:2-events
+    870 Ssl  do_epoll_wait                    init
+    891 I    worker_thread                    kworker/u38:3
+    896 S    do_sys_poll                      init
+    898 S    do_sys_poll                      ueventd
+    940 I    worker_thread                    kworker/u40:3-events_unbound
+    944 I    worker_thread                    kworker/u39:3-loop0
+    964 SNl  sigsuspend                       logd
+    965 S    do_epoll_wait                    servicemanager
+    966 S    do_epoll_wait                    hwservicemanage
+    967 S    do_epoll_wait                    vndservicemanag
+    985 Sl   binder_ioctl_write_read          Binder:56_2
+   1078 Sl   binder_ioctl_write_read          suspend@1.0-ser
+   1079 S    arm64_sys_nanosleep              android.hardwar
+   1080 S    binder_ioctl_write_read          engmode@1.0-ser
+   1083 S    binder_ioctl_write_read          vaultkeeper@2.0
+   1112 Ssl  do_epoll_wait                    systemd-timesyn
+   1116 I    worker_thread                    kworker/6:2-cgroup_release
+   1143 S    do_epoll_wait                    tombstoned
+   1148 Sl   do_epoll_wait                    Binder:119_2
+   1152 S    binder_ioctl_write_read          allocator@1.0-s
+   1153 S    binder_ioctl_write_read          netd@1.1-servic
+   1154 S    do_epoll_wait                    healthd
+   1156 Sl   binder_ioctl_write_read          bluetooth@1.0-s
+   1158 Sl   binder_ioctl_write_read          configstore@1.1
+   1159 Sl   binder_ioctl_write_read          drm@1.3-service
+   1161 S    binder_ioctl_write_read          gatekeeper@1.0-
+   1162 Sl   binder_ioctl_write_read          allocator@2.0-s
+   1163 Sl   binder_ioctl_write_read          composer@2.1-se
+   1164 S    do_epoll_wait                    android.hardwar
+   1167 S    binder_ioctl_write_read          memtrack@1.0-se
+   1168 Sl   binder_ioctl_write_read          sensors@2.0-ser
+   1169 S    binder_ioctl_write_read          wifi@1.0-servic
+   1170 Sl   binder_ioctl_write_read          ant@1.0-service
+   1171 Sl   binder_ioctl_write_read          vendor.samsung.
+   1172 S    binder_ioctl_write_read          vendor.samsung.
+   1173 S    binder_ioctl_write_read          android.hardwar
+   1174 Sl   binder_ioctl_write_read          samsung.hardwar
+   1176 S    binder_ioctl_write_read          miscpower@2.0-s
+   1177 Sl   binder_ioctl_write_read          drk@2.0-service
+   1178 Sl   binder_ioctl_write_read          snap@1.2-servic
+   1179 S    binder_ioctl_write_read          sysinput@1.1-se
+   1180 Sl   binder_ioctl_write_read          thermal@1.0-ser
+   1181 S    binder_ioctl_write_read          vibrator@2.2-se
+   1182 S    binder_ioctl_write_read          wifi@2.0-servic
+   1183 S    binder_ioctl_write_read          ExynosHWCServic
+   1184 Sl   binder_ioctl_write_read          configstore@1.0
+   1185 Sl   binder_ioctl_write_read          ofi@1.0-service
+   1186 Sl   binder_ioctl_write_read          credstore
+   1187 Sl   binder_ioctl_write_read          Binder:156_2
+   1266 I    worker_thread                    kworker/u36:4
+   1267 Sl   do_sys_poll                      traced_probes
+   1270 Sl   do_sys_poll                      traced
+   1275 Ssl  do_sys_poll                      accounts-daemon
+   1278 Ssl  do_sys_poll                      biometryd
+   1280 Sl   binder_ioctl_write_read          drmserver
+   1292 Sl   binder_ioctl_write_read          Binder:216_2
+   1296 I    worker_thread                    kworker/u37:4
+   1297 Ss   do_epoll_wait                    dbus-daemon
+   1302 Sl   do_epoll_wait                    Binder:219_3
+   1304 Sl   binder_ioctl_write_read          Binder:220_2
+   1305 Ssl  do_sys_poll                      hfd-service
+   1314 Sl   futex_wait                       keystore
+   1319 Sl   binder_ioctl_write_read          mediaextractor
+   1325 Sl   binder_ioctl_write_read          mediametrics
+   1331 Ssl  do_sys_poll                      sensorfwd
+   1336 Sl   binder_ioctl_write_read          minimediaservic
+   1345 SNl  binder_ioctl_write_read          storaged
+   1351 Sl   do_epoll_wait                    wificond
+   1363 S    arm64_sys_nanosleep              cbd
+   1366 Ss   do_epoll_wait                    systemd-logind
+   1384 Sl   arm64_sys_nanosleep              gpsd
+   1385 Ssl  do_sys_poll                      udisksd
+   1401 Sl   binder_ioctl_write_read          gnss@2.0-servic
+   1403 Ssl  do_sys_poll                      urfkilld
+   1436 Sl   futex_wait                       mediaswcodec
+   1444 Sl   binder_ioctl_write_read          gatekeeperd
+   1446 Sl   binder_ioctl_write_read          fingerprint@3.0
+   1449 I    worker_thread                    kworker/u35:4
+   1490 Ssl  do_sys_poll                      usb_moded
+   1510 I    worker_thread                    kworker/u39:4-kvfree_rcu_reclaim
+   1512 Ssl  do_sys_poll                      nfcd
+   1549 I    worker_thread                    kworker/6:3-cgroup_free
+   1551 I    worker_thread                    kworker/6:4
+   1557 I    worker_thread                    kworker/3:2-mm_percpu_wq
+   1561 I    worker_thread                    kworker/3:3-events
+   1572 S    irq_thread                       irq/66-dwc3
+   1592 Ssl  do_sys_poll                      mechanicd
+   1593 Ssl  do_sys_poll                      ofonod
+   1594 Ssl  do_sys_poll                      polkitd
+   1596 Ss   do_select                        wpa_supplicant
+   1606 Ssl  do_sys_poll                      lomiri-location
+   1607 I    worker_thread                    kworker/u32:2
+   1611 Ssl  do_sys_poll                      NetworkManager
+   1615 I    worker_thread                    kworker/u40:4
+   1630 Ss   do_sys_poll                      busybox
+   1638 Ssl  do_sys_poll                      upowerd
+   1755 Ss   do_epoll_wait                    lxc-monitord
+   1760 Ss   do_select                        dhcpd
+   1776 Ss   do_sys_poll                      sshd
+   1786 I    worker_thread                    kworker/5:2-events
+   1797 Ss   do_sys_poll                      sshd
+   1821 Ss   do_wait                          a50-audio-speak
+   1822 S<sl do_sys_poll                      aethercast
+   1885 Ss   do_epoll_wait                    systemd
+   1893 S    do_sigtimedwait                  (sd-pam)
+   1967 Ss   do_sys_poll                      mpris-proxy
+   1973 Ss   do_epoll_wait                    dbus-daemon
+   1976 I<   worker_thread                    kworker/u46:1
+   1984 Ssl  futex_wait                       pulseaudio
+   1990 SNsl do_sys_poll                      rtkit-daemon
+   2074 Ss   do_epoll_wait                    systemd
+   2088 S    do_sigtimedwait                  (sd-pam)
+   2153 S    psi_rtpoll_worker                psimon
+   2178 Ssl  do_sys_poll                      audiosystem-pas
+   2186 I<   worker_thread                    kworker/u45:1
+   2227 Ssl  do_sys_poll                      sshd-session
+   2228 Ssl  do_sys_poll                      sshd-session
+   2230 Ssl  do_sys_poll                      sshd-session
+   2265 S    do_sys_poll                      sshd-session
+   2266 Ss   do_wait                          bash
+   2298 S    do_sys_poll                      sshd-session
+   2299 Ss   do_wait                          sh
+   2305 S    do_sys_poll                      sshd-session
+   2307 Ss   devkmsg_read                     dmesg
+   2373 I    worker_thread                    kworker/0:2-events
+   2407 I<   worker_thread                    kworker/u41:1
+   2408 I<   worker_thread                    kworker/u49:1-kbase_pm_shader_poweroff
+   3628 I<   worker_thread                    kworker/u44:1
+   3681 S    do_wait                          a50-audio-speak
+   3682 S    anon_pipe_read                   grep
+   3683 Sl   do_wait                          su
+   3693 Ss   do_sys_poll                      pactl
+   3759 S    hrtimer_nanosleep                sleep
+   3767 Ssl  do_sys_poll                      lightdm
+   3780 Rsl+ -                                lomiri-system-c
+   3793 S    hrtimer_nanosleep                sleep
+   3794 S    arm64_sys_nanosleep              vaultkeeperd
+   3834 R    -                                camera_service
+   3856 S    do_sigtimedwait                  timeout
+   3857 S    hrtimer_nanosleep                sleep
+   3858 R    -                                ps
+RC=0
+
+CMD: systemctl show -p SystemState -p NFailedUnits -p NJobs
+NFailedUnits=0
+NJobs=4
+SystemState=starting
+RC=0
+
+CMD: systemctl --failed --no-pager --plain
+UNIT LOAD ACTIVE SUB DESCRIPTION
+
+0 loaded units listed.
+RC=0
+
+CMD: lxc-info -n android
+Name:           android
+State:          RUNNING
+PID:            870
+IP:             10.15.19.82
+RC=0
+
+CMD: findmnt -no TARGET,OPTIONS /userdata
+/userdata rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+RC=0
+
+CMD: dmesg
+[   55.015891] mali 11500000.mali: ctx 2355_4: Atom 104 still waiting for fence [00000000f7c550b9] after 3000ms
+[   55.015896] mali 11500000.mali: 	Guilty fence [00000000f7c550b9] 1#1153: active
+[   55.015900] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.015904] mali 11500000.mali: ctx 2355_4: Atom 105 still waiting for fence [0000000053d02be0] after 3000ms
+[   55.015909] mali 11500000.mali: 	Guilty fence [0000000053d02be0] 1#1154: active
+[   55.015913] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.015917] mali 11500000.mali: ctx 2355_4: Atom 4 still waiting for fence [00000000a7966cae] after 3000ms
+[   55.015922] mali 11500000.mali: 	Guilty fence [00000000a7966cae] 1#1155: active
+[   55.015926] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.015930] mali 11500000.mali: ctx 2355_4: Atom 106 still waiting for fence [00000000079dace6] after 3000ms
+[   55.015935] mali 11500000.mali: 	Guilty fence [00000000079dace6] 1#1156: active
+[   55.015939] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.015943] mali 11500000.mali: ctx 2355_4: Atom 107 still waiting for fence [0000000058d0f3b9] after 3000ms
+[   55.015948] mali 11500000.mali: 	Guilty fence [0000000058d0f3b9] 1#1157: active
+[   55.015952] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.015956] mali 11500000.mali: ctx 2355_4: Atom 108 still waiting for fence [0000000033418014] after 3000ms
+[   55.015962] mali 11500000.mali: 	Guilty fence [0000000033418014] 1#1158: active
+[   55.015966] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.015970] mali 11500000.mali: ctx 2355_4: Atom 26 still waiting for fence [0000000085f2238d] after 3000ms
+[   55.015975] mali 11500000.mali: 	Guilty fence [0000000085f2238d] 1#1159: active
+[   55.015979] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.015983] mali 11500000.mali: ctx 2355_4: Atom 109 still waiting for fence [00000000704a9362] after 3000ms
+[   55.015988] mali 11500000.mali: 	Guilty fence [00000000704a9362] 1#1160: active
+[   55.015992] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.015996] mali 11500000.mali: ctx 2355_4: Atom 110 still waiting for fence [0000000036d9af88] after 3000ms
+[   55.016002] mali 11500000.mali: 	Guilty fence [0000000036d9af88] 1#1161: active
+[   55.016006] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.016010] mali 11500000.mali: ctx 2355_4: Atom 111 still waiting for fence [000000001bcbb680] after 3000ms
+[   55.016015] mali 11500000.mali: 	Guilty fence [000000001bcbb680] 1#1162: active
+[   55.016019] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.016023] mali 11500000.mali: ctx 2355_4: Atom 112 still waiting for fence [000000007e9826bc] after 3000ms
+[   55.016028] mali 11500000.mali: 	Guilty fence [000000007e9826bc] 1#1163: active
+[   55.016032] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.016036] mali 11500000.mali: ctx 2355_4: Atom 27 still waiting for fence [00000000a8786165] after 3000ms
+[   55.016041] mali 11500000.mali: 	Guilty fence [00000000a8786165] 1#1164: active
+[   55.016045] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.016050] mali 11500000.mali: ctx 2355_4: Atom 113 still waiting for fence [0000000057b92f7d] after 3000ms
+[   55.016055] mali 11500000.mali: 	Guilty fence [0000000057b92f7d] 1#1165: active
+[   55.016059] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.016064] mali 11500000.mali: ctx 2355_4: Atom 114 still waiting for fence [00000000a04b8340] after 3000ms
+[   55.016069] mali 11500000.mali: 	Guilty fence [00000000a04b8340] 1#1166: active
+[   55.016073] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.016077] mali 11500000.mali: ctx 2355_4: Atom 28 still waiting for fence [00000000d52a6b4e] after 3000ms
+[   55.016082] mali 11500000.mali: 	Guilty fence [00000000d52a6b4e] 1#1167: active
+[   55.016086] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.016091] mali 11500000.mali: ctx 2355_4: Atom 115 still waiting for fence [000000007dffda77] after 3000ms
+[   55.016096] mali 11500000.mali: 	Guilty fence [000000007dffda77] 1#1168: active
+[   55.016100] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.016104] mali 11500000.mali: ctx 2355_4: Atom 116 still waiting for fence [000000004d60ba28] after 3000ms
+[   55.016109] mali 11500000.mali: 	Guilty fence [000000004d60ba28] 1#1169: active
+[   55.016114] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.016118] mali 11500000.mali: ctx 2355_4: Atom 117 still waiting for fence [00000000b274af03] after 3000ms
+[   55.016123] mali 11500000.mali: 	Guilty fence [00000000b274af03] 1#1170: active
+[   55.016127] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.016131] mali 11500000.mali: ctx 2355_4: Atom 29 still waiting for fence [00000000058d4305] after 3000ms
+[   55.016136] mali 11500000.mali: 	Guilty fence [00000000058d4305] 1#1171: active
+[   55.016140] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.016145] mali 11500000.mali: ctx 2355_4: Atom 118 still waiting for fence [00000000980bf726] after 3000ms
+[   55.016150] mali 11500000.mali: 	Guilty fence [00000000980bf726] 1#1172: active
+[   55.016154] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.016158] mali 11500000.mali: ctx 2355_4: Atom 119 still waiting for fence [000000006263f774] after 3000ms
+[   55.016164] mali 11500000.mali: 	Guilty fence [000000006263f774] 1#1173: active
+[   55.016168] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.016172] mali 11500000.mali: ctx 2355_4: Atom 120 still waiting for fence [00000000c4d02e08] after 3000ms
+[   55.016177] mali 11500000.mali: 	Guilty fence [00000000c4d02e08] 1#1174: active
+[   55.016181] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.016187] mali 11500000.mali: ctx 2355_4: Atom 5 still waiting for fence [00000000c88783cf] after 3000ms
+[   55.016192] mali 11500000.mali: 	Guilty fence [00000000c88783cf] 1#1175: active
+[   55.016196] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.016200] mali 11500000.mali: ctx 2355_4: Atom 121 still waiting for fence [000000009153ad0a] after 3000ms
+[   55.016205] mali 11500000.mali: 	Guilty fence [000000009153ad0a] 1#1176: active
+[   55.016209] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.016215] mali 11500000.mali: ctx 2355_4: Atom 122 still waiting for fence [0000000047ae1924] after 3000ms
+[   55.016220] mali 11500000.mali: 	Guilty fence [0000000047ae1924] 1#1177: active
+[   55.016224] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.016228] mali 11500000.mali: ctx 2355_4: Atom 30 still waiting for fence [00000000e3dda61b] after 3000ms
+[   55.016233] mali 11500000.mali: 	Guilty fence [00000000e3dda61b] 1#1178: active
+[   55.016237] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.016241] mali 11500000.mali: ctx 2355_4: Atom 123 still waiting for fence [000000004dc2a1cf] after 3000ms
+[   55.016246] mali 11500000.mali: 	Guilty fence [000000004dc2a1cf] 1#1179: active
+[   55.016250] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.016254] mali 11500000.mali: ctx 2355_4: Atom 124 still waiting for fence [00000000bfb39a0f] after 3000ms
+[   55.016259] mali 11500000.mali: 	Guilty fence [00000000bfb39a0f] 1#1180: active
+[   55.016263] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.016267] mali 11500000.mali: ctx 2355_4: Atom 125 still waiting for fence [00000000b538665b] after 3000ms
+[   55.016272] mali 11500000.mali: 	Guilty fence [00000000b538665b] 1#1181: active
+[   55.016276] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.016280] mali 11500000.mali: ctx 2355_4: Atom 126 still waiting for fence [000000003c20f8ad] after 3000ms
+[   55.016285] mali 11500000.mali: 	Guilty fence [000000003c20f8ad] 1#1182: active
+[   55.016289] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.016293] mali 11500000.mali: ctx 2355_4: Atom 31 still waiting for fence [000000006846a864] after 3000ms
+[   55.016298] mali 11500000.mali: 	Guilty fence [000000006846a864] 1#1183: active
+[   55.016302] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.016306] mali 11500000.mali: ctx 2355_4: Atom 127 still waiting for fence [000000001c22e62a] after 3000ms
+[   55.016311] mali 11500000.mali: 	Guilty fence [000000001c22e62a] 1#1184: active
+[   55.016315] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.016319] mali 11500000.mali: ctx 2355_4: Atom 128 still waiting for fence [000000004ddb4a51] after 3000ms
+[   55.016324] mali 11500000.mali: 	Guilty fence [000000004ddb4a51] 1#1185: active
+[   55.016328] mali 11500000.mali: kbase_fence_debug_check_atom
+[   55.372291] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   55.384139] init: Control message: Could not find 'android.hardware.audio@5.0::IDevicesFactory/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   55.435827] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   55.495360] init: starting service 'sec-camera-provider-4-0'...
+[   55.496865] libprocessgroup: Failed to make and chown /acct/uid_1047: Read-only file system
+[   55.496920] init: createProcessGroup(1047, 595) failed for service 'sec-camera-provider-4-0': Read-only file system
+[   55.500123] libprocessgroup: Failed to open /dev/cpuset/camera-daemon/tasks: No such file or directory: No such file or directory
+[   55.500172] libprocessgroup: Failed to apply CameraServiceCapacity task profile: No such file or directory
+[   55.693706] a50-decon 148b0000.decon_f: G2b acquire: out=1#1152 layer=0 in=1129#6 signaled_bit=1
+[   55.727535] a50-decon 148b0000.decon_f: G2b WIN_CONFIG: fence=1#1408 layers=1 layer=0 format=2 dma_eligible=0 pending=255
+[   55.826148] init: Service 'sec-camera-provider-4-0' (pid 595) received signal 11
+[   55.826186] init: Sending signal 9 to service 'sec-camera-provider-4-0' (pid 595) process group...
+[   55.826256] libprocessgroup: Successfully killed process cgroup uid 1047 pid 595 in 0ms
+[   56.020903] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 22.
+[   56.052207] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[   56.058501] init: sys_prop: invalid command 2
+[   56.073621] systemd[1]: lightdm.service: Main process exited, code=exited, status=1/FAILURE
+[   56.073839] systemd[1]: lightdm.service: Failed with result 'exit-code'.
+[   56.082064] init: sys_prop: invalid command 2
+[   56.143327] bluebinder[3256]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[   56.143519] bluebinder[3256]: g_io_channel_unref: assertion 'channel != NULL' failed
+[   56.146539] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[   56.147191] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[   56.171281] binder: undelivered death notification, 0000000000000000
+[   56.272844] systemd[1]: lightdm.service: Scheduled restart job, restart counter is at 12.
+[   56.295668] systemd[1]: Starting lightdm.service - Light Display Manager...
+[   56.374928] systemd[1]: Started lightdm.service - Light Display Manager.
+[   56.376364] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   56.388244] init: Control message: Could not find 'android.hardware.audio@5.0::IDevicesFactory/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   56.440148] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   56.441434] init: sys_prop: invalid command 2
+[   56.496174] a50_copy_layer: 290 callbacks suppressed
+[   56.496187] a50-decon 148b0000.decon_f: win_config: format 2 not bridged
+[   56.512890] a50-decon 148b0000.decon_f: win_config: format 2 not bridged
+[   56.529607] a50-decon 148b0000.decon_f: win_config: format 2 not bridged
+[   56.546324] a50-decon 148b0000.decon_f: win_config: format 2 not bridged
+[   56.563036] a50-decon 148b0000.decon_f: win_config: format 2 not bridged
+[   56.579751] a50-decon 148b0000.decon_f: win_config: format 2 not bridged
+[   56.596473] a50-decon 148b0000.decon_f: win_config: format 2 not bridged
+[   56.613188] a50-decon 148b0000.decon_f: win_config: format 2 not bridged
+[   56.629915] a50-decon 148b0000.decon_f: win_config: format 2 not bridged
+[   56.646632] a50-decon 148b0000.decon_f: win_config: format 2 not bridged
+[   57.272803] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 23.
+[   57.300364] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[   57.312339] init: sys_prop: invalid command 2
+[   57.347612] init: sys_prop: invalid command 2
+[   57.380326] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   57.392241] init: Control message: Could not find 'android.hardware.audio@5.0::IDevicesFactory/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   57.420265] bluebinder[3315]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[   57.420813] bluebinder[3315]: g_io_channel_unref: assertion 'channel != NULL' failed
+[   57.424147] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[   57.425424] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[   57.444003] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   57.770270] init: Service 'vaultkeeper' (pid 502) exited with status 255
+[   57.770301] init: Sending signal 9 to service 'vaultkeeper' (pid 502) process group...
+[   57.770382] libprocessgroup: Successfully killed process cgroup uid 1000 pid 502 in 0ms
+[   57.770819] init: starting service 'vaultkeeper'...
+[   57.772427] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   57.772475] init: createProcessGroup(1000, 603) failed for service 'vaultkeeper': Read-only file system
+[   57.833544] a50-decon 148b0000.decon_f: G2b acquire: out=1#1280 layer=0 in=1075#6 signaled_bit=1
+[   57.867398] a50-decon 148b0000.decon_f: G2b WIN_CONFIG: fence=1#1536 layers=1 layer=0 format=2 dma_eligible=0 pending=255
+[   58.064748] systemd[1]: lightdm.service: Main process exited, code=exited, status=1/FAILURE
+[   58.064927] systemd[1]: lightdm.service: Failed with result 'exit-code'.
+[   58.087332] mali 11500000.mali: ctx 2355_4: Atom 211 still waiting for fence [00000000afa3b317] after 3000ms
+[   58.087352] mali 11500000.mali: 	Guilty fence [00000000afa3b317] 1#1295: active
+[   58.087359] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087365] mali 11500000.mali: ctx 2355_4: Atom 212 still waiting for fence [0000000034fc94cd] after 3000ms
+[   58.087371] mali 11500000.mali: 	Guilty fence [0000000034fc94cd] 1#1296: active
+[   58.087376] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087381] mali 11500000.mali: ctx 2355_4: Atom 52 still waiting for fence [00000000e08b0dd4] after 3000ms
+[   58.087387] mali 11500000.mali: 	Guilty fence [00000000e08b0dd4] 1#1297: active
+[   58.087392] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087396] mali 11500000.mali: ctx 2355_4: Atom 213 still waiting for fence [00000000f7651cae] after 3000ms
+[   58.087401] mali 11500000.mali: 	Guilty fence [00000000f7651cae] 1#1298: active
+[   58.087406] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087410] mali 11500000.mali: ctx 2355_4: Atom 214 still waiting for fence [000000003e346283] after 3000ms
+[   58.087415] mali 11500000.mali: 	Guilty fence [000000003e346283] 1#1299: active
+[   58.087420] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087424] mali 11500000.mali: ctx 2355_4: Atom 215 still waiting for fence [00000000be126104] after 3000ms
+[   58.087429] mali 11500000.mali: 	Guilty fence [00000000be126104] 1#1300: active
+[   58.087434] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087439] mali 11500000.mali: ctx 2355_4: Atom 53 still waiting for fence [0000000067775992] after 3000ms
+[   58.087444] mali 11500000.mali: 	Guilty fence [0000000067775992] 1#1301: active
+[   58.087449] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087456] mali 11500000.mali: ctx 2355_4: Atom 216 still waiting for fence [00000000a4e83aea] after 3000ms
+[   58.087461] mali 11500000.mali: 	Guilty fence [00000000a4e83aea] 1#1302: active
+[   58.087465] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087470] mali 11500000.mali: ctx 2355_4: Atom 217 still waiting for fence [000000009caf30e8] after 3000ms
+[   58.087475] mali 11500000.mali: 	Guilty fence [000000009caf30e8] 1#1303: active
+[   58.087480] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087484] mali 11500000.mali: ctx 2355_4: Atom 218 still waiting for fence [000000004482474b] after 3000ms
+[   58.087490] mali 11500000.mali: 	Guilty fence [000000004482474b] 1#1304: active
+[   58.087494] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087498] mali 11500000.mali: ctx 2355_4: Atom 54 still waiting for fence [00000000a9da013d] after 3000ms
+[   58.087503] mali 11500000.mali: 	Guilty fence [00000000a9da013d] 1#1305: active
+[   58.087508] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087512] mali 11500000.mali: ctx 2355_4: Atom 219 still waiting for fence [0000000007412e9c] after 3000ms
+[   58.087517] mali 11500000.mali: 	Guilty fence [0000000007412e9c] 1#1306: active
+[   58.087522] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087527] mali 11500000.mali: ctx 2355_4: Atom 220 still waiting for fence [00000000b4f9407a] after 3000ms
+[   58.087532] mali 11500000.mali: 	Guilty fence [00000000b4f9407a] 1#1307: active
+[   58.087537] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087542] mali 11500000.mali: ctx 2355_4: Atom 221 still waiting for fence [000000006123a8f0] after 3000ms
+[   58.087547] mali 11500000.mali: 	Guilty fence [000000006123a8f0] 1#1308: active
+[   58.087551] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087556] mali 11500000.mali: ctx 2355_4: Atom 222 still waiting for fence [0000000057a5a99e] after 3000ms
+[   58.087561] mali 11500000.mali: 	Guilty fence [0000000057a5a99e] 1#1309: active
+[   58.087565] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087569] mali 11500000.mali: ctx 2355_4: Atom 13 still waiting for fence [00000000458d16b0] after 3000ms
+[   58.087574] mali 11500000.mali: 	Guilty fence [00000000458d16b0] 1#1310: active
+[   58.087578] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087583] mali 11500000.mali: ctx 2355_4: Atom 223 still waiting for fence [000000002fdde4af] after 3000ms
+[   58.087588] mali 11500000.mali: 	Guilty fence [000000002fdde4af] 1#1311: active
+[   58.087592] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087596] mali 11500000.mali: ctx 2355_4: Atom 224 still waiting for fence [0000000029c2e107] after 3000ms
+[   58.087601] mali 11500000.mali: 	Guilty fence [0000000029c2e107] 1#1312: active
+[   58.087606] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087610] mali 11500000.mali: ctx 2355_4: Atom 225 still waiting for fence [00000000b33827b9] after 3000ms
+[   58.087615] mali 11500000.mali: 	Guilty fence [00000000b33827b9] 1#1313: active
+[   58.087619] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087624] mali 11500000.mali: ctx 2355_4: Atom 55 still waiting for fence [00000000c30bccaf] after 3000ms
+[   58.087629] mali 11500000.mali: 	Guilty fence [00000000c30bccaf] 1#1314: active
+[   58.087633] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087638] mali 11500000.mali: ctx 2355_4: Atom 226 still waiting for fence [0000000024e15d4a] after 3000ms
+[   58.087643] mali 11500000.mali: 	Guilty fence [0000000024e15d4a] 1#1315: active
+[   58.087648] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087653] mali 11500000.mali: ctx 2355_4: Atom 227 still waiting for fence [000000007a82d4b8] after 3000ms
+[   58.087658] mali 11500000.mali: 	Guilty fence [000000007a82d4b8] 1#1316: active
+[   58.087662] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087667] mali 11500000.mali: ctx 2355_4: Atom 228 still waiting for fence [00000000bcafba72] after 3000ms
+[   58.087672] mali 11500000.mali: 	Guilty fence [00000000bcafba72] 1#1317: active
+[   58.087676] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087681] mali 11500000.mali: ctx 2355_4: Atom 56 still waiting for fence [00000000bd09fbb8] after 3000ms
+[   58.087687] mali 11500000.mali: 	Guilty fence [00000000bd09fbb8] 1#1318: active
+[   58.087691] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087695] mali 11500000.mali: ctx 2355_4: Atom 229 still waiting for fence [000000000533b717] after 3000ms
+[   58.087700] mali 11500000.mali: 	Guilty fence [000000000533b717] 1#1319: active
+[   58.087704] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087709] mali 11500000.mali: ctx 2355_4: Atom 230 still waiting for fence [000000007a6316a9] after 3000ms
+[   58.087714] mali 11500000.mali: 	Guilty fence [000000007a6316a9] 1#1320: active
+[   58.087718] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087723] mali 11500000.mali: ctx 2355_4: Atom 231 still waiting for fence [0000000014190221] after 3000ms
+[   58.087728] mali 11500000.mali: 	Guilty fence [0000000014190221] 1#1321: active
+[   58.087732] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087736] mali 11500000.mali: ctx 2355_4: Atom 57 still waiting for fence [000000001f6ad9a4] after 3000ms
+[   58.087741] mali 11500000.mali: 	Guilty fence [000000001f6ad9a4] 1#1322: active
+[   58.087745] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087749] mali 11500000.mali: ctx 2355_4: Atom 232 still waiting for fence [000000000fccf254] after 3000ms
+[   58.087754] mali 11500000.mali: 	Guilty fence [000000000fccf254] 1#1323: active
+[   58.087759] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087763] mali 11500000.mali: ctx 2355_4: Atom 233 still waiting for fence [000000004846d233] after 3000ms
+[   58.087768] mali 11500000.mali: 	Guilty fence [000000004846d233] 1#1324: active
+[   58.087773] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087777] mali 11500000.mali: ctx 2355_4: Atom 234 still waiting for fence [00000000e3be50e3] after 3000ms
+[   58.087782] mali 11500000.mali: 	Guilty fence [00000000e3be50e3] 1#1325: active
+[   58.087786] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087790] mali 11500000.mali: ctx 2355_4: Atom 14 still waiting for fence [000000006c06c97d] after 3000ms
+[   58.087796] mali 11500000.mali: 	Guilty fence [000000006c06c97d] 1#1326: active
+[   58.087800] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087804] mali 11500000.mali: ctx 2355_4: Atom 235 still waiting for fence [00000000c6b0704c] after 3000ms
+[   58.087809] mali 11500000.mali: 	Guilty fence [00000000c6b0704c] 1#1327: active
+[   58.087813] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087818] mali 11500000.mali: ctx 2355_4: Atom 236 still waiting for fence [00000000e55d6bc7] after 3000ms
+[   58.087823] mali 11500000.mali: 	Guilty fence [00000000e55d6bc7] 1#1328: active
+[   58.087827] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087831] mali 11500000.mali: ctx 2355_4: Atom 237 still waiting for fence [0000000077e3905a] after 3000ms
+[   58.087836] mali 11500000.mali: 	Guilty fence [0000000077e3905a] 1#1329: active
+[   58.087840] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087845] mali 11500000.mali: ctx 2355_4: Atom 238 still waiting for fence [00000000ab706e9c] after 3000ms
+[   58.087850] mali 11500000.mali: 	Guilty fence [00000000ab706e9c] 1#1330: active
+[   58.087854] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087859] mali 11500000.mali: ctx 2355_4: Atom 58 still waiting for fence [000000002bd49dfe] after 3000ms
+[   58.087864] mali 11500000.mali: 	Guilty fence [000000002bd49dfe] 1#1331: active
+[   58.087869] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087873] mali 11500000.mali: ctx 2355_4: Atom 239 still waiting for fence [00000000d27046da] after 3000ms
+[   58.087878] mali 11500000.mali: 	Guilty fence [00000000d27046da] 1#1332: active
+[   58.087883] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087887] mali 11500000.mali: ctx 2355_4: Atom 240 still waiting for fence [00000000804f75fd] after 3000ms
+[   58.087892] mali 11500000.mali: 	Guilty fence [00000000804f75fd] 1#1333: active
+[   58.087897] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087900] mali 11500000.mali: ctx 2355_4: Atom 241 still waiting for fence [00000000e55af7ad] after 3000ms
+[   58.087906] mali 11500000.mali: 	Guilty fence [00000000e55af7ad] 1#1334: active
+[   58.087910] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087914] mali 11500000.mali: ctx 2355_4: Atom 59 still waiting for fence [000000009ade33e9] after 3000ms
+[   58.087919] mali 11500000.mali: 	Guilty fence [000000009ade33e9] 1#1335: active
+[   58.087923] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087928] mali 11500000.mali: ctx 2355_4: Atom 242 still waiting for fence [00000000ccfa1dfb] after 3000ms
+[   58.087934] mali 11500000.mali: 	Guilty fence [00000000ccfa1dfb] 1#1336: active
+[   58.087938] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087942] mali 11500000.mali: ctx 2355_4: Atom 243 still waiting for fence [00000000df6e0a54] after 3000ms
+[   58.087947] mali 11500000.mali: 	Guilty fence [00000000df6e0a54] 1#1337: active
+[   58.087951] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087955] mali 11500000.mali: ctx 2355_4: Atom 244 still waiting for fence [00000000f5126115] after 3000ms
+[   58.087960] mali 11500000.mali: 	Guilty fence [00000000f5126115] 1#1338: active
+[   58.087965] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087969] mali 11500000.mali: ctx 2355_4: Atom 60 still waiting for fence [00000000232b6783] after 3000ms
+[   58.087974] mali 11500000.mali: 	Guilty fence [00000000232b6783] 1#1339: active
+[   58.087978] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087983] mali 11500000.mali: ctx 2355_4: Atom 245 still waiting for fence [000000001732d2fb] after 3000ms
+[   58.087988] mali 11500000.mali: 	Guilty fence [000000001732d2fb] 1#1340: active
+[   58.087992] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.087997] mali 11500000.mali: ctx 2355_4: Atom 246 still waiting for fence [00000000d8e34a76] after 3000ms
+[   58.088002] mali 11500000.mali: 	Guilty fence [00000000d8e34a76] 1#1341: active
+[   58.088007] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.088011] mali 11500000.mali: ctx 2355_4: Atom 247 still waiting for fence [00000000a92ffec1] after 3000ms
+[   58.088016] mali 11500000.mali: 	Guilty fence [00000000a92ffec1] 1#1342: active
+[   58.088020] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.088024] mali 11500000.mali: ctx 2355_4: Atom 61 still waiting for fence [000000000c183ced] after 3000ms
+[   58.088029] mali 11500000.mali: 	Guilty fence [000000000c183ced] 1#1343: active
+[   58.088034] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.088038] mali 11500000.mali: ctx 2355_4: Atom 248 still waiting for fence [00000000b079d86d] after 3000ms
+[   58.088043] mali 11500000.mali: 	Guilty fence [00000000b079d86d] 1#1344: active
+[   58.088048] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.088052] mali 11500000.mali: ctx 2355_4: Atom 249 still waiting for fence [000000007dbfeb1b] after 3000ms
+[   58.088057] mali 11500000.mali: 	Guilty fence [000000007dbfeb1b] 1#1345: active
+[   58.088061] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.088065] mali 11500000.mali: ctx 2355_4: Atom 250 still waiting for fence [00000000b7eca6f8] after 3000ms
+[   58.088070] mali 11500000.mali: 	Guilty fence [00000000b7eca6f8] 1#1346: active
+[   58.088074] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.088078] mali 11500000.mali: ctx 2355_4: Atom 15 still waiting for fence [00000000627dd5ed] after 3000ms
+[   58.088084] mali 11500000.mali: 	Guilty fence [00000000627dd5ed] 1#1347: active
+[   58.088088] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.088092] mali 11500000.mali: ctx 2355_4: Atom 251 still waiting for fence [00000000c8ae4f9e] after 3000ms
+[   58.088097] mali 11500000.mali: 	Guilty fence [00000000c8ae4f9e] 1#1348: active
+[   58.088101] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.088106] mali 11500000.mali: ctx 2355_4: Atom 252 still waiting for fence [0000000073f20b22] after 3000ms
+[   58.088111] mali 11500000.mali: 	Guilty fence [0000000073f20b22] 1#1349: active
+[   58.088116] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.088120] mali 11500000.mali: ctx 2355_4: Atom 253 still waiting for fence [0000000087e046b3] after 3000ms
+[   58.088125] mali 11500000.mali: 	Guilty fence [0000000087e046b3] 1#1350: active
+[   58.088129] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.088133] mali 11500000.mali: ctx 2355_4: Atom 62 still waiting for fence [00000000aad0c75a] after 3000ms
+[   58.088139] mali 11500000.mali: 	Guilty fence [00000000aad0c75a] 1#1351: active
+[   58.088143] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.088147] mali 11500000.mali: ctx 2355_4: Atom 254 still waiting for fence [0000000055cdfc7e] after 3000ms
+[   58.088152] mali 11500000.mali: 	Guilty fence [0000000055cdfc7e] 1#1352: active
+[   58.088156] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.088160] mali 11500000.mali: ctx 2355_4: Atom 255 still waiting for fence [000000004faa6908] after 3000ms
+[   58.088165] mali 11500000.mali: 	Guilty fence [000000004faa6908] 1#1353: active
+[   58.088170] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.088174] mali 11500000.mali: ctx 2355_4: Atom 63 still waiting for fence [00000000bfc094ae] after 3000ms
+[   58.088179] mali 11500000.mali: 	Guilty fence [00000000bfc094ae] 1#1354: active
+[   58.088183] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.088187] mali 11500000.mali: ctx 2355_4: Atom 64 still waiting for fence [000000000c85999f] after 3000ms
+[   58.088193] mali 11500000.mali: 	Guilty fence [000000000c85999f] 1#1355: active
+[   58.088197] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.088201] mali 11500000.mali: ctx 2355_4: Atom 16 still waiting for fence [000000007e798e9a] after 3000ms
+[   58.088206] mali 11500000.mali: 	Guilty fence [000000007e798e9a] 1#1356: active
+[   58.088210] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.088215] mali 11500000.mali: ctx 2355_4: Atom 65 still waiting for fence [000000003da5dc9e] after 3000ms
+[   58.088220] mali 11500000.mali: 	Guilty fence [000000003da5dc9e] 1#1357: active
+[   58.088224] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.088230] mali 11500000.mali: ctx 2355_4: Atom 66 still waiting for fence [00000000b5314126] after 3000ms
+[   58.088235] mali 11500000.mali: 	Guilty fence [00000000b5314126] 1#1358: active
+[   58.088239] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.088244] mali 11500000.mali: ctx 2355_4: Atom 67 still waiting for fence [0000000006a3d9b9] after 3000ms
+[   58.088249] mali 11500000.mali: 	Guilty fence [0000000006a3d9b9] 1#1359: active
+[   58.088253] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.088257] mali 11500000.mali: ctx 2355_4: Atom 1 still waiting for fence [000000005409dc3d] after 3000ms
+[   58.088262] mali 11500000.mali: 	Guilty fence [000000005409dc3d] 1#1360: active
+[   58.088267] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.088271] mali 11500000.mali: ctx 2355_4: Atom 68 still waiting for fence [000000009579447d] after 3000ms
+[   58.088276] mali 11500000.mali: 	Guilty fence [000000009579447d] 1#1361: active
+[   58.088280] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.088284] mali 11500000.mali: ctx 2355_4: Atom 69 still waiting for fence [00000000d47c6025] after 3000ms
+[   58.088289] mali 11500000.mali: 	Guilty fence [00000000d47c6025] 1#1362: active
+[   58.088294] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.088298] mali 11500000.mali: ctx 2355_4: Atom 70 still waiting for fence [00000000d9736700] after 3000ms
+[   58.088303] mali 11500000.mali: 	Guilty fence [00000000d9736700] 1#1363: active
+[   58.088307] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.088312] mali 11500000.mali: ctx 2355_4: Atom 17 still waiting for fence [000000008dc24b18] after 3000ms
+[   58.088317] mali 11500000.mali: 	Guilty fence [000000008dc24b18] 1#1364: active
+[   58.088321] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.088326] mali 11500000.mali: ctx 2355_4: Atom 71 still waiting for fence [0000000064983009] after 3000ms
+[   58.088331] mali 11500000.mali: 	Guilty fence [0000000064983009] 1#1365: active
+[   58.088335] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.088339] mali 11500000.mali: ctx 2355_4: Atom 72 still waiting for fence [000000003684f564] after 3000ms
+[   58.088344] mali 11500000.mali: 	Guilty fence [000000003684f564] 1#1366: active
+[   58.088349] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.088353] mali 11500000.mali: ctx 2355_4: Atom 73 still waiting for fence [00000000be1c0606] after 3000ms
+[   58.088358] mali 11500000.mali: 	Guilty fence [00000000be1c0606] 1#1367: active
+[   58.088362] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.088367] mali 11500000.mali: ctx 2355_4: Atom 18 still waiting for fence [000000009a952b77] after 3000ms
+[   58.088372] mali 11500000.mali: 	Guilty fence [000000009a952b77] 1#1368: active
+[   58.088376] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.088380] mali 11500000.mali: ctx 2355_4: Atom 74 still waiting for fence [000000001cf9a7fd] after 3000ms
+[   58.088385] mali 11500000.mali: 	Guilty fence [000000001cf9a7fd] 1#1369: active
+[   58.088389] mali 11500000.mali: kbase_fence_debug_check_atom
+[   58.271432] init: starting service 'vendor.audio-hal'...
+[   58.272960] libprocessgroup: Failed to make and chown /acct/uid_1041: Read-only file system
+[   58.273013] init: createProcessGroup(1041, 604) failed for service 'vendor.audio-hal': Read-only file system
+[   58.273711] init: starting service 'vendor.cas-hal-1-2'...
+[   58.274076] systemd[1]: lightdm.service: Scheduled restart job, restart counter is at 13.
+[   58.275523] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[   58.275578] init: createProcessGroup(1013, 605) failed for service 'vendor.cas-hal-1-2': Read-only file system
+[   58.283350] init: starting service 'vendor.drm-widevine-hal-1-3'...
+[   58.284964] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[   58.285029] init: createProcessGroup(1013, 606) failed for service 'vendor.drm-widevine-hal-1-3': Read-only file system
+[   58.304471] systemd[1]: Starting lightdm.service - Light Display Manager...
+[   58.384455] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   58.396263] init: Control message: Could not find 'android.hardware.audio@5.0::IDevicesFactory/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   58.403986] systemd[1]: Started lightdm.service - Light Display Manager.
+[   58.448183] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   58.520753] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 24.
+[   58.544470] init: Service 'vendor.audio-hal' (pid 604) received signal 11
+[   58.544502] init: Sending signal 9 to service 'vendor.audio-hal' (pid 604) process group...
+[   58.544579] libprocessgroup: Successfully killed process cgroup uid 1041 pid 604 in 0ms
+[   58.544748] init: Command 'restart audioserver' action=onrestart (<Service 'vendor.audio-hal' onrestart>:1) took 0ms and failed: service audioserver not found
+[   58.552260] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[   58.556837] init: sys_prop: invalid command 2
+[   58.559337] init: starting service 'secure_storage'...
+[   58.561146] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   58.561204] init: createProcessGroup(1000, 614) failed for service 'secure_storage': Read-only file system
+[   58.563504] init: sys_prop: invalid command 2
+[   58.583736] init: sys_prop: invalid command 2
+[   58.587551] init: Service 'vendor.cas-hal-1-2' (pid 605) received signal 11
+[   58.587579] init: Sending signal 9 to service 'vendor.cas-hal-1-2' (pid 605) process group...
+[   58.587656] libprocessgroup: Successfully killed process cgroup uid 1013 pid 605 in 0ms
+[   58.615393] init: Service 'secure_storage' (pid 614) exited with status 14
+[   58.615429] init: Sending signal 9 to service 'secure_storage' (pid 614) process group...
+[   58.615508] libprocessgroup: Successfully killed process cgroup uid 1000 pid 614 in 0ms
+[   58.621856] bluebinder[3362]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[   58.622450] bluebinder[3362]: g_io_channel_unref: assertion 'channel != NULL' failed
+[   58.623120] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[   58.624228] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[   58.643311] binder: undelivered death notification, 0000000000000000
+[   58.645483] init: Service 'vendor.drm-widevine-hal-1-3' (pid 606) received signal 11
+[   58.645504] init: Sending signal 9 to service 'vendor.drm-widevine-hal-1-3' (pid 606) process group...
+[   58.645568] libprocessgroup: Successfully killed process cgroup uid 1013 pid 606 in 0ms
+[   58.731344] init: starting service 'camera_service'...
+[   58.732819] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[   58.732870] init: createProcessGroup(1013, 616) failed for service 'camera_service': Read-only file system
+[   58.925063] init: Service 'camera_service' (pid 616) received signal 11
+[   58.925097] init: Sending signal 9 to service 'camera_service' (pid 616) process group...
+[   58.925180] libprocessgroup: Successfully killed process cgroup uid 1013 pid 616 in 0ms
+[   58.943354] init: starting service 'vendor.media.omx'...
+[   58.944914] libprocessgroup: Failed to make and chown /acct/uid_1046: Read-only file system
+[   58.944969] init: createProcessGroup(1046, 618) failed for service 'vendor.media.omx': Read-only file system
+[   58.948024] libprocessgroup: Failed to find SystemServicePerformancetask profile: No such file or directory
+[   58.948076] libprocessgroup: Failed to find SystemServiceCapacityHightask profile: No such file or directory
+[   59.003352] init: starting service 'ril-daemon'...
+[   59.003526] init: Created socket '/dev/socket/sap_uim_socket1', mode 660, user 1002, group 1002
+[   59.005080] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[   59.005135] init: createProcessGroup(1001, 619) failed for service 'ril-daemon': Read-only file system
+[   59.027394] init: starting service 'ril-daemon1'...
+[   59.028979] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[   59.029034] init: createProcessGroup(1001, 620) failed for service 'ril-daemon1': Read-only file system
+[   59.035350] mif: cbd: start_shannon310_boot: NV validation TIMEOUT
+[   59.035417] mif: cbd: boot_wake_lock: /sys/power/wake_lock/ss310
+[   59.035445] mif: cbd: start_shannon310_boot: Prepare arguments, read TOC, check NV
+[   59.035476] mif: cbd: std_boot_prepare_args: ERR! DEV(/dev/umts_boot0) open fail (Success)
+[   59.035495] mif: cbd: prepare_boot_args: ERR! std_boot_prepare_args fail
+[   59.035512] mif: cbd: start_shannon310_boot: ERR! prepare_boot_args fail
+[   59.035541] mif: cbd: boot_wake_lock: /sys/power/wake_unlock/ss310
+[   59.035565] mif: cbd: main: start boot fail
+[   59.057766] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:619: Read-only property was already set
+[   59.057918] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:619: Read-only property was already set
+[   59.064589] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:619: Read-only property was already set
+[   59.064745] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:619: Read-only property was already set
+[   59.095948] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:620: Read-only property was already set
+[   59.096181] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:620: Read-only property was already set
+[   59.101996] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:620: Read-only property was already set
+[   59.102182] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:620: Read-only property was already set
+[   59.116436] init: starting service 'wlbtd'...
+[   59.118042] libprocessgroup: Failed to make and chown /acct/uid_1010: Read-only file system
+[   59.118103] init: createProcessGroup(1010, 630) failed for service 'wlbtd': Read-only file system
+[   59.131002] init: Service 'wlbtd' (pid 630) exited with status 0
+[   59.131036] init: Sending signal 9 to service 'wlbtd' (pid 630) process group...
+[   59.131099] libprocessgroup: Successfully killed process cgroup uid 1010 pid 630 in 0ms
+[   59.170183] init: Service 'ril-daemon1' (pid 620) exited with status 255
+[   59.170213] init: Sending signal 9 to service 'ril-daemon1' (pid 620) process group...
+[   59.170276] libprocessgroup: Successfully killed process cgroup uid 1001 pid 620 in 0ms
+[   59.170418] init: Sending signal 9 to service 'cpboot-daemon' (pid 236) process group...
+[   59.170460] libprocessgroup: Successfully killed process cgroup uid 0 pid 236 in 0ms
+[   59.173452] init: Command 'restart DIAG-daemon' action=onrestart (<Service 'ril-daemon1' onrestart>:2) took 0ms and failed: service DIAG-daemon not found
+[   59.220239] init: Service 'ril-daemon' (pid 619) exited with status 255
+[   59.220271] init: Sending signal 9 to service 'ril-daemon' (pid 619) process group...
+[   59.220334] libprocessgroup: Successfully killed process cgroup uid 1001 pid 619 in 0ms
+[   59.220481] init: Sending signal 9 to service 'cpboot-daemon' (pid 236) process group...
+[   59.220521] libprocessgroup: Successfully killed process cgroup uid 0 pid 236 in 0ms
+[   59.220718] init: Command 'restart cpboot-daemon5g' action=onrestart (<Service 'ril-daemon' onrestart>:2) took 0ms and failed: service cpboot-daemon5g not found
+[   59.220777] init: Command 'restart DIAG-daemon' action=onrestart (<Service 'ril-daemon' onrestart>:3) took 0ms and failed: service DIAG-daemon not found
+[   59.339050] init: Service 'vendor.media.omx' (pid 618) received signal 11
+[   59.339083] init: Sending signal 9 to service 'vendor.media.omx' (pid 618) process group...
+[   59.339143] libprocessgroup: Successfully killed process cgroup uid 1046 pid 618 in 0ms
+[   59.388244] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   59.400304] init: Control message: Could not find 'android.hardware.audio@5.0::IDevicesFactory/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   59.452066] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   59.772640] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 25.
+[   59.812385] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[   59.821885] init: sys_prop: invalid command 2
+[   59.853590] init: sys_prop: invalid command 2
+[   59.887453] bluebinder[3433]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[   59.887644] bluebinder[3433]: g_io_channel_unref: assertion 'channel != NULL' failed
+[   59.891714] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[   59.892821] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[   59.903295] binder: undelivered death notification, 0000000000000000
+[   59.990352] a50-decon 148b0000.decon_f: G2b acquire: out=1#1408 layer=0 in=1130#6 signaled_bit=1
+[   60.010669] ofonod[1593]: ../../../gobject/gsignal.c:2723: instance '0xaaaaf7572ae0' has no handler with id '25'
+[   60.024362] a50-decon 148b0000.decon_f: G2b WIN_CONFIG: fence=1#1664 layers=1 layer=0 format=2 dma_eligible=0 pending=255
+[   60.039337] mif: cbd: main: Call boot start
+[   60.039367] mif: cbd: main: Modem type = 12
+[   60.039385] mif: cbd: main: Boot link = 9
+[   60.039408] mif: cbd: main: Main link = 9
+[   60.039453] mif: cbd: check_board_revision: /proc/device-tree/model_info-system_rev open fail
+[   60.039477] mif: cbd: start_shannon310_boot: CP boot device = /dev/umts_boot0
+[   60.039493] mif: cbd: start_shannon310_boot: CP binary file = /dev/block/by-name/radio
+[   60.039509] mif: cbd: start_shannon310_boot: CP NV file = /mnt/vendor/efs/nv_data.bin
+[   60.039527] mif: cbd: start_shannon310_boot: BOOT link SHMEM
+[   60.039544] mif: cbd: start_shannon310_boot: MAIN link SHMEM
+[   60.304365] systemd[1]: Starting enable-cpu-hotplug.service - Enable CPU hotplugging after Ubuntu Touch boot...
+[   60.307603] systemd[1]: systemd-hostnamed.service: Deactivated successfully.
+[   60.392482] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   60.405751] init: Control message: Could not find 'android.hardware.audio@5.0::IDevicesFactory/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   60.408952] systemd[1]: enable-cpu-hotplug.service: Deactivated successfully.
+[   60.409866] systemd[1]: Finished enable-cpu-hotplug.service - Enable CPU hotplugging after Ubuntu Touch boot.
+[   60.455994] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   60.499357] init: starting service 'sec-camera-provider-4-0'...
+[   60.500852] libprocessgroup: Failed to make and chown /acct/uid_1047: Read-only file system
+[   60.500904] init: createProcessGroup(1047, 646) failed for service 'sec-camera-provider-4-0': Read-only file system
+[   60.504102] libprocessgroup: Failed to open /dev/cpuset/camera-daemon/tasks: No such file or directory: No such file or directory
+[   60.504150] libprocessgroup: Failed to apply CameraServiceCapacity task profile: No such file or directory
+[   60.617397] A50STATUS: BEGIN uptime=60.61 target=60
+[   60.617606] A50STATUS: CMD uname -r
+[   60.649098] A50STATUS: 6.18.33-a50-diag+
+[   60.649320] A50STATUS: RC 0
+[   60.649512] A50STATUS: CMD systemctl is-system-running
+[   60.690961] A50STATUS: starting
+[   60.691185] A50STATUS: RC 1
+[   60.691399] A50STATUS: CMD systemctl --failed --no-pager --plain --no-legend
+[   60.734180] A50STATUS: RC 0
+[   60.734390] A50STATUS: CMD systemctl list-jobs --no-pager --plain --no-legend
+[   60.767180] A50STATUS: 1   graphical.target                     start waiting
+[   60.767460] A50STATUS: 2   multi-user.target                    start waiting
+[   60.767690] A50STATUS: 188 a50-audio-route.service              start running
+[   60.767941] A50STATUS: 208 systemd-update-utmp-runlevel.service start waiting
+[   60.768144] A50STATUS: RC 0
+[   60.768335] A50STATUS: CMD systemctl show multi-user.target graphical.target -p Id -p ActiveState -p SubState -p Job
+[   60.836006] init: Service 'sec-camera-provider-4-0' (pid 646) received signal 11
+[   60.836041] init: Sending signal 9 to service 'sec-camera-provider-4-0' (pid 646) process group...
+[   60.836117] libprocessgroup: Successfully killed process cgroup uid 1047 pid 646 in 0ms
+[   60.836490] A50STATUS: Id=multi-user.target
+[   60.836712] A50STATUS: ActiveState=inactive
+[   60.836939] A50STATUS: SubState=dead
+[   60.837134] A50STATUS: Job=2
+[   60.837323] A50STATUS:
+[   60.837550] A50STATUS: Id=graphical.target
+[   60.837776] A50STATUS: ActiveState=inactive
+[   60.837971] A50STATUS: SubState=dead
+[   60.838162] A50STATUS: Job=1
+[   60.838369] A50STATUS: RC 0
+[   60.838563] A50STATUS: CMD systemctl show -p SystemState -p NFailedUnits -p NJobs
+[   60.876860] A50STATUS: NFailedUnits=0
+[   60.877082] A50STATUS: NJobs=4
+[   60.877294] A50STATUS: SystemState=starting
+[   60.877525] A50STATUS: RC 0
+[   60.877717] A50STATUS: CMD findmnt -no TARGET,OPTIONS /userdata
+[   60.903455] A50STATUS: /userdata rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[   60.903676] A50STATUS: RC 0
+[   60.903866] A50STATUS: CMD ip -brief address
+[   60.920105] A50STATUS: lo               UNKNOWN        127.0.0.1/8 ::1/128
+[   60.920336] A50STATUS: sit0@NONE        DOWN
+[   60.920603] A50STATUS: usb0             UP             10.15.19.82/24 fe80::b40f:11ff:fe90:7e5c/64
+[   60.920805] A50STATUS: RC 0
+[   60.921000] A50STATUS: CMD systemctl show usb-moded.service usb-tethering.service usb-moded-udhcpd.service usb-moded-ssh.service -p Id -p ActiveState -p SubState
+[   60.956532] systemd[1]: lightdm.service: Main process exited, code=exited, status=1/FAILURE
+[   60.957089] systemd[1]: lightdm.service: Failed with result 'exit-code'.
+[   60.958076] systemd[1]: lightdm.service: Consumed 1.604s CPU time.
+[   60.962266] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 26.
+[   60.996520] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[   61.004611] init: sys_prop: invalid command 2
+[   61.025982] init: sys_prop: invalid command 2
+[   61.067651] A50STATUS: Id=usb-moded.service
+[   61.067879] A50STATUS: ActiveState=active
+[   61.068085] A50STATUS: SubState=running
+[   61.068276] A50STATUS:
+[   61.068482] A50STATUS: Id=usb-tethering.service
+[   61.068682] A50STATUS: ActiveState=active
+[   61.068904] A50STATUS: SubState=running
+[   61.069091] A50STATUS:
+[   61.069296] A50STATUS: Id=usb-moded-udhcpd.service
+[   61.069495] A50STATUS: ActiveState=active
+[   61.069691] A50STATUS: SubState=running
+[   61.069878] A50STATUS:
+[   61.070081] A50STATUS: Id=usb-moded-ssh.service
+[   61.070279] A50STATUS: ActiveState=active
+[   61.070476] A50STATUS: SubState=running
+[   61.070680] A50STATUS: RC 0
+[   61.070918] A50STATUS: CMD /bin/sh -c for u in /sys/class/udc/*; do echo "UDC ${u##*/}"; cat "$u/state"; done; for g in /sys/kernel/config/usb_gadget/*; do echo "gadget ${g##*/}"; cat "$g/UDC"; find "$g/configs" -maxdepth 2 -type l -printf "%f -> %l\n"; done
+[   61.101337] systemd[1]: lightdm.service: Scheduled restart job, restart counter is at 14.
+[   61.108778] systemd[1]: Starting lightdm.service - Light Display Manager...
+[   61.108942] bluebinder[3484]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[   61.109506] bluebinder[3484]: g_io_channel_unref: assertion 'channel != NULL' failed
+[   61.112815] A50STATUS: UDC 13200000.usb
+[   61.113030] A50STATUS: configured
+[   61.113231] A50STATUS: gadget g1
+[   61.113433] A50STATUS: 13200000.usb
+[   61.113662] A50STATUS: rndis.usb0 -> ../../../../usb_gadget/g1/functions/rndis.usb0
+[   61.113863] A50STATUS: RC 0
+[   61.114070] A50STATUS: END target=60
+[   61.116921] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[   61.118306] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[   61.123306] binder: undelivered death notification, 0000000000000000
+[   61.159298] mali 11500000.mali: ctx 2355_4: Atom 156 still waiting for fence [000000009d283280] after 3000ms
+[   61.159319] mali 11500000.mali: 	Guilty fence [000000009d283280] 1#1477: active
+[   61.159325] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159332] mali 11500000.mali: ctx 2355_4: Atom 157 still waiting for fence [00000000499113b1] after 3000ms
+[   61.159339] mali 11500000.mali: 	Guilty fence [00000000499113b1] 1#1478: active
+[   61.159344] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159349] mali 11500000.mali: ctx 2355_4: Atom 8 still waiting for fence [00000000530b222f] after 3000ms
+[   61.159354] mali 11500000.mali: 	Guilty fence [00000000530b222f] 1#1479: active
+[   61.159359] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159364] mali 11500000.mali: ctx 2355_4: Atom 158 still waiting for fence [0000000085d14b5f] after 3000ms
+[   61.159369] mali 11500000.mali: 	Guilty fence [0000000085d14b5f] 1#1480: active
+[   61.159374] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159379] mali 11500000.mali: ctx 2355_4: Atom 159 still waiting for fence [00000000af43acbf] after 3000ms
+[   61.159384] mali 11500000.mali: 	Guilty fence [00000000af43acbf] 1#1481: active
+[   61.159388] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159392] mali 11500000.mali: ctx 2355_4: Atom 39 still waiting for fence [00000000c904965d] after 3000ms
+[   61.159397] mali 11500000.mali: 	Guilty fence [00000000c904965d] 1#1482: active
+[   61.159402] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159406] mali 11500000.mali: ctx 2355_4: Atom 160 still waiting for fence [000000009dfa427f] after 3000ms
+[   61.159411] mali 11500000.mali: 	Guilty fence [000000009dfa427f] 1#1483: active
+[   61.159416] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159420] mali 11500000.mali: ctx 2355_4: Atom 161 still waiting for fence [0000000024ebe9e1] after 3000ms
+[   61.159425] mali 11500000.mali: 	Guilty fence [0000000024ebe9e1] 1#1484: active
+[   61.159429] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159434] mali 11500000.mali: ctx 2355_4: Atom 162 still waiting for fence [0000000012514ccb] after 3000ms
+[   61.159439] mali 11500000.mali: 	Guilty fence [0000000012514ccb] 1#1485: active
+[   61.159444] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159450] mali 11500000.mali: ctx 2355_4: Atom 40 still waiting for fence [000000009c96ed98] after 3000ms
+[   61.159455] mali 11500000.mali: 	Guilty fence [000000009c96ed98] 1#1486: active
+[   61.159460] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159464] mali 11500000.mali: ctx 2355_4: Atom 163 still waiting for fence [0000000043c2bf04] after 3000ms
+[   61.159469] mali 11500000.mali: 	Guilty fence [0000000043c2bf04] 1#1487: active
+[   61.159473] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159478] mali 11500000.mali: ctx 2355_4: Atom 164 still waiting for fence [000000000c01fdeb] after 3000ms
+[   61.159483] mali 11500000.mali: 	Guilty fence [000000000c01fdeb] 1#1488: active
+[   61.159487] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159491] mali 11500000.mali: ctx 2355_4: Atom 165 still waiting for fence [000000008f10d0d1] after 3000ms
+[   61.159496] mali 11500000.mali: 	Guilty fence [000000008f10d0d1] 1#1489: active
+[   61.159501] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159505] mali 11500000.mali: ctx 2355_4: Atom 41 still waiting for fence [0000000012924044] after 3000ms
+[   61.159510] mali 11500000.mali: 	Guilty fence [0000000012924044] 1#1490: active
+[   61.159515] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159519] mali 11500000.mali: ctx 2355_4: Atom 166 still waiting for fence [00000000ff389582] after 3000ms
+[   61.159524] mali 11500000.mali: 	Guilty fence [00000000ff389582] 1#1491: active
+[   61.159529] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159533] mali 11500000.mali: ctx 2355_4: Atom 167 still waiting for fence [00000000ce4ef033] after 3000ms
+[   61.159538] mali 11500000.mali: 	Guilty fence [00000000ce4ef033] 1#1492: active
+[   61.159542] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159546] mali 11500000.mali: ctx 2355_4: Atom 168 still waiting for fence [00000000a3f58c1e] after 3000ms
+[   61.159551] mali 11500000.mali: 	Guilty fence [00000000a3f58c1e] 1#1493: active
+[   61.159556] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159560] mali 11500000.mali: ctx 2355_4: Atom 9 still waiting for fence [00000000f217d28b] after 3000ms
+[   61.159565] mali 11500000.mali: 	Guilty fence [00000000f217d28b] 1#1494: active
+[   61.159569] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159574] mali 11500000.mali: ctx 2355_4: Atom 169 still waiting for fence [0000000047eeb86c] after 3000ms
+[   61.159579] mali 11500000.mali: 	Guilty fence [0000000047eeb86c] 1#1495: active
+[   61.159583] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159588] mali 11500000.mali: ctx 2355_4: Atom 170 still waiting for fence [0000000046d788eb] after 3000ms
+[   61.159593] mali 11500000.mali: 	Guilty fence [0000000046d788eb] 1#1496: active
+[   61.159597] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159601] mali 11500000.mali: ctx 2355_4: Atom 42 still waiting for fence [0000000044e544db] after 3000ms
+[   61.159607] mali 11500000.mali: 	Guilty fence [0000000044e544db] 1#1497: active
+[   61.159611] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159615] mali 11500000.mali: ctx 2355_4: Atom 171 still waiting for fence [0000000051c77eb2] after 3000ms
+[   61.159620] mali 11500000.mali: 	Guilty fence [0000000051c77eb2] 1#1498: active
+[   61.159624] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159629] mali 11500000.mali: ctx 2355_4: Atom 172 still waiting for fence [00000000f9684091] after 3000ms
+[   61.159634] mali 11500000.mali: 	Guilty fence [00000000f9684091] 1#1499: active
+[   61.159638] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159643] mali 11500000.mali: ctx 2355_4: Atom 173 still waiting for fence [0000000052bb73a3] after 3000ms
+[   61.159648] mali 11500000.mali: 	Guilty fence [0000000052bb73a3] 1#1500: active
+[   61.159652] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159656] mali 11500000.mali: ctx 2355_4: Atom 174 still waiting for fence [00000000cc2d0fa5] after 3000ms
+[   61.159661] mali 11500000.mali: 	Guilty fence [00000000cc2d0fa5] 1#1501: active
+[   61.159666] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159670] mali 11500000.mali: ctx 2355_4: Atom 43 still waiting for fence [0000000019d7e899] after 3000ms
+[   61.159675] mali 11500000.mali: 	Guilty fence [0000000019d7e899] 1#1502: active
+[   61.159679] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159683] mali 11500000.mali: ctx 2355_4: Atom 175 still waiting for fence [000000000d866e46] after 3000ms
+[   61.159688] mali 11500000.mali: 	Guilty fence [000000000d866e46] 1#1503: active
+[   61.159693] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159697] mali 11500000.mali: ctx 2355_4: Atom 176 still waiting for fence [00000000c0b92b47] after 3000ms
+[   61.159702] mali 11500000.mali: 	Guilty fence [00000000c0b92b47] 1#1504: active
+[   61.159707] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159711] mali 11500000.mali: ctx 2355_4: Atom 177 still waiting for fence [00000000c7dbdd16] after 3000ms
+[   61.159716] mali 11500000.mali: 	Guilty fence [00000000c7dbdd16] 1#1505: active
+[   61.159720] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159724] mali 11500000.mali: ctx 2355_4: Atom 44 still waiting for fence [00000000fd398d6b] after 3000ms
+[   61.159730] mali 11500000.mali: 	Guilty fence [00000000fd398d6b] 1#1506: active
+[   61.159734] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159738] mali 11500000.mali: ctx 2355_4: Atom 178 still waiting for fence [000000007b82dbc7] after 3000ms
+[   61.159743] mali 11500000.mali: 	Guilty fence [000000007b82dbc7] 1#1507: active
+[   61.159747] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159752] mali 11500000.mali: ctx 2355_4: Atom 179 still waiting for fence [000000007ab796ab] after 3000ms
+[   61.159757] mali 11500000.mali: 	Guilty fence [000000007ab796ab] 1#1508: active
+[   61.159761] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159766] mali 11500000.mali: ctx 2355_4: Atom 180 still waiting for fence [00000000b1994f08] after 3000ms
+[   61.159771] mali 11500000.mali: 	Guilty fence [00000000b1994f08] 1#1509: active
+[   61.159775] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159779] mali 11500000.mali: ctx 2355_4: Atom 45 still waiting for fence [00000000783c2db8] after 3000ms
+[   61.159784] mali 11500000.mali: 	Guilty fence [00000000783c2db8] 1#1510: active
+[   61.159789] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159793] mali 11500000.mali: ctx 2355_4: Atom 181 still waiting for fence [00000000309f7ac1] after 3000ms
+[   61.159798] mali 11500000.mali: 	Guilty fence [00000000309f7ac1] 1#1511: active
+[   61.159802] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159806] mali 11500000.mali: ctx 2355_4: Atom 182 still waiting for fence [00000000ae361e95] after 3000ms
+[   61.159811] mali 11500000.mali: 	Guilty fence [00000000ae361e95] 1#1512: active
+[   61.159816] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159820] mali 11500000.mali: ctx 2355_4: Atom 183 still waiting for fence [0000000048a851c0] after 3000ms
+[   61.159825] mali 11500000.mali: 	Guilty fence [0000000048a851c0] 1#1513: active
+[   61.159829] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159833] mali 11500000.mali: ctx 2355_4: Atom 10 still waiting for fence [0000000056248e46] after 3000ms
+[   61.159839] mali 11500000.mali: 	Guilty fence [0000000056248e46] 1#1514: active
+[   61.159843] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159847] mali 11500000.mali: ctx 2355_4: Atom 184 still waiting for fence [00000000f3932fb9] after 3000ms
+[   61.159853] mali 11500000.mali: 	Guilty fence [00000000f3932fb9] 1#1515: active
+[   61.159857] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159861] mali 11500000.mali: ctx 2355_4: Atom 185 still waiting for fence [00000000b9a02131] after 3000ms
+[   61.159866] mali 11500000.mali: 	Guilty fence [00000000b9a02131] 1#1516: active
+[   61.159871] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159875] mali 11500000.mali: ctx 2355_4: Atom 186 still waiting for fence [0000000052228d82] after 3000ms
+[   61.159880] mali 11500000.mali: 	Guilty fence [0000000052228d82] 1#1517: active
+[   61.159884] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159889] mali 11500000.mali: ctx 2355_4: Atom 46 still waiting for fence [00000000ce999a0c] after 3000ms
+[   61.159894] mali 11500000.mali: 	Guilty fence [00000000ce999a0c] 1#1518: active
+[   61.159898] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159902] mali 11500000.mali: ctx 2355_4: Atom 187 still waiting for fence [0000000068880285] after 3000ms
+[   61.159907] mali 11500000.mali: 	Guilty fence [0000000068880285] 1#1519: active
+[   61.159911] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159916] mali 11500000.mali: ctx 2355_4: Atom 188 still waiting for fence [000000000dc03aa5] after 3000ms
+[   61.159921] mali 11500000.mali: 	Guilty fence [000000000dc03aa5] 1#1520: active
+[   61.159925] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159929] mali 11500000.mali: ctx 2355_4: Atom 189 still waiting for fence [00000000a04de9da] after 3000ms
+[   61.159934] mali 11500000.mali: 	Guilty fence [00000000a04de9da] 1#1521: active
+[   61.159939] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159943] mali 11500000.mali: ctx 2355_4: Atom 190 still waiting for fence [00000000dd04abac] after 3000ms
+[   61.159948] mali 11500000.mali: 	Guilty fence [00000000dd04abac] 1#1522: active
+[   61.159953] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159957] mali 11500000.mali: ctx 2355_4: Atom 47 still waiting for fence [00000000c0a5cc6f] after 3000ms
+[   61.159962] mali 11500000.mali: 	Guilty fence [00000000c0a5cc6f] 1#1523: active
+[   61.159966] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159970] mali 11500000.mali: ctx 2355_4: Atom 191 still waiting for fence [00000000eec5b36f] after 3000ms
+[   61.159975] mali 11500000.mali: 	Guilty fence [00000000eec5b36f] 1#1524: active
+[   61.159980] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159984] mali 11500000.mali: ctx 2355_4: Atom 192 still waiting for fence [000000008efda036] after 3000ms
+[   61.159989] mali 11500000.mali: 	Guilty fence [000000008efda036] 1#1525: active
+[   61.159993] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.159997] mali 11500000.mali: ctx 2355_4: Atom 193 still waiting for fence [00000000394c1326] after 3000ms
+[   61.160002] mali 11500000.mali: 	Guilty fence [00000000394c1326] 1#1526: active
+[   61.160007] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.160011] mali 11500000.mali: ctx 2355_4: Atom 48 still waiting for fence [00000000f57480e7] after 3000ms
+[   61.160016] mali 11500000.mali: 	Guilty fence [00000000f57480e7] 1#1527: active
+[   61.160020] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.160024] mali 11500000.mali: ctx 2355_4: Atom 194 still waiting for fence [000000004fc07f73] after 3000ms
+[   61.160029] mali 11500000.mali: 	Guilty fence [000000004fc07f73] 1#1528: active
+[   61.160034] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.160038] mali 11500000.mali: ctx 2355_4: Atom 195 still waiting for fence [00000000f12ede13] after 3000ms
+[   61.160043] mali 11500000.mali: 	Guilty fence [00000000f12ede13] 1#1529: active
+[   61.160047] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.160051] mali 11500000.mali: ctx 2355_4: Atom 196 still waiting for fence [0000000092764acd] after 3000ms
+[   61.160056] mali 11500000.mali: 	Guilty fence [0000000092764acd] 1#1530: active
+[   61.160060] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.160065] mali 11500000.mali: ctx 2355_4: Atom 11 still waiting for fence [000000006376b2c1] after 3000ms
+[   61.160070] mali 11500000.mali: 	Guilty fence [000000006376b2c1] 1#1531: active
+[   61.160074] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.160078] mali 11500000.mali: ctx 2355_4: Atom 197 still waiting for fence [000000008e8d7850] after 3000ms
+[   61.160083] mali 11500000.mali: 	Guilty fence [000000008e8d7850] 1#1532: active
+[   61.160088] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.160092] mali 11500000.mali: ctx 2355_4: Atom 198 still waiting for fence [000000000fb7d7d4] after 3000ms
+[   61.160097] mali 11500000.mali: 	Guilty fence [000000000fb7d7d4] 1#1533: active
+[   61.160101] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.160105] mali 11500000.mali: ctx 2355_4: Atom 199 still waiting for fence [0000000090fb777f] after 3000ms
+[   61.160111] mali 11500000.mali: 	Guilty fence [0000000090fb777f] 1#1534: active
+[   61.160115] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.160119] mali 11500000.mali: ctx 2355_4: Atom 49 still waiting for fence [0000000025d89267] after 3000ms
+[   61.160124] mali 11500000.mali: 	Guilty fence [0000000025d89267] 1#1535: active
+[   61.160129] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.160133] mali 11500000.mali: ctx 2355_4: Atom 200 still waiting for fence [000000006b76f982] after 3000ms
+[   61.160138] mali 11500000.mali: 	Guilty fence [000000006b76f982] 1#1536: active
+[   61.160142] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.160146] mali 11500000.mali: ctx 2355_4: Atom 201 still waiting for fence [00000000bd6bc1fe] after 3000ms
+[   61.160151] mali 11500000.mali: 	Guilty fence [00000000bd6bc1fe] 1#1537: active
+[   61.160156] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.160160] mali 11500000.mali: ctx 2355_4: Atom 202 still waiting for fence [0000000070450c19] after 3000ms
+[   61.160165] mali 11500000.mali: 	Guilty fence [0000000070450c19] 1#1538: active
+[   61.160169] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.160173] mali 11500000.mali: ctx 2355_4: Atom 50 still waiting for fence [000000000ba1685e] after 3000ms
+[   61.160178] mali 11500000.mali: 	Guilty fence [000000000ba1685e] 1#1539: active
+[   61.160183] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.160187] mali 11500000.mali: ctx 2355_4: Atom 203 still waiting for fence [00000000cbafd39a] after 3000ms
+[   61.160192] mali 11500000.mali: 	Guilty fence [00000000cbafd39a] 1#1540: active
+[   61.160196] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.160200] mali 11500000.mali: ctx 2355_4: Atom 204 still waiting for fence [0000000087f370db] after 3000ms
+[   61.160205] mali 11500000.mali: 	Guilty fence [0000000087f370db] 1#1541: active
+[   61.160210] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.160214] mali 11500000.mali: ctx 2355_4: Atom 205 still waiting for fence [000000001510e69e] after 3000ms
+[   61.160219] mali 11500000.mali: 	Guilty fence [000000001510e69e] 1#1542: active
+[   61.160223] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.160228] mali 11500000.mali: ctx 2355_4: Atom 206 still waiting for fence [000000007d070bf0] after 3000ms
+[   61.160233] mali 11500000.mali: 	Guilty fence [000000007d070bf0] 1#1543: active
+[   61.160237] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.160241] mali 11500000.mali: ctx 2355_4: Atom 51 still waiting for fence [00000000251e8802] after 3000ms
+[   61.160246] mali 11500000.mali: 	Guilty fence [00000000251e8802] 1#1544: active
+[   61.160251] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.160255] mali 11500000.mali: ctx 2355_4: Atom 207 still waiting for fence [000000005fae90d7] after 3000ms
+[   61.160260] mali 11500000.mali: 	Guilty fence [000000005fae90d7] 1#1545: active
+[   61.160264] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.160269] mali 11500000.mali: ctx 2355_4: Atom 208 still waiting for fence [000000005253a011] after 3000ms
+[   61.160274] mali 11500000.mali: 	Guilty fence [000000005253a011] 1#1546: active
+[   61.160278] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.160282] mali 11500000.mali: ctx 2355_4: Atom 209 still waiting for fence [000000004cef491c] after 3000ms
+[   61.160289] mali 11500000.mali: 	Guilty fence [000000004cef491c] 1#1547: active
+[   61.160294] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.160298] mali 11500000.mali: ctx 2355_4: Atom 12 still waiting for fence [00000000178aa53a] after 3000ms
+[   61.160304] mali 11500000.mali: 	Guilty fence [00000000178aa53a] 1#1548: active
+[   61.160308] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.160313] mali 11500000.mali: ctx 2355_4: Atom 210 still waiting for fence [0000000001cbde1a] after 3000ms
+[   61.160318] mali 11500000.mali: 	Guilty fence [0000000001cbde1a] 1#1549: active
+[   61.160322] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.160326] mali 11500000.mali: ctx 2355_4: Atom 211 still waiting for fence [00000000c10663bc] after 3000ms
+[   61.160331] mali 11500000.mali: 	Guilty fence [00000000c10663bc] 1#1550: active
+[   61.160336] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.160340] mali 11500000.mali: ctx 2355_4: Atom 212 still waiting for fence [00000000aeac2030] after 3000ms
+[   61.160345] mali 11500000.mali: 	Guilty fence [00000000aeac2030] 1#1551: active
+[   61.160349] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.160354] mali 11500000.mali: ctx 2355_4: Atom 52 still waiting for fence [00000000d6ba1b12] after 3000ms
+[   61.160359] mali 11500000.mali: 	Guilty fence [00000000d6ba1b12] 1#1552: active
+[   61.160363] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.160367] mali 11500000.mali: ctx 2355_4: Atom 213 still waiting for fence [000000005c02700e] after 3000ms
+[   61.160372] mali 11500000.mali: 	Guilty fence [000000005c02700e] 1#1553: active
+[   61.160377] mali 11500000.mali: kbase_fence_debug_check_atom
+[   61.212041] systemd[1]: Started lightdm.service - Light Display Manager.
+[   61.345299] init: sys_prop: invalid command 2
+[   61.396214] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   61.408102] init: Control message: Could not find 'android.hardware.audio@5.0::IDevicesFactory/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   61.460091] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   61.511734] a50_copy_layer: 289 callbacks suppressed
+[   61.511753] a50-decon 148b0000.decon_f: win_config: format 2 not bridged
+[   61.528468] a50-decon 148b0000.decon_f: win_config: format 2 not bridged
+[   61.545186] a50-decon 148b0000.decon_f: win_config: format 2 not bridged
+[   61.560773] A50M64: BEGIN target=60 uptime=61.55
+[   61.561229] A50M64: CMD systemctl show mount-android-partitions.service a50-container-prepare.service lxc-android-config.service -p Id -p ActiveState -p SubState -p Result -p ExecMainStatus
+[   61.561898] a50-decon 148b0000.decon_f: win_config: format 2 not bridged
+[   61.578627] a50-decon 148b0000.decon_f: win_config: format 2 not bridged
+[   61.595331] a50-decon 148b0000.decon_f: win_config: format 2 not bridged
+[   61.612045] a50-decon 148b0000.decon_f: win_config: format 2 not bridged
+[   61.620176] A50M64: Result=success
+[   61.620685] A50M64: ExecMainStatus=0
+[   61.621220] A50M64: Id=mount-android-partitions.service
+[   61.621682] A50M64: ActiveState=active
+[   61.622142] A50M64: SubState=exited
+[   61.622575] A50M64:
+[   61.623044] A50M64: Result=success
+[   61.623540] A50M64: ExecMainStatus=0
+[   61.624071] A50M64: Id=a50-container-prepare.service
+[   61.624562] A50M64: ActiveState=active
+[   61.625041] A50M64: SubState=exited
+[   61.625493] A50M64:
+[   61.625952] A50M64: Result=success
+[   61.626424] A50M64: ExecMainStatus=0
+[   61.626923] A50M64: Id=lxc-android-config.service
+[   61.627429] A50M64: ActiveState=active
+[   61.627944] A50M64: SubState=running
+[   61.628455] A50M64: RC 0
+[   61.628770] a50-decon 148b0000.decon_f: win_config: format 2 not bridged
+[   61.628928] A50M64: CMD systemctl show rild.service ofono.service bluebinder.service a50-audio-route.service -p Id -p ActiveState -p SubState -p Result -p ExecMainStatus -p Job
+[   61.645491] a50-decon 148b0000.decon_f: win_config: format 2 not bridged
+[   61.662201] a50-decon 148b0000.decon_f: win_config: format 2 not bridged
+[   61.683821] A50M64: Result=success
+[   61.684282] A50M64: ExecMainStatus=0
+[   61.684788] A50M64: Id=rild.service
+[   61.685243] A50M64: ActiveState=active
+[   61.685701] A50M64: SubState=exited
+[   61.686146] A50M64: Job=
+[   61.686564] A50M64:
+[   61.687020] A50M64: Result=success
+[   61.687517] A50M64: ExecMainStatus=0
+[   61.687972] A50M64: Id=ofono.service
+[   61.688463] A50M64: ActiveState=active
+[   61.688965] A50M64: SubState=running
+[   61.689415] A50M64: Job=
+[   61.689837] A50M64:
+[   61.690269] A50M64: Result=protocol
+[   61.690719] A50M64: ExecMainStatus=0
+[   61.691168] A50M64: Id=bluebinder.service
+[   61.691685] A50M64: ActiveState=activating
+[   61.692186] A50M64: SubState=auto-restart
+[   61.692643] A50M64: Job=
+[   61.693072] A50M64:
+[   61.693526] A50M64: Result=success
+[   61.693975] A50M64: ExecMainStatus=0
+[   61.694424] A50M64: Id=a50-audio-route.service
+[   61.694897] A50M64: ActiveState=activating
+[   61.695384] A50M64: SubState=start
+[   61.695855] A50M64: Job=188
+[   61.696338] A50M64: RC 0
+[   61.696754] A50M64: CMD lxc-info -n android
+[   61.722002] A50M64: Name:           android
+[   61.722482] A50M64: State:          RUNNING
+[   61.722923] A50M64: PID:            870
+[   61.723434] A50M64: IP:             10.15.19.82
+[   61.723909] A50M64: RC 0
+[   61.724369] A50M64: CMD lxc-attach -n android -- /system/bin/getprop sys.boot_completed
+[   61.761092] lxc[863]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[   61.806528] A50M64: 1
+[   61.806994] A50M64: RC 0
+[   61.807471] A50M64: CMD lxc-attach -n android -- /system/bin/getprop init.svc.vendor.gralloc-2-0
+[   61.836727] lxc[863]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[   61.868603] A50M64: running
+[   61.869085] A50M64: RC 0
+[   61.869507] A50M64: CMD /bin/sh -c ps -eo pid,comm,args | grep -E "graphics.allocator|/system/bin/init|lxc-start|servicemanager" | grep -v grep
+[   61.926734] A50M64:     863 lxc-start       /usr/bin/lxc-start -n android -F -- /system/bin/env -i PATH=/product/bin:/apex/com.android.runtime/bin:/apex/com.android.art/bin:/sbin:/system/sbin:/system_ext/bin:/system/bin:/system/xbin:/odm/bin:/vendor/bin:/vendor/xbin INIT_STARTED_AT=0 /init second_stage
+[   61.927396] A50M64:     896 init            /system/bin/init subcontext u:r:vendor_init:s0 14
+[   61.927937] A50M64:     965 servicemanager  /system/bin/servicemanager
+[   61.928508] A50M64:     966 hwservicemanage /system/bin/hwservicemanager
+[   61.929082] A50M64:     967 vndservicemanag /vendor/bin/vndservicemanager /dev/vndbinder
+[   61.929677] A50M64:    1162 allocator@2.0-s /vendor/bin/hw/android.hardware.graphics.allocator@2.0-service
+[   61.930168] A50M64: RC 0
+[   61.930595] A50M64: CMD /bin/sh -c cat /sys/fs/cgroup/cgroup.controllers; cat /sys/fs/cgroup/cgroup.subtree_control; cat /proc/self/cgroup
+[   61.985382] A50M64: cpuset io memory
+[   61.985865] A50M64: cpuset io memory
+[   61.986325] A50M64: 0::/init.scope
+[   61.986793] A50M64: RC 0
+[   61.987220] A50M64: CMD findmnt -R /android -o TARGET,SOURCE,FSTYPE,OPTIONS
+[   62.008337] A50M64: TARGET                                                SOURCE                                                    FSTYPE OPTIONS
+[   62.009044] A50M64: /android                                              /dev/loop1                                                ext4   ro,relatime
+[   62.009734] A50M64: |-/android/system                                     /dev/loop1[/system]                                       ext4   ro,relatime
+[   62.010554] A50M64: |-/android/data                                       /dev/sda32[/android-data]                                 ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[   62.012060] A50M64: | `-/android/data                                     /dev/sda32[/android-data]                                 ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[   62.012896] A50M64: |-/android/cache                                      /dev/sda32[/cache]                                        ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[   62.013731] A50M64: | `-/android/cache                                    /dev/sda32[/android-data/cache]                           ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[   62.014494] A50M64: |-/android/vendor                                     /dev/sda26                                                ext4   ro,nosuid,nodev,relatime,nodiscard,norecovery
+[   62.015198] A50M64: | `-/android/vendor/lib64/hw/audio.primary.default.so /dev/loop1[/system/lib64/hw/audio.hidl_compat.default.so] ext4   ro,relatime
+[   62.016798] A50M64: |-/android/mnt                                        a50-android-mnt                                           tmpfs  rw,nosuid,nodev,relatime,size=16384k,mode=755
+[   62.017508] A50M64: |-/android/apex                                       android_apex                                              tmpfs  rw,relatime
+[   62.018226] A50M64: | |-/android/apex/com.android.i18n                    /dev/loop1[/system/apex/com.android.i18n]                 ext4   ro,relatime
+[   62.018905] A50M64: | |-/android/apex/com.android.art                     /dev/loop1[/system/apex/com.android.art.release]          ext4   ro,relatime
+[   62.020027] A50M64: | |-/android/apex/com.android.runtime                 /dev/loop1[/system/apex/com.android.runtime]              ext4   ro,relatime
+[   62.020748] A50M64: | `-/android/apex/com.android.vndk.v30                /dev/loop1[/system/apex/com.android.vndk.current]         ext4   ro,relatime
+[   62.021443] A50M64: `-/android/linkerconfig                               linkerconfig                                              tmpfs  rw,relatime
+[   62.021926] A50M64: RC 0
+[   62.022338] A50M64: CMD tail -n 35 /run/a50-m64/mount.log
+[   62.046926] A50M64: A50M64: mount vendor /dev/disk/by-partlabel/vendor ro,noload,nodev,nosuid
+[   62.047876] A50M64: A50M64: EFS, SEC_EFS, CPEFS and physical cache mounts skipped
+[   62.048487] A50M64: TARGET             SOURCE                          FSTYPE OPTIONS
+[   62.049092] A50M64: /android           /dev/loop1                      ext4   ro,relatime
+[   62.049667] A50M64: \xe2\x94\x9c\xe2\x94\x80/android/system  /dev/loop1[/system]             ext4   ro,relatime
+[   62.050344] A50M64: \xe2\x94\x9c\xe2\x94\x80/android/data    /dev/sda32[/android-data]       ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[   62.051046] A50M64: \xe2\x94\x82 \xe2\x94\x94\xe2\x94\x80/android/data  /dev/sda32[/android-data]       ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[   62.052479] A50M64: \xe2\x94\x9c\xe2\x94\x80/android/cache   /dev/sda32[/cache]              ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[   62.053199] A50M64: \xe2\x94\x82 \xe2\x94\x94\xe2\x94\x80/android/cache /dev/sda32[/android-data/cache] ext4   rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+[   62.053846] A50M64: \xe2\x94\x9c\xe2\x94\x80/android/vendor  /dev/sda26                      ext4   ro,nosuid,nodev,relatime,nodiscard,norecovery
+[   62.054515] A50M64: \xe2\x94\x94\xe2\x94\x80/android/mnt     a50-android-mnt                 tmpfs  rw,nosuid,nodev,relatime,size=16384k,mode=755
+[   62.055013] A50M64: A50M64: safe Android mounts ready
+[   62.055917] A50M64: RC 0
+[   62.056376] A50M64: CMD /bin/sh -c tail -n 70 /run/a50-m64/lxc.log
+[   62.083183] A50M64: RC 0
+[   62.083744] A50M64: CMD journalctl -b --no-pager -n 35 -u mount-android-partitions.service -u a50-container-prepare.service -u lxc-android-config.service
+[   62.130370] a50-decon 148b0000.decon_f: G2b acquire: out=1#1536 layer=0 in=1226#6 signaled_bit=1
+[   62.164037] a50-decon 148b0000.decon_f: G2b WIN_CONFIG: fence=1#1792 layers=1 layer=0 format=2 dma_eligible=0 pending=255
+[   62.272601] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 27.
+[   62.301126] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[   62.308994] init: sys_prop: invalid command 2
+[   62.325633] init: sys_prop: invalid command 2
+[   62.359133] bluebinder[3569]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[   62.359338] bluebinder[3569]: g_io_channel_unref: assertion 'channel != NULL' failed
+[   62.362501] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[   62.363768] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[   62.387273] binder: undelivered death notification, 0000000000000000
+[   62.400152] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   62.411280] binder: undelivered death notification, 0000000000000000
+[   62.416012] init: Control message: Could not find 'android.hardware.audio@5.0::IDevicesFactory/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   62.463836] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   62.549949] systemd[1]: session-c1.scope: Deactivated successfully.
+[   62.782643] A50M64: -- No entries --
+[   62.783102] A50M64: RC 0
+[   62.783894] A50M64: END target=60
+[   63.275346] init: starting service 'vendor.audio-hal'...
+[   63.276927] libprocessgroup: Failed to make and chown /acct/uid_1041: Read-only file system
+[   63.276980] init: createProcessGroup(1041, 656) failed for service 'vendor.audio-hal': Read-only file system
+[   63.277406] init: starting service 'vendor.cas-hal-1-2'...
+[   63.279065] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[   63.279119] init: createProcessGroup(1013, 657) failed for service 'vendor.cas-hal-1-2': Read-only file system
+[   63.287340] init: starting service 'vendor.drm-widevine-hal-1-3'...
+[   63.288986] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[   63.289042] init: createProcessGroup(1013, 658) failed for service 'vendor.drm-widevine-hal-1-3': Read-only file system
+[   63.404376] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   63.417354] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 28.
+[   63.423001] init: Control message: Could not find 'android.hardware.audio@5.0::IDevicesFactory/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   63.444303] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[   63.445376] systemd[1]: systemd-timedated.service: Deactivated successfully.
+[   63.454122] init: sys_prop: invalid command 2
+[   63.468231] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   63.473209] init: sys_prop: invalid command 2
+[   63.537393] bluebinder[3617]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[   63.537566] bluebinder[3617]: g_io_channel_unref: assertion 'channel != NULL' failed
+[   63.540336] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[   63.541776] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[   63.554695] init: Service 'vendor.audio-hal' (pid 656) received signal 11
+[   63.554727] init: Sending signal 9 to service 'vendor.audio-hal' (pid 656) process group...
+[   63.554803] libprocessgroup: Successfully killed process cgroup uid 1041 pid 656 in 0ms
+[   63.554973] init: Command 'restart audioserver' action=onrestart (<Service 'vendor.audio-hal' onrestart>:1) took 0ms and failed: service audioserver not found
+[   63.563306] init: starting service 'secure_storage'...
+[   63.564850] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   63.564900] init: createProcessGroup(1000, 666) failed for service 'secure_storage': Read-only file system
+[   63.572932] init: Service 'vendor.cas-hal-1-2' (pid 657) received signal 11
+[   63.572962] init: Sending signal 9 to service 'vendor.cas-hal-1-2' (pid 657) process group...
+[   63.573029] libprocessgroup: Successfully killed process cgroup uid 1013 pid 657 in 0ms
+[   63.575319] binder: undelivered death notification, 0000000000000000
+[   63.585115] init: Service 'secure_storage' (pid 666) exited with status 14
+[   63.585146] init: Sending signal 9 to service 'secure_storage' (pid 666) process group...
+[   63.585210] libprocessgroup: Successfully killed process cgroup uid 1000 pid 666 in 0ms
+[   63.632712] init: Service 'vendor.drm-widevine-hal-1-3' (pid 658) received signal 11
+[   63.632743] init: Sending signal 9 to service 'vendor.drm-widevine-hal-1-3' (pid 658) process group...
+[   63.632828] libprocessgroup: Successfully killed process cgroup uid 1013 pid 658 in 0ms
+[   63.691553] systemd[1]: lightdm.service: Main process exited, code=exited, status=1/FAILURE
+[   63.691753] systemd[1]: lightdm.service: Failed with result 'exit-code'.
+[   63.692428] systemd[1]: lightdm.service: Consumed 1.570s CPU time.
+[   63.735378] init: starting service 'camera_service'...
+[   63.736920] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[   63.736968] init: createProcessGroup(1013, 668) failed for service 'camera_service': Read-only file system
+[   63.947348] init: starting service 'vendor.media.omx'...
+[   63.948833] libprocessgroup: Failed to make and chown /acct/uid_1046: Read-only file system
+[   63.948883] init: createProcessGroup(1046, 669) failed for service 'vendor.media.omx': Read-only file system
+[   63.950133] libprocessgroup: Failed to find SystemServicePerformancetask profile: No such file or directory
+[   63.950161] libprocessgroup: Failed to find SystemServiceCapacityHightask profile: No such file or directory
+[   64.007373] init: starting service 'ril-daemon'...
+[   64.007545] init: Created socket '/dev/socket/sap_uim_socket1', mode 660, user 1002, group 1002
+[   64.009164] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[   64.009215] init: createProcessGroup(1001, 670) failed for service 'ril-daemon': Read-only file system
+[   64.020755] systemd[1]: lightdm.service: Scheduled restart job, restart counter is at 15.
+[   64.031397] init: starting service 'ril-daemon1'...
+[   64.033141] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[   64.033197] init: createProcessGroup(1001, 671) failed for service 'ril-daemon1': Read-only file system
+[   64.048713] systemd[1]: Starting lightdm.service - Light Display Manager...
+[   64.113135] init: Service 'vendor.media.omx' (pid 669) received signal 11
+[   64.113170] init: Sending signal 9 to service 'vendor.media.omx' (pid 669) process group...
+[   64.113255] libprocessgroup: Successfully killed process cgroup uid 1046 pid 669 in 0ms
+[   64.119306] init: starting service 'wlbtd'...
+[   64.120835] libprocessgroup: Failed to make and chown /acct/uid_1010: Read-only file system
+[   64.120903] init: createProcessGroup(1010, 674) failed for service 'wlbtd': Read-only file system
+[   64.132752] init: Service 'wlbtd' (pid 674) exited with status 0
+[   64.132787] init: Sending signal 9 to service 'wlbtd' (pid 674) process group...
+[   64.132848] libprocessgroup: Successfully killed process cgroup uid 1010 pid 674 in 0ms
+[   64.144227] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:670: Read-only property was already set
+[   64.144566] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:670: Read-only property was already set
+[   64.150573] systemd[1]: Started lightdm.service - Light Display Manager.
+[   64.159196] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:670: Read-only property was already set
+[   64.159617] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:670: Read-only property was already set
+[   64.169348] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:671: Read-only property was already set
+[   64.169732] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:671: Read-only property was already set
+[   64.194354] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:671: Read-only property was already set
+[   64.194631] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:671: Read-only property was already set
+[   64.216709] init: Service 'camera_service' (pid 668) received signal 11
+[   64.216743] init: Sending signal 9 to service 'camera_service' (pid 668) process group...
+[   64.216813] libprocessgroup: Successfully killed process cgroup uid 1013 pid 668 in 0ms
+[   64.230292] init: sys_prop: invalid command 2
+[   64.231288] mali 11500000.mali: ctx 2355_4: Atom 25 still waiting for fence [000000004e604a46] after 3000ms
+[   64.231307] mali 11500000.mali: 	Guilty fence [000000004e604a46] 1#1661: active
+[   64.231313] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231320] mali 11500000.mali: ctx 2355_4: Atom 103 still waiting for fence [00000000da089125] after 3000ms
+[   64.231326] mali 11500000.mali: 	Guilty fence [00000000da089125] 1#1662: active
+[   64.231332] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231336] mali 11500000.mali: ctx 2355_4: Atom 104 still waiting for fence [00000000c1baef44] after 3000ms
+[   64.231343] mali 11500000.mali: 	Guilty fence [00000000c1baef44] 1#1663: active
+[   64.231348] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231352] mali 11500000.mali: ctx 2355_4: Atom 105 still waiting for fence [0000000057dd9e29] after 3000ms
+[   64.231358] mali 11500000.mali: 	Guilty fence [0000000057dd9e29] 1#1664: active
+[   64.231362] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231366] mali 11500000.mali: ctx 2355_4: Atom 4 still waiting for fence [00000000754ecda6] after 3000ms
+[   64.231372] mali 11500000.mali: 	Guilty fence [00000000754ecda6] 1#1665: active
+[   64.231376] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231380] mali 11500000.mali: ctx 2355_4: Atom 106 still waiting for fence [000000007b239764] after 3000ms
+[   64.231386] mali 11500000.mali: 	Guilty fence [000000007b239764] 1#1666: active
+[   64.231390] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231394] mali 11500000.mali: ctx 2355_4: Atom 107 still waiting for fence [000000001e04ebe7] after 3000ms
+[   64.231399] mali 11500000.mali: 	Guilty fence [000000001e04ebe7] 1#1667: active
+[   64.231404] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231408] mali 11500000.mali: ctx 2355_4: Atom 108 still waiting for fence [0000000054340e3f] after 3000ms
+[   64.231413] mali 11500000.mali: 	Guilty fence [0000000054340e3f] 1#1668: active
+[   64.231417] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231422] mali 11500000.mali: ctx 2355_4: Atom 26 still waiting for fence [00000000ffb7f19c] after 3000ms
+[   64.231427] mali 11500000.mali: 	Guilty fence [00000000ffb7f19c] 1#1669: active
+[   64.231431] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231435] mali 11500000.mali: ctx 2355_4: Atom 109 still waiting for fence [00000000abf5cc9f] after 3000ms
+[   64.231440] mali 11500000.mali: 	Guilty fence [00000000abf5cc9f] 1#1670: active
+[   64.231445] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231449] mali 11500000.mali: ctx 2355_4: Atom 110 still waiting for fence [00000000ead03dd6] after 3000ms
+[   64.231454] mali 11500000.mali: 	Guilty fence [00000000ead03dd6] 1#1671: active
+[   64.231458] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231462] mali 11500000.mali: ctx 2355_4: Atom 111 still waiting for fence [00000000d941ce96] after 3000ms
+[   64.231467] mali 11500000.mali: 	Guilty fence [00000000d941ce96] 1#1672: active
+[   64.231472] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231476] mali 11500000.mali: ctx 2355_4: Atom 112 still waiting for fence [00000000b721fbc1] after 3000ms
+[   64.231481] mali 11500000.mali: 	Guilty fence [00000000b721fbc1] 1#1673: active
+[   64.231485] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231489] mali 11500000.mali: ctx 2355_4: Atom 27 still waiting for fence [0000000025efdad2] after 3000ms
+[   64.231494] mali 11500000.mali: 	Guilty fence [0000000025efdad2] 1#1674: active
+[   64.231499] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231503] mali 11500000.mali: ctx 2355_4: Atom 113 still waiting for fence [00000000eaa96f45] after 3000ms
+[   64.231508] mali 11500000.mali: 	Guilty fence [00000000eaa96f45] 1#1675: active
+[   64.231512] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231516] mali 11500000.mali: ctx 2355_4: Atom 114 still waiting for fence [00000000f3f94f19] after 3000ms
+[   64.231521] mali 11500000.mali: 	Guilty fence [00000000f3f94f19] 1#1676: active
+[   64.231525] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231529] mali 11500000.mali: ctx 2355_4: Atom 28 still waiting for fence [00000000a358cb1b] after 3000ms
+[   64.231534] mali 11500000.mali: 	Guilty fence [00000000a358cb1b] 1#1677: active
+[   64.231539] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231543] mali 11500000.mali: ctx 2355_4: Atom 115 still waiting for fence [00000000da581417] after 3000ms
+[   64.231548] mali 11500000.mali: 	Guilty fence [00000000da581417] 1#1678: active
+[   64.231552] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231557] mali 11500000.mali: ctx 2355_4: Atom 116 still waiting for fence [000000002c607bba] after 3000ms
+[   64.231562] mali 11500000.mali: 	Guilty fence [000000002c607bba] 1#1679: active
+[   64.231566] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231570] mali 11500000.mali: ctx 2355_4: Atom 117 still waiting for fence [0000000048b0da0d] after 3000ms
+[   64.231575] mali 11500000.mali: 	Guilty fence [0000000048b0da0d] 1#1680: active
+[   64.231580] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231584] mali 11500000.mali: ctx 2355_4: Atom 29 still waiting for fence [00000000a04b8340] after 3000ms
+[   64.231589] mali 11500000.mali: 	Guilty fence [00000000a04b8340] 1#1681: active
+[   64.231593] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231597] mali 11500000.mali: ctx 2355_4: Atom 118 still waiting for fence [000000007dffda77] after 3000ms
+[   64.231603] mali 11500000.mali: 	Guilty fence [000000007dffda77] 1#1682: active
+[   64.231607] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231611] mali 11500000.mali: ctx 2355_4: Atom 119 still waiting for fence [0000000055503cbe] after 3000ms
+[   64.231616] mali 11500000.mali: 	Guilty fence [0000000055503cbe] 1#1683: active
+[   64.231620] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231625] mali 11500000.mali: ctx 2355_4: Atom 120 still waiting for fence [000000006fe99316] after 3000ms
+[   64.231630] mali 11500000.mali: 	Guilty fence [000000006fe99316] 1#1684: active
+[   64.231634] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231638] mali 11500000.mali: ctx 2355_4: Atom 5 still waiting for fence [00000000ba6f0653] after 3000ms
+[   64.231644] mali 11500000.mali: 	Guilty fence [00000000ba6f0653] 1#1685: active
+[   64.231648] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231652] mali 11500000.mali: ctx 2355_4: Atom 121 still waiting for fence [00000000c459c5e9] after 3000ms
+[   64.231657] mali 11500000.mali: 	Guilty fence [00000000c459c5e9] 1#1686: active
+[   64.231662] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231666] mali 11500000.mali: ctx 2355_4: Atom 122 still waiting for fence [00000000eaea1476] after 3000ms
+[   64.231671] mali 11500000.mali: 	Guilty fence [00000000eaea1476] 1#1687: active
+[   64.231676] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231680] mali 11500000.mali: ctx 2355_4: Atom 30 still waiting for fence [000000006c17db2d] after 3000ms
+[   64.231685] mali 11500000.mali: 	Guilty fence [000000006c17db2d] 1#1688: active
+[   64.231690] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231694] mali 11500000.mali: ctx 2355_4: Atom 123 still waiting for fence [00000000b5122e9c] after 3000ms
+[   64.231699] mali 11500000.mali: 	Guilty fence [00000000b5122e9c] 1#1689: active
+[   64.231703] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231707] mali 11500000.mali: ctx 2355_4: Atom 124 still waiting for fence [000000005619f160] after 3000ms
+[   64.231713] mali 11500000.mali: 	Guilty fence [000000005619f160] 1#1690: active
+[   64.231717] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231722] mali 11500000.mali: ctx 2355_4: Atom 125 still waiting for fence [000000004a505a3a] after 3000ms
+[   64.231726] mali 11500000.mali: 	Guilty fence [000000004a505a3a] 1#1691: active
+[   64.231731] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231735] mali 11500000.mali: ctx 2355_4: Atom 126 still waiting for fence [000000000bc7d162] after 3000ms
+[   64.231740] mali 11500000.mali: 	Guilty fence [000000000bc7d162] 1#1692: active
+[   64.231745] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231749] mali 11500000.mali: ctx 2355_4: Atom 31 still waiting for fence [000000009192a239] after 3000ms
+[   64.231754] mali 11500000.mali: 	Guilty fence [000000009192a239] 1#1693: active
+[   64.231758] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231762] mali 11500000.mali: ctx 2355_4: Atom 127 still waiting for fence [0000000056af735a] after 3000ms
+[   64.231767] mali 11500000.mali: 	Guilty fence [0000000056af735a] 1#1694: active
+[   64.231771] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231775] mali 11500000.mali: ctx 2355_4: Atom 128 still waiting for fence [00000000afa3b317] after 3000ms
+[   64.231780] mali 11500000.mali: 	Guilty fence [00000000afa3b317] 1#1695: active
+[   64.231785] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231789] mali 11500000.mali: ctx 2355_4: Atom 129 still waiting for fence [00000000790f794f] after 3000ms
+[   64.231794] mali 11500000.mali: 	Guilty fence [00000000790f794f] 1#1696: active
+[   64.231798] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231802] mali 11500000.mali: ctx 2355_4: Atom 32 still waiting for fence [000000004ddb4a51] after 3000ms
+[   64.231807] mali 11500000.mali: 	Guilty fence [000000004ddb4a51] 1#1697: active
+[   64.231811] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231816] mali 11500000.mali: ctx 2355_4: Atom 130 still waiting for fence [0000000098a98602] after 3000ms
+[   64.231821] mali 11500000.mali: 	Guilty fence [0000000098a98602] 1#1698: active
+[   64.231825] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231829] mali 11500000.mali: ctx 2355_4: Atom 131 still waiting for fence [00000000b0c37827] after 3000ms
+[   64.231835] mali 11500000.mali: 	Guilty fence [00000000b0c37827] 1#1699: active
+[   64.231839] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231843] mali 11500000.mali: ctx 2355_4: Atom 6 still waiting for fence [0000000093b18478] after 3000ms
+[   64.231848] mali 11500000.mali: 	Guilty fence [0000000093b18478] 1#1700: active
+[   64.231852] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231856] mali 11500000.mali: ctx 2355_4: Atom 132 still waiting for fence [00000000c9fdd4de] after 3000ms
+[   64.231861] mali 11500000.mali: 	Guilty fence [00000000c9fdd4de] 1#1701: active
+[   64.231865] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231869] mali 11500000.mali: ctx 2355_4: Atom 133 still waiting for fence [00000000c26abe1d] after 3000ms
+[   64.231874] mali 11500000.mali: 	Guilty fence [00000000c26abe1d] 1#1702: active
+[   64.231879] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231883] mali 11500000.mali: ctx 2355_4: Atom 134 still waiting for fence [000000007ab48bc0] after 3000ms
+[   64.231888] mali 11500000.mali: 	Guilty fence [000000007ab48bc0] 1#1703: active
+[   64.231892] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231896] mali 11500000.mali: ctx 2355_4: Atom 33 still waiting for fence [0000000059a1246c] after 3000ms
+[   64.231901] mali 11500000.mali: 	Guilty fence [0000000059a1246c] 1#1704: active
+[   64.231905] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231910] mali 11500000.mali: ctx 2355_4: Atom 135 still waiting for fence [00000000e89a180c] after 3000ms
+[   64.231915] mali 11500000.mali: 	Guilty fence [00000000e89a180c] 1#1705: active
+[   64.231919] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231923] mali 11500000.mali: ctx 2355_4: Atom 136 still waiting for fence [0000000024e15d4a] after 3000ms
+[   64.231928] mali 11500000.mali: 	Guilty fence [0000000024e15d4a] 1#1706: active
+[   64.231932] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231937] mali 11500000.mali: ctx 2355_4: Atom 137 still waiting for fence [00000000a7966cae] after 3000ms
+[   64.231942] mali 11500000.mali: 	Guilty fence [00000000a7966cae] 1#1707: active
+[   64.231946] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231950] mali 11500000.mali: ctx 2355_4: Atom 34 still waiting for fence [0000000094703819] after 3000ms
+[   64.231955] mali 11500000.mali: 	Guilty fence [0000000094703819] 1#1708: active
+[   64.231960] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231964] mali 11500000.mali: ctx 2355_4: Atom 138 still waiting for fence [0000000094067939] after 3000ms
+[   64.231969] mali 11500000.mali: 	Guilty fence [0000000094067939] 1#1709: active
+[   64.231973] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231978] mali 11500000.mali: ctx 2355_4: Atom 139 still waiting for fence [0000000048c031b7] after 3000ms
+[   64.231983] mali 11500000.mali: 	Guilty fence [0000000048c031b7] 1#1710: active
+[   64.231987] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.231991] mali 11500000.mali: ctx 2355_4: Atom 140 still waiting for fence [0000000085f2238d] after 3000ms
+[   64.231996] mali 11500000.mali: 	Guilty fence [0000000085f2238d] 1#1711: active
+[   64.232000] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.232004] mali 11500000.mali: ctx 2355_4: Atom 141 still waiting for fence [00000000747bb9e7] after 3000ms
+[   64.232010] mali 11500000.mali: 	Guilty fence [00000000747bb9e7] 1#1712: active
+[   64.232014] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.232018] mali 11500000.mali: ctx 2355_4: Atom 35 still waiting for fence [000000002e80cffb] after 3000ms
+[   64.232023] mali 11500000.mali: 	Guilty fence [000000002e80cffb] 1#1713: active
+[   64.232027] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.232032] mali 11500000.mali: ctx 2355_4: Atom 142 still waiting for fence [00000000077f2ed6] after 3000ms
+[   64.232037] mali 11500000.mali: 	Guilty fence [00000000077f2ed6] 1#1714: active
+[   64.232041] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.232045] mali 11500000.mali: ctx 2355_4: Atom 143 still waiting for fence [00000000fdd32cc8] after 3000ms
+[   64.232050] mali 11500000.mali: 	Guilty fence [00000000fdd32cc8] 1#1715: active
+[   64.232055] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.232059] mali 11500000.mali: ctx 2355_4: Atom 144 still waiting for fence [000000005bbed98c] after 3000ms
+[   64.232064] mali 11500000.mali: 	Guilty fence [000000005bbed98c] 1#1716: active
+[   64.232068] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.232072] mali 11500000.mali: ctx 2355_4: Atom 7 still waiting for fence [000000007e9f86c6] after 3000ms
+[   64.232077] mali 11500000.mali: 	Guilty fence [000000007e9f86c6] 1#1717: active
+[   64.232082] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.232086] mali 11500000.mali: ctx 2355_4: Atom 145 still waiting for fence [00000000c9a712f7] after 3000ms
+[   64.232091] mali 11500000.mali: 	Guilty fence [00000000c9a712f7] 1#1718: active
+[   64.232095] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.232100] mali 11500000.mali: ctx 2355_4: Atom 146 still waiting for fence [00000000ed77786f] after 3000ms
+[   64.232105] mali 11500000.mali: 	Guilty fence [00000000ed77786f] 1#1719: active
+[   64.232109] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.232113] mali 11500000.mali: ctx 2355_4: Atom 147 still waiting for fence [0000000030300841] after 3000ms
+[   64.232118] mali 11500000.mali: 	Guilty fence [0000000030300841] 1#1720: active
+[   64.232122] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.232127] mali 11500000.mali: ctx 2355_4: Atom 36 still waiting for fence [00000000190e3bed] after 3000ms
+[   64.232132] mali 11500000.mali: 	Guilty fence [00000000190e3bed] 1#1721: active
+[   64.232136] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.232140] mali 11500000.mali: ctx 2355_4: Atom 148 still waiting for fence [000000007b80b888] after 3000ms
+[   64.232145] mali 11500000.mali: 	Guilty fence [000000007b80b888] 1#1722: active
+[   64.232149] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.232154] mali 11500000.mali: ctx 2355_4: Atom 149 still waiting for fence [000000005eb3a074] after 3000ms
+[   64.232159] mali 11500000.mali: 	Guilty fence [000000005eb3a074] 1#1723: active
+[   64.232163] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.232167] mali 11500000.mali: ctx 2355_4: Atom 150 still waiting for fence [00000000435d81a8] after 3000ms
+[   64.232172] mali 11500000.mali: 	Guilty fence [00000000435d81a8] 1#1724: active
+[   64.232177] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.232181] mali 11500000.mali: ctx 2355_4: Atom 37 still waiting for fence [00000000234f3885] after 3000ms
+[   64.232186] mali 11500000.mali: 	Guilty fence [00000000234f3885] 1#1725: active
+[   64.232190] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.232199] mali 11500000.mali: ctx 2355_4: Atom 151 still waiting for fence [000000002df4bf4b] after 3000ms
+[   64.232205] mali 11500000.mali: 	Guilty fence [000000002df4bf4b] 1#1726: active
+[   64.232209] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.232213] mali 11500000.mali: ctx 2355_4: Atom 152 still waiting for fence [0000000089e7abd9] after 3000ms
+[   64.232218] mali 11500000.mali: 	Guilty fence [0000000089e7abd9] 1#1727: active
+[   64.232223] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.232227] mali 11500000.mali: ctx 2355_4: Atom 153 still waiting for fence [0000000076f97596] after 3000ms
+[   64.232232] mali 11500000.mali: 	Guilty fence [0000000076f97596] 1#1728: active
+[   64.232236] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.232240] mali 11500000.mali: ctx 2355_4: Atom 38 still waiting for fence [0000000015afaf84] after 3000ms
+[   64.232245] mali 11500000.mali: 	Guilty fence [0000000015afaf84] 1#1729: active
+[   64.232250] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.232254] mali 11500000.mali: ctx 2355_4: Atom 154 still waiting for fence [00000000c77bd5fd] after 3000ms
+[   64.232259] mali 11500000.mali: 	Guilty fence [00000000c77bd5fd] 1#1730: active
+[   64.232263] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.232267] mali 11500000.mali: ctx 2355_4: Atom 155 still waiting for fence [00000000d74428ce] after 3000ms
+[   64.232273] mali 11500000.mali: 	Guilty fence [00000000d74428ce] 1#1731: active
+[   64.232277] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.232281] mali 11500000.mali: ctx 2355_4: Atom 156 still waiting for fence [00000000e244013b] after 3000ms
+[   64.232286] mali 11500000.mali: 	Guilty fence [00000000e244013b] 1#1732: active
+[   64.232291] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.232295] mali 11500000.mali: ctx 2355_4: Atom 157 still waiting for fence [00000000f9371544] after 3000ms
+[   64.232300] mali 11500000.mali: 	Guilty fence [00000000f9371544] 1#1733: active
+[   64.232304] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.232309] mali 11500000.mali: ctx 2355_4: Atom 8 still waiting for fence [00000000cc8cb640] after 3000ms
+[   64.232314] mali 11500000.mali: 	Guilty fence [00000000cc8cb640] 1#1734: active
+[   64.232318] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.232323] mali 11500000.mali: ctx 2355_4: Atom 158 still waiting for fence [000000005ff27484] after 3000ms
+[   64.232328] mali 11500000.mali: 	Guilty fence [000000005ff27484] 1#1735: active
+[   64.232332] mali 11500000.mali: kbase_fence_debug_check_atom
+[   64.269937] a50-decon 148b0000.decon_f: G2b acquire: out=1#1664 layer=0 in=1131#7 signaled_bit=1
+[   64.271561] init: Service 'ril-daemon1' (pid 671) exited with status 255
+[   64.271590] init: Sending signal 9 to service 'ril-daemon1' (pid 671) process group...
+[   64.271658] libprocessgroup: Successfully killed process cgroup uid 1001 pid 671 in 0ms
+[   64.271797] init: Sending signal 9 to service 'cpboot-daemon' (pid 236) process group...
+[   64.271842] libprocessgroup: Successfully killed process cgroup uid 0 pid 236 in 0ms
+[   64.274002] init: Command 'restart DIAG-daemon' action=onrestart (<Service 'ril-daemon1' onrestart>:2) took 0ms and failed: service DIAG-daemon not found
+[   64.340281] init: Service 'ril-daemon' (pid 670) exited with status 255
+[   64.340319] init: Sending signal 9 to service 'ril-daemon' (pid 670) process group...
+[   64.340397] libprocessgroup: Successfully killed process cgroup uid 1001 pid 670 in 0ms
+[   64.340578] init: Sending signal 9 to service 'cpboot-daemon' (pid 236) process group...
+[   64.340622] libprocessgroup: Successfully killed process cgroup uid 0 pid 236 in 0ms
+[   64.340902] init: Command 'restart cpboot-daemon5g' action=onrestart (<Service 'ril-daemon' onrestart>:2) took 0ms and failed: service cpboot-daemon5g not found
+[   64.340967] init: Command 'restart DIAG-daemon' action=onrestart (<Service 'ril-daemon' onrestart>:3) took 0ms and failed: service DIAG-daemon not found
+[   64.408225] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   64.428068] init: Control message: Could not find 'android.hardware.audio@5.0::IDevicesFactory/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   64.471941] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   64.571749] su[3683]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[   64.572047] su[3683]: (to phablet) root on none
+[   64.581230] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 29.
+[   64.600198] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[   64.613770] systemd[1]: Started session-c2.scope - Session c2 of User phablet.
+[   64.621270] init: sys_prop: invalid command 2
+[   64.656863] init: sys_prop: invalid command 2
+[   64.665526] init: sys_prop: invalid command 2
+[   64.705764] init: sys_prop: invalid command 2
+[   64.730566] bluebinder[3703]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[   64.730761] bluebinder[3703]: g_io_channel_unref: assertion 'channel != NULL' failed
+[   64.732452] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[   64.732948] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[   65.239340] mif: cbd: start_shannon310_boot: NV validation TIMEOUT
+[   65.239452] mif: cbd: boot_wake_lock: /sys/power/wake_lock/ss310
+[   65.239479] mif: cbd: start_shannon310_boot: Prepare arguments, read TOC, check NV
+[   65.239507] mif: cbd: std_boot_prepare_args: ERR! DEV(/dev/umts_boot0) open fail (Success)
+[   65.239525] mif: cbd: prepare_boot_args: ERR! std_boot_prepare_args fail
+[   65.239542] mif: cbd: start_shannon310_boot: ERR! prepare_boot_args fail
+[   65.239572] mif: cbd: boot_wake_lock: /sys/power/wake_unlock/ss310
+[   65.239593] mif: cbd: main: start boot fail
+[   65.415913] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   65.431979] init: Control message: Could not find 'android.hardware.audio@5.0::IDevicesFactory/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   65.475844] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   65.503337] init: starting service 'sec-camera-provider-4-0'...
+[   65.504869] libprocessgroup: Failed to make and chown /acct/uid_1047: Read-only file system
+[   65.504945] init: createProcessGroup(1047, 698) failed for service 'sec-camera-provider-4-0': Read-only file system
+[   65.508229] libprocessgroup: Failed to open /dev/cpuset/camera-daemon/tasks: No such file or directory: No such file or directory
+[   65.508281] libprocessgroup: Failed to apply CameraServiceCapacity task profile: No such file or directory
+[   65.723986] Abnormal katom
+[   65.724008] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724021] Abnormal katom
+[   65.724026] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724036] Abnormal katom
+[   65.724041] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724051] Abnormal katom
+[   65.724056] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724066] Abnormal katom
+[   65.724071] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724081] Abnormal katom
+[   65.724086] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724096] Abnormal katom
+[   65.724101] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724110] Abnormal katom
+[   65.724115] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724125] Abnormal katom
+[   65.724130] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724140] Abnormal katom
+[   65.724145] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724155] Abnormal katom
+[   65.724160] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724169] Abnormal katom
+[   65.724174] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724184] Abnormal katom
+[   65.724189] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724199] Abnormal katom
+[   65.724204] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724215] Abnormal katom
+[   65.724220] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724230] Abnormal katom
+[   65.724235] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724244] Abnormal katom
+[   65.724249] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724259] Abnormal katom
+[   65.724264] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724275] Abnormal katom
+[   65.724280] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724289] Abnormal katom
+[   65.724294] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724304] Abnormal katom
+[   65.724309] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724318] Abnormal katom
+[   65.724324] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724335] Abnormal katom
+[   65.724340] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724349] Abnormal katom
+[   65.724355] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724364] Abnormal katom
+[   65.724369] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724379] Abnormal katom
+[   65.724384] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724394] Abnormal katom
+[   65.724399] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724409] Abnormal katom
+[   65.724414] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724424] Abnormal katom
+[   65.724429] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724438] Abnormal katom
+[   65.724444] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724453] Abnormal katom
+[   65.724458] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724469] Abnormal katom
+[   65.724474] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724483] Abnormal katom
+[   65.724488] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724498] Abnormal katom
+[   65.724503] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724512] Abnormal katom
+[   65.724517] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724527] Abnormal katom
+[   65.724532] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724542] Abnormal katom
+[   65.724548] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724556] Abnormal katom
+[   65.724562] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724571] Abnormal katom
+[   65.724576] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724587] Abnormal katom
+[   65.724592] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724601] Abnormal katom
+[   65.724606] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724615] Abnormal katom
+[   65.724621] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724630] Abnormal katom
+[   65.724635] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724645] Abnormal katom
+[   65.724650] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724659] Abnormal katom
+[   65.724665] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724674] Abnormal katom
+[   65.724679] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724690] Abnormal katom
+[   65.724695] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724705] Abnormal katom
+[   65.724710] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724719] Abnormal katom
+[   65.724725] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724734] Abnormal katom
+[   65.724739] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.724749] Abnormal katom
+[   65.724754] katom->kctx: 0x0000000068bfbd28, katom->kctx->tgid: 2355, katom->kctx->process_mm: 0x0000000000000000
+[   65.772714] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 30.
+[   65.796228] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[   65.835269] init: Service 'sec-camera-provider-4-0' (pid 698) received signal 11
+[   65.835295] init: Sending signal 9 to service 'sec-camera-provider-4-0' (pid 698) process group...
+[   65.835360] libprocessgroup: Successfully killed process cgroup uid 1047 pid 698 in 0ms
+[   65.967251] a50-decon 148b0000.decon_f: blank: TE during sequence=4 DSIM INTSRC=0x11000000 FIFOCTRL=0x00005507 dcs_timeouts=0
+[   65.992365] init: sys_prop: invalid command 2
+[   66.024600] init: sys_prop: invalid command 2
+[   66.078991] bluebinder[3748]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[   66.079177] bluebinder[3748]: g_io_channel_unref: assertion 'channel != NULL' failed
+[   66.081934] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[   66.082561] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[   66.087312] binder: undelivered death notification, 0000000000000000
+[   66.243357] mif: cbd: main: Call boot start
+[   66.243389] mif: cbd: main: Modem type = 12
+[   66.243407] mif: cbd: main: Boot link = 9
+[   66.243423] mif: cbd: main: Main link = 9
+[   66.243469] mif: cbd: check_board_revision: /proc/device-tree/model_info-system_rev open fail
+[   66.243487] mif: cbd: start_shannon310_boot: CP boot device = /dev/umts_boot0
+[   66.243504] mif: cbd: start_shannon310_boot: CP binary file = /dev/block/by-name/radio
+[   66.243520] mif: cbd: start_shannon310_boot: CP NV file = /mnt/vendor/efs/nv_data.bin
+[   66.243535] mif: cbd: start_shannon310_boot: BOOT link SHMEM
+[   66.243551] mif: cbd: start_shannon310_boot: MAIN link SHMEM
+[   66.420525] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   66.435984] init: Control message: Could not find 'android.hardware.audio@5.0::IDevicesFactory/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   66.479837] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   66.975291] a50_copy_layer: 249 callbacks suppressed
+[   66.975309] a50-decon 148b0000.decon_f: win_config: format 2 not bridged
+[   67.036215] systemd[1]: lightdm.service: Main process exited, code=exited, status=1/FAILURE
+[   67.036403] systemd[1]: lightdm.service: Failed with result 'exit-code'.
+[   67.272902] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 31.
+[   67.276447] systemd[1]: lightdm.service: Scheduled restart job, restart counter is at 16.
+[   67.308244] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[   67.312123] systemd[1]: Starting lightdm.service - Light Display Manager...
+[   67.320577] init: sys_prop: invalid command 2
+[   67.353025] init: sys_prop: invalid command 2
+[   67.404532] systemd[1]: Started lightdm.service - Light Display Manager.
+[   67.410475] bluebinder[3773]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[   67.410646] bluebinder[3773]: g_io_channel_unref: assertion 'channel != NULL' failed
+[   67.413108] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[   67.413730] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[   67.424304] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   67.440188] init: Control message: Could not find 'android.hardware.audio@5.0::IDevicesFactory/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   67.487752] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   67.540254] init: sys_prop: invalid command 2
+[   67.846237] init: Service 'vaultkeeper' (pid 603) exited with status 255
+[   67.846268] init: Sending signal 9 to service 'vaultkeeper' (pid 603) process group...
+[   67.846343] libprocessgroup: Successfully killed process cgroup uid 1000 pid 603 in 0ms
+[   67.846776] init: starting service 'vaultkeeper'...
+[   67.848272] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   67.848321] init: createProcessGroup(1000, 706) failed for service 'vaultkeeper': Read-only file system
+[   67.887312] a50-decon 148b0000.decon_f: win_config: format 2 not bridged
+[   68.279351] init: starting service 'vendor.audio-hal'...
+[   68.280850] libprocessgroup: Failed to make and chown /acct/uid_1041: Read-only file system
+[   68.280902] init: createProcessGroup(1041, 707) failed for service 'vendor.audio-hal': Read-only file system
+[   68.281322] init: starting service 'vendor.cas-hal-1-2'...
+[   68.282969] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[   68.283021] init: createProcessGroup(1013, 708) failed for service 'vendor.cas-hal-1-2': Read-only file system
+[   68.291349] init: starting service 'vendor.drm-widevine-hal-1-3'...
+[   68.292931] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[   68.292989] init: createProcessGroup(1013, 709) failed for service 'vendor.drm-widevine-hal-1-3': Read-only file system
+[   68.428626] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   68.444277] init: Control message: Could not find 'android.hardware.audio@5.0::IDevicesFactory/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   68.492113] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   68.520667] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 32.
+[   68.564666] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[   68.567473] init: starting service 'secure_storage'...
+[   68.569138] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   68.569194] init: createProcessGroup(1000, 716) failed for service 'secure_storage': Read-only file system
+[   68.574570] init: sys_prop: invalid command 2
+[   68.578237] init: Service 'vendor.cas-hal-1-2' (pid 708) received signal 11
+[   68.578266] init: Sending signal 9 to service 'vendor.cas-hal-1-2' (pid 708) process group...
+[   68.578344] libprocessgroup: Successfully killed process cgroup uid 1013 pid 708 in 0ms
+[   68.593111] init: Service 'secure_storage' (pid 716) exited with status 14
+[   68.593143] init: Sending signal 9 to service 'secure_storage' (pid 716) process group...
+[   68.593215] libprocessgroup: Successfully killed process cgroup uid 1000 pid 716 in 0ms
+[   68.601226] init: sys_prop: invalid command 2
+[   68.606415] init: Service 'vendor.audio-hal' (pid 707) received signal 11
+[   68.606442] init: Sending signal 9 to service 'vendor.audio-hal' (pid 707) process group...
+[   68.606522] libprocessgroup: Successfully killed process cgroup uid 1041 pid 707 in 0ms
+[   68.606712] init: Command 'restart audioserver' action=onrestart (<Service 'vendor.audio-hal' onrestart>:1) took 0ms and failed: service audioserver not found
+[   68.633355] init: Service 'vendor.drm-widevine-hal-1-3' (pid 709) received signal 11
+[   68.633387] init: Sending signal 9 to service 'vendor.drm-widevine-hal-1-3' (pid 709) process group...
+[   68.633460] libprocessgroup: Successfully killed process cgroup uid 1013 pid 709 in 0ms
+[   68.678615] bluebinder[3828]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[   68.678774] bluebinder[3828]: g_io_channel_unref: assertion 'channel != NULL' failed
+[   68.680673] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[   68.681187] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[   68.695291] binder: undelivered death notification, 0000000000000000
+[   68.706761] init: Untracked pid 718 exited with status 0
+[   68.706868] init: Untracked pid 719 received signal 11
+[   68.739329] init: starting service 'camera_service'...
+[   68.740833] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[   68.740882] init: createProcessGroup(1013, 721) failed for service 'camera_service': Read-only file system
+[   68.795329] a50-decon 148b0000.decon_f: win_config: format 2 not bridged
+[   68.939711] init: Service 'camera_service' (pid 721) received signal 11
+[   68.939744] init: Sending signal 9 to service 'camera_service' (pid 721) process group...
+[   68.939825] libprocessgroup: Successfully killed process cgroup uid 1013 pid 721 in 0ms
+[   68.951387] init: starting service 'vendor.media.omx'...
+[   68.952962] libprocessgroup: Failed to make and chown /acct/uid_1046: Read-only file system
+[   68.953018] init: createProcessGroup(1046, 723) failed for service 'vendor.media.omx': Read-only file system
+[   68.954310] libprocessgroup: Failed to find SystemServicePerformancetask profile: No such file or directory
+[   68.954335] libprocessgroup: Failed to find SystemServiceCapacityHightask profile: No such file or directory
+[   69.011391] init: starting service 'ril-daemon'...
+[   69.011561] init: Created socket '/dev/socket/sap_uim_socket1', mode 660, user 1002, group 1002
+[   69.013192] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[   69.013235] init: createProcessGroup(1001, 724) failed for service 'ril-daemon': Read-only file system
+[   69.035570] init: starting service 'ril-daemon1'...
+[   69.037232] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[   69.037276] init: createProcessGroup(1001, 725) failed for service 'ril-daemon1': Read-only file system
+RC=0
