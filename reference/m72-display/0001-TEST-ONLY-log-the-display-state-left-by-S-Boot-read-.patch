@@ -1,0 +1,213 @@
+From e5b86c62987e21bff14104ad4e949b2c89ab3459 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Sat, 14 Nov 2026 03:49:31 +0600
+Subject: [PATCH] TEST ONLY: log the display state left by S-Boot, read-only
+ (do not merge)
+
+M7.2 boot D0. Reads the DISPAUD power-domain status, the TOP and
+CMU_DISPAUD clock gates, and, only when their clocks are usable, the
+defined DECON, DSIM, DMA and IDMA registers. Nothing is written.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: Ibfcbca8486d7ed66a8150ff78dac7c30f14e53a6
+---
+ drivers/soc/samsung/Makefile         |   1 +
+ drivers/soc/samsung/a50-dpu-status.c | 177 +++++++++++++++++++++++++++
+ 2 files changed, 178 insertions(+)
+ create mode 100644 drivers/soc/samsung/a50-dpu-status.c
+
+diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
+index 248a33d77..011749a61 100644
+--- a/drivers/soc/samsung/Makefile
++++ b/drivers/soc/samsung/Makefile
+@@ -13,3 +13,4 @@ obj-$(CONFIG_EXYNOS_PMU_ARM_DRIVERS)	+= exynos3250-pmu.o exynos4-pmu.o \
+ obj-$(CONFIG_EXYNOS_REGULATOR_COUPLER) += exynos-regulator-coupler.o
+ 
+ obj-$(CONFIG_SAMSUNG_PM_CHECK)	+= s3c-pm-check.o
++obj-y				+= a50-dpu-status.o
+diff --git a/drivers/soc/samsung/a50-dpu-status.c b/drivers/soc/samsung/a50-dpu-status.c
+new file mode 100644
+index 000000000..249ea2926
+--- /dev/null
++++ b/drivers/soc/samsung/a50-dpu-status.c
+@@ -0,0 +1,177 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * TEST ONLY (M7.2 boot D0), do not merge: log the display state that S-Boot
++ * leaves behind, read-only. Nothing is written to any register.
++ *
++ * Offsets: 4.14 drivers/video/fbdev/exynos/dpu20/cal_9610/regs-{decon,dpp,dsim}.h,
++ * cal-if/exynos9610/cmucal-sfr.c (CMU_DISPAUD base 0x14980000), 6.18
++ * clk-exynos9610.c (gate offsets). Gate bits: 20 manual, 21 manual clock value,
++ * 28 hardware automatic gating (clk-exynos-arm64.c).
++ *
++ * A block is read only if its clock gate shows the clock usable (automatic
++ * gating on, or manual with the clock enabled): reading a block whose clock
++ * is stopped can stall the bus. Only registers defined in the headers are
++ * read (DECON/DMA can report a slave error for undefined offsets), and
++ * registers with read side effects are skipped (DSIM RX FIFO and payload).
++ * The probe runs from a work item so a stall would not block kernel_init.
++ */
++#include <linux/init.h>
++#include <linux/io.h>
++#include <linux/kernel.h>
++#include <linux/printk.h>
++#include <linux/workqueue.h>
++
++#define PMU_BASE	0x11860000
++#define TOP_BASE	0x12100000
++#define CMU_DISP_BASE	0x14980000
++#define DECON_BASE	0x148b0000
++#define DSIM_BASE	0x148e0000
++#define DMA_COM_BASE	0x14880000
++#define IDMA_BASE(ch)	(0x14881000 + (ch) * 0x1000)
++
++#define GATE_MANUAL	BIT(20)
++#define GATE_CG_VALUE	BIT(21)
++#define GATE_HWACG	BIT(28)
++
++struct reg { const char *name; u16 off; };
++
++static const struct reg cmu_regs[] = {
++	{ "PLL_CON0_DISP_USER", 0x0140 }, { "GAT_CLK_DISPAUD_DISP", 0x2044 },
++	{ "GAT_BTM_DPU_ACLK", 0x2050 }, { "GAT_BTM_DPU_PCLK", 0x2054 },
++	{ "GAT_DPU_ACLK_DECON", 0x2060 }, { "GAT_DPU_ACLK_DMA", 0x2064 },
++	{ "GAT_DPU_ACLK_DPP", 0x2068 }, { "GAT_LHM_AXI_P_DISPAUD", 0x2070 },
++	{ "GAT_SMMU_DPU", 0x20b4 }, { "GAT_SYSREG_PCLK", 0x20b8 },
++};
++
++static const struct reg decon_regs[] = {
++	{ "GLOBAL_CONTROL", 0x0000 }, { "RESOURCE_OCCUPANCY_0", 0x0010 },
++	{ "SRAM_SHARE_ENABLE", 0x0030 }, { "INTERRUPT_ENABLE", 0x0040 },
++	{ "INTERRUPT_PENDING", 0x004c }, { "SHADOW_REG_UPDATE_REQ", 0x0060 },
++	{ "SECURE_CONTROL", 0x0064 }, { "HW_SW_TRIG_CONTROL", 0x0070 },
++	{ "HW_SW_TRIG_TIMER", 0x0074 }, { "HW_TE_CNT", 0x0078 },
++	{ "CLOCK_CONTROL_0", 0x00f0 }, { "SPLITTER_SIZE_CONTROL_0", 0x0100 },
++	{ "OUTFIFO_SIZE_CONTROL_0", 0x0120 }, { "BLENDER_BG_IMAGE_SIZE_0", 0x0200 },
++	{ "DATA_PATH_CONTROL_0", 0x0214 }, { "DATA_PATH_CONTROL_2", 0x0230 },
++	{ "DSIM_CONNECTION_CONTROL", 0x0250 }, { "DSIM0_TE_TIMEOUT_CONTROL", 0x0254 },
++	{ "DSIM0_START_TIME_CONTROL", 0x0260 }, { "FRAME_COUNT", 0x02a0 },
++	{ "WIN0_CONTROL_0", 0x1000 }, { "WIN0_CONTROL_1", 0x1004 },
++	{ "WIN0_START_POSITION", 0x1008 }, { "WIN0_END_POSITION", 0x100c },
++	{ "WIN1_CONTROL_0", 0x1030 }, { "WIN2_CONTROL_0", 0x1060 },
++	{ "WIN3_CONTROL_0", 0x1090 },
++};
++
++static const struct reg dsim_regs[] = {
++	{ "VERSION", 0x00 }, { "LINK_STATUS0", 0x08 }, { "LINK_STATUS1", 0x0c },
++	{ "LINK_STATUS3", 0x14 }, { "MIPI_STATUS", 0x18 }, { "DPHY_STATUS", 0x1c },
++	{ "CLK_CTRL", 0x20 }, { "ESCMODE", 0x2c }, { "RESOL", 0x3c },
++	{ "VPORCH", 0x40 }, { "HPORCH", 0x44 }, { "CONFIG", 0x4c },
++	{ "INTSRC", 0x50 }, { "INTMSK", 0x54 }, { "CMD_CONFIG", 0x80 },
++	{ "CMD_TE_CTRL0", 0x84 }, { "CMD_TE_CTRL1", 0x88 }, { "CMD_STATUS", 0x8c },
++	{ "PLLCTRL", 0xa0 }, { "PLL_CTRL1", 0xa4 }, { "PLL_CTRL2", 0xa8 },
++};
++
++static const struct reg dma_com_regs[] = {
++	{ "DPU_DMA_VERSION", 0x0000 }, { "DPU_DMA_QCH_EN", 0x000c },
++	{ "DPU_DMA_GLB_CGEN", 0x0014 },
++};
++
++static const struct reg idma_regs[] = {
++	{ "ENABLE", 0x0000 }, { "IRQ", 0x0004 }, { "IN_CON", 0x0008 },
++	{ "OUT_CON", 0x000c }, { "SRC_SIZE", 0x0010 }, { "SRC_OFFSET", 0x0014 },
++	{ "IMG_SIZE", 0x0018 }, { "IN_BASE_ADDR_Y", 0x0040 },
++	{ "IN_BASE_ADDR_C", 0x0044 }, { "CFG_ERR_STATE", 0x0870 },
++};
++
++static void dump(const char *blk, phys_addr_t base, size_t size,
++		 const struct reg *r, unsigned int n)
++{
++	void __iomem *p = ioremap(base, size);
++	unsigned int i;
++
++	if (!p) {
++		pr_info("a50-dpu: %s ioremap failed\n", blk);
++		return;
++	}
++	pr_info("a50-dpu: reading %s @0x%08llx\n", blk, (u64)base);
++	for (i = 0; i < n; i++)
++		pr_info("a50-dpu: %s %s [+0x%04x] = 0x%08x\n", blk, r[i].name,
++			r[i].off, readl(p + r[i].off));
++	iounmap(p);
++}
++
++static bool gate_on(u32 v)
++{
++	return (v & GATE_HWACG) || ((v & GATE_MANUAL) && (v & GATE_CG_VALUE));
++}
++
++static void a50_dpu_status(struct work_struct *w)
++{
++	void __iomem *p;
++	u32 pd, top_gate, g_disp, g_decon, g_dma, g_dpp, g_lhm;
++	unsigned int ch;
++	char name[8];
++
++	p = ioremap(PMU_BASE, 0x5000);
++	if (!p)
++		return;
++	pd = readl(p + 0x4004);
++	iounmap(p);
++	pr_info("a50-dpu: dispaud pd status=0x%08x\n", pd);
++	if ((pd & 0xf) != 0xf) {
++		pr_info("a50-dpu: dispaud domain not on, nothing read\n");
++		return;
++	}
++
++	p = ioremap(TOP_BASE, 0x3000);
++	if (!p)
++		return;
++	top_gate = readl(p + 0x2040);
++	pr_info("a50-dpu: top MUX_CLKCMU_DISPAUD_DISP=0x%08x DIV=0x%08x GATE=0x%08x\n",
++		readl(p + 0x1038), readl(p + 0x1840), top_gate);
++	iounmap(p);
++	if (!gate_on(top_gate)) {
++		pr_info("a50-dpu: TOP gate to DISPAUD off, nothing more read\n");
++		return;
++	}
++
++	dump("cmu_dispaud", CMU_DISP_BASE, 0x3000, cmu_regs, ARRAY_SIZE(cmu_regs));
++	p = ioremap(CMU_DISP_BASE, 0x3000);
++	if (!p)
++		return;
++	g_disp = readl(p + 0x2044);
++	g_decon = readl(p + 0x2060);
++	g_dma = readl(p + 0x2064);
++	g_dpp = readl(p + 0x2068);
++	g_lhm = readl(p + 0x2070);
++	iounmap(p);
++
++	if (!gate_on(g_disp) || !gate_on(g_lhm)) {
++		pr_info("a50-dpu: DISPAUD bus clock off, DPU blocks not read\n");
++		return;
++	}
++	if (gate_on(g_decon)) {
++		dump("decon", DECON_BASE, 0x2000, decon_regs, ARRAY_SIZE(decon_regs));
++		dump("dsim", DSIM_BASE, 0x100, dsim_regs, ARRAY_SIZE(dsim_regs));
++	} else {
++		pr_info("a50-dpu: DECON clock off, decon/dsim not read\n");
++	}
++	if (gate_on(g_dma) && gate_on(g_dpp)) {
++		dump("dma_com", DMA_COM_BASE, 0x110, dma_com_regs, ARRAY_SIZE(dma_com_regs));
++		for (ch = 0; ch < 4; ch++) {
++			snprintf(name, sizeof(name), "idma%u", ch);
++			dump(name, IDMA_BASE(ch), 0x1000, idma_regs, ARRAY_SIZE(idma_regs));
++		}
++	} else {
++		pr_info("a50-dpu: DMA/DPP clock off, idma not read\n");
++	}
++	pr_info("a50-dpu: done\n");
++}
++
++static DECLARE_WORK(a50_dpu_work, a50_dpu_status);
++
++static int __init a50_dpu_status_init(void)
++{
++	queue_work(system_unbound_wq, &a50_dpu_work);
++	return 0;
++}
++late_initcall(a50_dpu_status_init);
+-- 
+2.56.0
+

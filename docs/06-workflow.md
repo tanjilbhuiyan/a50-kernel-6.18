@@ -28,6 +28,10 @@ rootfs/chroot step needs it.
   test set and then restores stock DTB/DTBO and the baseline BOOT (owner approved 2026-11-14).
 - VENDOR / SYSTEM / any other DTB/DTBO change / anything ≥ 100 MB: TWRP → `adb push` →
   `dd` to `/dev/block/by-name/<part>` → read back sha256 must equal source.
+- During every 6.18 boot the screen stays on the boot warning screen: the panel keeps the last bootloader frame,
+  because 6.18 doesn't drive the display yet. While `tools/m32_run_test.sh` is inside its WAIT window, neither that
+  screen nor a missing USB device is a reason for manual key recovery. Wait for the runner's "NO Download mode"
+  message (M7.2 D0 lost its dump this way).
 - After a failed Heimdall session the phone needs re-entry into Download mode;
   the "emergency recovery" screen is still Download mode and is flashable.
 - Never flash RECOVERY unless replacing TWRP is the task.

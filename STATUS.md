@@ -12,8 +12,12 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
 - **Connection:** home `192.168.0.171`. Final stock restore completed 2026-11-14 at 02:57:44, baseline boot time
   02:57:58, battery 100% Charging. DTB/DTBO/BOOT post-flight hashes passed; saved baseline fsck clean. No test active.
   Owner confirmed presence, USB connected and Claude Code idle for this completed session; reverify live state on resumption.
-- **Milestone:** M6 done. **M7.1 done (host audit, 2026-11-14, Claude Code); next M7.2 boot D0** (read-only display state
-  probe), not started. M7.3 may start in parallel with G0 (read-only GPU ID probe). Audit and boot ladder:
+- **Milestone:** M6 done, M7.1 done. **M7.2 in progress: D0 ran (2026-11-14, Claude Code)**. The TOP→DISPAUD clock is
+  manual-off because of the 6.18 CMU init (range 0x8000, so every gate is forced to manual). Next D0b: enable only
+  `gout_cmu_dispaud_disp`, then read. Log `log/2026-11-14-M7.2-d0-display-probe.md`; kernel test branch `a50-m72-d0-test`
+  (`e5b86c629`). Phone restored, post-flight passed, fsck clean. The warning screen is normal during 6.18 boots: don't
+  key-recover inside the runner window. M7.3 may start in parallel with G0 (read-only GPU ID probe; check the TOP G3D
+  gate first). M7.1 audit and boot ladder:
   `log/2026-11-14-M7.1-display-gpu-audit.md`. Display needs neither M4.4 nor M4.3 (panel power is GPIO-only; S2MPB03
   feeds cameras). The composer already starts on simplefb, so check ioctls and the panel, not the process.
   Vendor display libraries read as phablet (no root) into ignored `src/m71/vendor/` (proprietary; never commit).
