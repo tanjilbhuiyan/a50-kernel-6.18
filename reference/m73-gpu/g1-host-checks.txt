@@ -1,0 +1,13 @@
+g1-candidate-build.log: errors=0; warnings={'-Wmissing-prototypes': 14, '-Wmacro-redefined': 1, '-Wimplicit-fallthrough': 16, '-Wunused-function': 1}
+g1-final-link.log: errors=0; warnings={}
+g1b-build.log: errors=0; warnings={'-Wmissing-prototypes': 2}
+No -Wno-error override in final compile commands.
+Fresh complete build followed by final source-specific relinks; full input manifests contain frozen artifacts.
+Both patches reconstruct recorded source trees; all 49 manifest checks pass.
+Userdata guard/sense host tests and deliberate regression controls pass.
+real allocator: PASS: empty/interior gaps, stack guards, limits, shader/4GB rules, overflow, alignment
+ignore stack guards: stack guard: got 0x9000 expected 0x7000
+keep lowest gap: highest interior gap: got 0x3000 expected 0x9000
+omit high limit: high limit inside gap: got 0x9000 expected 0x8000
+RESULT: PASS (real source passes; all three regression controls fail)
+

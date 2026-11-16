@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-14 (M6 complete with portable build; M7.1 audit done; M7.2 D0 next)
+Updated: 2026-11-17 (M7.3 G1b native/compat metadata passed; baseline restored)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -8,7 +8,33 @@ Read this file, then the active ticket and its log. Before trusting anything her
 branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and on the phone. At the end of a session, update
 **RESUME HERE** with commits, branch, image hashes, last test and rollback result, and the next action.
 
-## RESUME HERE (2026-11-14)
+## RESUME HERE (2026-11-17)
+- **Active ticket:** `tasks/M7.3-mali-kbase.md`, in progress. M7.1 and M7.2 are done.
+  G1b now exposes `/dev/mali0`; native and AArch32 VERSION_CHECK 11.27 and GET_GPUPROPS pass (82 properties each).
+  These establish metadata only; allocation/import/cache/fences/GPU jobs/rendering are still unvalidated.
+- **Phone:** baseline restored 01:04:24, boot 01:04:38 on 2026-11-17. Home Wi-Fi `192.168.0.171`, kernel 4.14.194,
+  battery 99% Charging. Stock DTB/DTBO/BOOT hashes passed; saved fsck clean (6523/3440640 files, 1986158/13745152 blocks).
+  No test active. G1b had USB root SSH at `10.15.19.82` and passed metadata probes before its timed dump/restore.
+  Owner confirmed present/USB/Claude idle separately for G1 and G1b. Both restores/fsck passed. Reverify on resumption.
+- **Fix:** G1 failed before GPU initialization: legacy raw IORESOURCE_IRQ lookup returned no IRQ 0.
+  G1b changes only IRQ acquisition to `platform_get_irq_byname()` and `irq_get_trigger_type()`. Config/DTB/cpio identical.
+  The GPU identifies as Mali-G72 r0p1 MP3 at the measured fixed 260 MHz. No DVFS, power-domain switching or secure calls.
+- **Diagnostic restriction:** built-in `mali_kbase.a50_g1_probe_only=1` permits only VERSION_CHECK, SET_FLAGS and GET_GPUPROPS.
+  Allocation/job requests return EOPNOTSUPP; the tests verify this. Keep the restriction explicit for future tests.
+- **Git handoff:** outer starting HEAD `6793249`; current G1/G1b tools/evidence/docs are uncommitted.
+  Shared kernel is **dirty on `a50-m73-g1-wip/6df856849`**, with inherited Claude port edits plus this continuation.
+  Preserve the WIP; do not switch to `a50-usb` with these changes. No source commit or production-branch changes this session.
+  Exact G1b source tree `2c8ab17e16c68ae7a72ed3c814f08d39894e5413`; reconstruct from M6 source using
+  `reference/m73-gpu/g1-kernel.patch` then `g1b-irq.patch` (both verified by tree hash).
+- **Build/artifacts:** tools/recipe `tools/m73/README.md`; full config `reference/m73-gpu/g1.config`.
+  Workspace `src/ack-6.18/out/m73-g1-candidate` reused only after archiving each variant in `src/m73/g1-as-built/` and
+  `g1b-as-built/`. G1b BOOT `src/m73/boot-g1b.img`, SHA `1c545ebc84c1daea807dd7dc935aebfb3ae1be6c15d4193d529ba96bc06edd43`.
+  DT `src/m73/dt-g1.img`, SHA `dee291ace91ab19f9d241d3c7cd42557e109f066ddf0c38eb69a6a7b1f97625c`.
+  Exact manifests/as-run scripts under `reference/m73-gpu/g1*-inputs.json`, `g1*-scripts/`; log `log/2026-11-17-M7.3-g1-kbase.md`.
+- **Next action:** prepare controlled allocation/import/sync and real GPU execution tests with the metadata restriction
+  removed in a separate boot. M7.3 is not done. Confirm owner presence before every flash.
+
+## Earlier handoff (2026-11-14–16; historical)
 - **Connection:** home `192.168.0.171`. Final stock restore completed 2026-11-14 at 02:57:44, baseline boot time
   02:57:58, battery 100% Charging. DTB/DTBO/BOOT post-flight hashes passed; saved baseline fsck clean. No test active.
   Owner confirmed presence, USB connected and Claude Code idle for this completed session; reverify live state on resumption.

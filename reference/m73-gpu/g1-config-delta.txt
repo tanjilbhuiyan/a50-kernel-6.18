@@ -1,0 +1,65 @@
+--- M6.4-test7.config
++++ G1-and-G1b.config
+@@ -200,7 +200,7 @@
+ # CONFIG_RT_SOFTIRQ_AWARE_SCHED is not set
+ # CONFIG_RELAY is not set
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_INITRAMFS_SOURCE="/home/bs01808/Development/RnD/ubuntu-touch/a50-kernel-6.18/src/m64/runtime7/initramfs.list"
++CONFIG_INITRAMFS_SOURCE="/home/bs01808/Development/RnD/ubuntu-touch/a50-kernel-6.18/src/reproduce-m6/payload/initramfs.list"
+ # CONFIG_INITRAMFS_FORCE is not set
+ CONFIG_INITRAMFS_ROOT_UID=0
+ CONFIG_INITRAMFS_ROOT_GID=0
+@@ -539,7 +539,7 @@
+ #
+ # Boot options
+ #
+-CONFIG_CMDLINE="console=tty0 loglevel=7 ignore_loglevel clk_ignore_unused printk.devkmsg=on systemd.log_target=kmsg systemd.journald.forward_to_kmsg=1 systemd.show_status=1 systemd.mask=repowerd.service systemd.mask=a50-enable-autosuspend.service systemd.mask=sleep.target"
++CONFIG_CMDLINE="console=tty0 loglevel=7 ignore_loglevel clk_ignore_unused printk.devkmsg=on systemd.log_target=kmsg systemd.journald.forward_to_kmsg=1 systemd.show_status=1 systemd.mask=repowerd.service systemd.mask=a50-enable-autosuspend.service systemd.mask=sleep.target mali_kbase.a50_g1_probe_only=1"
+ # CONFIG_CMDLINE_FROM_BOOTLOADER is not set
+ CONFIG_CMDLINE_EXTEND=y
+ # CONFIG_CMDLINE_FORCE is not set
+@@ -2035,6 +2035,44 @@
+ CONFIG_VIDEO=y
+ # CONFIG_AUXDISPLAY is not set
+ # CONFIG_DRM is not set
++CONFIG_MALI_MIDGARD=y
++# CONFIG_MALI_GATOR_SUPPORT is not set
++# CONFIG_MALI_MIDGARD_DVFS is not set
++# CONFIG_MALI_MIDGARD_ENABLE_TRACE is not set
++# CONFIG_MALI_DEVFREQ is not set
++# CONFIG_MALI_DMA_FENCE is not set
++CONFIG_MALI_PLATFORM_THIRDPARTY=y
++CONFIG_MALI_PLATFORM_THIRDPARTY_NAME="exynos"
++# CONFIG_MALI_ARBITER_SUPPORT is not set
++CONFIG_MALI_EXPERT=y
++# CONFIG_MALI_CORESTACK is not set
++# CONFIG_MALI_DEBUG is not set
++CONFIG_MALI_FENCE_DEBUG=y
++# CONFIG_MALI_NO_MALI is not set
++CONFIG_MALI_REAL_HW=y
++# CONFIG_MALI_SYSTEM_TRACE is not set
++# CONFIG_MALI_2MB_ALLOC is not set
++# CONFIG_MALI_PWRSOFT_765 is not set
++# CONFIG_MALI_MEMORY_FULLY_BACKED is not set
++# CONFIG_MALI_DMA_BUF_MAP_ON_DEMAND is not set
++# CONFIG_MALI_DMA_BUF_LEGACY_COMPAT is not set
++# CONFIG_MALI_HW_ERRATA_1485982_NOT_AFFECTED is not set
++# CONFIG_MALI_HW_ERRATA_1485982_USE_CLOCK_ALTERNATIVE is not set
++# CONFIG_MALI_GEM5_BUILD is not set
++# CONFIG_MALI_JOB_DUMP is not set
++# CONFIG_MALI_PRFCNT_SET_SECONDARY is not set
++# CONFIG_MALI_PRFCNT_SET_SECONDARY_VIA_DEBUG_FS is not set
++CONFIG_EXYNOS_SOC_NAME=""
++# CONFIG_MALI_DVFS is not set
++# CONFIG_MALI_RT_PM is not set
++CONFIG_MALI_EXYNOS_TRACE=y
++# CONFIG_MALI_DEBUG_SYS is not set
++# CONFIG_MALI_SEC_CL_BOOST is not set
++# CONFIG_MALI_PM_QOS is not set
++# CONFIG_MALI_GPU_PM_QOS is not set
++# CONFIG_MALI_SEC_VK_BOOST is not set
++CONFIG_MALI_EXYNOS_SECURE_RENDERING_UNSUPPORTED=y
++# CONFIG_MALI_KUTF is not set
+ 
+ #
+ # Frame buffer Devices

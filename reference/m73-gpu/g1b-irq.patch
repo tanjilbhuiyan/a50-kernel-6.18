@@ -1,0 +1,62 @@
+diff --git a/drivers/gpu/arm/midgard/mali_kbase_core_linux.c b/drivers/gpu/arm/midgard/mali_kbase_core_linux.c
+index 7fe0cc6b7..922a0d1be 100644
+--- a/drivers/gpu/arm/midgard/mali_kbase_core_linux.c
++++ b/drivers/gpu/arm/midgard/mali_kbase_core_linux.c
+@@ -22,6 +22,7 @@
+ 
+ #include <mali_kbase.h>
+ #include <linux/moduleparam.h>
++#include <linux/irq.h>
+ 
+ /* TEST ONLY: keep background vendor clients from submitting work in G1. */
+ static bool a50_g1_probe_only;
+@@ -477,40 +478,25 @@ static struct kbase_device *to_kbase_device(struct device *dev)
+ int assign_irqs(struct kbase_device *kbdev)
+ {
+ 	struct platform_device *pdev;
++	static const char * const names[] = { "JOB", "MMU", "GPU" };
+ 	int i;
+ 
+ 	if (!kbdev)
+ 		return -ENODEV;
+ 
+ 	pdev = to_platform_device(kbdev->dev);
+-	/* 3 IRQ resources */
++	/* 6.18 maps OF IRQs on demand; raw IORESOURCE_IRQ entries may be absent. */
+ 	for (i = 0; i < 3; i++) {
+-		struct resource *irq_res;
+-		int irqtag;
+-
+-		irq_res = platform_get_resource(pdev, IORESOURCE_IRQ, i);
+-		if (!irq_res) {
+-			dev_err(kbdev->dev, "No IRQ resource at index %d\n", i);
+-			return -ENOENT;
+-		}
+-
++		int irq;
+ #ifdef CONFIG_OF
+-		if (!strncasecmp(irq_res->name, "JOB", 4)) {
+-			irqtag = JOB_IRQ_TAG;
+-		} else if (!strncasecmp(irq_res->name, "MMU", 4)) {
+-			irqtag = MMU_IRQ_TAG;
+-		} else if (!strncasecmp(irq_res->name, "GPU", 4)) {
+-			irqtag = GPU_IRQ_TAG;
+-		} else {
+-			dev_err(&pdev->dev, "Invalid irq res name: '%s'\n",
+-				irq_res->name);
+-			return -EINVAL;
+-		}
++		irq = platform_get_irq_byname(pdev, names[i]);
+ #else
+-		irqtag = i;
++		irq = platform_get_irq(pdev, i);
+ #endif /* CONFIG_OF */
+-		kbdev->irqs[irqtag].irq = irq_res->start;
+-		kbdev->irqs[irqtag].flags = irq_res->flags & IRQF_TRIGGER_MASK;
++		if (irq < 0)
++			return irq;
++		kbdev->irqs[i].irq = irq;
++		kbdev->irqs[i].flags = irq_get_trigger_type(irq);
+ 	}
+ 
+ 	return 0;

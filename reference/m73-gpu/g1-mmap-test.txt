@@ -1,0 +1,5 @@
+real allocator: PASS: empty/interior gaps, stack guards, limits, shader/4GB rules, overflow, alignment
+ignore stack guards: stack guard: got 0x9000 expected 0x7000
+keep lowest gap: highest interior gap: got 0x3000 expected 0x9000
+omit high limit: high limit inside gap: got 0x9000 expected 0x8000
+RESULT: PASS (real source passes; all three regression controls fail)

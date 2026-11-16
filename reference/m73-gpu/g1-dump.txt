@@ -1,0 +1,1370 @@
+# 6.18 dump read back from /proc/last_kmsg (identifiers redacted: 0)
+===== A50 6.18 DMESG BEGIN (dump_after=420) =====
+[  383.952128] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 283.
+[  383.977747] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  383.984921] init: sys_prop: invalid command 2
+[  384.005874] init: sys_prop: invalid command 2
+[  384.077891] bluebinder[10269]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  384.078467] bluebinder[10269]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  384.080420] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  384.082924] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  384.093810] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  384.105004] binder: undelivered death notification, 0000000000000000
+[  384.217040] mif: cbd: main: Call boot start
+[  384.217069] mif: cbd: main: Modem type = 12
+[  384.217091] mif: cbd: main: Boot link = 9
+[  384.217113] mif: cbd: main: Main link = 9
+[  384.217161] mif: cbd: check_board_revision: /proc/device-tree/model_info-system_rev open fail
+[  384.217185] mif: cbd: start_shannon310_boot: CP boot device = /dev/umts_boot0
+[  384.217205] mif: cbd: start_shannon310_boot: CP binary file = /dev/block/by-name/radio
+[  384.217225] mif: cbd: start_shannon310_boot: CP NV file = /mnt/vendor/efs/nv_data.bin
+[  384.217246] mif: cbd: start_shannon310_boot: BOOT link SHMEM
+[  384.217266] mif: cbd: start_shannon310_boot: MAIN link SHMEM
+[  384.689779] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  384.857038] init: starting service 'vendor.audio-hal'...
+[  384.858585] libprocessgroup: Failed to make and chown /acct/uid_1041: Read-only file system
+[  384.858649] init: createProcessGroup(1041, 3753) failed for service 'vendor.audio-hal': Read-only file system
+[  384.877082] init: starting service 'vendor.cas-hal-1-2'...
+[  384.878689] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  384.878748] init: createProcessGroup(1013, 3756) failed for service 'vendor.cas-hal-1-2': Read-only file system
+[  384.913040] init: starting service 'vendor.drm-widevine-hal-1-3'...
+[  384.914536] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  384.914602] init: createProcessGroup(1013, 3757) failed for service 'vendor.drm-widevine-hal-1-3': Read-only file system
+[  385.054761] init: Service 'vendor.drm-widevine-hal-1-3' (pid 3757) received signal 11
+[  385.054812] init: Sending signal 9 to service 'vendor.drm-widevine-hal-1-3' (pid 3757) process group...
+[  385.054897] libprocessgroup: Successfully killed process cgroup uid 1013 pid 3757 in 0ms
+[  385.098088] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  385.138764] init: Service 'vendor.audio-hal' (pid 3753) received signal 11
+[  385.138802] init: Sending signal 9 to service 'vendor.audio-hal' (pid 3753) process group...
+[  385.138879] libprocessgroup: Successfully killed process cgroup uid 1041 pid 3753 in 0ms
+[  385.139041] init: Command 'restart audioserver' action=onrestart (<Service 'vendor.audio-hal' onrestart>:1) took 0ms and failed: service audioserver not found
+[  385.161428] init: Service 'vendor.cas-hal-1-2' (pid 3756) received signal 11
+[  385.161451] init: Sending signal 9 to service 'vendor.cas-hal-1-2' (pid 3756) process group...
+[  385.161508] libprocessgroup: Successfully killed process cgroup uid 1013 pid 3756 in 0ms
+[  385.200022] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 284.
+[  385.223526] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  385.235726] init: sys_prop: invalid command 2
+[  385.252638] init: sys_prop: invalid command 2
+[  385.296930] bluebinder[10295]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  385.299188] bluebinder[10295]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  385.299835] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  385.300372] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  385.565070] init: starting service 'secure_storage'...
+[  385.566596] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  385.566656] init: createProcessGroup(1000, 3762) failed for service 'secure_storage': Read-only file system
+[  385.587897] init: Service 'secure_storage' (pid 3762) exited with status 14
+[  385.587936] init: Sending signal 9 to service 'secure_storage' (pid 3762) process group...
+[  385.588010] libprocessgroup: Successfully killed process cgroup uid 1000 pid 3762 in 0ms
+[  385.673053] init: starting service 'camera_service'...
+[  385.674571] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  385.674628] init: createProcessGroup(1013, 3763) failed for service 'camera_service': Read-only file system
+[  385.694088] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  385.777136] init: starting service 'vendor.media.omx'...
+[  385.778752] libprocessgroup: Failed to make and chown /acct/uid_1046: Read-only file system
+[  385.778815] init: createProcessGroup(1046, 3765) failed for service 'vendor.media.omx': Read-only file system
+[  385.781769] libprocessgroup: Failed to find SystemServicePerformancetask profile: No such file or directory
+[  385.781838] libprocessgroup: Failed to find SystemServiceCapacityHightask profile: No such file or directory
+[  385.797096] init: starting service 'ril-daemon'...
+[  385.797278] init: Created socket '/dev/socket/sap_uim_socket1', mode 660, user 1002, group 1002
+[  385.798881] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[  385.798938] init: createProcessGroup(1001, 3766) failed for service 'ril-daemon': Read-only file system
+[  385.805101] init: starting service 'ril-daemon1'...
+[  385.806741] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[  385.806809] init: createProcessGroup(1001, 3767) failed for service 'ril-daemon1': Read-only file system
+[  385.825104] init: starting service 'wlbtd'...
+[  385.826785] libprocessgroup: Failed to make and chown /acct/uid_1010: Read-only file system
+[  385.826847] init: createProcessGroup(1010, 3768) failed for service 'wlbtd': Read-only file system
+[  385.853034] init: Service 'wlbtd' (pid 3768) exited with status 0
+[  385.853077] init: Sending signal 9 to service 'wlbtd' (pid 3768) process group...
+[  385.853152] libprocessgroup: Successfully killed process cgroup uid 1010 pid 3768 in 0ms
+[  385.872922] init: Service 'camera_service' (pid 3763) received signal 11
+[  385.872984] init: Sending signal 9 to service 'camera_service' (pid 3763) process group...
+[  385.873067] libprocessgroup: Successfully killed process cgroup uid 1013 pid 3763 in 0ms
+[  385.923114] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:3766: Read-only property was already set
+[  385.923372] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:3766: Read-only property was already set
+[  385.928832] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:3767: Read-only property was already set
+[  385.929140] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:3767: Read-only property was already set
+[  385.937921] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:3766: Read-only property was already set
+[  385.938175] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:3766: Read-only property was already set
+[  385.945985] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:3767: Read-only property was already set
+[  385.946307] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:3767: Read-only property was already set
+[  386.011612] init: Service 'ril-daemon1' (pid 3767) exited with status 255
+[  386.011688] init: Sending signal 9 to service 'ril-daemon1' (pid 3767) process group...
+[  386.011754] libprocessgroup: Successfully killed process cgroup uid 1001 pid 3767 in 0ms
+[  386.011892] init: Sending signal 9 to service 'cpboot-daemon' (pid 250) process group...
+[  386.011938] libprocessgroup: Successfully killed process cgroup uid 0 pid 250 in 0ms
+[  386.015130] init: Command 'restart DIAG-daemon' action=onrestart (<Service 'ril-daemon1' onrestart>:2) took 0ms and failed: service DIAG-daemon not found
+[  386.087096] init: Service 'ril-daemon' (pid 3766) exited with status 255
+[  386.087134] init: Sending signal 9 to service 'ril-daemon' (pid 3766) process group...
+[  386.087198] libprocessgroup: Successfully killed process cgroup uid 1001 pid 3766 in 0ms
+[  386.087361] init: Sending signal 9 to service 'cpboot-daemon' (pid 250) process group...
+[  386.087408] libprocessgroup: Successfully killed process cgroup uid 0 pid 250 in 0ms
+[  386.087641] init: Command 'restart cpboot-daemon5g' action=onrestart (<Service 'ril-daemon' onrestart>:2) took 0ms and failed: service cpboot-daemon5g not found
+[  386.087712] init: Command 'restart DIAG-daemon' action=onrestart (<Service 'ril-daemon' onrestart>:3) took 0ms and failed: service DIAG-daemon not found
+[  386.101808] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  386.174780] init: Service 'vendor.media.omx' (pid 3765) received signal 11
+[  386.174816] init: Sending signal 9 to service 'vendor.media.omx' (pid 3765) process group...
+[  386.174902] libprocessgroup: Successfully killed process cgroup uid 1046 pid 3765 in 0ms
+[  386.450618] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 285.
+[  386.481338] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  386.490185] init: sys_prop: invalid command 2
+[  386.506964] init: sys_prop: invalid command 2
+[  386.558496] bluebinder[10336]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  386.558715] bluebinder[10336]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  386.562144] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  386.563270] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  386.584982] binder: undelivered death notification, 0000000000000000
+[  386.697907] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  386.837044] init: starting service 'sec-camera-provider-4-0'...
+[  386.838530] libprocessgroup: Failed to make and chown /acct/uid_1047: Read-only file system
+[  386.838598] init: createProcessGroup(1047, 3790) failed for service 'sec-camera-provider-4-0': Read-only file system
+[  386.839951] libprocessgroup: Failed to open /dev/cpuset/camera-daemon/tasks: No such file or directory: No such file or directory
+[  386.839987] libprocessgroup: Failed to apply CameraServiceCapacity task profile: No such file or directory
+[  386.990951] init: Service 'sec-camera-provider-4-0' (pid 3790) received signal 11
+[  386.990999] init: Sending signal 9 to service 'sec-camera-provider-4-0' (pid 3790) process group...
+[  386.991083] libprocessgroup: Successfully killed process cgroup uid 1047 pid 3790 in 0ms
+[  387.105915] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  387.700063] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 286.
+[  387.701762] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  387.749757] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  387.759384] init: sys_prop: invalid command 2
+[  387.790777] init: sys_prop: invalid command 2
+[  387.835142] bluebinder[10355]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  387.835687] bluebinder[10355]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  387.838908] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  387.839442] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  387.853023] binder: undelivered death notification, 0000000000000000
+[  388.109831] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  388.705654] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  388.950526] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 287.
+[  388.969393] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  388.981709] init: sys_prop: invalid command 2
+[  389.013509] init: sys_prop: invalid command 2
+[  389.055711] bluebinder[10371]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  389.056187] bluebinder[10371]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  389.059534] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  389.060098] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  389.065025] binder: undelivered death notification, 0000000000000000
+[  389.113982] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  389.417022] mif: cbd: start_shannon310_boot: NV validation TIMEOUT
+[  389.417084] mif: cbd: boot_wake_lock: /sys/power/wake_lock/ss310
+[  389.417121] mif: cbd: start_shannon310_boot: Prepare arguments, read TOC, check NV
+[  389.417153] mif: cbd: std_boot_prepare_args: ERR! DEV(/dev/umts_boot0) open fail (Success)
+[  389.417178] mif: cbd: prepare_boot_args: ERR! std_boot_prepare_args fail
+[  389.417197] mif: cbd: start_shannon310_boot: ERR! prepare_boot_args fail
+[  389.417231] mif: cbd: boot_wake_lock: /sys/power/wake_unlock/ss310
+[  389.417256] mif: cbd: main: start boot fail
+[  389.709816] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  389.861035] init: starting service 'vendor.audio-hal'...
+[  389.862588] libprocessgroup: Failed to make and chown /acct/uid_1041: Read-only file system
+[  389.862649] init: createProcessGroup(1041, 3798) failed for service 'vendor.audio-hal': Read-only file system
+[  389.881076] init: starting service 'vendor.cas-hal-1-2'...
+[  389.882688] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  389.882747] init: createProcessGroup(1013, 3801) failed for service 'vendor.cas-hal-1-2': Read-only file system
+[  389.917043] init: starting service 'vendor.drm-widevine-hal-1-3'...
+[  389.918544] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  389.918609] init: createProcessGroup(1013, 3802) failed for service 'vendor.drm-widevine-hal-1-3': Read-only file system
+[  390.118037] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  390.171226] init: Service 'vendor.cas-hal-1-2' (pid 3801) received signal 11
+[  390.171271] init: Sending signal 9 to service 'vendor.cas-hal-1-2' (pid 3801) process group...
+[  390.171364] libprocessgroup: Successfully killed process cgroup uid 1013 pid 3801 in 0ms
+[  390.175242] init: Service 'vendor.audio-hal' (pid 3798) received signal 11
+[  390.175281] init: Sending signal 9 to service 'vendor.audio-hal' (pid 3798) process group...
+[  390.175356] libprocessgroup: Successfully killed process cgroup uid 1041 pid 3798 in 0ms
+[  390.175531] init: Command 'restart audioserver' action=onrestart (<Service 'vendor.audio-hal' onrestart>:1) took 0ms and failed: service audioserver not found
+[  390.198395] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 288.
+[  390.221977] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  390.234665] init: sys_prop: invalid command 2
+[  390.248218] init: Service 'vendor.drm-widevine-hal-1-3' (pid 3802) received signal 11
+[  390.248246] init: Sending signal 9 to service 'vendor.drm-widevine-hal-1-3' (pid 3802) process group...
+[  390.248315] libprocessgroup: Successfully killed process cgroup uid 1013 pid 3802 in 0ms
+[  390.266851] init: sys_prop: invalid command 2
+[  390.308705] bluebinder[10396]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  390.310828] bluebinder[10396]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  390.311882] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  390.312458] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  390.421062] mif: cbd: main: Call boot start
+[  390.421105] mif: cbd: main: Modem type = 12
+[  390.421126] mif: cbd: main: Boot link = 9
+[  390.421147] mif: cbd: main: Main link = 9
+[  390.421195] mif: cbd: check_board_revision: /proc/device-tree/model_info-system_rev open fail
+[  390.421219] mif: cbd: start_shannon310_boot: CP boot device = /dev/umts_boot0
+[  390.421239] mif: cbd: start_shannon310_boot: CP binary file = /dev/block/by-name/radio
+[  390.421259] mif: cbd: start_shannon310_boot: CP NV file = /mnt/vendor/efs/nv_data.bin
+[  390.421279] mif: cbd: start_shannon310_boot: BOOT link SHMEM
+[  390.421298] mif: cbd: start_shannon310_boot: MAIN link SHMEM
+[  390.569068] init: starting service 'secure_storage'...
+[  390.570589] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  390.570647] init: createProcessGroup(1000, 3807) failed for service 'secure_storage': Read-only file system
+[  390.591880] init: Service 'secure_storage' (pid 3807) exited with status 14
+[  390.591926] init: Sending signal 9 to service 'secure_storage' (pid 3807) process group...
+[  390.591993] libprocessgroup: Successfully killed process cgroup uid 1000 pid 3807 in 0ms
+[  390.677021] init: starting service 'camera_service'...
+[  390.678522] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  390.678582] init: createProcessGroup(1013, 3808) failed for service 'camera_service': Read-only file system
+[  390.714094] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  390.781083] init: starting service 'vendor.media.omx'...
+[  390.782722] libprocessgroup: Failed to make and chown /acct/uid_1046: Read-only file system
+[  390.782784] init: createProcessGroup(1046, 3810) failed for service 'vendor.media.omx': Read-only file system
+[  390.785767] libprocessgroup: Failed to find SystemServicePerformancetask profile: No such file or directory
+[  390.785836] libprocessgroup: Failed to find SystemServiceCapacityHightask profile: No such file or directory
+[  390.801096] init: starting service 'ril-daemon'...
+[  390.801278] init: Created socket '/dev/socket/sap_uim_socket1', mode 660, user 1002, group 1002
+[  390.802872] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[  390.802931] init: createProcessGroup(1001, 3811) failed for service 'ril-daemon': Read-only file system
+[  390.809146] init: starting service 'ril-daemon1'...
+[  390.810808] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[  390.810877] init: createProcessGroup(1001, 3812) failed for service 'ril-daemon1': Read-only file system
+[  390.829290] init: starting service 'wlbtd'...
+[  390.830967] libprocessgroup: Failed to make and chown /acct/uid_1010: Read-only file system
+[  390.831027] init: createProcessGroup(1010, 3813) failed for service 'wlbtd': Read-only file system
+[  390.842910] init: Service 'wlbtd' (pid 3813) exited with status 0
+[  390.842951] init: Sending signal 9 to service 'wlbtd' (pid 3813) process group...
+[  390.843026] libprocessgroup: Successfully killed process cgroup uid 1010 pid 3813 in 0ms
+[  390.875844] init: Service 'camera_service' (pid 3808) received signal 11
+[  390.875885] init: Sending signal 9 to service 'camera_service' (pid 3808) process group...
+[  390.875965] libprocessgroup: Successfully killed process cgroup uid 1013 pid 3808 in 0ms
+[  390.926849] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:3811: Read-only property was already set
+[  390.927288] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:3811: Read-only property was already set
+[  390.932448] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:3812: Read-only property was already set
+[  390.937106] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:3812: Read-only property was already set
+[  390.941539] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:3811: Read-only property was already set
+[  390.941810] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:3811: Read-only property was already set
+[  390.953237] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:3812: Read-only property was already set
+[  390.953514] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:3812: Read-only property was already set
+[  391.036398] init: Service 'ril-daemon1' (pid 3812) exited with status 255
+[  391.036437] init: Sending signal 9 to service 'ril-daemon1' (pid 3812) process group...
+[  391.036502] libprocessgroup: Successfully killed process cgroup uid 1001 pid 3812 in 0ms
+[  391.036642] init: Sending signal 9 to service 'cpboot-daemon' (pid 250) process group...
+[  391.036688] libprocessgroup: Successfully killed process cgroup uid 0 pid 250 in 0ms
+[  391.040426] init: Command 'restart DIAG-daemon' action=onrestart (<Service 'ril-daemon1' onrestart>:2) took 0ms and failed: service DIAG-daemon not found
+[  391.082634] init: Service 'vaultkeeper' (pid 3733) exited with status 255
+[  391.082668] init: Sending signal 9 to service 'vaultkeeper' (pid 3733) process group...
+[  391.082730] libprocessgroup: Successfully killed process cgroup uid 1000 pid 3733 in 0ms
+[  391.086220] init: starting service 'vaultkeeper'...
+[  391.088110] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  391.088169] init: createProcessGroup(1000, 3828) failed for service 'vaultkeeper': Read-only file system
+[  391.119484] init: Service 'ril-daemon' (pid 3811) exited with status 255
+[  391.119523] init: Sending signal 9 to service 'ril-daemon' (pid 3811) process group...
+[  391.119587] libprocessgroup: Successfully killed process cgroup uid 1001 pid 3811 in 0ms
+[  391.119748] init: Sending signal 9 to service 'cpboot-daemon' (pid 250) process group...
+[  391.119794] libprocessgroup: Successfully killed process cgroup uid 0 pid 250 in 0ms
+[  391.120057] init: Command 'restart cpboot-daemon5g' action=onrestart (<Service 'ril-daemon' onrestart>:2) took 0ms and failed: service cpboot-daemon5g not found
+[  391.120131] init: Command 'restart DIAG-daemon' action=onrestart (<Service 'ril-daemon' onrestart>:3) took 0ms and failed: service DIAG-daemon not found
+[  391.121832] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  391.181981] init: Service 'vendor.media.omx' (pid 3810) received signal 11
+[  391.182017] init: Sending signal 9 to service 'vendor.media.omx' (pid 3810) process group...
+[  391.182089] libprocessgroup: Successfully killed process cgroup uid 1046 pid 3810 in 0ms
+[  391.450579] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 289.
+[  391.490202] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  391.495465] init: sys_prop: invalid command 2
+[  391.515943] init: sys_prop: invalid command 2
+[  391.582911] bluebinder[10438]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  391.583494] bluebinder[10438]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  391.584474] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  391.585106] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  391.605002] binder: undelivered death notification, 0000000000000000
+[  391.717886] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  391.841037] init: starting service 'sec-camera-provider-4-0'...
+[  391.842581] libprocessgroup: Failed to make and chown /acct/uid_1047: Read-only file system
+[  391.842648] init: createProcessGroup(1047, 3836) failed for service 'sec-camera-provider-4-0': Read-only file system
+[  391.844011] libprocessgroup: Failed to open /dev/cpuset/camera-daemon/tasks: No such file or directory: No such file or directory
+[  391.844047] libprocessgroup: Failed to apply CameraServiceCapacity task profile: No such file or directory
+[  391.996648] init: Service 'sec-camera-provider-4-0' (pid 3836) received signal 11
+[  391.996693] init: Sending signal 9 to service 'sec-camera-provider-4-0' (pid 3836) process group...
+[  391.996786] libprocessgroup: Successfully killed process cgroup uid 1047 pid 3836 in 0ms
+[  392.125913] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  392.698662] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 290.
+[  392.721878] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  392.738192] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  392.747343] init: sys_prop: invalid command 2
+[  392.778917] init: sys_prop: invalid command 2
+[  392.821204] bluebinder[10457]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  392.821813] bluebinder[10457]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  392.826283] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  392.828052] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  393.129869] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  393.725712] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  393.952167] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 291.
+[  393.995217] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  394.002601] init: sys_prop: invalid command 2
+[  394.019675] init: sys_prop: invalid command 2
+[  394.056669] bluebinder[10473]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  394.056840] bluebinder[10473]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  394.060723] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  394.061929] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  394.073011] binder: undelivered death notification, 0000000000000000
+[  394.133958] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  394.729717] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  394.865032] init: starting service 'vendor.audio-hal'...
+[  394.866581] libprocessgroup: Failed to make and chown /acct/uid_1041: Read-only file system
+[  394.866640] init: createProcessGroup(1041, 3844) failed for service 'vendor.audio-hal': Read-only file system
+[  394.885081] init: starting service 'vendor.cas-hal-1-2'...
+[  394.886663] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  394.886726] init: createProcessGroup(1013, 3847) failed for service 'vendor.cas-hal-1-2': Read-only file system
+[  394.921044] init: starting service 'vendor.drm-widevine-hal-1-3'...
+[  394.922550] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  394.922614] init: createProcessGroup(1013, 3848) failed for service 'vendor.drm-widevine-hal-1-3': Read-only file system
+[  395.138162] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  395.154206] init: Service 'vendor.audio-hal' (pid 3844) received signal 11
+[  395.154247] init: Sending signal 9 to service 'vendor.audio-hal' (pid 3844) process group...
+[  395.154335] libprocessgroup: Successfully killed process cgroup uid 1041 pid 3844 in 0ms
+[  395.154513] init: Command 'restart audioserver' action=onrestart (<Service 'vendor.audio-hal' onrestart>:1) took 0ms and failed: service audioserver not found
+[  395.172707] init: Service 'vendor.cas-hal-1-2' (pid 3847) received signal 11
+[  395.172730] init: Sending signal 9 to service 'vendor.cas-hal-1-2' (pid 3847) process group...
+[  395.172780] libprocessgroup: Successfully killed process cgroup uid 1013 pid 3847 in 0ms
+[  395.200016] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 292.
+[  395.225321] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  395.236302] init: sys_prop: invalid command 2
+[  395.252656] init: sys_prop: invalid command 2
+[  395.262855] init: Service 'vendor.drm-widevine-hal-1-3' (pid 3848) received signal 11
+[  395.262921] init: Sending signal 9 to service 'vendor.drm-widevine-hal-1-3' (pid 3848) process group...
+[  395.263008] libprocessgroup: Successfully killed process cgroup uid 1013 pid 3848 in 0ms
+[  395.304511] bluebinder[10498]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  395.304684] bluebinder[10498]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  395.309501] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  395.310626] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  395.317020] binder: undelivered death notification, 0000000000000000
+[  395.573084] init: starting service 'secure_storage'...
+[  395.574589] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  395.574649] init: createProcessGroup(1000, 3853) failed for service 'secure_storage': Read-only file system
+[  395.595886] init: Service 'secure_storage' (pid 3853) exited with status 14
+[  395.595927] init: Sending signal 9 to service 'secure_storage' (pid 3853) process group...
+[  395.595994] libprocessgroup: Successfully killed process cgroup uid 1000 pid 3853 in 0ms
+[  395.617032] mif: cbd: start_shannon310_boot: NV validation TIMEOUT
+[  395.617089] mif: cbd: boot_wake_lock: /sys/power/wake_lock/ss310
+[  395.617124] mif: cbd: start_shannon310_boot: Prepare arguments, read TOC, check NV
+[  395.617154] mif: cbd: std_boot_prepare_args: ERR! DEV(/dev/umts_boot0) open fail (Success)
+[  395.617179] mif: cbd: prepare_boot_args: ERR! std_boot_prepare_args fail
+[  395.617199] mif: cbd: start_shannon310_boot: ERR! prepare_boot_args fail
+[  395.617232] mif: cbd: boot_wake_lock: /sys/power/wake_unlock/ss310
+[  395.617256] mif: cbd: main: start boot fail
+[  395.681045] init: starting service 'camera_service'...
+[  395.682566] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  395.682626] init: createProcessGroup(1013, 3854) failed for service 'camera_service': Read-only file system
+[  395.734144] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  395.785102] init: starting service 'vendor.media.omx'...
+[  395.786781] libprocessgroup: Failed to make and chown /acct/uid_1046: Read-only file system
+[  395.786857] init: createProcessGroup(1046, 3856) failed for service 'vendor.media.omx': Read-only file system
+[  395.789870] libprocessgroup: Failed to find SystemServicePerformancetask profile: No such file or directory
+[  395.789941] libprocessgroup: Failed to find SystemServiceCapacityHightask profile: No such file or directory
+[  395.805097] init: starting service 'ril-daemon'...
+[  395.805282] init: Created socket '/dev/socket/sap_uim_socket1', mode 660, user 1002, group 1002
+[  395.806887] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[  395.806948] init: createProcessGroup(1001, 3857) failed for service 'ril-daemon': Read-only file system
+[  395.813131] init: starting service 'ril-daemon1'...
+[  395.814801] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[  395.814861] init: createProcessGroup(1001, 3858) failed for service 'ril-daemon1': Read-only file system
+[  395.833105] init: starting service 'wlbtd'...
+[  395.834789] libprocessgroup: Failed to make and chown /acct/uid_1010: Read-only file system
+[  395.834852] init: createProcessGroup(1010, 3859) failed for service 'wlbtd': Read-only file system
+[  395.861388] init: Service 'wlbtd' (pid 3859) exited with status 0
+[  395.861431] init: Sending signal 9 to service 'wlbtd' (pid 3859) process group...
+[  395.861505] libprocessgroup: Successfully killed process cgroup uid 1010 pid 3859 in 0ms
+[  395.882073] init: Service 'camera_service' (pid 3854) received signal 11
+[  395.882115] init: Sending signal 9 to service 'camera_service' (pid 3854) process group...
+[  395.882200] libprocessgroup: Successfully killed process cgroup uid 1013 pid 3854 in 0ms
+[  395.931746] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:3857: Read-only property was already set
+[  395.932038] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:3857: Read-only property was already set
+[  395.936532] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:3858: Read-only property was already set
+[  395.936774] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:3858: Read-only property was already set
+[  395.946927] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:3857: Read-only property was already set
+[  395.947213] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:3857: Read-only property was already set
+[  395.952668] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:3858: Read-only property was already set
+[  395.952940] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:3858: Read-only property was already set
+[  396.019978] init: Service 'ril-daemon1' (pid 3858) exited with status 255
+[  396.020016] init: Sending signal 9 to service 'ril-daemon1' (pid 3858) process group...
+[  396.020080] libprocessgroup: Successfully killed process cgroup uid 1001 pid 3858 in 0ms
+[  396.020218] init: Sending signal 9 to service 'cpboot-daemon' (pid 250) process group...
+[  396.020263] libprocessgroup: Successfully killed process cgroup uid 0 pid 250 in 0ms
+[  396.022876] init: Command 'restart DIAG-daemon' action=onrestart (<Service 'ril-daemon1' onrestart>:2) took 0ms and failed: service DIAG-daemon not found
+[  396.094228] init: Service 'ril-daemon' (pid 3857) exited with status 255
+[  396.094269] init: Sending signal 9 to service 'ril-daemon' (pid 3857) process group...
+[  396.094342] libprocessgroup: Successfully killed process cgroup uid 1001 pid 3857 in 0ms
+[  396.094520] init: Sending signal 9 to service 'cpboot-daemon' (pid 250) process group...
+[  396.094564] libprocessgroup: Successfully killed process cgroup uid 0 pid 250 in 0ms
+[  396.094833] init: Command 'restart cpboot-daemon5g' action=onrestart (<Service 'ril-daemon' onrestart>:2) took 0ms and failed: service cpboot-daemon5g not found
+[  396.094905] init: Command 'restart DIAG-daemon' action=onrestart (<Service 'ril-daemon' onrestart>:3) took 0ms and failed: service DIAG-daemon not found
+[  396.141857] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  396.182821] init: Service 'vendor.media.omx' (pid 3856) received signal 11
+[  396.182856] init: Sending signal 9 to service 'vendor.media.omx' (pid 3856) process group...
+[  396.182938] libprocessgroup: Successfully killed process cgroup uid 1046 pid 3856 in 0ms
+[  396.452121] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 293.
+[  396.493752] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  396.499252] init: sys_prop: invalid command 2
+[  396.519491] init: sys_prop: invalid command 2
+[  396.576789] bluebinder[10539]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  396.576997] bluebinder[10539]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  396.580533] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  396.581687] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  396.621060] mif: cbd: main: Call boot start
+[  396.621097] mif: cbd: main: Modem type = 12
+[  396.621117] mif: cbd: main: Boot link = 9
+[  396.621137] mif: cbd: main: Main link = 9
+[  396.621182] mif: cbd: check_board_revision: /proc/device-tree/model_info-system_rev open fail
+[  396.621205] mif: cbd: start_shannon310_boot: CP boot device = /dev/umts_boot0
+[  396.621224] mif: cbd: start_shannon310_boot: CP binary file = /dev/block/by-name/radio
+[  396.621244] mif: cbd: start_shannon310_boot: CP NV file = /mnt/vendor/efs/nv_data.bin
+[  396.621264] mif: cbd: start_shannon310_boot: BOOT link SHMEM
+[  396.621283] mif: cbd: start_shannon310_boot: MAIN link SHMEM
+[  396.737994] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  396.845035] init: starting service 'sec-camera-provider-4-0'...
+[  396.846565] libprocessgroup: Failed to make and chown /acct/uid_1047: Read-only file system
+[  396.846632] init: createProcessGroup(1047, 3881) failed for service 'sec-camera-provider-4-0': Read-only file system
+[  396.847966] libprocessgroup: Failed to open /dev/cpuset/camera-daemon/tasks: No such file or directory: No such file or directory
+[  396.848001] libprocessgroup: Failed to apply CameraServiceCapacity task profile: No such file or directory
+[  397.001267] init: Service 'sec-camera-provider-4-0' (pid 3881) received signal 11
+[  397.001314] init: Sending signal 9 to service 'sec-camera-provider-4-0' (pid 3881) process group...
+[  397.001398] libprocessgroup: Successfully killed process cgroup uid 1047 pid 3881 in 0ms
+[  397.145956] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  397.700114] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 294.
+[  397.741860] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  397.749736] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  397.755349] init: sys_prop: invalid command 2
+[  397.776364] init: sys_prop: invalid command 2
+[  397.844057] bluebinder[10557]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  397.844279] bluebinder[10557]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  397.847934] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  397.849070] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  398.149860] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  398.745686] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  398.952110] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 295.
+[  398.993705] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  399.005246] init: sys_prop: invalid command 2
+[  399.039843] init: sys_prop: invalid command 2
+[  399.120098] bluebinder[10574]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  399.120276] bluebinder[10574]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  399.124168] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  399.125274] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  399.141076] binder: undelivered death notification, 0000000000000000
+[  399.153809] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  399.749779] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  399.869033] init: starting service 'vendor.audio-hal'...
+[  399.870591] libprocessgroup: Failed to make and chown /acct/uid_1041: Read-only file system
+[  399.870654] init: createProcessGroup(1041, 3889) failed for service 'vendor.audio-hal': Read-only file system
+[  399.889078] init: starting service 'vendor.cas-hal-1-2'...
+[  399.890669] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  399.890729] init: createProcessGroup(1013, 3892) failed for service 'vendor.cas-hal-1-2': Read-only file system
+[  399.925039] init: starting service 'vendor.drm-widevine-hal-1-3'...
+[  399.926543] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  399.926607] init: createProcessGroup(1013, 3893) failed for service 'vendor.drm-widevine-hal-1-3': Read-only file system
+[  400.158044] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  400.179486] init: Service 'vendor.cas-hal-1-2' (pid 3892) received signal 11
+[  400.179508] init: Sending signal 9 to service 'vendor.cas-hal-1-2' (pid 3892) process group...
+[  400.179573] libprocessgroup: Successfully killed process cgroup uid 1013 pid 3892 in 0ms
+[  400.182325] init: Service 'vendor.audio-hal' (pid 3889) received signal 11
+[  400.182346] init: Sending signal 9 to service 'vendor.audio-hal' (pid 3889) process group...
+[  400.182391] libprocessgroup: Successfully killed process cgroup uid 1041 pid 3889 in 0ms
+[  400.182524] init: Command 'restart audioserver' action=onrestart (<Service 'vendor.audio-hal' onrestart>:1) took 0ms and failed: service audioserver not found
+[  400.200016] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 296.
+[  400.245799] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  400.254221] init: sys_prop: invalid command 2
+[  400.257590] init: Service 'vendor.drm-widevine-hal-1-3' (pid 3893) received signal 11
+[  400.257635] init: Sending signal 9 to service 'vendor.drm-widevine-hal-1-3' (pid 3893) process group...
+[  400.257721] libprocessgroup: Successfully killed process cgroup uid 1013 pid 3893 in 0ms
+[  400.271025] init: sys_prop: invalid command 2
+[  400.325404] bluebinder[10599]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  400.325583] bluebinder[10599]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  400.327820] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  400.328723] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  400.577067] init: starting service 'secure_storage'...
+[  400.578594] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  400.578654] init: createProcessGroup(1000, 3898) failed for service 'secure_storage': Read-only file system
+[  400.599794] init: Service 'secure_storage' (pid 3898) exited with status 14
+[  400.599833] init: Sending signal 9 to service 'secure_storage' (pid 3898) process group...
+[  400.599915] libprocessgroup: Successfully killed process cgroup uid 1000 pid 3898 in 0ms
+[  400.685028] init: starting service 'camera_service'...
+[  400.686501] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  400.686555] init: createProcessGroup(1013, 3899) failed for service 'camera_service': Read-only file system
+[  400.757660] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  400.789021] init: starting service 'vendor.media.omx'...
+[  400.790522] libprocessgroup: Failed to make and chown /acct/uid_1046: Read-only file system
+[  400.790579] init: createProcessGroup(1046, 3901) failed for service 'vendor.media.omx': Read-only file system
+[  400.793745] libprocessgroup: Failed to find SystemServicePerformancetask profile: No such file or directory
+[  400.793813] libprocessgroup: Failed to find SystemServiceCapacityHightask profile: No such file or directory
+[  400.809018] init: starting service 'ril-daemon'...
+[  400.809153] init: Created socket '/dev/socket/sap_uim_socket1', mode 660, user 1002, group 1002
+[  400.810570] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[  400.810625] init: createProcessGroup(1001, 3902) failed for service 'ril-daemon': Read-only file system
+[  400.817081] init: starting service 'ril-daemon1'...
+[  400.818536] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[  400.818596] init: createProcessGroup(1001, 3903) failed for service 'ril-daemon1': Read-only file system
+[  400.837124] init: starting service 'wlbtd'...
+[  400.838727] libprocessgroup: Failed to make and chown /acct/uid_1010: Read-only file system
+[  400.838789] init: createProcessGroup(1010, 3904) failed for service 'wlbtd': Read-only file system
+[  400.864767] init: Service 'wlbtd' (pid 3904) exited with status 0
+[  400.864810] init: Sending signal 9 to service 'wlbtd' (pid 3904) process group...
+[  400.864884] libprocessgroup: Successfully killed process cgroup uid 1010 pid 3904 in 0ms
+[  400.867710] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:3903: Read-only property was already set
+[  400.867880] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:3903: Read-only property was already set
+[  400.873041] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:3903: Read-only property was already set
+[  400.873283] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:3903: Read-only property was already set
+[  400.913748] init: Service 'ril-daemon1' (pid 3903) exited with status 255
+[  400.913785] init: Sending signal 9 to service 'ril-daemon1' (pid 3903) process group...
+[  400.913847] libprocessgroup: Successfully killed process cgroup uid 1001 pid 3903 in 0ms
+[  400.913990] init: Sending signal 9 to service 'cpboot-daemon' (pid 250) process group...
+[  400.914036] libprocessgroup: Successfully killed process cgroup uid 0 pid 250 in 0ms
+[  400.916462] init: Command 'restart DIAG-daemon' action=onrestart (<Service 'ril-daemon1' onrestart>:2) took 0ms and failed: service DIAG-daemon not found
+[  400.942122] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:3902: Read-only property was already set
+[  400.942445] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:3902: Read-only property was already set
+[  400.957204] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:3902: Read-only property was already set
+[  400.957566] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:3902: Read-only property was already set
+[  401.087484] init: Service 'ril-daemon' (pid 3902) exited with status 255
+[  401.087527] init: Sending signal 9 to service 'ril-daemon' (pid 3902) process group...
+[  401.087610] libprocessgroup: Successfully killed process cgroup uid 1001 pid 3902 in 0ms
+[  401.087810] init: Sending signal 9 to service 'cpboot-daemon' (pid 250) process group...
+[  401.087857] libprocessgroup: Successfully killed process cgroup uid 0 pid 250 in 0ms
+[  401.089426] init: Command 'restart cpboot-daemon5g' action=onrestart (<Service 'ril-daemon' onrestart>:2) took 0ms and failed: service cpboot-daemon5g not found
+[  401.089503] init: Command 'restart DIAG-daemon' action=onrestart (<Service 'ril-daemon' onrestart>:3) took 0ms and failed: service DIAG-daemon not found
+[  401.162001] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  401.172063] init: Service 'vaultkeeper' (pid 3828) exited with status 255
+[  401.172085] init: Sending signal 9 to service 'vaultkeeper' (pid 3828) process group...
+[  401.172149] libprocessgroup: Successfully killed process cgroup uid 1000 pid 3828 in 0ms
+[  401.172485] init: starting service 'vaultkeeper'...
+[  401.173976] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  401.174031] init: createProcessGroup(1000, 3925) failed for service 'vaultkeeper': Read-only file system
+[  401.178694] init: Service 'camera_service' (pid 3899) received signal 11
+[  401.178732] init: Sending signal 9 to service 'camera_service' (pid 3899) process group...
+[  401.178797] libprocessgroup: Successfully killed process cgroup uid 1013 pid 3899 in 0ms
+[  401.186813] init: Service 'vendor.media.omx' (pid 3901) received signal 11
+[  401.186853] init: Sending signal 9 to service 'vendor.media.omx' (pid 3901) process group...
+[  401.186929] libprocessgroup: Successfully killed process cgroup uid 1046 pid 3901 in 0ms
+[  401.452240] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 297.
+[  401.494617] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  401.503295] init: sys_prop: invalid command 2
+[  401.537879] init: sys_prop: invalid command 2
+[  401.616455] bluebinder[10640]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  401.616651] bluebinder[10640]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  401.618854] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  401.621135] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  401.641002] binder: undelivered death notification, 0000000000000000
+[  401.766071] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  401.821024] mif: cbd: start_shannon310_boot: NV validation TIMEOUT
+[  401.821087] mif: cbd: boot_wake_lock: /sys/power/wake_lock/ss310
+[  401.821120] mif: cbd: start_shannon310_boot: Prepare arguments, read TOC, check NV
+[  401.821153] mif: cbd: std_boot_prepare_args: ERR! DEV(/dev/umts_boot0) open fail (Success)
+[  401.821176] mif: cbd: prepare_boot_args: ERR! std_boot_prepare_args fail
+[  401.821200] mif: cbd: start_shannon310_boot: ERR! prepare_boot_args fail
+[  401.821236] mif: cbd: boot_wake_lock: /sys/power/wake_unlock/ss310
+[  401.821260] mif: cbd: main: start boot fail
+[  401.849027] init: starting service 'sec-camera-provider-4-0'...
+[  401.850538] libprocessgroup: Failed to make and chown /acct/uid_1047: Read-only file system
+[  401.850603] init: createProcessGroup(1047, 3927) failed for service 'sec-camera-provider-4-0': Read-only file system
+[  401.852012] libprocessgroup: Failed to open /dev/cpuset/camera-daemon/tasks: No such file or directory: No such file or directory
+[  401.852042] libprocessgroup: Failed to apply CameraServiceCapacity task profile: No such file or directory
+[  402.165812] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  402.173212] init: Service 'sec-camera-provider-4-0' (pid 3927) received signal 11
+[  402.173239] init: Sending signal 9 to service 'sec-camera-provider-4-0' (pid 3927) process group...
+[  402.173299] libprocessgroup: Successfully killed process cgroup uid 1047 pid 3927 in 0ms
+[  402.700296] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 298.
+[  402.755313] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  402.759271] init: sys_prop: invalid command 2
+[  402.771814] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  402.779908] init: sys_prop: invalid command 2
+[  402.825059] mif: cbd: main: Call boot start
+[  402.825101] mif: cbd: main: Modem type = 12
+[  402.825121] mif: cbd: main: Boot link = 9
+[  402.825141] mif: cbd: main: Main link = 9
+[  402.825185] mif: cbd: check_board_revision: /proc/device-tree/model_info-system_rev open fail
+[  402.825207] mif: cbd: start_shannon310_boot: CP boot device = /dev/umts_boot0
+[  402.825227] mif: cbd: start_shannon310_boot: CP binary file = /dev/block/by-name/radio
+[  402.825247] mif: cbd: start_shannon310_boot: CP NV file = /mnt/vendor/efs/nv_data.bin
+[  402.825267] mif: cbd: start_shannon310_boot: BOOT link SHMEM
+[  402.825285] mif: cbd: start_shannon310_boot: MAIN link SHMEM
+[  402.852854] bluebinder[10660]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  402.853058] bluebinder[10660]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  402.855085] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  402.856025] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  403.169895] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  403.773761] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  403.952307] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 299.
+[  403.995297] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  403.999185] init: sys_prop: invalid command 2
+[  404.019504] init: sys_prop: invalid command 2
+[  404.091732] bluebinder[10676]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  404.091902] bluebinder[10676]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  404.095641] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  404.097990] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  404.173936] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  404.777702] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  404.873026] init: starting service 'vendor.audio-hal'...
+[  404.874529] libprocessgroup: Failed to make and chown /acct/uid_1041: Read-only file system
+[  404.874591] init: createProcessGroup(1041, 3935) failed for service 'vendor.audio-hal': Read-only file system
+[  404.893062] init: starting service 'vendor.cas-hal-1-2'...
+[  404.894599] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  404.894658] init: createProcessGroup(1013, 3938) failed for service 'vendor.cas-hal-1-2': Read-only file system
+[  404.929033] init: starting service 'vendor.drm-widevine-hal-1-3'...
+[  404.930528] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  404.930597] init: createProcessGroup(1013, 3939) failed for service 'vendor.drm-widevine-hal-1-3': Read-only file system
+[  405.074984] init: Service 'vendor.drm-widevine-hal-1-3' (pid 3939) received signal 11
+[  405.075030] init: Sending signal 9 to service 'vendor.drm-widevine-hal-1-3' (pid 3939) process group...
+[  405.075116] libprocessgroup: Successfully killed process cgroup uid 1013 pid 3939 in 0ms
+[  405.149847] init: Service 'vendor.audio-hal' (pid 3935) received signal 11
+[  405.149889] init: Sending signal 9 to service 'vendor.audio-hal' (pid 3935) process group...
+[  405.149969] libprocessgroup: Successfully killed process cgroup uid 1041 pid 3935 in 0ms
+[  405.150151] init: Command 'restart audioserver' action=onrestart (<Service 'vendor.audio-hal' onrestart>:1) took 0ms and failed: service audioserver not found
+[  405.177812] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  405.178645] init: Service 'vendor.cas-hal-1-2' (pid 3938) received signal 11
+[  405.178665] init: Sending signal 9 to service 'vendor.cas-hal-1-2' (pid 3938) process group...
+[  405.178728] libprocessgroup: Successfully killed process cgroup uid 1013 pid 3938 in 0ms
+[  405.200154] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 300.
+[  405.243360] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  405.247296] init: sys_prop: invalid command 2
+[  405.264175] init: sys_prop: invalid command 2
+[  405.318236] bluebinder[10701]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  405.318415] bluebinder[10701]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  405.322318] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  405.324573] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  405.581067] init: starting service 'secure_storage'...
+[  405.582597] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  405.582656] init: createProcessGroup(1000, 3944) failed for service 'secure_storage': Read-only file system
+[  405.625853] init: Service 'secure_storage' (pid 3944) exited with status 14
+[  405.625878] init: Sending signal 9 to service 'secure_storage' (pid 3944) process group...
+[  405.625944] libprocessgroup: Successfully killed process cgroup uid 1000 pid 3944 in 0ms
+[  405.689023] init: starting service 'camera_service'...
+[  405.690469] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  405.690520] init: createProcessGroup(1013, 3945) failed for service 'camera_service': Read-only file system
+[  405.781836] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  405.793003] init: starting service 'vendor.media.omx'...
+[  405.794452] libprocessgroup: Failed to make and chown /acct/uid_1046: Read-only file system
+[  405.794507] init: createProcessGroup(1046, 3947) failed for service 'vendor.media.omx': Read-only file system
+[  405.797625] libprocessgroup: Failed to find SystemServicePerformancetask profile: No such file or directory
+[  405.797692] libprocessgroup: Failed to find SystemServiceCapacityHightask profile: No such file or directory
+[  405.813063] init: starting service 'ril-daemon'...
+[  405.813227] init: Created socket '/dev/socket/sap_uim_socket1', mode 660, user 1002, group 1002
+[  405.814834] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[  405.814892] init: createProcessGroup(1001, 3948) failed for service 'ril-daemon': Read-only file system
+[  405.821084] init: starting service 'ril-daemon1'...
+[  405.822631] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[  405.822693] init: createProcessGroup(1001, 3949) failed for service 'ril-daemon1': Read-only file system
+[  405.841119] init: starting service 'wlbtd'...
+[  405.842754] libprocessgroup: Failed to make and chown /acct/uid_1010: Read-only file system
+[  405.842817] init: createProcessGroup(1010, 3950) failed for service 'wlbtd': Read-only file system
+[  405.868975] init: Service 'wlbtd' (pid 3950) exited with status 0
+[  405.869027] init: Sending signal 9 to service 'wlbtd' (pid 3950) process group...
+[  405.869110] libprocessgroup: Successfully killed process cgroup uid 1010 pid 3950 in 0ms
+[  405.942277] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:3948: Read-only property was already set
+[  405.942758] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:3948: Read-only property was already set
+[  405.946717] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:3949: Read-only property was already set
+[  405.947043] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:3949: Read-only property was already set
+[  405.957620] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:3948: Read-only property was already set
+[  405.957921] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:3948: Read-only property was already set
+[  405.963244] init: Service 'vendor.media.omx' (pid 3947) received signal 11
+[  405.963286] init: Sending signal 9 to service 'vendor.media.omx' (pid 3947) process group...
+[  405.963362] libprocessgroup: Successfully killed process cgroup uid 1046 pid 3947 in 0ms
+[  405.965584] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:3949: Read-only property was already set
+[  405.965875] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:3949: Read-only property was already set
+[  406.032442] init: Service 'ril-daemon1' (pid 3949) exited with status 255
+[  406.032480] init: Sending signal 9 to service 'ril-daemon1' (pid 3949) process group...
+[  406.032542] libprocessgroup: Successfully killed process cgroup uid 1001 pid 3949 in 0ms
+[  406.032675] init: Sending signal 9 to service 'cpboot-daemon' (pid 250) process group...
+[  406.032720] libprocessgroup: Successfully killed process cgroup uid 0 pid 250 in 0ms
+[  406.035826] init: Command 'restart DIAG-daemon' action=onrestart (<Service 'ril-daemon1' onrestart>:2) took 0ms and failed: service DIAG-daemon not found
+[  406.111231] init: Service 'ril-daemon' (pid 3948) exited with status 255
+[  406.111270] init: Sending signal 9 to service 'ril-daemon' (pid 3948) process group...
+[  406.111336] libprocessgroup: Successfully killed process cgroup uid 1001 pid 3948 in 0ms
+[  406.111499] init: Sending signal 9 to service 'cpboot-daemon' (pid 250) process group...
+[  406.111545] libprocessgroup: Successfully killed process cgroup uid 0 pid 250 in 0ms
+[  406.111769] init: Command 'restart cpboot-daemon5g' action=onrestart (<Service 'ril-daemon' onrestart>:2) took 0ms and failed: service cpboot-daemon5g not found
+[  406.111843] init: Command 'restart DIAG-daemon' action=onrestart (<Service 'ril-daemon' onrestart>:3) took 0ms and failed: service DIAG-daemon not found
+[  406.159932] init: Service 'camera_service' (pid 3945) received signal 11
+[  406.159967] init: Sending signal 9 to service 'camera_service' (pid 3945) process group...
+[  406.160043] libprocessgroup: Successfully killed process cgroup uid 1013 pid 3945 in 0ms
+[  406.185418] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  406.452132] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 301.
+[  406.499335] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  406.503174] init: sys_prop: invalid command 2
+[  406.523413] init: sys_prop: invalid command 2
+[  406.580166] bluebinder[10741]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  406.580746] bluebinder[10741]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  406.583806] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  406.584442] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  406.786000] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  406.853029] init: starting service 'sec-camera-provider-4-0'...
+[  406.854544] libprocessgroup: Failed to make and chown /acct/uid_1047: Read-only file system
+[  406.854607] init: createProcessGroup(1047, 3972) failed for service 'sec-camera-provider-4-0': Read-only file system
+[  406.857748] libprocessgroup: Failed to open /dev/cpuset/camera-daemon/tasks: No such file or directory: No such file or directory
+[  406.857815] libprocessgroup: Failed to apply CameraServiceCapacity task profile: No such file or directory
+[  407.182052] init: Service 'sec-camera-provider-4-0' (pid 3972) received signal 11
+[  407.182091] init: Sending signal 9 to service 'sec-camera-provider-4-0' (pid 3972) process group...
+[  407.182169] libprocessgroup: Successfully killed process cgroup uid 1047 pid 3972 in 0ms
+[  407.189517] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  407.698669] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 302.
+[  407.733334] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  407.739806] init: sys_prop: invalid command 2
+[  407.756654] init: sys_prop: invalid command 2
+[  407.789916] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  407.800139] bluebinder[10760]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  407.800234] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  407.800916] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  407.800916] bluebinder[10760]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  408.025033] mif: cbd: start_shannon310_boot: NV validation TIMEOUT
+[  408.025102] mif: cbd: boot_wake_lock: /sys/power/wake_lock/ss310
+[  408.025130] mif: cbd: start_shannon310_boot: Prepare arguments, read TOC, check NV
+[  408.025162] mif: cbd: std_boot_prepare_args: ERR! DEV(/dev/umts_boot0) open fail (Success)
+[  408.025186] mif: cbd: prepare_boot_args: ERR! std_boot_prepare_args fail
+[  408.025206] mif: cbd: start_shannon310_boot: ERR! prepare_boot_args fail
+[  408.025242] mif: cbd: boot_wake_lock: /sys/power/wake_unlock/ss310
+[  408.025266] mif: cbd: main: start boot fail
+[  408.193821] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  408.793691] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  408.950649] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 303.
+[  408.977358] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  408.983882] init: sys_prop: invalid command 2
+[  409.000748] init: sys_prop: invalid command 2
+[  409.029072] mif: cbd: main: Call boot start
+[  409.029113] mif: cbd: main: Modem type = 12
+[  409.029135] mif: cbd: main: Boot link = 9
+[  409.029156] mif: cbd: main: Main link = 9
+[  409.029200] mif: cbd: check_board_revision: /proc/device-tree/model_info-system_rev open fail
+[  409.029224] mif: cbd: start_shannon310_boot: CP boot device = /dev/umts_boot0
+[  409.029245] mif: cbd: start_shannon310_boot: CP binary file = /dev/block/by-name/radio
+[  409.029268] mif: cbd: start_shannon310_boot: CP NV file = /mnt/vendor/efs/nv_data.bin
+[  409.029290] mif: cbd: start_shannon310_boot: BOOT link SHMEM
+[  409.029309] mif: cbd: start_shannon310_boot: MAIN link SHMEM
+[  409.042990] bluebinder[10776]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  409.043516] bluebinder[10776]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  409.046716] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  409.047333] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  409.197959] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  409.797793] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  409.877027] init: starting service 'vendor.audio-hal'...
+[  409.878546] libprocessgroup: Failed to make and chown /acct/uid_1041: Read-only file system
+[  409.878606] init: createProcessGroup(1041, 3980) failed for service 'vendor.audio-hal': Read-only file system
+[  409.897054] init: starting service 'vendor.cas-hal-1-2'...
+[  409.898651] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  409.898708] init: createProcessGroup(1013, 3983) failed for service 'vendor.cas-hal-1-2': Read-only file system
+[  409.933014] init: starting service 'vendor.drm-widevine-hal-1-3'...
+[  409.934477] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  409.934540] init: createProcessGroup(1013, 3984) failed for service 'vendor.drm-widevine-hal-1-3': Read-only file system
+[  410.077573] init: Service 'vendor.drm-widevine-hal-1-3' (pid 3984) received signal 11
+[  410.077620] init: Sending signal 9 to service 'vendor.drm-widevine-hal-1-3' (pid 3984) process group...
+[  410.077705] libprocessgroup: Successfully killed process cgroup uid 1013 pid 3984 in 0ms
+[  410.157780] init: Service 'vendor.audio-hal' (pid 3980) received signal 11
+[  410.157822] init: Sending signal 9 to service 'vendor.audio-hal' (pid 3980) process group...
+[  410.157902] libprocessgroup: Successfully killed process cgroup uid 1041 pid 3980 in 0ms
+[  410.158090] init: Command 'restart audioserver' action=onrestart (<Service 'vendor.audio-hal' onrestart>:1) took 0ms and failed: service audioserver not found
+[  410.181331] init: Service 'vendor.cas-hal-1-2' (pid 3983) received signal 11
+[  410.181354] init: Sending signal 9 to service 'vendor.cas-hal-1-2' (pid 3983) process group...
+[  410.181411] libprocessgroup: Successfully killed process cgroup uid 1013 pid 3983 in 0ms
+[  410.198586] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 304.
+[  410.201967] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  410.225358] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  410.232034] init: sys_prop: invalid command 2
+[  410.252121] init: sys_prop: invalid command 2
+[  410.329786] bluebinder[10801]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  410.330369] bluebinder[10801]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  410.334990] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  410.336129] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  410.585074] init: starting service 'secure_storage'...
+[  410.586551] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  410.586611] init: createProcessGroup(1000, 3989) failed for service 'secure_storage': Read-only file system
+[  410.629741] init: Service 'secure_storage' (pid 3989) exited with status 14
+[  410.629768] init: Sending signal 9 to service 'secure_storage' (pid 3989) process group...
+[  410.629831] libprocessgroup: Successfully killed process cgroup uid 1000 pid 3989 in 0ms
+[  410.693023] init: starting service 'camera_service'...
+[  410.694485] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  410.694537] init: createProcessGroup(1013, 3990) failed for service 'camera_service': Read-only file system
+[  410.797041] init: starting service 'vendor.media.omx'...
+[  410.798509] libprocessgroup: Failed to make and chown /acct/uid_1046: Read-only file system
+[  410.798567] init: createProcessGroup(1046, 3991) failed for service 'vendor.media.omx': Read-only file system
+[  410.799762] libprocessgroup: Failed to find SystemServicePerformancetask profile: No such file or directory
+[  410.799791] libprocessgroup: Failed to find SystemServiceCapacityHightask profile: No such file or directory
+[  410.805905] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  410.817008] init: starting service 'ril-daemon'...
+[  410.817133] init: Created socket '/dev/socket/sap_uim_socket1', mode 660, user 1002, group 1002
+[  410.818544] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[  410.818597] init: createProcessGroup(1001, 3993) failed for service 'ril-daemon': Read-only file system
+[  410.825063] init: starting service 'ril-daemon1'...
+[  410.826656] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[  410.826715] init: createProcessGroup(1001, 3994) failed for service 'ril-daemon1': Read-only file system
+[  410.845084] init: starting service 'wlbtd'...
+[  410.846711] libprocessgroup: Failed to make and chown /acct/uid_1010: Read-only file system
+[  410.846772] init: createProcessGroup(1010, 3995) failed for service 'wlbtd': Read-only file system
+[  410.872361] init: Service 'wlbtd' (pid 3995) exited with status 0
+[  410.872402] init: Sending signal 9 to service 'wlbtd' (pid 3995) process group...
+[  410.872473] libprocessgroup: Successfully killed process cgroup uid 1010 pid 3995 in 0ms
+[  410.876861] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:3993: Read-only property was already set
+[  410.877037] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:3993: Read-only property was already set
+[  410.882491] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:3993: Read-only property was already set
+[  410.882650] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:3993: Read-only property was already set
+[  410.957554] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:3994: Read-only property was already set
+[  410.957834] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:3994: Read-only property was already set
+[  410.971781] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:3994: Read-only property was already set
+[  410.972061] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:3994: Read-only property was already set
+[  411.010529] init: Service 'ril-daemon' (pid 3993) exited with status 255
+[  411.010568] init: Sending signal 9 to service 'ril-daemon' (pid 3993) process group...
+[  411.010634] libprocessgroup: Successfully killed process cgroup uid 1001 pid 3993 in 0ms
+[  411.010802] init: Sending signal 9 to service 'cpboot-daemon' (pid 250) process group...
+[  411.010850] libprocessgroup: Successfully killed process cgroup uid 0 pid 250 in 0ms
+[  411.014477] init: Command 'restart cpboot-daemon5g' action=onrestart (<Service 'ril-daemon' onrestart>:2) took 0ms and failed: service cpboot-daemon5g not found
+[  411.014553] init: Command 'restart DIAG-daemon' action=onrestart (<Service 'ril-daemon' onrestart>:3) took 0ms and failed: service DIAG-daemon not found
+[  411.033723] init: Service 'ril-daemon1' (pid 3994) exited with status 255
+[  411.033761] init: Sending signal 9 to service 'ril-daemon1' (pid 3994) process group...
+[  411.033824] libprocessgroup: Successfully killed process cgroup uid 1001 pid 3994 in 0ms
+[  411.033961] init: Sending signal 9 to service 'cpboot-daemon' (pid 250) process group...
+[  411.034007] libprocessgroup: Successfully killed process cgroup uid 0 pid 250 in 0ms
+[  411.035704] init: Command 'restart DIAG-daemon' action=onrestart (<Service 'ril-daemon1' onrestart>:2) took 0ms and failed: service DIAG-daemon not found
+[  411.163410] init: Service 'camera_service' (pid 3990) received signal 11
+[  411.163448] init: Sending signal 9 to service 'camera_service' (pid 3990) process group...
+[  411.163517] libprocessgroup: Successfully killed process cgroup uid 1013 pid 3990 in 0ms
+[  411.205963] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  411.213203] init: Service 'vendor.media.omx' (pid 3991) received signal 11
+[  411.213224] init: Sending signal 9 to service 'vendor.media.omx' (pid 3991) process group...
+[  411.213284] libprocessgroup: Successfully killed process cgroup uid 1046 pid 3991 in 0ms
+[  411.230523] init: Service 'vaultkeeper' (pid 3925) exited with status 255
+[  411.230554] init: Sending signal 9 to service 'vaultkeeper' (pid 3925) process group...
+[  411.230619] libprocessgroup: Successfully killed process cgroup uid 1000 pid 3925 in 0ms
+[  411.231012] init: starting service 'vaultkeeper'...
+[  411.232477] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  411.232527] init: createProcessGroup(1000, 4016) failed for service 'vaultkeeper': Read-only file system
+[  411.452133] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 305.
+[  411.493789] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  411.500045] init: sys_prop: invalid command 2
+[  411.516921] init: sys_prop: invalid command 2
+[  411.561245] bluebinder[10844]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  411.561823] bluebinder[10844]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  411.565077] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  411.565716] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  411.601120] binder: undelivered death notification, 0000000000000000
+[  411.809951] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  411.857033] init: starting service 'sec-camera-provider-4-0'...
+[  411.858526] libprocessgroup: Failed to make and chown /acct/uid_1047: Read-only file system
+[  411.858592] init: createProcessGroup(1047, 4018) failed for service 'sec-camera-provider-4-0': Read-only file system
+[  411.861723] libprocessgroup: Failed to open /dev/cpuset/camera-daemon/tasks: No such file or directory: No such file or directory
+[  411.861789] libprocessgroup: Failed to apply CameraServiceCapacity task profile: No such file or directory
+[  412.186328] init: Service 'sec-camera-provider-4-0' (pid 4018) received signal 11
+[  412.186371] init: Sending signal 9 to service 'sec-camera-provider-4-0' (pid 4018) process group...
+[  412.186439] libprocessgroup: Successfully killed process cgroup uid 1047 pid 4018 in 0ms
+[  412.209839] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  412.698555] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 306.
+[  412.742173] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  412.753738] init: sys_prop: invalid command 2
+[  412.785555] init: sys_prop: invalid command 2
+[  412.813997] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  412.827788] bluebinder[10862]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  412.828299] bluebinder[10862]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  412.831771] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  412.832796] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  412.852998] binder: undelivered death notification, 0000000000000000
+[  413.213857] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  413.817751] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  413.950625] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 307.
+[  414.002231] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  414.011645] init: sys_prop: invalid command 2
+[  414.046582] init: sys_prop: invalid command 2
+[  414.117512] bluebinder[10879]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  414.118098] bluebinder[10879]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  414.122506] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  414.124328] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  414.217876] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  414.229033] mif: cbd: start_shannon310_boot: NV validation TIMEOUT
+[  414.229095] mif: cbd: boot_wake_lock: /sys/power/wake_lock/ss310
+[  414.229124] mif: cbd: start_shannon310_boot: Prepare arguments, read TOC, check NV
+[  414.229158] mif: cbd: std_boot_prepare_args: ERR! DEV(/dev/umts_boot0) open fail (Success)
+[  414.229181] mif: cbd: prepare_boot_args: ERR! std_boot_prepare_args fail
+[  414.229200] mif: cbd: start_shannon310_boot: ERR! prepare_boot_args fail
+[  414.229235] mif: cbd: boot_wake_lock: /sys/power/wake_unlock/ss310
+[  414.229260] mif: cbd: main: start boot fail
+[  414.692975] a50-decon 148b0000.decon_f: late: frames req=1 done=2 start=2 timeouts=0 extra=0 te=24762 FRAME_COUNT=4 GLOBAL=0x00000133 TRIG=0x00003010 vsync_on=0 win_configs=0 copied=0 skipped=0 acq_timeouts=0 frame_wait_timeouts=0 scanned=0 dma_fallbacks=0 shadow_wait_timeouts=0 IDMA0=0xca000000 blanks=0 unblanks=0 dcs=0 dcs_timeouts=0
+[  414.821730] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  414.881034] init: starting service 'vendor.audio-hal'...
+[  414.882521] libprocessgroup: Failed to make and chown /acct/uid_1041: Read-only file system
+[  414.882598] init: createProcessGroup(1041, 4026) failed for service 'vendor.audio-hal': Read-only file system
+[  414.901015] init: starting service 'vendor.cas-hal-1-2'...
+[  414.902425] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  414.902478] init: createProcessGroup(1013, 4027) failed for service 'vendor.cas-hal-1-2': Read-only file system
+[  414.937017] init: starting service 'vendor.drm-widevine-hal-1-3'...
+[  414.938445] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  414.938509] init: createProcessGroup(1013, 4030) failed for service 'vendor.drm-widevine-hal-1-3': Read-only file system
+[  415.188985] init: Service 'vendor.cas-hal-1-2' (pid 4027) received signal 11
+[  415.189023] init: Sending signal 9 to service 'vendor.cas-hal-1-2' (pid 4027) process group...
+[  415.189091] libprocessgroup: Successfully killed process cgroup uid 1013 pid 4027 in 0ms
+[  415.200082] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 308.
+[  415.221948] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  415.227741] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  415.233093] mif: cbd: main: Call boot start
+[  415.233124] mif: cbd: main: Modem type = 12
+[  415.233143] mif: cbd: main: Boot link = 9
+[  415.233162] mif: cbd: main: Main link = 9
+[  415.233206] mif: cbd: check_board_revision: /proc/device-tree/model_info-system_rev open fail
+[  415.233229] mif: cbd: start_shannon310_boot: CP boot device = /dev/umts_boot0
+[  415.233249] mif: cbd: start_shannon310_boot: CP binary file = /dev/block/by-name/radio
+[  415.233270] mif: cbd: start_shannon310_boot: CP NV file = /mnt/vendor/efs/nv_data.bin
+[  415.233290] mif: cbd: start_shannon310_boot: BOOT link SHMEM
+[  415.233309] mif: cbd: start_shannon310_boot: MAIN link SHMEM
+[  415.249700] init: sys_prop: invalid command 2
+[  415.271404] init: sys_prop: invalid command 2
+[  415.273571] init: Service 'vendor.drm-widevine-hal-1-3' (pid 4030) received signal 11
+[  415.273620] init: Sending signal 9 to service 'vendor.drm-widevine-hal-1-3' (pid 4030) process group...
+[  415.273705] libprocessgroup: Successfully killed process cgroup uid 1013 pid 4030 in 0ms
+[  415.287582] init: Service 'vendor.audio-hal' (pid 4026) received signal 11
+[  415.287622] init: Sending signal 9 to service 'vendor.audio-hal' (pid 4026) process group...
+[  415.287693] libprocessgroup: Successfully killed process cgroup uid 1041 pid 4026 in 0ms
+[  415.287869] init: Command 'restart audioserver' action=onrestart (<Service 'vendor.audio-hal' onrestart>:1) took 0ms and failed: service audioserver not found
+[  415.326431] bluebinder[10903]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  415.326603] bluebinder[10903]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  415.328820] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  415.330655] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  415.348982] binder: undelivered death notification, 0000000000000000
+[  415.589080] init: starting service 'secure_storage'...
+[  415.590611] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  415.590667] init: createProcessGroup(1000, 4035) failed for service 'secure_storage': Read-only file system
+[  415.634194] init: Service 'secure_storage' (pid 4035) exited with status 14
+[  415.634217] init: Sending signal 9 to service 'secure_storage' (pid 4035) process group...
+[  415.634276] libprocessgroup: Successfully killed process cgroup uid 1000 pid 4035 in 0ms
+[  415.697006] init: starting service 'camera_service'...
+[  415.698459] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  415.698514] init: createProcessGroup(1013, 4036) failed for service 'camera_service': Read-only file system
+[  415.801019] init: starting service 'vendor.media.omx'...
+[  415.802497] libprocessgroup: Failed to make and chown /acct/uid_1046: Read-only file system
+[  415.802549] init: createProcessGroup(1046, 4037) failed for service 'vendor.media.omx': Read-only file system
+[  415.805688] libprocessgroup: Failed to find SystemServicePerformancetask profile: No such file or directory
+[  415.805755] libprocessgroup: Failed to find SystemServiceCapacityHightask profile: No such file or directory
+[  415.821028] init: starting service 'ril-daemon'...
+[  415.821157] init: Created socket '/dev/socket/sap_uim_socket1', mode 660, user 1002, group 1002
+[  415.822603] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[  415.822654] init: createProcessGroup(1001, 4038) failed for service 'ril-daemon': Read-only file system
+[  415.825858] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  415.829017] init: starting service 'ril-daemon1'...
+[  415.830460] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[  415.830520] init: createProcessGroup(1001, 4040) failed for service 'ril-daemon1': Read-only file system
+[  415.849115] init: starting service 'wlbtd'...
+[  415.850642] libprocessgroup: Failed to make and chown /acct/uid_1010: Read-only file system
+[  415.850705] init: createProcessGroup(1010, 4041) failed for service 'wlbtd': Read-only file system
+[  415.862311] init: Service 'wlbtd' (pid 4041) exited with status 0
+[  415.862349] init: Sending signal 9 to service 'wlbtd' (pid 4041) process group...
+[  415.862470] libprocessgroup: Successfully killed process cgroup uid 1010 pid 4041 in 0ms
+[  415.884055] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:4040: Read-only property was already set
+[  415.884225] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:4040: Read-only property was already set
+[  415.889637] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:4040: Read-only property was already set
+[  415.889797] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:4040: Read-only property was already set
+[  415.930913] init: Service 'ril-daemon1' (pid 4040) exited with status 255
+[  415.930955] init: Sending signal 9 to service 'ril-daemon1' (pid 4040) process group...
+[  415.931020] libprocessgroup: Successfully killed process cgroup uid 1001 pid 4040 in 0ms
+[  415.931167] init: Sending signal 9 to service 'cpboot-daemon' (pid 250) process group...
+[  415.931215] libprocessgroup: Successfully killed process cgroup uid 0 pid 250 in 0ms
+[  415.934546] init: Command 'restart DIAG-daemon' action=onrestart (<Service 'ril-daemon1' onrestart>:2) took 0ms and failed: service DIAG-daemon not found
+[  415.946166] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:4038: Read-only property was already set
+[  415.946425] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:4038: Read-only property was already set
+[  415.960388] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:4038: Read-only property was already set
+[  415.960669] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:4038: Read-only property was already set
+[  416.091065] init: Service 'ril-daemon' (pid 4038) exited with status 255
+[  416.091106] init: Sending signal 9 to service 'ril-daemon' (pid 4038) process group...
+[  416.091187] libprocessgroup: Successfully killed process cgroup uid 1001 pid 4038 in 0ms
+[  416.091381] init: Sending signal 9 to service 'cpboot-daemon' (pid 250) process group...
+[  416.091431] libprocessgroup: Successfully killed process cgroup uid 0 pid 250 in 0ms
+[  416.093525] init: Command 'restart cpboot-daemon5g' action=onrestart (<Service 'ril-daemon' onrestart>:2) took 0ms and failed: service cpboot-daemon5g not found
+[  416.093601] init: Command 'restart DIAG-daemon' action=onrestart (<Service 'ril-daemon' onrestart>:3) took 0ms and failed: service DIAG-daemon not found
+[  416.188829] init: Service 'camera_service' (pid 4036) received signal 11
+[  416.188864] init: Sending signal 9 to service 'camera_service' (pid 4036) process group...
+[  416.188941] libprocessgroup: Successfully killed process cgroup uid 1013 pid 4036 in 0ms
+[  416.200586] init: Service 'vendor.media.omx' (pid 4037) received signal 11
+[  416.200608] init: Sending signal 9 to service 'vendor.media.omx' (pid 4037) process group...
+[  416.200664] libprocessgroup: Successfully killed process cgroup uid 1046 pid 4037 in 0ms
+[  416.233633] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  416.452240] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 309.
+[  416.495321] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  416.499385] init: sys_prop: invalid command 2
+[  416.519767] init: sys_prop: invalid command 2
+[  416.589828] bluebinder[10945]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  416.590410] bluebinder[10945]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  416.594913] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  416.596087] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  416.830023] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  416.861018] init: starting service 'sec-camera-provider-4-0'...
+[  416.862459] libprocessgroup: Failed to make and chown /acct/uid_1047: Read-only file system
+[  416.862519] init: createProcessGroup(1047, 4063) failed for service 'sec-camera-provider-4-0': Read-only file system
+[  416.865689] libprocessgroup: Failed to open /dev/cpuset/camera-daemon/tasks: No such file or directory: No such file or directory
+[  416.865757] libprocessgroup: Failed to apply CameraServiceCapacity task profile: No such file or directory
+[  417.189821] init: Service 'sec-camera-provider-4-0' (pid 4063) received signal 11
+[  417.189866] init: Sending signal 9 to service 'sec-camera-provider-4-0' (pid 4063) process group...
+[  417.189946] libprocessgroup: Successfully killed process cgroup uid 1047 pid 4063 in 0ms
+[  417.237882] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  417.700094] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 310.
+[  417.749698] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  417.755421] init: sys_prop: invalid command 2
+[  417.772382] init: sys_prop: invalid command 2
+[  417.820330] bluebinder[10963]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  417.820519] bluebinder[10963]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  417.824757] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  417.825895] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  417.832982] binder: undelivered death notification, 0000000000000000
+[  417.833966] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  418.241741] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  418.837712] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  418.952097] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 311.
+[  419.001820] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  419.011403] init: sys_prop: invalid command 2
+[  419.042637] init: sys_prop: invalid command 2
+[  419.085298] bluebinder[10979]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  419.085833] bluebinder[10979]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  419.089023] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  419.089549] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  419.245954] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  419.841789] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  419.885025] init: starting service 'vendor.audio-hal'...
+[  419.886511] libprocessgroup: Failed to make and chown /acct/uid_1041: Read-only file system
+[  419.886567] init: createProcessGroup(1041, 4071) failed for service 'vendor.audio-hal': Read-only file system
+[  419.905010] init: starting service 'vendor.cas-hal-1-2'...
+[  419.906401] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  419.906452] init: createProcessGroup(1013, 4072) failed for service 'vendor.cas-hal-1-2': Read-only file system
+[  419.941020] init: starting service 'vendor.drm-widevine-hal-1-3'...
+[  419.942449] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  419.942514] init: createProcessGroup(1013, 4075) failed for service 'vendor.drm-widevine-hal-1-3': Read-only file system
+[  420.083138] init: Service 'vendor.drm-widevine-hal-1-3' (pid 4075) received signal 11
+[  420.083186] init: Sending signal 9 to service 'vendor.drm-widevine-hal-1-3' (pid 4075) process group...
+[  420.083270] libprocessgroup: Successfully killed process cgroup uid 1013 pid 4075 in 0ms
+[  420.188775] init: Service 'vendor.cas-hal-1-2' (pid 4072) received signal 11
+[  420.188811] init: Sending signal 9 to service 'vendor.cas-hal-1-2' (pid 4072) process group...
+[  420.188884] libprocessgroup: Successfully killed process cgroup uid 1013 pid 4072 in 0ms
+[  420.198692] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 312.
+[  420.225386] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  420.234695] init: sys_prop: invalid command 2
+[  420.249996] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  420.255418] init: sys_prop: invalid command 2
+[  420.306437] bluebinder[11004]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  420.306610] bluebinder[11004]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  420.310647] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  420.311836] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  420.336127] init: Service 'vendor.audio-hal' (pid 4071) received signal 11
+[  420.336159] init: Sending signal 9 to service 'vendor.audio-hal' (pid 4071) process group...
+[  420.336250] libprocessgroup: Successfully killed process cgroup uid 1041 pid 4071 in 0ms
+[  420.336428] init: Command 'restart audioserver' action=onrestart (<Service 'vendor.audio-hal' onrestart>:1) took 0ms and failed: service audioserver not found
+[  420.356985] binder: undelivered death notification, 0000000000000000
+[  420.433046] mif: cbd: start_shannon310_boot: NV validation TIMEOUT
+[  420.433104] mif: cbd: boot_wake_lock: /sys/power/wake_lock/ss310
+[  420.433132] mif: cbd: start_shannon310_boot: Prepare arguments, read TOC, check NV
+[  420.433168] mif: cbd: std_boot_prepare_args: ERR! DEV(/dev/umts_boot0) open fail (Success)
+[  420.433190] mif: cbd: prepare_boot_args: ERR! std_boot_prepare_args fail
+[  420.433210] mif: cbd: start_shannon310_boot: ERR! prepare_boot_args fail
+[  420.433245] mif: cbd: boot_wake_lock: /sys/power/wake_unlock/ss310
+[  420.433270] mif: cbd: main: start boot fail
+[  420.593047] init: starting service 'secure_storage'...
+[  420.594547] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  420.594606] init: createProcessGroup(1000, 4080) failed for service 'secure_storage': Read-only file system
+[  420.637772] init: Service 'secure_storage' (pid 4080) exited with status 14
+[  420.637799] init: Sending signal 9 to service 'secure_storage' (pid 4080) process group...
+[  420.637863] libprocessgroup: Successfully killed process cgroup uid 1000 pid 4080 in 0ms
+[  420.701028] init: starting service 'camera_service'...
+[  420.702502] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  420.702558] init: createProcessGroup(1013, 4081) failed for service 'camera_service': Read-only file system
+[  420.805017] init: starting service 'vendor.media.omx'...
+[  420.806482] libprocessgroup: Failed to make and chown /acct/uid_1046: Read-only file system
+[  420.806535] init: createProcessGroup(1046, 4082) failed for service 'vendor.media.omx': Read-only file system
+[  420.809640] libprocessgroup: Failed to find SystemServicePerformancetask profile: No such file or directory
+[  420.809711] libprocessgroup: Failed to find SystemServiceCapacityHightask profile: No such file or directory
+[  420.825017] init: starting service 'ril-daemon'...
+[  420.825150] init: Created socket '/dev/socket/sap_uim_socket1', mode 660, user 1002, group 1002
+[  420.826567] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[  420.826630] init: createProcessGroup(1001, 4083) failed for service 'ril-daemon': Read-only file system
+[  420.833018] init: starting service 'ril-daemon1'...
+[  420.834465] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[  420.834517] init: createProcessGroup(1001, 4084) failed for service 'ril-daemon1': Read-only file system
+[  420.845870] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  420.853024] init: starting service 'wlbtd'...
+[  420.854501] libprocessgroup: Failed to make and chown /acct/uid_1010: Read-only file system
+[  420.854558] init: createProcessGroup(1010, 4086) failed for service 'wlbtd': Read-only file system
+[  420.865867] init: Service 'wlbtd' (pid 4086) exited with status 0
+[  420.865906] init: Sending signal 9 to service 'wlbtd' (pid 4086) process group...
+[  420.865971] libprocessgroup: Successfully killed process cgroup uid 1010 pid 4086 in 0ms
+[  420.953277] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:4083: Read-only property was already set
+[  420.953735] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:4083: Read-only property was already set
+[  420.957542] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:4084: Read-only property was already set
+[  420.957793] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:4084: Read-only property was already set
+[  420.968012] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:4083: Read-only property was already set
+[  420.968283] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:4083: Read-only property was already set
+[  420.976447] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:4084: Read-only property was already set
+[  420.976739] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:4084: Read-only property was already set
+[  421.041623] init: Service 'ril-daemon1' (pid 4084) exited with status 255
+[  421.041662] init: Sending signal 9 to service 'ril-daemon1' (pid 4084) process group...
+[  421.041725] libprocessgroup: Successfully killed process cgroup uid 1001 pid 4084 in 0ms
+[  421.041866] init: Sending signal 9 to service 'cpboot-daemon' (pid 250) process group...
+[  421.041911] libprocessgroup: Successfully killed process cgroup uid 0 pid 250 in 0ms
+[  421.046638] init: Command 'restart DIAG-daemon' action=onrestart (<Service 'ril-daemon1' onrestart>:2) took 0ms and failed: service DIAG-daemon not found
+[  421.138037] init: Service 'ril-daemon' (pid 4083) exited with status 255
+[  421.138080] init: Sending signal 9 to service 'ril-daemon' (pid 4083) process group...
+[  421.138157] libprocessgroup: Successfully killed process cgroup uid 1001 pid 4083 in 0ms
+[  421.138355] init: Sending signal 9 to service 'cpboot-daemon' (pid 250) process group...
+[  421.138402] libprocessgroup: Successfully killed process cgroup uid 0 pid 250 in 0ms
+[  421.142948] init: Command 'restart cpboot-daemon5g' action=onrestart (<Service 'ril-daemon' onrestart>:2) took 0ms and failed: service cpboot-daemon5g not found
+[  421.143027] init: Command 'restart DIAG-daemon' action=onrestart (<Service 'ril-daemon' onrestart>:3) took 0ms and failed: service DIAG-daemon not found
+[  421.195141] init: Service 'camera_service' (pid 4081) received signal 11
+[  421.195179] init: Sending signal 9 to service 'camera_service' (pid 4081) process group...
+[  421.195252] libprocessgroup: Successfully killed process cgroup uid 1013 pid 4081 in 0ms
+[  421.205325] init: Service 'vendor.media.omx' (pid 4082) received signal 11
+[  421.205347] init: Sending signal 9 to service 'vendor.media.omx' (pid 4082) process group...
+[  421.205401] libprocessgroup: Successfully killed process cgroup uid 1046 pid 4082 in 0ms
+[  421.253931] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  421.307965] init: Service 'vaultkeeper' (pid 4016) exited with status 255
+[  421.307987] init: Sending signal 9 to service 'vaultkeeper' (pid 4016) process group...
+[  421.308047] libprocessgroup: Successfully killed process cgroup uid 1000 pid 4016 in 0ms
+[  421.308406] init: starting service 'vaultkeeper'...
+[  421.309926] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  421.309976] init: createProcessGroup(1000, 4107) failed for service 'vaultkeeper': Read-only file system
+[  421.437036] mif: cbd: main: Call boot start
+[  421.437071] mif: cbd: main: Modem type = 12
+[  421.437092] mif: cbd: main: Boot link = 9
+[  421.437111] mif: cbd: main: Main link = 9
+[  421.437158] mif: cbd: check_board_revision: /proc/device-tree/model_info-system_rev open fail
+[  421.437182] mif: cbd: start_shannon310_boot: CP boot device = /dev/umts_boot0
+[  421.437202] mif: cbd: start_shannon310_boot: CP binary file = /dev/block/by-name/radio
+[  421.437224] mif: cbd: start_shannon310_boot: CP NV file = /mnt/vendor/efs/nv_data.bin
+[  421.437245] mif: cbd: start_shannon310_boot: BOOT link SHMEM
+[  421.437264] mif: cbd: start_shannon310_boot: MAIN link SHMEM
+[  421.452111] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 313.
+[  421.506481] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  421.514079] init: sys_prop: invalid command 2
+[  421.531272] init: sys_prop: invalid command 2
+[  421.575323] bluebinder[11047]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  421.575902] bluebinder[11047]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  421.579166] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  421.579781] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  421.849940] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  421.865035] init: starting service 'sec-camera-provider-4-0'...
+[  421.866479] libprocessgroup: Failed to make and chown /acct/uid_1047: Read-only file system
+[  421.866539] init: createProcessGroup(1047, 4109) failed for service 'sec-camera-provider-4-0': Read-only file system
+[  421.869749] libprocessgroup: Failed to open /dev/cpuset/camera-daemon/tasks: No such file or directory: No such file or directory
+[  421.869816] libprocessgroup: Failed to apply CameraServiceCapacity task profile: No such file or directory
+[  422.195150] init: Service 'sec-camera-provider-4-0' (pid 4109) received signal 11
+[  422.195183] init: Sending signal 9 to service 'sec-camera-provider-4-0' (pid 4109) process group...
+[  422.195253] libprocessgroup: Successfully killed process cgroup uid 1047 pid 4109 in 0ms
+[  422.257998] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  422.698549] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 314.
+[  422.733351] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  422.745746] init: sys_prop: invalid command 2
+[  422.777227] init: sys_prop: invalid command 2
+[  422.853931] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  422.855792] bluebinder[11065]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  422.856338] bluebinder[11065]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  422.860211] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  422.861404] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  423.261846] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  423.857775] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  423.952049] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 315.
+[  423.997749] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  424.006612] init: sys_prop: invalid command 2
+[  424.027590] init: sys_prop: invalid command 2
+[  424.098282] bluebinder[11082]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  424.098915] bluebinder[11082]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  424.103011] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  424.104871] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  424.265868] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  424.861691] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  424.889023] init: starting service 'vendor.audio-hal'...
+[  424.890498] libprocessgroup: Failed to make and chown /acct/uid_1041: Read-only file system
+[  424.890555] init: createProcessGroup(1041, 4117) failed for service 'vendor.audio-hal': Read-only file system
+[  424.909028] init: starting service 'vendor.cas-hal-1-2'...
+[  424.910469] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  424.910526] init: createProcessGroup(1013, 4118) failed for service 'vendor.cas-hal-1-2': Read-only file system
+[  424.945018] init: starting service 'vendor.drm-widevine-hal-1-3'...
+[  424.946457] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  424.946519] init: createProcessGroup(1013, 4121) failed for service 'vendor.drm-widevine-hal-1-3': Read-only file system
+[  425.088388] init: Service 'vendor.drm-widevine-hal-1-3' (pid 4121) received signal 11
+[  425.088438] init: Sending signal 9 to service 'vendor.drm-widevine-hal-1-3' (pid 4121) process group...
+[  425.088524] libprocessgroup: Successfully killed process cgroup uid 1013 pid 4121 in 0ms
+[  425.194227] init: Service 'vendor.cas-hal-1-2' (pid 4118) received signal 11
+[  425.194266] init: Sending signal 9 to service 'vendor.cas-hal-1-2' (pid 4118) process group...
+[  425.194344] libprocessgroup: Successfully killed process cgroup uid 1013 pid 4118 in 0ms
+[  425.200168] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 316.
+[  425.243569] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  425.249973] init: sys_prop: invalid command 2
+[  425.266473] init: sys_prop: invalid command 2
+[  425.269917] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  425.313468] bluebinder[11106]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  425.314172] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  425.314390] bluebinder[11106]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  425.314726] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  425.321316] init: Service 'vendor.audio-hal' (pid 4117) received signal 11
+[  425.321347] init: Sending signal 9 to service 'vendor.audio-hal' (pid 4117) process group...
+[  425.321432] libprocessgroup: Successfully killed process cgroup uid 1041 pid 4117 in 0ms
+[  425.321601] init: Command 'restart audioserver' action=onrestart (<Service 'vendor.audio-hal' onrestart>:1) took 0ms and failed: service audioserver not found
+[  425.597068] init: starting service 'secure_storage'...
+[  425.598601] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  425.598659] init: createProcessGroup(1000, 4126) failed for service 'secure_storage': Read-only file system
+[  425.641955] init: Service 'secure_storage' (pid 4126) exited with status 14
+[  425.641981] init: Sending signal 9 to service 'secure_storage' (pid 4126) process group...
+[  425.642050] libprocessgroup: Successfully killed process cgroup uid 1000 pid 4126 in 0ms
+[  425.705021] init: starting service 'camera_service'...
+[  425.706460] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  425.706513] init: createProcessGroup(1013, 4127) failed for service 'camera_service': Read-only file system
+[  425.809015] init: starting service 'vendor.media.omx'...
+[  425.810515] libprocessgroup: Failed to make and chown /acct/uid_1046: Read-only file system
+[  425.810571] init: createProcessGroup(1046, 4128) failed for service 'vendor.media.omx': Read-only file system
+[  425.813743] libprocessgroup: Failed to find SystemServicePerformancetask profile: No such file or directory
+[  425.813812] libprocessgroup: Failed to find SystemServiceCapacityHightask profile: No such file or directory
+[  425.829011] init: starting service 'ril-daemon'...
+[  425.829141] init: Created socket '/dev/socket/sap_uim_socket1', mode 660, user 1002, group 1002
+[  425.830540] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[  425.830592] init: createProcessGroup(1001, 4129) failed for service 'ril-daemon': Read-only file system
+[  425.837021] init: starting service 'ril-daemon1'...
+[  425.838492] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[  425.838546] init: createProcessGroup(1001, 4130) failed for service 'ril-daemon1': Read-only file system
+[  425.857084] init: starting service 'wlbtd'...
+[  425.858709] libprocessgroup: Failed to make and chown /acct/uid_1010: Read-only file system
+[  425.858772] init: createProcessGroup(1010, 4131) failed for service 'wlbtd': Read-only file system
+[  425.866028] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  425.886308] init: Service 'wlbtd' (pid 4131) exited with status 0
+[  425.886349] init: Sending signal 9 to service 'wlbtd' (pid 4131) process group...
+[  425.886429] libprocessgroup: Successfully killed process cgroup uid 1010 pid 4131 in 0ms
+[  425.887728] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:4130: Read-only property was already set
+[  425.887888] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:4130: Read-only property was already set
+[  425.893064] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:4130: Read-only property was already set
+[  425.893224] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:4130: Read-only property was already set
+[  425.931260] init: Service 'ril-daemon1' (pid 4130) exited with status 255
+[  425.931299] init: Sending signal 9 to service 'ril-daemon1' (pid 4130) process group...
+[  425.931362] libprocessgroup: Successfully killed process cgroup uid 1001 pid 4130 in 0ms
+[  425.931501] init: Sending signal 9 to service 'cpboot-daemon' (pid 250) process group...
+[  425.931546] libprocessgroup: Successfully killed process cgroup uid 0 pid 250 in 0ms
+[  425.934766] init: Command 'restart DIAG-daemon' action=onrestart (<Service 'ril-daemon1' onrestart>:2) took 0ms and failed: service DIAG-daemon not found
+[  425.961753] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:4129: Read-only property was already set
+[  425.962130] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:4129: Read-only property was already set
+[  425.977037] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:4129: Read-only property was already set
+[  425.977393] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:4129: Read-only property was already set
+[  426.103376] init: Service 'ril-daemon' (pid 4129) exited with status 255
+[  426.103417] init: Sending signal 9 to service 'ril-daemon' (pid 4129) process group...
+[  426.103496] libprocessgroup: Successfully killed process cgroup uid 1001 pid 4129 in 0ms
+[  426.103686] init: Sending signal 9 to service 'cpboot-daemon' (pid 250) process group...
+[  426.103731] libprocessgroup: Successfully killed process cgroup uid 0 pid 250 in 0ms
+[  426.105974] init: Command 'restart cpboot-daemon5g' action=onrestart (<Service 'ril-daemon' onrestart>:2) took 0ms and failed: service cpboot-daemon5g not found
+[  426.106051] init: Command 'restart DIAG-daemon' action=onrestart (<Service 'ril-daemon' onrestart>:3) took 0ms and failed: service DIAG-daemon not found
+[  426.196211] init: Service 'camera_service' (pid 4127) received signal 11
+[  426.196236] init: Sending signal 9 to service 'camera_service' (pid 4127) process group...
+[  426.196297] libprocessgroup: Successfully killed process cgroup uid 1013 pid 4127 in 0ms
+[  426.207980] init: Service 'vendor.media.omx' (pid 4128) received signal 11
+[  426.208001] init: Sending signal 9 to service 'vendor.media.omx' (pid 4128) process group...
+[  426.208056] libprocessgroup: Successfully killed process cgroup uid 1046 pid 4128 in 0ms
+[  426.273926] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  426.450607] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 317.
+[  426.473397] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  426.483193] init: sys_prop: invalid command 2
+[  426.514672] init: sys_prop: invalid command 2
+[  426.559242] bluebinder[11148]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  426.559827] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  426.560093] bluebinder[11148]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  426.560469] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  426.637065] mif: cbd: start_shannon310_boot: NV validation TIMEOUT
+[  426.637132] mif: cbd: boot_wake_lock: /sys/power/wake_lock/ss310
+[  426.637161] mif: cbd: start_shannon310_boot: Prepare arguments, read TOC, check NV
+[  426.637191] mif: cbd: std_boot_prepare_args: ERR! DEV(/dev/umts_boot0) open fail (Success)
+[  426.637215] mif: cbd: prepare_boot_args: ERR! std_boot_prepare_args fail
+[  426.637236] mif: cbd: start_shannon310_boot: ERR! prepare_boot_args fail
+[  426.637268] mif: cbd: boot_wake_lock: /sys/power/wake_unlock/ss310
+[  426.637291] mif: cbd: main: start boot fail
+[  426.869066] init: starting service 'sec-camera-provider-4-0'...
+[  426.870593] libprocessgroup: Failed to make and chown /acct/uid_1047: Read-only file system
+[  426.870657] init: createProcessGroup(1047, 4154) failed for service 'sec-camera-provider-4-0': Read-only file system
+[  426.871087] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  426.873742] libprocessgroup: Failed to open /dev/cpuset/camera-daemon/tasks: No such file or directory: No such file or directory
+[  426.873808] libprocessgroup: Failed to apply CameraServiceCapacity task profile: No such file or directory
+[  427.197999] init: Service 'sec-camera-provider-4-0' (pid 4154) received signal 11
+[  427.198037] init: Sending signal 9 to service 'sec-camera-provider-4-0' (pid 4154) process group...
+[  427.198109] libprocessgroup: Successfully killed process cgroup uid 1047 pid 4154 in 0ms
+[  427.277887] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  427.641034] mif: cbd: main: Call boot start
+[  427.641065] mif: cbd: main: Modem type = 12
+[  427.641088] mif: cbd: main: Boot link = 9
+[  427.641108] mif: cbd: main: Main link = 9
+[  427.641155] mif: cbd: check_board_revision: /proc/device-tree/model_info-system_rev open fail
+[  427.641179] mif: cbd: start_shannon310_boot: CP boot device = /dev/umts_boot0
+[  427.641201] mif: cbd: start_shannon310_boot: CP binary file = /dev/block/by-name/radio
+[  427.641223] mif: cbd: start_shannon310_boot: CP NV file = /mnt/vendor/efs/nv_data.bin
+[  427.641244] mif: cbd: start_shannon310_boot: BOOT link SHMEM
+[  427.641263] mif: cbd: start_shannon310_boot: MAIN link SHMEM
+[  427.698649] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 318.
+[  427.725332] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  427.734205] init: sys_prop: invalid command 2
+[  427.751295] init: sys_prop: invalid command 2
+[  427.799602] bluebinder[11166]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  427.799774] bluebinder[11166]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  427.803463] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  427.804632] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  427.817008] binder: undelivered death notification, 0000000000000000
+[  427.877698] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  428.281742] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  428.881683] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  428.952131] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 319.
+[  428.978501] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  428.987945] init: sys_prop: invalid command 2
+[  429.022566] init: sys_prop: invalid command 2
+[  429.079064] bluebinder[11182]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  429.079632] bluebinder[11182]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  429.082782] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  429.083414] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  429.093013] binder: undelivered death notification, 0000000000000000
+[  429.285846] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  429.885785] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  429.893014] init: starting service 'vendor.audio-hal'...
+[  429.894506] libprocessgroup: Failed to make and chown /acct/uid_1041: Read-only file system
+[  429.894563] init: createProcessGroup(1041, 4162) failed for service 'vendor.audio-hal': Read-only file system
+[  429.913012] init: starting service 'vendor.cas-hal-1-2'...
+[  429.914427] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  429.914480] init: createProcessGroup(1013, 4163) failed for service 'vendor.cas-hal-1-2': Read-only file system
+[  429.949101] init: starting service 'vendor.drm-widevine-hal-1-3'...
+[  429.950764] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  429.950831] init: createProcessGroup(1013, 4166) failed for service 'vendor.drm-widevine-hal-1-3': Read-only file system
+[  430.042348] init: Service 'vendor.cas-hal-1-2' (pid 4163) received signal 11
+[  430.042391] init: Sending signal 9 to service 'vendor.cas-hal-1-2' (pid 4163) process group...
+[  430.042474] libprocessgroup: Successfully killed process cgroup uid 1013 pid 4163 in 0ms
+[  430.097765] init: Service 'vendor.drm-widevine-hal-1-3' (pid 4166) received signal 11
+[  430.097814] init: Sending signal 9 to service 'vendor.drm-widevine-hal-1-3' (pid 4166) process group...
+[  430.097891] libprocessgroup: Successfully killed process cgroup uid 1013 pid 4166 in 0ms
+[  430.198420] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 320.
+[  430.217415] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[  430.229886] init: sys_prop: invalid command 2
+[  430.261854] init: sys_prop: invalid command 2
+[  430.290186] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[  430.295165] bluebinder[11207]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[  430.295337] bluebinder[11207]: g_io_channel_unref: assertion 'channel != NULL' failed
+[  430.298298] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[  430.298909] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[  430.301274] init: Service 'vendor.audio-hal' (pid 4162) received signal 11
+[  430.301303] init: Sending signal 9 to service 'vendor.audio-hal' (pid 4162) process group...
+[  430.301376] libprocessgroup: Successfully killed process cgroup uid 1041 pid 4162 in 0ms
+[  430.301531] init: Command 'restart audioserver' action=onrestart (<Service 'vendor.audio-hal' onrestart>:1) took 0ms and failed: service audioserver not found
+[  430.317002] binder: undelivered death notification, 0000000000000000
+[  430.601041] init: starting service 'secure_storage'...
+[  430.602538] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[  430.602598] init: createProcessGroup(1000, 4171) failed for service 'secure_storage': Read-only file system
+[  430.645973] init: Service 'secure_storage' (pid 4171) exited with status 14
+[  430.645998] init: Sending signal 9 to service 'secure_storage' (pid 4171) process group...
+[  430.646064] libprocessgroup: Successfully killed process cgroup uid 1000 pid 4171 in 0ms
+[  430.709012] init: starting service 'camera_service'...
+[  430.710510] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[  430.710565] init: createProcessGroup(1013, 4172) failed for service 'camera_service': Read-only file system
+[  430.813016] init: starting service 'vendor.media.omx'...
+[  430.814453] libprocessgroup: Failed to make and chown /acct/uid_1046: Read-only file system
+[  430.814515] init: createProcessGroup(1046, 4173) failed for service 'vendor.media.omx': Read-only file system
+[  430.817642] libprocessgroup: Failed to find SystemServicePerformancetask profile: No such file or directory
+[  430.817710] libprocessgroup: Failed to find SystemServiceCapacityHightask profile: No such file or directory
+[  430.833009] init: starting service 'ril-daemon'...
+[  430.833138] init: Created socket '/dev/socket/sap_uim_socket1', mode 660, user 1002, group 1002
+[  430.834676] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[  430.834727] init: createProcessGroup(1001, 4174) failed for service 'ril-daemon': Read-only file system
+[  430.841010] init: starting service 'ril-daemon1'...
+[  430.842428] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[  430.842490] init: createProcessGroup(1001, 4175) failed for service 'ril-daemon1': Read-only file system
+[  430.861083] init: starting service 'wlbtd'...
+[  430.862708] libprocessgroup: Failed to make and chown /acct/uid_1010: Read-only file system
+[  430.862778] init: createProcessGroup(1010, 4176) failed for service 'wlbtd': Read-only file system
+[  430.888711] init: Service 'wlbtd' (pid 4176) exited with status 0
+[  430.888751] init: Sending signal 9 to service 'wlbtd' (pid 4176) process group...
+[  430.888826] libprocessgroup: Successfully killed process cgroup uid 1010 pid 4176 in 0ms
+[  430.890065] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[  430.891826] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:4175: Read-only property was already set
+[  430.891993] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:4175: Read-only property was already set
+[  430.897331] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:4175: Read-only property was already set
+[  430.897487] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:4175: Read-only property was already set
+[  430.935100] init: Service 'ril-daemon1' (pid 4175) exited with status 255
+[  430.935139] init: Sending signal 9 to service 'ril-daemon1' (pid 4175) process group...
+[  430.935201] libprocessgroup: Successfully killed process cgroup uid 1001 pid 4175 in 0ms
+[  430.935337] init: Sending signal 9 to service 'cpboot-daemon' (pid 250) process group...
+[  430.935382] libprocessgroup: Successfully killed process cgroup uid 0 pid 250 in 0ms
+[  430.940002] init: Command 'restart DIAG-daemon' action=onrestart (<Service 'ril-daemon1' onrestart>:2) took 0ms and failed: service DIAG-daemon not found
+[  430.961630] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:4174: Read-only property was already set
+[  430.961995] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:4174: Read-only property was already set
+[  430.976724] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:4174: Read-only property was already set
+[  430.977166] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:4174: Read-only property was already set
+[  431.073026] A50DIAG: sync before the timed dump
+[  431.077532] A50DIAG: sync done
+===== A50 6.18 DMESG END =====

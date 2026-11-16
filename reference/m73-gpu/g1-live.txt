@@ -1,0 +1,1881 @@
+
+CMD: uname -r
+6.18.33-a50-diag+
+RC=0
+
+CMD: cat /proc/uptime
+36.48 201.36
+RC=0
+
+CMD: cat /sys/module/mali_kbase/parameters/a50_g1_probe_only
+Y
+RC=0
+
+CMD: ls -l /dev/mali0
+ls: cannot access '/dev/mali0': No such file or directory
+RC=2
+
+CMD: /run/a50-g1-exec/gpuprops64
+FAIL: open mali: No such file or directory
+RC=1
+
+CMD: /run/a50-g1-exec/gpuprops32
+FAIL: open mali: No such file or directory
+RC=1
+
+CMD: /bin/sh -c grep -iE "mali|gpu|mmu|job" /proc/interrupts
+ 57:          0          0          0          0          0          0          0          0 GIC-0 250 Level     14820000.iommu
+RC=0
+
+CMD: /bin/sh -c cat /sys/devices/platform/11500000.mali/uevent; readlink /sys/devices/platform/11500000.mali/driver
+OF_NAME=mali
+OF_FULLNAME=/mali@11500000
+OF_COMPATIBLE_0=arm,mali
+OF_COMPATIBLE_N=1
+MODALIAS=of:NmaliT(null)Carm,mali
+RC=1
+
+CMD: systemctl show -p SystemState -p NFailedUnits -p NJobs
+NFailedUnits=1
+NJobs=5
+SystemState=starting
+RC=0
+
+CMD: systemctl --failed --no-pager --plain
+UNIT            LOAD   ACTIVE SUB    DESCRIPTION
+lightdm.service loaded failed failed Light Display Manager
+
+Legend: LOAD   -> Reflects whether the unit definition was properly loaded.
+        ACTIVE -> The high-level unit activation state, i.e. generalization of SUB.
+        SUB    -> The low-level unit activation state, values depend on unit type.
+
+1 loaded units listed.
+RC=0
+
+CMD: lxc-info -n android
+Name:           android
+State:          RUNNING
+PID:            863
+IP:             10.15.19.82
+RC=0
+
+CMD: findmnt -no TARGET,OPTIONS /userdata
+/userdata rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+RC=0
+
+CMD: /bin/sh -c dmesg | grep -E "mali|Mali|A50 G1|A50_UFS_SAFE|EXT4-fs.*sda32|[Ss]ys[Mm][Mm][Uu]|fault|SError|BUG:"
+[   22.978830] init: SVC_EXEC service 'boringssl_self_test32' pid 27 (uid 0 gid 0+0 context default) started; waiting...
+[   23.143949] init: SVC_EXEC service 'boringssl_self_test64' pid 37 (uid 0 gid 0+0 context default) started; waiting...
+[   23.218196] init: SVC_EXEC service 'boringssl_self_test32_vendor' pid 38 (uid 0 gid 0+0 context default) started; waiting...
+[   23.266880] init: SVC_EXEC service 'boringssl_self_test64_vendor' pid 39 (uid 0 gid 0+0 context default) started; waiting...
+[   23.360149] init: SVC_EXEC service 'exec 2 (/system/bin/vndk-detect)' pid 44 (uid 0 gid 0+0 context default) started; waiting...
+[   28.485167] init: SVC_EXEC service 'sim_config' pid 65 (uid 1001 gid 1001+0 context default) started; waiting...
+[   28.504354] init: SVC_EXEC service 'exec 3 (/system/bin/vdc checkpoint markBootAttempt)' pid 66 (uid 1000 gid 1000+0 context default) started; waiting...
+[   28.557929] init: SVC_EXEC service 'exec 4 (/system/bin/vdc checkpoint prepareCheckpoint)' pid 72 (uid 1000 gid 1000+0 context default) started; waiting...
+[   28.574940] init: Switched to default mount namespace
+[   28.625453] init: SVC_EXEC service 'exec 5 (/system/bin/chattr +F /data/media)' pid 76 (uid 1023 gid 1023+0 context default) started; waiting...
+[   28.640182] init: SVC_EXEC service 'derive_sdk' pid 77 (uid 9999 gid 9999+0 context default) started; waiting...
+[   28.660874] init: SVC_EXEC service 'exec 6 (/system/bin/vdc --wait cryptfs init_user0)' pid 78 (uid 0 gid 0+0 context default) started; waiting...
+[   28.735947] init: SVC_EXEC service 'apexd-snapshotde' pid 80 (uid 0 gid 1000+0 context default) started; waiting...
+[   28.757813] init: SVC_EXEC service 'exec 7 (/system/bin/tzdatacheck /apex/com.android.tzdata/etc/tz /data/misc/zoneinfo)' pid 81 (uid 1000 gid 1000+0 context default) started; waiting...
+[   28.772317] init: SVC_EXEC service 'exec 8 (/system/bin/on-post-data.sh)' pid 82 (uid 0 gid 0+0 context default) started; waiting...
+[   29.259039] init: SVC_EXEC service 'network_config' pid 115 (uid 1001 gid 1001+0 context default) started; waiting...
+[   29.309469] init: SVC_EXEC service 'exec 10 (/system/bin/flags_health_check BOOT_FAILURE)' pid 117 (uid 1000 gid 1000+0 context default) started; waiting...
+[   29.512212] init: Control message: Processed ctl.interface_start for 'android.hardware.gatekeeper@1.0::IGatekeeper/default' from pid: 42 (/system/bin/hwservicemanager)
+[   29.513008] init: Control message: Could not find 'android.hardware.biometrics.fingerprint@2.1::IBiometricsFingerprint/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   29.522049] init: Control message: Processed ctl.interface_start for 'android.hardware.gatekeeper@1.0::IGatekeeper/default' from pid: 42 (/system/bin/hwservicemanager)
+[   29.522934] init: Control message: Could not find 'android.hardware.biometrics.fingerprint@2.1::IBiometricsFingerprint/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   29.675096] init: starting service 'vendor.samsung.hardware.hyper-default'...
+[   29.678807] init: createProcessGroup(1000, 157) failed for service 'vendor.samsung.hardware.hyper-default': Read-only file system
+[   29.682408] init: starting service 'vendor.samsung.hardware.light-default'...
+[   29.684197] init: createProcessGroup(1000, 158) failed for service 'vendor.samsung.hardware.light-default': Read-only file system
+[   29.685743] init: starting service 'vendor.samsung.power-default'...
+[   29.687634] init: createProcessGroup(1000, 159) failed for service 'vendor.samsung.power-default': Read-only file system
+[   29.833802] init: Control message: Could not find 'android.hardware.vibrator@1.0::IVibrator/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   29.847559] init: Control message: Could not find 'android.hardware.light@2.0::ILight/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   29.853848] init: SVC_EXEC service 'exec 11 (/system/bin/fsverity_init)' pid 179 (uid 0 gid 0+0 context default) started; waiting...
+[   29.917967] init: SVC_EXEC service 'exec 12 (/system/bin/micshm.sh)' pid 187 (uid 0 gid 0+0 context default) started; waiting...
+[   29.997948] init: Control message: Could not find 'android.hardware.sensors@2.1::ISensors/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   30.017480] init: Control message: Could not find 'android.hardware.sensors@2.1::ISensors/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   30.305452] init: SVC_EXEC service 'boringssl_self_test_apex32' pid 231 (uid 0 gid 0+0 context default) started; waiting...
+[   30.317985] init: SVC_EXEC service 'boringssl_self_test_apex64' pid 232 (uid 0 gid 0+0 context default) started; waiting...
+[   30.633841] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   30.637493] init: Control message: Processed ctl.interface_start for 'android.hardware.gatekeeper@1.0::IGatekeeper/default' from pid: 42 (/system/bin/hwservicemanager)
+[   30.639659] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   30.648117] init: Control message: Could not find 'android.hardware.biometrics.fingerprint@2.3::IBiometricsFingerprint/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   30.711145] init: Control message: Could not find 'android.hardware.radio.config@1.1::IRadioConfig/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   30.713072] init: Control message: Could not find 'android.hardware.radio.config@1.0::IRadioConfig/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   30.718867] init: Control message: Processed ctl.interface_start for 'android.hardware.gatekeeper@1.0::IGatekeeper/default' from pid: 42 (/system/bin/hwservicemanager)
+[   30.720513] init: Control message: Processed ctl.interface_start for 'android.hardware.gatekeeper@1.0::IGatekeeper/default' from pid: 42 (/system/bin/hwservicemanager)
+[   31.135953] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   31.136244] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   31.147776] root[1694]: 02default_route_workaround: (lo): up: flushing routing table (proto boot)
+[   31.261175] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   31.261435] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   31.645367] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   31.722313] init: Control message: Processed ctl.interface_start for 'android.hardware.gatekeeper@1.0::IGatekeeper/default' from pid: 42 (/system/bin/hwservicemanager)
+[   31.731242] init: SVC_EXEC service 'exec 15 (/bin/rm -rf /data/per_boot)' pid 328 (uid 1000 gid 1000+0 context default) started; waiting...
+[   32.245254] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   32.646069] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   32.726097] init: Control message: Processed ctl.interface_start for 'android.hardware.gatekeeper@1.0::IGatekeeper/default' from pid: 42 (/system/bin/hwservicemanager)
+[   33.245874] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   33.649849] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   33.729961] init: Control message: Processed ctl.interface_start for 'android.hardware.gatekeeper@1.0::IGatekeeper/default' from pid: 42 (/system/bin/hwservicemanager)
+[   34.250333] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   34.658175] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   34.737309] init: Control message: Processed ctl.interface_start for 'android.hardware.gatekeeper@1.0::IGatekeeper/default' from pid: 42 (/system/bin/hwservicemanager)
+[   35.211210] systemd[2004]: Queued start job for default target default.target.
+[   35.254117] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   35.351638] systemd[2004]: Reached target default.target - Main User Target.
+[   35.667505] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   35.738545] init: Control message: Processed ctl.interface_start for 'android.hardware.gatekeeper@1.0::IGatekeeper/default' from pid: 42 (/system/bin/hwservicemanager)
+[   36.059396] init: Control message: Could not find 'android.hardware.audio@5.0::IDevicesFactory/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   36.061380] init: Control message: Could not find 'android.hardware.audio@5.0::IDevicesFactory/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   36.258172] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   36.666234] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   36.742476] init: Control message: Processed ctl.interface_start for 'android.hardware.gatekeeper@1.0::IGatekeeper/default' from pid: 42 (/system/bin/hwservicemanager)
+RC=0
+
+CMD: cat /run/a50-m64/kernel-early.txt
+[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x410fd034]
+[    0.000000] Linux version 6.18.33-a50-diag+ (a50@firstlight) (Android (15323222, +pgo, +bolt, +lto, +mlgo, based on r584948c) clang version 22.0.1 (https://android.googlesource.com/toolchain/llvm-project 2d65e4108033380e6fe8e08b1f1826cd2bfb0c99), LLD 22.0.1 (/mnt/disks/build-disk/src/googleplex-android/llvm-r584948-release/out/llvm-project/llvm 2d65e4108033380e6fe8e08b1f1826cd2bfb0c99)) #1 SMP Wed Nov  4 00:00:00 UTC 2026
+[    0.000000] Machine model: Samsung Galaxy A50 (SM-A505F)
+[    0.000000] printk: debug: ignoring loglevel setting.
+[    0.000000] [Firmware Bug]: Kernel image misaligned at boot, please fix your bootloader!
+[    0.000000] OF: reserved mem: 0x0000000080000000..0x0000000080000fff (4 KiB) nomap non-reusable sec_debug_magic@80000000
+[    0.000000] OF: reserved mem: 0x00000000b8000000..0x00000000b84fffff (5120 KiB) nomap non-reusable vipx_fw@b8000000
+[    0.000000] OF: reserved mem: 0x00000000c0000000..0x00000000c007ffff (512 KiB) nomap non-reusable seclog@c0000000
+[    0.000000] OF: reserved mem: 0x00000000ca000000..0x00000000ca9fffff (10240 KiB) nomap non-reusable fb_reserved@ca000000
+[    0.000000] OF: reserved mem: 0x00000000e9400000..0x00000000ebbfffff (40960 KiB) nomap non-reusable abox@e9400000
+[    0.000000] OF: reserved mem: 0x00000000ed000000..0x00000000f59fffff (141312 KiB) nomap non-reusable modem_if@ed000000
+[    0.000000] OF: reserved mem: 0x00000000f5a00000..0x00000000f77fffff (30720 KiB) nomap non-reusable cp_ram_logging@f5a00000
+[    0.000000] OF: reserved mem: 0x00000000f9000000..0x00000000fa70ffff (23616 KiB) nomap non-reusable debug_snapshot@f9000000
+[    0.000000] OF: reserved mem: 0x0000000091202000..0x0000000091387fff (1560 KiB) nomap non-reusable sec_debug_bufs@91202000
+[    0.000000] OF: reserved mem: 0x0000000091388000..0x0000000091b87fff (8192 KiB) nomap non-reusable sec_debug_next@91388000
+[    0.000000] OF: reserved mem: 0x00000000fb000000..0x00000000fb7fffff (8192 KiB) nomap non-reusable gnss_if@fb000000
+[    0.000000] OF: reserved mem: 0x00000000fd000000..0x00000000fd07ffff (512 KiB) nomap non-reusable chub@fd000000
+[    0.000000] OF: reserved mem: 0x0000000087000000..0x00000000871fffff (2048 KiB) map non-reusable el2_code
+[    0.000000] OF: reserved mem: 0x00000008fe600000..0x00000008ffffffff (26624 KiB) map non-reusable el2_earlymem
+[    0.000000] OF: reserved mem: 0x0000000080001000..0x0000000080001fff (4 KiB) map non-reusable kaslr
+[    0.000000] Zone ranges:
+[    0.000000]   DMA      [mem 0x0000000080000000-0x00000000ffffffff]
+[    0.000000]   DMA32    empty
+[    0.000000]   Normal   [mem 0x0000000100000000-0x00000008ffffffff]
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000080000000-0x0000000080000fff]
+[    0.000000]   node   0: [mem 0x0000000080001000-0x0000000091201fff]
+[    0.000000]   node   0: [mem 0x0000000091202000-0x0000000091b87fff]
+[    0.000000]   node   0: [mem 0x0000000091b88000-0x00000000b7ffffff]
+[    0.000000]   node   0: [mem 0x00000000b8000000-0x00000000b84fffff]
+[    0.000000]   node   0: [mem 0x00000000b8500000-0x00000000baafffff]
+[    0.000000]   node   0: [mem 0x00000000c0000000-0x00000000c007ffff]
+[    0.000000]   node   0: [mem 0x00000000c0080000-0x00000000c9ffffff]
+[    0.000000]   node   0: [mem 0x00000000ca000000-0x00000000ca9fffff]
+[    0.000000]   node   0: [mem 0x00000000caa00000-0x00000000dfffffff]
+[    0.000000]   node   0: [mem 0x00000000e1900000-0x00000000e93fffff]
+[    0.000000]   node   0: [mem 0x00000000e9400000-0x00000000ebbfffff]
+[    0.000000]   node   0: [mem 0x00000000ebc00000-0x00000000ecffffff]
+[    0.000000]   node   0: [mem 0x00000000ed000000-0x00000000f77fffff]
+[    0.000000]   node   0: [mem 0x00000000f7800000-0x00000000f8ffffff]
+[    0.000000]   node   0: [mem 0x00000000f9000000-0x00000000fa70ffff]
+[    0.000000]   node   0: [mem 0x00000000fa710000-0x00000000faffffff]
+[    0.000000]   node   0: [mem 0x00000000fb000000-0x00000000fb7fffff]
+[    0.000000]   node   0: [mem 0x00000000fb800000-0x00000000fcffffff]
+[    0.000000]   node   0: [mem 0x00000000fd000000-0x00000000fd07ffff]
+[    0.000000]   node   0: [mem 0x00000000fd080000-0x00000000ffffffff]
+[    0.000000]   node   0: [mem 0x0000000880000000-0x00000008ffffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000080000000-0x00000008ffffffff]
+[    0.000000] On node 0, zone DMA: 21760 pages in unavailable ranges
+[    0.000000] On node 0, zone DMA: 6400 pages in unavailable ranges
+[    0.000000] psci: probing for conduit method from DT.
+[    0.000000] psci: Using PSCI v0.1 Function IDs from DT
+[    0.000000] WARNING: x1-x3 nonzero in violation of boot protocol:
+               	x1: 0000000080000000
+               	x2: 00000000001d0000
+               	x3: 00000000801d0000
+               This indicates a broken bootloader or old kernel
+[    0.000000] percpu: Embedded 26 pages/cpu s74776 r0 d31720 u106496
+[    0.000000] pcpu-alloc: s74776 r0 d31720 u106496 alloc=26*4096
+[    0.000000] pcpu-alloc: [0] 0 [0] 1 [0] 2 [0] 3 [0] 4 [0] 5 [0] 6 [0] 7
+[    0.000000] Detected VIPT I-cache on CPU0
+[    0.000000] CPU features: detected: ARM erratum 845719
+[    0.000000] alternatives: applying boot alternatives
+[    0.000000] Kernel command line: console=tty0 loglevel=7 ignore_loglevel clk_ignore_unused printk.devkmsg=on systemd.log_target=kmsg systemd.journald.forward_to_kmsg=1 systemd.show_status=1 systemd.mask=repowerd.service systemd.mask=a50-enable-autosuspend.service systemd.mask=sleep.target mali_kbase.a50_g1_probe_only=1 console=ram loglevel=4 sec_debug.pcb_offset=7346944 sec_debug.smd_offset=7348992 sec_debug.lpddr4_size=4 sec_debug.dram_info=01,06,01,4G sec_debug.pwrsrc_rs=0x0001000820000000 sec_debug.reset_reason=7 sec_reset.reset_reason=7 sec_debug.reset_rwc=1 sec_debug.level=0 sec_watchdog.sec_pet=5 androidboot.debug_level=0x4f4c androidboot.force_upload=0x0 softdog.soft_margin=100 softdog.soft_panic=1 sec_debug.dump_sink=0x0 sec_debug.upload_count=0 androidboot.dram_info=01,06,01,4G androidboot.fmm_lock=0 sec_debug.fmm_lock_offset=7340600 sec_debug.sjl=1 androidboot.sn.param.offset=7343024 androidboot.prototype.param.offset=7351040 androidboot.recovery_offset=7355136 printk.devkmsg=on ess_setup=0xf9000000 \
+[    0.000000] Kernel command line: sec_avc_log=0x40000@0x91202000 sec_tsp_log=0x40000@0x91244000 sec_disp_log=0x100000@0x91286000 sec_debug_next=0x800000@0x91388000 charging_mode=0x3000 s3cfb.bootloaderfb=0xca000000 lcdtype=9453571 androidboot.carrierid.param.offset=7340608 androidboot.carrierid=BKD consoleblank=0 ehci_hcd.park=3 oops=panic pmic_info=27 ccic_info=1 fg_reset=0 androidboot.emmc_checksum=3 androidboot.sales.param.offset=7340572 sales_code=BKD androidboot.odin_download=1 androidboot.bootloader=A505FDDS9CWA2 androidboot.selinux=enforcing androidboot.product.model=SM-A505F androidboot.ucs_mode=0 androidboot.revision=6 androidboot.hardware=exynos9610 androidboot.warranty_bit=1 androidboot.wb.hs=0e03 androidboot.rp=9 androidboot.wb.snapQB=CUSTOM sec_debug.bin=A androidboot.hmac_mismatch=0 androidboot.sec_atd.tty=/dev/ttySAC0 androidboot.serialno=<redacted> androidboot.ap_serial=<redacted> snd_soc_core.pmdown_time=1000 androidboot.cp_reserved_mem=off skip_initramfs rootwait ro init=/init root=/dev/sda25 \
+[    0.000000] Kernel command line: androidboot.dtbo_idx=5 androidboot.fmp_config=0 androidboo
+[    0.000000] Unknown kernel command line parameters "androidboo ess_setup=0xf9000000 sec_avc_log=0x40000@0x91202000 sec_tsp_log=0x40000@0x91244000 sec_disp_log=0x100000@0x91286000 sec_debug_next=0x800000@0x91388000 charging_mode=0x3000 lcdtype=9453571 pmic_info=27 ccic_info=1 fg_reset=0 sales_code=BKD", will be passed to user space.
+[    0.000000] printk: log buffer data + meta data: 131072 + 458752 = 589824 bytes
+[    0.000000] Dentry cache hash table entries: 524288 (order: 10, 4194304 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 262144 (order: 9, 2097152 bytes, linear)
+[    0.000000] software IO TLB: area num 8.
+[    0.000000] software IO TLB: mapped [mem 0x00000000e5400000-0x00000000e9400000] (64MB)
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 1020416
+[    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=8, Nodes=1
+[    0.000000] rcu: Hierarchical RCU implementation.
+[    0.000000] rcu: 	RCU restricting CPUs from NR_CPUS=512 to nr_cpu_ids=8.
+[    0.000000] 	Tracing variant of Tasks RCU enabled.
+[    0.000000] rcu: RCU calculated value of scheduler-enlistment delay is 25 jiffies.
+[    0.000000] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=8
+[    0.000000] RCU Tasks Trace: Setting shift to 3 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=8.
+[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000] Root IRQ handler: gic_handle_irq
+[    0.000000] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.000000] /soc@0/clock-controller@12100000: incorrect res size for automatic clocks
+[    0.000000] /soc@0/clock-controller@12100000: incorrect res size for automatic clocks
+[    0.000000] arch_timer: cp15 timer running at 26.00MHz (virt).
+[    0.000000] clocksource: arch_sys_counter: mask: 0xffffffffffffff max_cycles: 0x5ff13d5a9, max_idle_ns: 440795202370 ns
+[    0.000000] sched_clock: 56 bits at 26MHz, resolution 38ns, wraps every 4398046511088ns
+[    0.000351] Console: colour dummy device 80x25
+[    0.000363] printk: legacy console [tty0] enabled
+[    0.001250] Calibrating delay loop (skipped), value calculated using timer frequency.. 52.00 BogoMIPS (lpj=104000)
+[    0.001274] pid_max: default: 32768 minimum: 301
+[    0.001399] LSM: initializing lsm=capability,yama,apparmor,tomoyo,evm
+[    0.001472] Yama: becoming mindful.
+[    0.001692] AppArmor: AppArmor initialized
+[    0.001755] TOMOYO Linux initialized
+[    0.001880] Mount-cache hash table entries: 8192 (order: 4, 65536 bytes, linear)
+[    0.001911] Mountpoint-cache hash table entries: 8192 (order: 4, 65536 bytes, linear)
+[    0.003006] cacheinfo: Unable to detect cache hierarchy for CPU 0
+[    0.004086] rcu: Hierarchical SRCU implementation.
+[    0.004115] rcu: 	Max phase no-delay instances is 1000.
+[    0.004765] smp: Bringing up secondary CPUs ...
+[    0.005331] Detected VIPT I-cache on CPU1
+[    0.005415] CPU1: Booted secondary processor 0x0000000001 [0x410fd034]
+[    0.006112] Detected VIPT I-cache on CPU2
+[    0.006192] CPU2: Booted secondary processor 0x0000000002 [0x410fd034]
+[    0.006878] Detected VIPT I-cache on CPU3
+[    0.006959] CPU3: Booted secondary processor 0x0000000003 [0x410fd034]
+[    0.007736] CPU features: detected: Spectre-v2
+[    0.007747] CPU features: detected: Spectre-v4
+[    0.007750] CPU features: detected: Spectre-BHB
+[    0.007754] CPU features: detected: ARM erratum 858921
+[    0.007758] Detected VIPT I-cache on CPU4
+[    0.007797] arch_timer: Enabling local workaround for ARM erratum 858921
+[    0.007809] arch_timer: CPU4: Trapping CNTVCT access
+[    0.007817] CPU4: Booted secondary processor 0x0000000100 [0x410fd092]
+[    0.008518] Detected VIPT I-cache on CPU5
+[    0.008544] arch_timer: Enabling local workaround for ARM erratum 858921
+[    0.008550] arch_timer: CPU5: Trapping CNTVCT access
+[    0.008555] CPU5: Booted secondary processor 0x0000000101 [0x410fd092]
+[    0.009183] Detected VIPT I-cache on CPU6
+[    0.009209] arch_timer: Enabling local workaround for ARM erratum 858921
+[    0.009215] arch_timer: CPU6: Trapping CNTVCT access
+[    0.009221] CPU6: Booted secondary processor 0x0000000102 [0x410fd092]
+[    0.009836] Detected VIPT I-cache on CPU7
+[    0.009863] arch_timer: Enabling local workaround for ARM erratum 858921
+[    0.009870] arch_timer: CPU7: Trapping CNTVCT access
+[    0.009876] CPU7: Booted secondary processor 0x0000000103 [0x410fd092]
+[    0.009958] smp: Brought up 1 node, 8 CPUs
+[    0.010161] SMP: Total of 8 processors activated.
+[    0.010173] CPU: All CPU(s) started at EL1
+[    0.010183] CPU features: detected: 32-bit EL0 Support
+[    0.010194] CPU features: detected: CRC32 instructions
+[    0.010210] CPU features: detected: PMUv3
+[    0.010290] alternatives: applying system-wide alternatives
+[    0.011809] Memory: 3596728K/4081664K available (10752K kernel code, 1490K rwdata, 2776K rodata, 14464K init, 726K bss, 476540K reserved, 0K cma-reserved)
+[    0.012476] devtmpfs: initialized
+[    0.017114] A50DIAG: DSS readout armed (buf 1 hdr 1 log 1 pmu 1), dump_after=420
+[    0.017389] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+[    0.017430] posixtimers hash table entries: 4096 (order: 4, 65536 bytes, linear)
+[    0.017524] futex hash table entries: 2048 (131072 bytes on 1 NUMA nodes, total 128 KiB, linear).
+[    0.017763] pinctrl core: initialized pinctrl subsystem
+[    0.018985] NET: Registered PF_NETLINK/PF_ROUTE protocol family
+[    0.019898] DMA: preallocated 512 KiB GFP_KERNEL pool for atomic allocations
+[    0.020029] DMA: preallocated 512 KiB GFP_KERNEL|GFP_DMA pool for atomic allocations
+[    0.020115] audit: initializing netlink subsys (disabled)
+[    0.020240] audit: type=2000 audit(0.020:1): state=initialized audit_enabled=0 res=1
+[    0.020495] thermal_sys: Registered thermal governor 'step_wise'
+[    0.020882] hw-breakpoint: found 6 breakpoint and 4 watchpoint registers.
+[    0.021246] ASID allocator initialised with 65536 entries
+[    0.024276] /soc@0/interrupt-controller@12301000: Fixed dependency cycle(s) with /soc@0/interrupt-controller@12301000
+[    0.029136] samsung-pinctrl 11c20000.pinctrl: irq number for muxed EINTs not found
+[    0.033466] /soc@0/clock-controller@13030000: incorrect res size for automatic clocks
+[    0.033548] /soc@0/clock-controller@13030000: incorrect res size for automatic clocks
+[    0.034627] /soc@0/clock-controller@13400000: incorrect res size for automatic clocks
+[    0.034702] /soc@0/clock-controller@13400000: incorrect res size for automatic clocks
+[    0.039997] /soc@0/clock-controller@14980000: incorrect res size for automatic clocks
+[    0.040104] /soc@0/clock-controller@14980000: incorrect res size for automatic clocks
+[    0.041018] exynos-sysmmu 14820000.iommu: hardware version: 7.2
+[    0.048791] iommu: Default domain type: Translated
+[    0.048803] iommu: DMA domain TLB invalidation policy: strict mode
+[    0.056151] SCSI subsystem initialized
+[    0.056192] pps_core: LinuxPPS API ver. 1 registered
+[    0.056199] pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti <giometti@linux.it>
+[    0.056210] PTP clock support registered
+[    0.056636] Bluetooth: Core ver 2.22
+[    0.056655] NET: Registered PF_BLUETOOTH protocol family
+[    0.056661] Bluetooth: HCI device and connection manager initialized
+[    0.056676] Bluetooth: HCI socket layer initialized
+[    0.056682] Bluetooth: L2CAP socket layer initialized
+[    0.056692] Bluetooth: SCO socket layer initialized
+[    0.056700] NetLabel: Initializing
+[    0.056704] NetLabel:  domain hash size = 128
+[    0.056709] NetLabel:  protocols = UNLABELED CIPSOv4 CALIPSO
+[    0.056740] NetLabel:  unlabeled traffic allowed by default
+[    0.056966] clocksource: Switched to clocksource arch_sys_counter
+[    0.057380] AppArmor: AppArmor Filesystem Enabled
+[    0.060196] NET: Registered PF_INET protocol family
+[    0.060323] IP idents hash table entries: 65536 (order: 7, 524288 bytes, linear)
+[    0.062173] tcp_listen_portaddr_hash hash table entries: 2048 (order: 3, 32768 bytes, linear)
+[    0.062195] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+[    0.062212] TCP established hash table entries: 32768 (order: 6, 262144 bytes, linear)
+[    0.062316] TCP bind hash table entries: 32768 (order: 8, 1048576 bytes, linear)
+[    0.062600] TCP: Hash tables configured (established 32768 bind 32768)
+[    0.062673] UDP hash table entries: 2048 (order: 5, 131072 bytes, linear)
+[    0.062732] UDP-Lite hash table entries: 2048 (order: 5, 131072 bytes, linear)
+[    0.062880] NET: Registered PF_UNIX/PF_LOCAL protocol family
+[    0.065680] workingset: timestamp_bits=46 max_order=20 bucket_order=0
+[    0.090184] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 249)
+[    0.090207] io scheduler mq-deadline registered
+[    0.091536] ------------[ cut here ]------------
+[    0.091546] a50-decon 148b0000.decon_f: late IOMMU probe at driver bind, something fishy here!
+[    0.091575] WARNING: CPU: 6 PID: 1 at drivers/iommu/iommu.c:612 __iommu_probe_device+0x1b4/0x464
+[    0.091596] CPU: 6 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.18.33-a50-diag+ #1 NONE
+[    0.091607] Hardware name: Samsung Galaxy A50 (SM-A505F) (DT)
+[    0.091613] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[    0.091621] pc : __iommu_probe_device+0x1b4/0x464
+[    0.091631] lr : __iommu_probe_device+0x1b4/0x464
+[    0.091639] sp : ffff800080063a60
+[    0.091644] x29: ffff800080063a70 x28: 0000000000000000 x27: 0000000000000000
+[    0.091656] x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
+[    0.091666] x23: ffff000800c7e500 x22: ffff800080cebc10 x21: 0000000000000001
+[    0.091676] x20: 0000000000000000 x19: ffff000800bec410 x18: 0000000000000026
+[    0.091685] x17: 6d6f73202c646e69 x16: 6220726576697264 x15: 0000000000000003
+[    0.091696] x14: ffff800081d7e8d8 x13: 0000000000000003 x12: 0000000000000003
+[    0.091706] x11: 00000000ffffefff x10: c0000000ffffefff x9 : 0fe4f869ac7c2600
+[    0.091715] x8 : 0fe4f869ac7c2600 x7 : 0720072007200720 x6 : 0720072007200720
+[    0.091724] x5 : ffff000800108f00 x4 : ffff000800108fa0 x3 : 0000000000000000
+[    0.091734] x2 : 0000000000000000 x1 : ffff800080063840 x0 : 0000000000000052
+[    0.091743] Call trace:
+[    0.091747]  __iommu_probe_device+0x1b4/0x464 (P)
+[    0.091758]  iommu_probe_device+0x30/0x70
+[    0.091767]  of_iommu_configure+0x1d4/0x268
+[    0.091776]  of_dma_configure_id+0xb0/0x1ac
+[    0.091786]  platform_dma_configure+0x84/0x8c
+[    0.091795]  really_probe+0xe0/0x318
+[    0.091802]  __driver_probe_device+0x90/0xc8
+[    0.091808]  driver_probe_device+0x3c/0x198
+[    0.091815]  __driver_attach+0xf8/0x184
+[    0.091821]  bus_for_each_dev+0x10c/0x180
+[    0.091830]  driver_attach+0x20/0x28
+[    0.091837]  bus_add_driver+0x164/0x250
+[    0.091845]  driver_register+0x64/0xf8
+[    0.091852]  __platform_driver_register+0x1c/0x24
+[    0.091860]  a50_decon_driver_init+0x18/0x20
+[    0.091870]  do_one_initcall+0x68/0x1b4
+[    0.091877]  do_initcall_level+0x90/0xf4
+[    0.091885]  do_initcalls+0x50/0x8c
+[    0.091892]  do_basic_setup+0x18/0x20
+[    0.091899]  kernel_init_freeable+0xf4/0x160
+[    0.091906]  kernel_init+0x1c/0x118
+[    0.091915]  ret_from_fork+0x10/0x20
+[    0.091926] ---[ end trace 0000000000000000 ]---
+[    0.091937] a50-decon 148b0000.decon_f: Adding to iommu group 0
+[    0.092105] a50-decon 148b0000.decon_f: exynos_iommu_attach_device: Attached IOMMU with pgtable 0x00000008814a8000
+[    0.092195] exynos-sysmmu 14820000.iommu: restoring state
+[    0.092224] a50-decon 148b0000.decon_f: handover state GLOBAL=0x00000133 TRIG=0x00003010 FRAME_COUNT=3, 5 clocks enabled
+[    0.092514] genirq: irq_chip gpc2 did not update eff. affinity mask of irq 61
+[    0.092644] a50-decon 148b0000.decon_f: fb0 on the boot framebuffer [mem 0xca000000-0xca9fffff]
+[    0.092663] a50-decon 148b0000.decon_f: iommu domain=yes type=0x3 iova 0xca000000 -> 0x00000000ca000000, 0xca9a3f7c -> 0x00000000ca9a3f7c, sysmmu MMU_CTRL=0x00000005 PT_BASE=0x008814a8 CAPA1=0x00000091 rpm_active=1
+[    0.093016] mali 11500000.mali: Kernel DDK version r26p0-01eac0
+[    0.093027] mali 11500000.mali: No IRQ resource at index 0
+[    0.093034] mali 11500000.mali: IRQ search failed error = -2
+[    0.093103] mali 11500000.mali: mali_jd_thread set to RT prio: 60
+[    0.093155] mali 11500000.mali: Device initialization failed
+[    0.093165] mali 11500000.mali: probe with driver mali failed with error -2
+[    0.098970] loop: module loaded
+[    0.099405] exynos9610-tmu 10070000.thermal-sensor: sensor 0: trim 278/338, two-point
+[    0.099419] exynos9610-tmu 10070000.thermal-sensor: sensor 1: trim 278/338, two-point
+[    0.099429] exynos9610-tmu 10070000.thermal-sensor: sensor 2: trim 279/338, two-point
+[    0.099988] exynos-ufshc 13520000.ufs: ufshcd_populate_vreg: Unable to find vdd-hba-supply regulator, assuming enabled
+[    0.100003] exynos-ufshc 13520000.ufs: ufshcd_populate_vreg: Unable to find vcc-supply regulator, assuming enabled
+[    0.100013] exynos-ufshc 13520000.ufs: ufshcd_populate_vreg: Unable to find vccq-supply regulator, assuming enabled
+[    0.100021] exynos-ufshc 13520000.ufs: ufshcd_populate_vreg: Unable to find vccq2-supply regulator, assuming enabled
+[    0.100619] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: self-test passed, write guard active
+[    0.100627] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: writes allowed on LUN 0 blocks 0x1c8700-0xee42ff only
+[    0.147805] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x4 idn 0xd
+[    0.147831] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x7 idn 0x4
+[    0.147880] exynos-ufshc 13520000.ufs: dme-set: attr-id 0x9540 val 0x1 failed 0 retries
+[    0.147900] exynos-ufshc 13520000.ufs: dme-set: attr-id 0x321 val 0x15 failed 0 retries
+[    0.147919] exynos-ufshc 13520000.ufs: dme-set: attr-id 0x9540 val 0x0 failed 0 retries
+[    0.152983] exynos-ufshc 13520000.ufs: Power mode changed to : FAST series_B G_3 L_1
+[    0.152995] scsi host0: ufshcd
+[    0.153716] ashmem_rust: Using Rust implementation.
+[    0.154113] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x4 idn 0x3
+[    0.154832] xt_time: kernel timezone is -0000
+[    0.154932] Initializing XFRM netlink socket
+[    0.154964] NET: Registered PF_INET6 protocol family
+[    0.155117] scsi 0:0:0:49488: Well-known LUN    SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.155627] Segment Routing with IPv6
+[    0.155658] In-situ OAM (IOAM) with IPv6
+[    0.155725] sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
+[    0.155988] NET: Registered PF_PACKET protocol family
+[    0.155999] NET: Registered PF_KEY protocol family
+[    0.156140] Bluetooth: RFCOMM TTY layer initialized
+[    0.156151] Bluetooth: RFCOMM socket layer initialized
+[    0.156173] Bluetooth: RFCOMM ver 1.11
+[    0.156182] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
+[    0.156188] Bluetooth: BNEP filters: protocol multicast
+[    0.156194] Bluetooth: BNEP socket layer initialized
+[    0.156199] Bluetooth: HIDP (Human Interface Emulation) ver 1.2
+[    0.156206] Bluetooth: HIDP socket layer initialized
+[    0.156226] Key type dns_resolver registered
+[    0.163719] Key type encrypted registered
+[    0.163742] AppArmor: AppArmor sha256 policy hashing enabled
+[    0.163759] evm: Initialising EVM extended attributes:
+[    0.163764] evm: security.selinux
+[    0.163769] evm: security.SMACK64
+[    0.163774] evm: security.SMACK64EXEC (disabled)
+[    0.163780] evm: security.SMACK64TRANSMUTE (disabled)
+[    0.163785] evm: security.SMACK64MMAP (disabled)
+[    0.163789] evm: security.apparmor
+[    0.163793] evm: security.ima (disabled)
+[    0.163798] evm: security.capability
+[    0.163802] evm: HMAC attrs: 0x1
+[    0.179823] scsi 0:0:0:49476: Well-known LUN    SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.181221] scsi 0:0:0:49456: Well-known LUN    SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.201466] scsi 0:0:0:0: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.203174] sd 0:0:0:0: [sda] 15616000 4096-byte logical blocks: (64.0 GB/59.6 GiB)
+[    0.203258] scsi 0:0:0:1: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.203307] sd 0:0:0:0: [sda] Write Protect is off
+[    0.203332] sd 0:0:0:0: [sda] Mode Sense: 00 32 00 10
+[    0.203456] sd 0:0:0:0: [sda] Write cache: enabled, read cache: enabled, supports DPO and FUA
+[    0.203531] sd 0:0:0:0: [sda] Preferred minimum I/O size 8192 bytes
+[    0.203549] sd 0:0:0:0: [sda] Optimal transfer size 8192 bytes
+[    0.205670] scsi 0:0:0:2: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.205795] sd 0:0:0:1: [sdb] 1024 4096-byte logical blocks: (4.19 MB/4.00 MiB)
+[    0.205882] sd 0:0:0:1: [sdb] Write Protect is on
+[    0.205898] sd 0:0:0:1: [sdb] Mode Sense: 00 32 00 90
+[    0.206021] sd 0:0:0:1: [sdb] Write cache: disabled, read cache: enabled, supports DPO and FUA
+[    0.206088] sd 0:0:0:1: [sdb] Preferred minimum I/O size 8192 bytes
+[    0.206115] sd 0:0:0:1: [sdb] Optimal transfer size 8192 bytes
+[    0.208064] scsi 0:0:0:3: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.208185] sd 0:0:0:2: [sdc] 1024 4096-byte logical blocks: (4.19 MB/4.00 MiB)
+[    0.208273] sd 0:0:0:2: [sdc] Write Protect is on
+[    0.208290] sd 0:0:0:2: [sdc] Mode Sense: 00 32 00 90
+[    0.208413] sd 0:0:0:2: [sdc] Write cache: disabled, read cache: enabled, supports DPO and FUA
+[    0.208479] sd 0:0:0:2: [sdc] Preferred minimum I/O size 8192 bytes
+[    0.208504] sd 0:0:0:2: [sdc] Optimal transfer size 8192 bytes
+[    0.210501] scsi 0:0:0:4: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.210622] sd 0:0:0:3: [sdd] 2048 4096-byte logical blocks: (8.39 MB/8.00 MiB)
+[    0.210708] sd 0:0:0:3: [sdd] Write Protect is on
+[    0.210727] sd 0:0:0:3: [sdd] Mode Sense: 00 32 00 90
+[    0.210849] sd 0:0:0:3: [sdd] Write cache: disabled, read cache: enabled, supports DPO and FUA
+[    0.210914] sd 0:0:0:3: [sdd] Preferred minimum I/O size 8192 bytes
+[    0.210940] sd 0:0:0:3: [sdd] Optimal transfer size 8192 bytes
+[    0.212770] sd 0:0:0:4: [sde] 2048 4096-byte logical blocks: (8.39 MB/8.00 MiB)
+[    0.212858] sd 0:0:0:4: [sde] Write Protect is on
+[    0.212876] sd 0:0:0:4: [sde] Mode Sense: 00 32 00 90
+[    0.212993] sd 0:0:0:4: [sde] Write cache: disabled, read cache: enabled, supports DPO and FUA
+[    0.213062] sd 0:0:0:4: [sde] Preferred minimum I/O size 8192 bytes
+[    0.213080] sd 0:0:0:4: [sde] Optimal transfer size 8192 bytes
+[    0.333214] Unpacking initramfs...
+[    0.333245] Initramfs unpacking failed: invalid magic at start of compressed archive
+[    2.184293] a50-decon 148b0000.decon_f: 2 s after probe: frames req=1 done=2 start=2 timeouts=0 extra=0 te=125 FRAME_COUNT=4 GLOBAL=0x00000133 TRIG=0x00003010 vsync_on=0 win_configs=0 copied=0 skipped=0 acq_timeouts=0 frame_wait_timeouts=0 scanned=0 dma_fallbacks=0 shadow_wait_timeouts=0 IDMA0=0xca000000 blanks=0 unblanks=0 dcs=0 dcs_timeouts=0
+[    8.184689] sd 0:0:0:2: [sdc] Attached SCSI disk
+[    8.184944] sd 0:0:0:4: [sde] Attached SCSI disk
+[    9.185118] sd 0:0:0:1: [sdb] Attached SCSI disk
+[   10.185298] Alternate GPT is invalid, using primary GPT.
+[   10.185405]  sda: sda1 sda2 sda3 sda4 sda5 sda6 sda7 sda8 sda9 sda10 sda11 sda12 sda13 sda14 sda15 sda16 sda17 sda18 sda19 sda20 sda21 sda22 sda23 sda24 sda25 sda26 sda27 sda28 sda29 sda30 sda31 sda32
+[   10.188733] sd 0:0:0:0: [sda] Attached SCSI disk
+[   14.186634]  sdd: sdd1
+[   14.186886] sd 0:0:0:3: [sdd] Attached SCSI disk
+[   15.186952] clk: Not disabling unused clocks
+[   15.186972] PM: genpd: Disabling unused power domains
+[   15.192296] Freeing unused kernel memory: 14464K
+[   15.192521] Run /init as init process
+[   15.192534]   with arguments:
+[   15.192542]     /init
+[   15.192551]     androidboo
+[   15.192560]   with environment:
+[   15.192569]     HOME=/
+[   15.192578]     TERM=linux
+[   15.192586]     ess_setup=0xf9000000
+[   15.192596]     sec_avc_log=0x40000@0x91202000
+[   15.192605]     sec_tsp_log=0x40000@0x91244000
+[   15.192619]     sec_disp_log=0x100000@0x91286000
+[   15.192628]     sec_debug_next=0x800000@0x91388000
+[   15.192638]     charging_mode=0x3000
+[   15.192647]     lcdtype=9453571
+[   15.192656]     pmic_info=27
+[   15.192664]     ccic_info=1
+[   15.192672]     fg_reset=0
+[   15.192681]     sales_code=BKD
+[   15.227592] systemd-udevd[126]: starting version 232
+[   16.552989] random: crng init done
+[   16.763949] Begin: Running /scripts/nfs-top ...
+[   16.764106] done.
+[   16.764265] Begin: Running /scripts/nfs-premount ...
+[   16.764385] done.
+[   16.764582] Begin: Running /scripts/local-top ...
+[   16.764695] done.
+[   16.764805] Begin: Running /scripts/local-premount ...
+[   16.766870] done.
+[   16.771137] initrd: Loading kernel modules from /lib/modules
+[   16.771850] cat: can't open 'modules.load': No such file or directory
+[   16.772385] /
+[   16.772485] initrd: Finished loading kernel modules
+[   17.799821] initrd: checking filesystem integrity for the userdata partition
+[   18.312177] EXT4-fs (sda32): recovery complete
+[   18.312788] EXT4-fs (sda32): mounted filesystem 6be7290a-f5e9-4537-8738-6adea31bf339 r/w with ordered data mode. Quota mode: disabled.
+[   18.314941] EXT4-fs (sda32): unmounting filesystem 6be7290a-f5e9-4537-8738-6adea31bf339.
+[   18.395554] initrd: checking filesystem for userdata took (including e2fsck) 1 seconds
+[   18.402895] dumpe2fs 1.43.4 (31-Jan-2017)
+[   18.406893] initrd: mounting /dev/sda32
+[   18.431408] EXT4-fs: Warning: mounting with data=journal disables delayed allocation, dioread_nolock, O_DIRECT and fast_commit support!
+[   18.431835] EXT4-fs: Mount option(s) incompatible with ext2
+[   18.434267] EXT4-fs (sda32): mounted filesystem 6be7290a-f5e9-4537-8738-6adea31bf339 r/w with journalled data mode. Quota mode: disabled.
+[   18.437117] initrd: Halium rootfs is /tmpmnt/ubuntu.img
+[   18.438042] initrd: mounting system rootfs at /halium-system
+[   18.439662] loop0: detected capacity change from 0 to 12582912
+[   18.465656] EXT4-fs (loop0): mounted filesystem e00143fa-d6ec-408e-b9f2-061fce1fe573 r/w with ordered data mode. Quota mode: disabled.
+[   18.475292] initrd: mounting  /tmpmnt/ubuntu.img (image developer mode)
+[   18.475574] initrd: mounting android system image (/tmpmnt/android-rootfs.img) ro, in /android-rootfs (rootfs mode)
+[   18.475662] initrd: mounting android system image from system rootfs
+[   18.477858] loop1: detected capacity change from 0 to 925296
+[   18.512815] EXT4-fs (loop1): mounted filesystem db906ff9-90b8-4ccb-bda6-79dd7205d5e0 ro without journal. Quota mode: disabled.
+[   18.525375] initrd: Android system image API level is 30
+[   18.525611] initrd: boot mode: halium
+[   18.526469] initrd: Normal boot
+[   18.552756] initrd: WARNING: Didn't find a device name. Is the Android system image mounted correctly?
+[   18.552840] initrd: device is unknown
+[   18.557109] initrd: Adding bind-mounts to /root/etc/fstab
+[   18.947955] initrd: checking fstab /root/var/lib/lxc/android/rootfs/fstab* for additional mount points
+[   18.950811] cat: can't open '/root/var/lib/lxc/android/rootfs/fstab*': No such file or directory
+[   18.954877] mkdir: can't create directory '/root/android/cache': File exists
+[   18.957927] initrd: moving Android system to /android/system
+[   18.963004] Begin: Running /scripts/local-bottom ...
+[   18.963154] done.
+[   18.963254] done.
+[   18.971997] Begin: Running /scripts/nfs-bottom ...
+[   18.972157] done.
+[   18.972446] Begin: Running /scripts/init-bottom ...
+[   18.980769] done.
+[   18.981992] Target filesystem doesn't have requested /root-rescue2.sh.
+[   19.016738] A50STATUS: observer armed in new root
+[   19.999805] A50M64: runtime observer armed
+[   20.005927] Not activating Mandatory Access Control as /sbin/tomoyo-init does not exist.
+RC=0
+
+CMD: dmesg
+[   23.030381] ueventd: Cannot get SELinux label on '/dev/urandom' device: No data available
+[   23.032194] ueventd: Cannot get SELinux label on '/dev/tty3' device: No data available
+[   23.036696] ueventd: Cannot get SELinux label on '/dev/tty4' device: No data available
+[   23.076122] ueventd: Cannot get SELinux label on '/dev/kmsg' device: No data available
+[   23.078917] ueventd: Cannot get SELinux label on '/dev/random' device: No data available
+[   23.091056] ueventd: Cannot get SELinux label on '/dev/tty2' device: No data available
+[   23.094157] ueventd: Cannot get SELinux label on '/dev/ptmx' device: Operation not supported on transport endpoint
+[   23.098441] ueventd: Cannot get SELinux label on '/dev/null' device: No data available
+[   23.131812] ueventd: Coldboot took 0.183 seconds
+[   23.140675] init: Service 'boringssl_self_test32' (pid 27) exited with status 0 waiting took 0.166000 seconds
+[   23.140725] init: Sending signal 9 to service 'boringssl_self_test32' (pid 27) process group...
+[   23.140799] libprocessgroup: Successfully killed process cgroup uid 0 pid 27 in 0ms
+[   23.141257] init: processing action (ro.product.cpu.abilist64=* && early-init) from (/system/etc/init/hw/init.rc:90)
+[   23.141366] init: starting service 'boringssl_self_test64'...
+[   23.142906] libprocessgroup: Failed to make and chown /acct/uid_0: Read-only file system
+[   23.142962] init: createProcessGroup(0, 37) failed for service 'boringssl_self_test64': Read-only file system
+[   23.143949] init: SVC_EXEC service 'boringssl_self_test64' pid 37 (uid 0 gid 0+0 context default) started; waiting...
+[   23.215323] init: Service 'boringssl_self_test64' (pid 37) exited with status 0 waiting took 0.072000 seconds
+[   23.215367] init: Sending signal 9 to service 'boringssl_self_test64' (pid 37) process group...
+[   23.215443] libprocessgroup: Successfully killed process cgroup uid 0 pid 37 in 0ms
+[   23.215786] init: processing action (early-init) from (/init.environ.rc:2)
+[   23.215916] init: processing action (ro.product.cpu.abilist32=* && early-init) from (/vendor/etc/init/boringssl_self_test.rc:2)
+[   23.216423] init: starting service 'boringssl_self_test32_vendor'...
+[   23.217740] libprocessgroup: Failed to make and chown /acct/uid_0: Read-only file system
+[   23.217798] init: createProcessGroup(0, 38) failed for service 'boringssl_self_test32_vendor': Read-only file system
+[   23.218196] init: SVC_EXEC service 'boringssl_self_test32_vendor' pid 38 (uid 0 gid 0+0 context default) started; waiting...
+[   23.261639] init: Service 'boringssl_self_test32_vendor' (pid 38) exited with status 0 waiting took 0.043000 seconds
+[   23.261677] init: Sending signal 9 to service 'boringssl_self_test32_vendor' (pid 38) process group...
+[   23.261750] libprocessgroup: Successfully killed process cgroup uid 0 pid 38 in 0ms
+[   23.262058] init: processing action (ro.product.cpu.abilist64=* && early-init) from (/vendor/etc/init/boringssl_self_test.rc:4)
+[   23.265187] init: starting service 'boringssl_self_test64_vendor'...
+[   23.266445] libprocessgroup: Failed to make and chown /acct/uid_0: Read-only file system
+[   23.266499] init: createProcessGroup(0, 39) failed for service 'boringssl_self_test64_vendor': Read-only file system
+[   23.266880] init: SVC_EXEC service 'boringssl_self_test64_vendor' pid 39 (uid 0 gid 0+0 context default) started; waiting...
+[   23.311637] init: Service 'boringssl_self_test64_vendor' (pid 39) exited with status 0 waiting took 0.045000 seconds
+[   23.311660] init: Sending signal 9 to service 'boringssl_self_test64_vendor' (pid 39) process group...
+[   23.311716] libprocessgroup: Successfully killed process cgroup uid 0 pid 39 in 0ms
+[   23.311953] init: processing action (early-init) from (/vendor/etc/init/init.exynos9610.rc:2)
+[   23.318954] init: processing action (wait_for_coldboot_done) from (<Builtin Action>:0)
+[   23.318985] init: start_waiting_for_property("ro.cold_boot_done", "true"): already set
+[   23.319022] init: processing action (KeychordInit) from (<Builtin Action>:0)
+[   23.319093] init: processing action (init) from (/system/etc/init/hw/init.rc:117)
+[   23.320291] init: Command 'symlink /proc/self/fd/0 /dev/stdin' action=init (/system/etc/init/hw/init.rc:124) took 0ms and failed: symlink() failed: File exists
+[   23.320683] init: Command 'symlink /proc/self/fd/1 /dev/stdout' action=init (/system/etc/init/hw/init.rc:125) took 0ms and failed: symlink() failed: File exists
+[   23.321065] init: Command 'symlink /proc/self/fd/2 /dev/stderr' action=init (/system/etc/init/hw/init.rc:126) took 0ms and failed: symlink() failed: File exists
+[   23.338745] init: Command 'copy /dev/cpuset/cpus /dev/cpuset/foreground/cpus' action=init (/system/etc/init/hw/init.rc:283) took 0ms and failed: Could not read input file '/dev/cpuset/cpus': open() failed: No such file or directory
+[   23.338815] init: Command 'copy /dev/cpuset/mems /dev/cpuset/foreground/mems' action=init (/system/etc/init/hw/init.rc:284) took 0ms and failed: Could not read input file '/dev/cpuset/mems': open() failed: No such file or directory
+[   23.339269] init: Command 'copy /dev/cpuset/cpus /dev/cpuset/background/cpus' action=init (/system/etc/init/hw/init.rc:286) took 0ms and failed: Could not read input file '/dev/cpuset/cpus': open() failed: No such file or directory
+[   23.339320] init: Command 'copy /dev/cpuset/mems /dev/cpuset/background/mems' action=init (/system/etc/init/hw/init.rc:287) took 0ms and failed: Could not read input file '/dev/cpuset/mems': open() failed: No such file or directory
+[   23.339787] init: Command 'copy /dev/cpuset/cpus /dev/cpuset/system-background/cpus' action=init (/system/etc/init/hw/init.rc:293) took 0ms and failed: Could not read input file '/dev/cpuset/cpus': open() failed: No such file or directory
+[   23.339840] init: Command 'copy /dev/cpuset/mems /dev/cpuset/system-background/mems' action=init (/system/etc/init/hw/init.rc:294) took 0ms and failed: Could not read input file '/dev/cpuset/mems': open() failed: No such file or directory
+[   23.340286] init: Command 'copy /dev/cpuset/cpus /dev/cpuset/restricted/cpus' action=init (/system/etc/init/hw/init.rc:299) took 0ms and failed: Could not read input file '/dev/cpuset/cpus': open() failed: No such file or directory
+[   23.340337] init: Command 'copy /dev/cpuset/mems /dev/cpuset/restricted/mems' action=init (/system/etc/init/hw/init.rc:300) took 0ms and failed: Could not read input file '/dev/cpuset/mems': open() failed: No such file or directory
+[   23.340772] init: Command 'copy /dev/cpuset/cpus /dev/cpuset/top-app/cpus' action=init (/system/etc/init/hw/init.rc:303) took 0ms and failed: Could not read input file '/dev/cpuset/cpus': open() failed: No such file or directory
+[   23.340823] init: Command 'copy /dev/cpuset/mems /dev/cpuset/top-app/mems' action=init (/system/etc/init/hw/init.rc:304) took 0ms and failed: Could not read input file '/dev/cpuset/mems': open() failed: No such file or directory
+[   23.342965] init: sys_prop: invalid command 2
+[   23.346041] init: Command 'symlink /proc/self/fd /dev/fd' action=init (/system/etc/init/hw/init.rc:366) took 0ms and failed: symlink() failed: File exists
+[   23.348299] init: starting service 'logd'...
+[   23.348417] init: Created socket '/dev/socket/logd', mode 666, user 1036, group 1036
+[   23.348492] init: Created socket '/dev/socket/logdr', mode 666, user 1036, group 1036
+[   23.348562] init: Created socket '/dev/socket/logdw', mode 222, user 1036, group 1036
+[   23.349958] libprocessgroup: Failed to make and chown /acct/uid_1036: Read-only file system
+[   23.350010] init: createProcessGroup(1036, 40) failed for service 'logd': Read-only file system
+[   23.350646] init: starting service 'servicemanager'...
+[   23.352146] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   23.352206] init: createProcessGroup(1000, 41) failed for service 'servicemanager': Read-only file system
+[   23.352798] init: starting service 'hwservicemanager'...
+[   23.354443] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   23.354507] init: createProcessGroup(1000, 42) failed for service 'hwservicemanager': Read-only file system
+[   23.355097] init: starting service 'vndservicemanager'...
+[   23.356460] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   23.356523] init: createProcessGroup(1000, 43) failed for service 'vndservicemanager': Read-only file system
+[   23.358356] init: processing action (ro.debuggable=1 && init) from (/system/etc/init/hw/init.rc:1067)
+[   23.358460] init: processing action (init) from (/system/etc/init/init.halium.rc:28)
+[   23.358584] init: starting service 'exec 2 (/system/bin/vndk-detect)'...
+[   23.360048] libprocessgroup: Failed to make and chown /acct/uid_0: Read-only file system
+[   23.360117] init: createProcessGroup(0, 44) failed for service 'exec 2 (/system/bin/vndk-detect)': Read-only file system
+[   23.360149] init: SVC_EXEC service 'exec 2 (/system/bin/vndk-detect)' pid 44 (uid 0 gid 0+0 context default) started; waiting...
+[   23.371671] init: sys_prop: invalid command 2
+[   23.421580] init: Service 'exec 2 (/system/bin/vndk-detect)' (pid 44) exited with status 0 waiting took 0.061000 seconds
+[   23.421630] init: Sending signal 9 to service 'exec 2 (/system/bin/vndk-detect)' (pid 44) process group...
+[   23.421703] libprocessgroup: Successfully killed process cgroup uid 0 pid 44 in 0ms
+[   23.421803] init: processing action (init) from (/vendor/etc/init/init.baseband.rc:1)
+[   23.433807] init: processing action (init) from (/vendor/etc/init/init.exynos9610.rc:8)
+[   23.433972] init: Command 'mkdir /persist 0771 system system' action=init (/vendor/etc/init/init.exynos9610.rc:10) took 0ms and failed: lchown failed on /persist: Read-only file system
+[   23.434295] init: Command 'mkdir /storage/sdcard 0000 root root' action=init (/vendor/etc/init/init.exynos9610.rc:13) took 0ms and failed: mkdir() failed on /storage/sdcard: Read-only file system
+[   23.434549] init: Command 'mkdir /storage/usb1 0000 root root' action=init (/vendor/etc/init/init.exynos9610.rc:14) took 0ms and failed: mkdir() failed on /storage/usb1: Read-only file system
+[   23.434788] init: Command 'mkdir /storage/usb2 0000 root root' action=init (/vendor/etc/init/init.exynos9610.rc:15) took 0ms and failed: mkdir() failed on /storage/usb2: Read-only file system
+[   23.436544] init: Command 'symlink /data/app /factory' action=init (/vendor/etc/init/init.exynos9610.rc:24) took 0ms and failed: symlink() failed: Read-only file system
+[   23.454273] init: processing action (init) from (/vendor/etc/init/init.recovery.exynos9610.rc:1)
+[   23.454650] init: processing action (late-init) from (/system/etc/init/hw/init.rc:425)
+[   23.454715] init: processing action (late-init) from (/system/etc/init/atrace.rc:3)
+[   23.454751] NOTICE: Automounting of tracing to debugfs is deprecated and will be removed in 2030
+[   23.461204] init: processing action (queue_property_triggers) from (<Builtin Action>:0)
+[   23.461284] init: processing action (early-fs) from (/system/etc/init/hw/init.rc:465)
+[   23.461367] init: starting service 'vold'...
+[   23.462681] libprocessgroup: Failed to make and chown /acct/uid_0: Read-only file system
+[   23.462730] init: createProcessGroup(0, 55) failed for service 'vold': Read-only file system
+[   23.463181] init: processing action (early-fs) from (/vendor/etc/init/icd_over_five_vendor.rc:9)
+[   23.463353] init: starting service 'iof_vendor'...
+[   23.464774] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   23.464823] init: createProcessGroup(1000, 56) failed for service 'iof_vendor': Read-only file system
+[   23.465474] init: processing action (fs) from (/system/etc/init/hw/init.rc:461)
+[   23.465550] init: [libfs_mgr]No entries found in fstab
+[   23.465573] init: [libfs_mgr]ReadFstabFromFile(): failed to load fstab from : '/dev/null'
+[   23.465618] init: Command 'mount_all /dev/null' action=fs (/system/etc/init/hw/init.rc:463) took 0ms and failed: Could not read fstab
+[   23.465646] init: processing action (fs) from (/system/etc/init/logd.rc:28)
+[   23.466260] init: processing action (fs) from (/vendor/etc/init/init.exynos9610.rc:510)
+[   23.466702] init: Userdata mounted using /vendor/etc/fstab.exynos9610 result : 1
+[   23.513469] init: sys_prop: invalid command 2
+[   23.643391] init: sys_prop: invalid command 2
+[   23.769569] init: sys_prop: invalid command 2
+[   23.901606] init: sys_prop: invalid command 2
+[   24.038127] init: sys_prop: invalid command 2
+[   24.166228] init: sys_prop: invalid command 2
+[   24.285401] init: sys_prop: invalid command 2
+[   24.405303] init: sys_prop: invalid command 2
+[   24.525298] init: sys_prop: invalid command 2
+[   24.602468] systemd[1]: Reached target usb-gadget.target - Hardware activated USB gadget.
+[   24.645647] init: sys_prop: invalid command 2
+[   24.765706] init: sys_prop: invalid command 2
+[   24.885678] init: sys_prop: invalid command 2
+[   25.005666] init: sys_prop: invalid command 2
+[   25.134386] init: sys_prop: invalid command 2
+[   25.253687] init: sys_prop: invalid command 2
+[   25.373687] init: sys_prop: invalid command 2
+[   25.493610] init: sys_prop: invalid command 2
+[   25.622371] init: sys_prop: invalid command 2
+[   25.741660] init: sys_prop: invalid command 2
+[   25.861617] init: sys_prop: invalid command 2
+[   25.990384] init: sys_prop: invalid command 2
+[   26.109611] init: sys_prop: invalid command 2
+[   26.229642] init: sys_prop: invalid command 2
+[   26.354340] init: sys_prop: invalid command 2
+[   26.482339] init: sys_prop: invalid command 2
+[   26.601571] init: sys_prop: invalid command 2
+[   26.725627] init: sys_prop: invalid command 2
+[   26.857657] init: sys_prop: invalid command 2
+[   26.994376] init: sys_prop: invalid command 2
+[   27.113728] init: sys_prop: invalid command 2
+[   27.237490] init: sys_prop: invalid command 2
+[   27.365683] init: sys_prop: invalid command 2
+[   27.485626] init: sys_prop: invalid command 2
+[   27.605636] init: sys_prop: invalid command 2
+[   27.725700] init: sys_prop: invalid command 2
+[   27.845699] init: sys_prop: invalid command 2
+[   27.965675] init: sys_prop: invalid command 2
+[   28.085658] init: sys_prop: invalid command 2
+[   28.205666] init: sys_prop: invalid command 2
+[   28.325647] init: sys_prop: invalid command 2
+[   28.445693] init: sys_prop: invalid command 2
+[   28.473130] init: wait for '/dev/block/platform/13520000.ufs/by-name/sec_efs' timed out and took 5006ms
+[   28.473307] init: Command 'wait /dev/block/platform/13520000.ufs/by-name/sec_efs' action=fs (/vendor/etc/init/init.exynos9610.rc:513) took 5006ms and failed: wait_for_file() failed
+[   28.473402] init: Service 'iof_vendor' (pid 56) exited with status 1 oneshot service took 5.008000 seconds in background
+[   28.473425] init: Sending signal 9 to service 'iof_vendor' (pid 56) process group...
+[   28.473497] libprocessgroup: Successfully killed process cgroup uid 1000 pid 56 in 0ms
+[   28.482877] init: processing action (fs) from (/vendor/etc/init/init.vendor.onebinary.rc:10)
+[   28.482992] init: Command 'copy /mnt/vendor/efs/factory.prop /efs/imei/factory.prop' action=fs (/vendor/etc/init/init.vendor.onebinary.rc:11) took 0ms and failed: Could not read input file '/mnt/vendor/efs/factory.prop': open() failed: No such file or directory
+[   28.483108] init: processing action (fs) from (/vendor/etc/init/init.vendor.rilcommon.rc:32)
+[   28.483246] init: starting service 'sim_config'...
+[   28.484658] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[   28.484703] init: createProcessGroup(1001, 65) failed for service 'sim_config': Read-only file system
+[   28.485167] init: SVC_EXEC service 'sim_config' pid 65 (uid 1001 gid 1001+0 context default) started; waiting...
+[   28.502331] init: Service 'sim_config' (pid 65) exited with status 0 waiting took 0.017000 seconds
+[   28.502370] init: Sending signal 9 to service 'sim_config' (pid 65) process group...
+[   28.502444] libprocessgroup: Successfully killed process cgroup uid 1001 pid 65 in 0ms
+[   28.502800] init: processing action (post-fs) from (/system/etc/init/hw/init.rc:469)
+[   28.502924] init: starting service 'exec 3 (/system/bin/vdc checkpoint markBootAttempt)'...
+[   28.504262] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   28.504319] init: createProcessGroup(1000, 66) failed for service 'exec 3 (/system/bin/vdc checkpoint markBootAttempt)': Read-only file system
+[   28.504354] init: SVC_EXEC service 'exec 3 (/system/bin/vdc checkpoint markBootAttempt)' pid 66 (uid 1000 gid 1000+0 context default) started; waiting...
+[   28.537224] init: Service 'exec 3 (/system/bin/vdc checkpoint markBootAttempt)' (pid 66) exited with status 0 waiting took 0.033000 seconds
+[   28.537248] init: Sending signal 9 to service 'exec 3 (/system/bin/vdc checkpoint markBootAttempt)' (pid 66) process group...
+[   28.537306] libprocessgroup: Successfully killed process cgroup uid 1000 pid 66 in 0ms
+[   28.540168] init: Command 'mkdir /metadata/vold' action=post-fs (/system/etc/init/hw/init.rc:516) took 0ms and failed: mkdir() failed on /metadata/vold: Read-only file system
+[   28.540480] init: Command 'mkdir /metadata/password_slots 0771 root system' action=post-fs (/system/etc/init/hw/init.rc:518) took 0ms and failed: mkdir() failed on /metadata/password_slots: Read-only file system
+[   28.540701] init: Command 'mkdir /metadata/bootstat 0750 system log' action=post-fs (/system/etc/init/hw/init.rc:519) took 0ms and failed: mkdir() failed on /metadata/bootstat: Read-only file system
+[   28.540979] init: Command 'mkdir /metadata/ota 0700 root system' action=post-fs (/system/etc/init/hw/init.rc:520) took 0ms and failed: mkdir() failed on /metadata/ota: Read-only file system
+[   28.541368] init: Command 'mkdir /metadata/apex 0700 root system' action=post-fs (/system/etc/init/hw/init.rc:523) took 0ms and failed: mkdir() failed on /metadata/apex: Read-only file system
+[   28.541771] init: Command 'mkdir /metadata/staged-install 0770 root system' action=post-fs (/system/etc/init/hw/init.rc:532) took 0ms and failed: mkdir() failed on /metadata/staged-install: Read-only file system
+[   28.541809] init: processing action (post-fs) from (/system/etc/init/atrace_userdebug.rc:7)
+[   28.542168] init: processing action (post-fs) from (/system/etc/init/gsid.rc:8)
+[   28.542377] init: Command 'mkdir /metadata/gsi 0771 root system' action=post-fs (/system/etc/init/gsid.rc:9) took 0ms and failed: mkdir() failed on /metadata/gsi: Read-only file system
+[   28.542913] init: processing action (post-fs) from (/vendor/etc/init/android.hardware.keymaster@4.0-service.rc:7)
+[   28.543408] init: processing action (post-fs) from (/vendor/etc/init/android.hardware.usb@1.1-service.exynos9610.rc:6)
+[   28.543695] init: processing action (post-fs) from (/vendor/etc/init/init.exynos9610.rc:128)
+[   28.543770] init: processing action (post-fs) from (/vendor/etc/init/init.exynos9610.rc:869)
+[   28.544042] init: processing action (post-fs) from (/vendor/etc/init/init.exynos9610.rc:883)
+[   28.544898] init: processing action (late-fs) from (/system/etc/init/hw/init.rc:533)
+[   28.545357] init: starting service 'system_suspend'...
+[   28.546748] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   28.546794] init: createProcessGroup(1000, 67) failed for service 'system_suspend': Read-only file system
+[   28.547281] init: starting service 'vendor.keymaster-4-0'...
+[   28.548720] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   28.548768] init: createProcessGroup(1000, 68) failed for service 'vendor.keymaster-4-0': Read-only file system
+[   28.549248] init: starting service 'engmode_hal'...
+[   28.550718] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   28.550765] init: createProcessGroup(1000, 69) failed for service 'engmode_hal': Read-only file system
+[   28.551177] init: processing action (late-fs) from (/vendor/etc/init/vaultkeeper_common.rc:14)
+[   28.551927] init: starting service 'vaultkeeper'...
+[   28.553424] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   28.553476] init: createProcessGroup(1000, 70) failed for service 'vaultkeeper': Read-only file system
+[   28.554033] init: starting service 'vaultkeeper_hal'...
+[   28.555581] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   28.555636] init: createProcessGroup(1000, 71) failed for service 'vaultkeeper_hal': Read-only file system
+[   28.556139] init: processing action (post-fs-data) from (/system/etc/init/hw/init.rc:542)
+[   28.556278] init: starting service 'exec 4 (/system/bin/vdc checkpoint prepareCheckpoint)'...
+[   28.557816] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   28.557884] init: createProcessGroup(1000, 72) failed for service 'exec 4 (/system/bin/vdc checkpoint prepareCheckpoint)': Read-only file system
+[   28.557929] init: SVC_EXEC service 'exec 4 (/system/bin/vdc checkpoint prepareCheckpoint)' pid 72 (uid 1000 gid 1000+0 context default) started; waiting...
+[   28.569095] init: sys_prop: invalid command 2
+[   28.574149] init: Service 'exec 4 (/system/bin/vdc checkpoint prepareCheckpoint)' (pid 72) exited with status 0 waiting took 0.016000 seconds
+[   28.574188] init: Sending signal 9 to service 'exec 4 (/system/bin/vdc checkpoint prepareCheckpoint)' (pid 72) process group...
+[   28.574265] libprocessgroup: Successfully killed process cgroup uid 1000 pid 72 in 0ms
+[   28.574940] init: Switched to default mount namespace
+[   28.574980] init: Not setting encryption policy on: /data/apex
+[   28.575296] init: Not setting encryption policy on: /data/app-staging
+[   28.575359] init: starting service 'apexd'...
+[   28.577027] libprocessgroup: Failed to make and chown /acct/uid_0: Read-only file system
+[   28.577099] init: createProcessGroup(0, 73) failed for service 'apexd': Read-only file system
+[   28.578915] init: Command 'copy /data/system/entropy.dat /dev/urandom' action=post-fs-data (/system/etc/init/hw/init.rc:575) took 1ms and failed: Could not read input file '/data/system/entropy.dat': open() failed: No such file or directory
+[   28.591864] init: Not setting encryption policy on: /data/preloads
+[   28.591995] init: Not setting encryption policy on: /data/vendor_ce
+[   28.592041] init: Not setting encryption policy on: /data/vendor_de
+[   28.592865] init: Not setting encryption policy on: /data/data
+[   28.593530] init: Not setting encryption policy on: /data/lost+found
+[   28.595484] init: Not setting encryption policy on: /data/system_de
+[   28.595633] init: Not setting encryption policy on: /data/system_ce
+[   28.597168] init: Not setting encryption policy on: /data/misc_de
+[   28.597243] init: Not setting encryption policy on: /data/misc_ce
+[   28.597292] init: Not setting encryption policy on: /data/user
+[   28.597338] init: Not setting encryption policy on: /data/user_de
+[   28.597610] init: Command 'rm /data/user/0' action=post-fs-data (/system/etc/init/hw/init.rc:720) took 0ms and failed: unlink() failed: Is a directory
+[   28.620283] apexd: This device does not support updatable APEX. Exiting
+[   28.620337] apexd: Marking APEXd as activated
+[   28.620588] init: Wait for property 'apexd.status=activated' took 12ms
+[   28.622784] init: Parsing file /apex/com.android.adbd/etc/init.rc...
+[   28.623092] init: Parsing file /apex/com.android.media.swcodec/etc/init.rc...
+[   28.623211] init: Parsing file /apex/com.android.os.statsd/etc/init.rc...
+[   28.623437] init: Parsing file /apex/com.android.sdkext/etc/derive_sdk.rc...
+[   28.623671] init: Not setting encryption policy on: /data/media
+[   28.623782] init: starting service 'exec 5 (/system/bin/chattr +F /data/media)'...
+[   28.625358] libprocessgroup: Failed to make and chown /acct/uid_1023: Read-only file system
+[   28.625421] init: createProcessGroup(1023, 76) failed for service 'exec 5 (/system/bin/chattr +F /data/media)': Read-only file system
+[   28.625453] init: SVC_EXEC service 'exec 5 (/system/bin/chattr +F /data/media)' pid 76 (uid 1023 gid 1023+0 context default) started; waiting...
+[   28.626011] init: Service 'apexd' (pid 73) exited with status 0 oneshot service took 0.049000 seconds in background
+[   28.626036] init: Sending signal 9 to service 'apexd' (pid 73) process group...
+[   28.626101] libprocessgroup: Successfully killed process cgroup uid 0 pid 73 in 0ms
+[   28.637633] init: Service 'exec 5 (/system/bin/chattr +F /data/media)' (pid 76) exited with status 1 waiting took 0.012000 seconds
+[   28.637679] init: Sending signal 9 to service 'exec 5 (/system/bin/chattr +F /data/media)' (pid 76) process group...
+[   28.637748] libprocessgroup: Successfully killed process cgroup uid 1023 pid 76 in 0ms
+[   28.638316] init: starting service 'derive_sdk'...
+[   28.639737] libprocessgroup: Failed to make and chown /acct/uid_9999: Read-only file system
+[   28.639788] init: createProcessGroup(9999, 77) failed for service 'derive_sdk': Read-only file system
+[   28.640182] init: SVC_EXEC service 'derive_sdk' pid 77 (uid 9999 gid 9999+0 context default) started; waiting...
+[   28.658900] init: Service 'derive_sdk' (pid 77) exited with status 0 waiting took 0.019000 seconds
+[   28.658935] init: Sending signal 9 to service 'derive_sdk' (pid 77) process group...
+[   28.659003] libprocessgroup: Successfully killed process cgroup uid 9999 pid 77 in 0ms
+[   28.659327] init: starting service 'exec 6 (/system/bin/vdc --wait cryptfs init_user0)'...
+[   28.660780] libprocessgroup: Failed to make and chown /acct/uid_0: Read-only file system
+[   28.660838] init: createProcessGroup(0, 78) failed for service 'exec 6 (/system/bin/vdc --wait cryptfs init_user0)': Read-only file system
+[   28.660874] init: SVC_EXEC service 'exec 6 (/system/bin/vdc --wait cryptfs init_user0)' pid 78 (uid 0 gid 0+0 context default) started; waiting...
+[   28.673523] vdc: Waited 0ms for vold
+[   28.689493] init: sys_prop: invalid command 2
+[   28.699938] linkerconfig: Failed to get realpath from /system_ext: No such file or directory
+[   28.704310] libapexutil: Failed to read manifest file: /apex/com.android.wifi/apex_manifest.pb
+[   28.704445] libapexutil: Failed to read manifest file: /apex/com.android.tzdata/apex_manifest.pb
+[   28.704538] libapexutil: Failed to read manifest file: /apex/com.android.tethering/apex_manifest.pb
+[   28.704634] libapexutil: Failed to read manifest file: /apex/com.android.sdkext/apex_manifest.pb
+[   28.704726] libapexutil: Failed to read manifest file: /apex/com.android.resolv/apex_manifest.pb
+[   28.704832] libapexutil: Failed to read manifest file: /apex/com.android.permission/apex_manifest.pb
+[   28.704924] libapexutil: Failed to read manifest file: /apex/com.android.os.statsd/apex_manifest.pb
+[   28.705066] libapexutil: Failed to read manifest file: /apex/com.android.neuralnetworks/apex_manifest.pb
+[   28.705182] libapexutil: Failed to read manifest file: /apex/com.android.mediaprovider/apex_manifest.pb
+[   28.705296] libapexutil: Failed to read manifest file: /apex/com.android.media.swcodec/apex_manifest.pb
+[   28.705400] libapexutil: Failed to read manifest file: /apex/com.android.media/apex_manifest.pb
+[   28.705497] libapexutil: Failed to read manifest file: /apex/com.android.ipsec/apex_manifest.pb
+[   28.705603] libapexutil: Failed to read manifest file: /apex/com.android.extservices/apex_manifest.pb
+[   28.705700] libapexutil: Failed to read manifest file: /apex/com.android.conscrypt/apex_manifest.pb
+[   28.705798] libapexutil: Failed to read manifest file: /apex/com.android.adbd/apex_manifest.pb
+[   28.726929] systemd[1]: Started lxc-android-config.service - LXC Android Config and Container Initialization.
+[   28.732335] vdc: Command: cryptfs init_user0 Failed: Status(-8, EX_SERVICE_SPECIFIC): '0: '
+[   28.733787] init: Service 'exec 6 (/system/bin/vdc --wait cryptfs init_user0)' (pid 78) exited with status 25 waiting took 0.073000 seconds
+[   28.733821] init: Sending signal 9 to service 'exec 6 (/system/bin/vdc --wait cryptfs init_user0)' (pid 78) process group...
+[   28.733897] libprocessgroup: Successfully killed process cgroup uid 0 pid 78 in 0ms
+[   28.733942] init: Failure (reboot suppressed): init_user0_failed
+[   28.734076] init: starting service 'apexd-snapshotde'...
+[   28.735411] libprocessgroup: Failed to make and chown /acct/uid_0: Read-only file system
+[   28.735461] init: createProcessGroup(0, 80) failed for service 'apexd-snapshotde': Read-only file system
+[   28.735947] init: SVC_EXEC service 'apexd-snapshotde' pid 80 (uid 0 gid 1000+0 context default) started; waiting...
+[   28.753393] apexd: This device does not support updatable APEX. Exiting
+[   28.753425] apexd: Marking APEXd as ready
+[   28.755646] init: Service 'apexd-snapshotde' (pid 80) exited with status 0 waiting took 0.020000 seconds
+[   28.755684] init: Sending signal 9 to service 'apexd-snapshotde' (pid 80) process group...
+[   28.755770] libprocessgroup: Successfully killed process cgroup uid 0 pid 80 in 0ms
+[   28.756248] init: starting service 'exec 7 (/system/bin/tzdatacheck /apex/com.android.tzdata/etc/tz /data/misc/zoneinfo)'...
+[   28.757714] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   28.757774] init: createProcessGroup(1000, 81) failed for service 'exec 7 (/system/bin/tzdatacheck /apex/com.android.tzdata/etc/tz /data/misc/zoneinfo)': Read-only file system
+[   28.757813] init: SVC_EXEC service 'exec 7 (/system/bin/tzdatacheck /apex/com.android.tzdata/etc/tz /data/misc/zoneinfo)' pid 81 (uid 1000 gid 1000+0 context default) started; waiting...
+[   28.761583] systemd[1]: Starting systemd-udev-trigger.service - udev Fake Coldplug all Devices...
+[   28.766962] systemd[1]: Starting timekeeper.service - Timekeeper is a utility to keep/restore RTC offset for Qualcomm devices...
+[   28.768393] init: Service 'exec 7 (/system/bin/tzdatacheck /apex/com.android.tzdata/etc/tz /data/misc/zoneinfo)' (pid 81) exited with status 0 waiting took 0.010000 seconds
+[   28.768436] init: Sending signal 9 to service 'exec 7 (/system/bin/tzdatacheck /apex/com.android.tzdata/etc/tz /data/misc/zoneinfo)' (pid 81) process group...
+[   28.768508] libprocessgroup: Successfully killed process cgroup uid 1000 pid 81 in 0ms
+[   28.769023] init: processing action (post-fs-data) from (/system/etc/init/bootstat.rc:9)
+[   28.770050] init: processing action (post-fs-data) from (/system/etc/init/gsid.rc:14)
+[   28.770123] init: Not setting encryption policy on: /data/gsi
+[   28.770496] init: processing action (post-fs-data) from (/system/etc/init/incidentd.rc:21)
+[   28.770550] init: processing action (post-fs-data) from (/system/etc/init/init.halium.rc:31)
+[   28.770655] init: starting service 'exec 8 (/system/bin/on-post-data.sh)'...
+[   28.772210] libprocessgroup: Failed to make and chown /acct/uid_0: Read-only file system
+[   28.772285] init: createProcessGroup(0, 82) failed for service 'exec 8 (/system/bin/on-post-data.sh)': Read-only file system
+[   28.772317] init: SVC_EXEC service 'exec 8 (/system/bin/on-post-data.sh)' pid 82 (uid 0 gid 0+0 context default) started; waiting...
+[   28.789940] systemd[1]: Finished timekeeper.service - Timekeeper is a utility to keep/restore RTC offset for Qualcomm devices.
+[   28.802402] systemd[1]: Starting systemd-timesyncd.service - Network Time Synchronization...
+[   28.809557] systemd[1]: Finished systemd-udev-trigger.service - udev Fake Coldplug all Devices.
+[   28.812327] systemd[1]: plymouth-start.service - Show Plymouth Boot Screen was skipped because of an unmet condition check (ConditionKernelCommandLine=splash).
+[   28.812807] systemd[1]: Started systemd-ask-password-console.path - Dispatch Password Requests to Console Directory Watch.
+[   28.813279] systemd[1]: systemd-ask-password-plymouth.path - Forward Password Requests to Plymouth Directory Watch was skipped because of an unmet condition check (ConditionPathExists=/run/plymouth/pid).
+[   28.813411] systemd[1]: Reached target cryptsetup.target - Local Encrypted Volumes.
+[   28.818967] systemd[1]: Starting systemd-udev-settle.service - Wait for udev To Complete Device Initialization...
+[   28.844113] udevadm[1112]: systemd-udev-settle.service is deprecated. Please fix usb-moded.service not to pull it in.
+[   28.872113] systemd[1]: Finished systemd-udev-settle.service - Wait for udev To Complete Device Initialization.
+[   29.025153] systemd[1]: Started systemd-timesyncd.service - Network Time Synchronization.
+[   29.026320] systemd[1]: Reached target sysinit.target - System Initialization.
+[   29.026898] systemd[1]: Started force-adb.path - Force enable or disable ADB as appropriate.
+[   29.027127] systemd[1]: Started enable-cpu-hotplug.timer - Enable CPU hotplugging after Ubuntu Touch boot.
+[   29.027332] systemd[1]: Started systemd-tmpfiles-clean.timer - Daily Cleanup of Temporary Directories.
+[   29.027509] systemd[1]: ua-timer.timer - Ubuntu Pro Timer for running repeated jobs was skipped because of an unmet condition check (ConditionPathExists=!/lib/systemd/system/lxc-android-config.service).
+[   29.027602] systemd[1]: Reached target paths.target - Path Units.
+[   29.027754] systemd[1]: Reached target time-set.target - System Time Set.
+[   29.028087] systemd[1]: apt-daily.timer - Daily apt download activities was skipped because of an unmet condition check (ConditionPathIsReadWrite=/).
+[   29.028143] systemd[1]: apt-daily-upgrade.timer - Daily apt upgrade and clean activities was skipped because of an unmet condition check (ConditionPathIsReadWrite=/).
+[   29.028755] systemd[1]: Started dpkg-db-backup.timer - Daily dpkg database backup timer.
+[   29.029604] systemd[1]: Started e2scrub_all.timer - Periodic ext4 Online Metadata Check for All Filesystems.
+[   29.030433] systemd[1]: Started fstrim.timer - Discard unused filesystem blocks once a week.
+[   29.030919] systemd[1]: Started logrotate.timer - Daily rotation of log files.
+[   29.031221] systemd[1]: Started motd-news.timer - Message of the Day.
+[   29.031725] systemd[1]: snapd.snap-repair.timer - Timer to automatically fetch and run repair assertions was skipped because no trigger condition checks were met.
+[   29.031802] systemd[1]: Reached target timers.target - Timer Units.
+[   29.032851] systemd[1]: Listening on dbus.socket - D-Bus System Message Bus Socket.
+[   29.035493] systemd[1]: Starting snapd.socket - Socket activation for snappy daemon...
+[   29.067700] systemd[1]: Starting no-cpu-hotplug.service - Disable CPU hotplugging during Ubuntu Touch boot...
+[   29.068083] systemd[1]: systemd-pcrphase-sysinit.service - TPM2 PCR Barrier (Initialization) was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
+[   29.078764] systemd[1]: Starting usb-moded.service - usb-moded USB gadget controller...
+[   29.079862] systemd[1]: Listening on snapd.socket - Socket activation for snappy daemon.
+[   29.080180] systemd[1]: Reached target sockets.target - Socket Units.
+[   29.112896] init: sys_prop: invalid command 2
+[   29.124976] init: sys_prop: invalid command 2
+[   29.136343] init: sys_prop: invalid command 2
+[   29.170543] systemd[1]: no-cpu-hotplug.service: Deactivated successfully.
+[   29.170994] systemd[1]: Finished no-cpu-hotplug.service - Disable CPU hotplugging during Ubuntu Touch boot.
+[   29.171822] systemd[1]: Reached target basic.target - Basic System.
+[   29.181956] configfs-gadget.g1 gadget.0: HOST MAC 82:63:00:89:0e:cc
+[   29.182003] configfs-gadget.g1 gadget.0: MAC f2:7a:db:80:a8:b3
+[   29.199459] init: Service 'exec 8 (/system/bin/on-post-data.sh)' (pid 82) exited with status 0 waiting took 0.427000 seconds
+[   29.199502] init: Sending signal 9 to service 'exec 8 (/system/bin/on-post-data.sh)' (pid 82) process group...
+[   29.199570] libprocessgroup: Successfully killed process cgroup uid 0 pid 82 in 0ms
+[   29.200302] init: processing action (post-fs-data) from (/system/etc/init/logtagd.rc:4)
+[   29.201414] systemd[1]: Starting a50-audio-hidl-compat.service - A50: present the 64-bit audio HIDL compat wrapper to PulseAudio...
+[   29.201645] init: processing action (post-fs-data) from (/system/etc/init/perfetto.rc:67)
+[   29.201951] init: Command 'rm /data/misc/perfetto-traces/.guardraildata' action=post-fs-data (/system/etc/init/perfetto.rc:68) took 0ms and failed: unlink() failed: No such file or directory
+[   29.201998] init: processing action (post-fs-data) from (/system/etc/init/recovery-persist.rc:1)
+[   29.202134] init: starting service 'exec 9 (/system/bin/recovery-persist)'...
+[   29.203716] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   29.203789] init: createProcessGroup(1000, 112) failed for service 'exec 9 (/system/bin/recovery-persist)': Read-only file system
+[   29.203880] init: processing action (post-fs-data) from (/system/etc/init/tombstoned.rc:10)
+[   29.203997] init: starting service 'tombstoned'...
+[   29.204148] init: Created socket '/dev/socket/tombstoned_crash', mode 666, user 1000, group 1000
+[   29.204249] init: Created socket '/dev/socket/tombstoned_intercept', mode 666, user 1000, group 1000
+[   29.204318] init: Created socket '/dev/socket/tombstoned_java_trace', mode 666, user 1000, group 1000
+[   29.204819] systemd[1]: Starting a50-gnss-unblock.service - A50: unblock Samsung gpsd (waits for a boot animation that never runs)...
+[   29.205987] libprocessgroup: Failed to make and chown /acct/uid_1058: Read-only file system
+[   29.206049] init: createProcessGroup(1058, 113) failed for service 'tombstoned': Read-only file system
+[   29.209149] init: processing action (post-fs-data) from (/vendor/etc/init/android.hardware.gatekeeper@1.0-service.rc:7)
+[   29.209481] init: processing action (post-fs-data) from (/vendor/etc/init/android.hardware.keymaster@4.0-service.rc:13)
+[   29.209668] init: processing action (post-fs-data) from (/vendor/etc/init/hostapd.android.rc:9)
+[   29.209818] systemd[1]: Starting accounts-daemon.service - Accounts Service...
+[   29.210739] init: processing action (post-fs-data) from (/vendor/etc/init/init.baseband.rc:10)
+[   29.211162] init: processing action (post-fs-data) from (/vendor/etc/init/init.baseband.rc:35)
+[   29.211354] init: processing action (post-fs-data) from (/vendor/etc/init/init.exynos9610.rc:132)
+[   29.212733] init: Command 'mount cgroup none /dev/freezer freezer' action=post-fs-data (/vendor/etc/init/init.exynos9610.rc:135) took 0ms and failed: mount() failed: Operation not permitted
+[   29.215493] systemd[1]: Starting biometryd.service - Mediate access to biometric devices...
+[   29.220510] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[   29.225453] init: Top-level directory needs encryption action, eg mkdir /data/exynos <mode> <uid> <gid> encryption=Require
+[   29.227295] systemd[1]: Starting bluetooth-touch.service - Bluetooth init for Touch devices...
+[   29.227569] systemd[1]: boot-hooks-new-version.service - Hooks running after updating to a new Ubuntu Touch version was skipped because of an unmet condition check (ConditionPathExists=/etc/ubuntu-build).
+[   29.230857] init: Top-level directory needs encryption action, eg mkdir /data/vendor <mode> <uid> <gid> encryption=Require
+[   29.233501] systemd[1]: Starting click-apparmor.service - Update Click AppArmor profiles...
+[   29.238646] systemd[1]: Starting click-system-hooks.service - Run Click system-level hooks...
+[   29.244199] lxc[857]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[   29.249732] systemd[1]: Starting dbus.service - D-Bus System Message Bus...
+[   29.250543] init: processing action (post-fs-data) from (/vendor/etc/init/init.gps.rc:1)
+[   29.250948] init: Top-level directory needs encryption action, eg mkdir /data/vendor <mode> <uid> <gid> encryption=Require
+[   29.252378] init: Command 'rm /data/vendor/gps/gps_started' action=post-fs-data (/vendor/etc/init/init.gps.rc:11) took 0ms and failed: unlink() failed: No such file or directory
+[   29.252524] init: Command 'rm /data/vendor/gps/glonass_started' action=post-fs-data (/vendor/etc/init/init.gps.rc:12) took 0ms and failed: unlink() failed: No such file or directory
+[   29.252630] init: Command 'rm /data/vendor/gps/beidou_started' action=post-fs-data (/vendor/etc/init/init.gps.rc:13) took 0ms and failed: unlink() failed: No such file or directory
+[   29.252727] init: Command 'rm /data/vendor/gps/smd_started' action=post-fs-data (/vendor/etc/init/init.gps.rc:14) took 0ms and failed: unlink() failed: No such file or directory
+[   29.252819] init: Command 'rm /data/vendor/gps/sv_cno.info' action=post-fs-data (/vendor/etc/init/init.gps.rc:15) took 0ms and failed: unlink() failed: No such file or directory
+[   29.252851] init: processing action (post-fs-data) from (/vendor/etc/init/init.vendor.rilcommon.rc:10)
+[   29.253067] init: processing action (post-fs-data) from (/vendor/etc/init/init.vendor.rilcommon.rc:35)
+[   29.253189] init: starting service 'network_config'...
+[   29.254845] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[   29.254918] init: createProcessGroup(1001, 115) failed for service 'network_config': Read-only file system
+[   29.257476] systemd[1]: Starting device-hacks.service - Run device's specific hacks....
+[   29.259039] init: SVC_EXEC service 'network_config' pid 115 (uid 1001 gid 1001+0 context default) started; waiting...
+[   29.259168] init: Service 'exec 9 (/system/bin/recovery-persist)' (pid 112) exited with status 0 oneshot service took 0.055000 seconds in background
+[   29.259196] init: Sending signal 9 to service 'exec 9 (/system/bin/recovery-persist)' (pid 112) process group...
+[   29.259286] libprocessgroup: Successfully killed process cgroup uid 1000 pid 112 in 0ms
+[   29.263540] init: sys_prop: invalid command 2
+[   29.266461] systemd[1]: Starting e2scrub_reap.service - Remove Stale Online ext4 Metadata Check Snapshots...
+[   29.269466] systemd[1]: getty-static.service - getty on tty2-tty6 if dbus and logind are not available was skipped because of an unmet condition check (ConditionPathExists=!/usr/bin/dbus-daemon).
+[   29.269679] systemd[1]: Reached target getty.target - Login Prompts.
+[   29.272245] init: sys_prop: invalid command 2
+[   29.283679] init: Service 'network_config' (pid 115) exited with status 0 waiting took 0.028000 seconds
+[   29.283738] init: Sending signal 9 to service 'network_config' (pid 115) process group...
+[   29.283827] libprocessgroup: Successfully killed process cgroup uid 1001 pid 115 in 0ms
+[   29.284725] systemd[1]: Starting hfd-service.service - HFD system service...
+[   29.285573] init: processing action (post-fs-data) from (/vendor/etc/init/secure_storage_daemon.rc:8)
+[   29.287867] init: processing action (post-fs-data) from (/vendor/etc/init/snap_utility.rc:1)
+[   29.293325] init: processing action (post-fs-data) from (/vendor/etc/init/wifi.rc:2)
+[   29.295742] init: Command 'chown system wifi /vendor/etc/wifi/indoorchannel.info' action=post-fs-data (/vendor/etc/init/wifi.rc:30) took 0ms and failed: lchown() failed: Read-only file system
+[   29.295953] init: Command 'chmod 0664 /vendor/etc/wifi/indoorchannel.info' action=post-fs-data (/vendor/etc/init/wifi.rc:31) took 0ms and failed: fchmodat() failed: Read-only file system
+[   29.296291] systemd[1]: Starting lxc-android-config-apply-sysctls.service - Apply retroactively per-network-interface sysctls...
+[   29.296758] init: processing action (post-fs-data) from (/vendor/etc/init/wifi_slsi.rc:1)
+[   29.298308] init: processing action (load_persist_props_action) from (/system/etc/init/hw/init.rc:415)
+[   29.299177] init: Couldn't load property file '/data/local.prop': open() failed: No such file or directory: No such file or directory
+[   29.300319] init: Wait for property 'ro.persistent_properties.ready=true' took 1ms
+[   29.300508] init: starting service 'logd-reinit'...
+[   29.302586] libprocessgroup: Failed to make and chown /acct/uid_1036: Read-only file system
+[   29.302690] init: createProcessGroup(1036, 116) failed for service 'logd-reinit': Read-only file system
+[   29.307135] init: processing action (load_persist_props_action) from (/system/etc/init/flags_health_check.rc:1)
+[   29.307264] init: Top-level directory needs encryption action, eg mkdir /data/server_configurable_flags <mode> <uid> <gid> encryption=Require
+[   29.307538] init: starting service 'exec 10 (/system/bin/flags_health_check BOOT_FAILURE)'...
+[   29.307860] lxc[857]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[   29.309349] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   29.309426] init: createProcessGroup(1000, 117) failed for service 'exec 10 (/system/bin/flags_health_check BOOT_FAILURE)': Read-only file system
+[   29.309469] init: SVC_EXEC service 'exec 10 (/system/bin/flags_health_check BOOT_FAILURE)' pid 117 (uid 1000 gid 1000+0 context default) started; waiting...
+[   29.310484] systemd[1]: Starting lxc-android-config-cleanup-boothooks-backup.service - Cleanup backups created by boot-hooks/new-release.d/000-backup...
+[   29.313331] systemd[1]: lxc-net.service - LXC network bridge setup was skipped because of an unmet condition check (ConditionPathExists=!/lib/systemd/system/lxc-android-config.service).
+[   29.331621] systemd[1]: Starting nfcd.service - NFC daemon...
+[   29.347228] kauditd_printk_skb: 186 callbacks suppressed
+[   29.347243] audit: type=1400 audit(1794854542.378:198): apparmor="STATUS" operation="profile_load" profile="unconfined" name="calculator.ubports_calculator_4.1.0" pid=1222 comm="apparmor_parser"
+[   29.350077] init: sys_prop: invalid command 2
+[   29.350077] init: Service 'logd-reinit' (pid 116) exited with status 0 oneshot service took 0.047000 seconds in background
+[   29.353094] init: Sending signal 9 to service 'logd-reinit' (pid 116) process group...
+[   29.353245] libprocessgroup: Successfully killed process cgroup uid 1036 pid 116 in 0ms
+[   29.354255] systemd[1]: Starting rild.service - Wait for rild in the Android container to become ready...
+[   29.359149] audit: type=1400 audit(1794854542.390:199): apparmor="STATUS" operation="profile_load" profile="unconfined" name="camera.ubports_barcode-reader_4.2.1-1-g6d5fe5c+ubuntu-touch-26.04-1.x" pid=1231 comm="apparmor_parser"
+[   29.362658] audit: type=1400 audit(1794854542.394:200): apparmor="STATUS" operation="profile_load" profile="unconfined" name="calendar.ubports_calendar-helper_1.3.1" pid=1223 comm="apparmor_parser"
+[   29.364324] audit: type=1400 audit(1794854542.394:201): apparmor="STATUS" operation="profile_load" profile="unconfined" name="camera.ubports_camera_4.1.1" pid=1232 comm="apparmor_parser"
+[   29.368716] audit: type=1400 audit(1794854542.398:202): apparmor="STATUS" operation="profile_load" profile="unconfined" name="calendar.ubports_calendar_1.3.1" pid=1226 comm="apparmor_parser"
+[   29.369449] init: starting service 'gpsd'...
+[   29.371362] libprocessgroup: Failed to make and chown /acct/uid_1021: Read-only file system
+[   29.371435] init: createProcessGroup(1021, 119) failed for service 'gpsd': Read-only file system
+[   29.377021] audit: type=1400 audit(1794854542.406:203): apparmor="STATUS" operation="profile_load" profile="unconfined" name="camera.ubports_camera_4.2.1-1-g6d5fe5c+ubuntu-touch-26.04-1.x" pid=1233 comm="apparmor_parser"
+[   29.380097] audit: type=1400 audit(1794854542.410:204): apparmor="STATUS" operation="profile_load" profile="unconfined" name="filemanager.ubports_filemanager_1.1.4" pid=1242 comm="apparmor_parser"
+[   29.386370] init: Control message: Processed ctl.restart for 'gpsd' from pid: 118 (/system/bin/setprop ctl.restart gpsd)
+[   29.391537] audit: type=1400 audit(1794854542.422:205): apparmor="STATUS" operation="profile_load" profile="unconfined" name="clock.ubports_clock_4.1.1" pid=1238 comm="apparmor_parser"
+[   29.407958] audit: type=1400 audit(1794854542.438:206): apparmor="STATUS" operation="profile_load" profile="unconfined" name="camera.ubports_barcode-reader_4.1.1" pid=1228 comm="apparmor_parser"
+[   29.410970] audit: type=1400 audit(1794854542.442:207): apparmor="STATUS" operation="profile_load" profile="unconfined" name="camerascanner.jonnius_camerascanner_0.5.1" pid=1234 comm="apparmor_parser"
+[   29.411683] systemd[1]: Starting sensorfwd.service - Sensor daemon for the sensor framework...
+[   29.413092] systemd[1]: snapd.core-fixup.service - Automatically repair incorrect owner/permissions on core devices was skipped because no trigger condition checks were met.
+[   29.413371] systemd[1]: snapd.recovery-chooser-trigger.service - Wait for the Ubuntu Core chooser trigger was skipped because of an unmet condition check (ConditionPathExistsGlob=/dev/input/event*).
+[   29.413586] systemd[1]: Reached target getty-pre.target - Preparation for Logins.
+[   29.424299] systemd[1]: Starting snapd.seeded.service - Wait until snapd is fully seeded...
+[   29.429289] init: sys_prop: invalid command 2
+[   29.433398] init: Service 'exec 10 (/system/bin/flags_health_check BOOT_FAILURE)' (pid 117) exited with status 0 waiting took 0.124000 seconds
+[   29.433489] init: Sending signal 9 to service 'exec 10 (/system/bin/flags_health_check BOOT_FAILURE)' (pid 117) process group...
+[   29.433585] libprocessgroup: Successfully killed process cgroup uid 1000 pid 117 in 0ms
+[   29.433854] init: processing action (load_persist_props_action) from (/system/etc/init/logcatd.rc:29)
+[   29.437961] systemd[1]: Starting snapd.service - Snap Daemon...
+[   29.443418] init: sys_prop: invalid command 2
+[   29.443739] init: processing action (load_bpf_programs) from (/system/etc/init/bpfloader.rc:20)
+[   29.444833] init: starting service 'bpfloader'...
+[   29.446839] libprocessgroup: Failed to make and chown /acct/uid_0: Read-only file system
+[   29.446928] init: createProcessGroup(0, 120) failed for service 'bpfloader': Read-only file system
+[   29.449912] systemd[1]: Starting ssh-generate-hostkeys.service - Generate SSH hostkeys...
+[   29.450545] systemd[1]: sshd-keygen.service - Generate sshd host keys on first boot was skipped because of an unmet condition check (ConditionFirstBoot=yes).
+[   29.457864] init: sys_prop: invalid command 2
+[   29.461251] init: processing action (persist.sys.fuse=true && zygote-start) from (/system/etc/init/hw/init.rc:811)
+[   29.463187] init: processing action (ro.crypto.state=unencrypted && zygote-start) from (/system/etc/init/hw/init.rc:826)
+[   29.463256] init: Command 'exec_start update_verifier_nonencrypted' action=ro.crypto.state=unencrypted && zygote-start (/system/etc/init/hw/init.rc:828) took 0ms and failed: Service not found
+[   29.465438] init: starting service 'statsd'...
+[   29.465624] init: Created socket '/dev/socket/statsdw', mode 222, user 1066, group 1066
+[   29.467397] libprocessgroup: Failed to make and chown /acct/uid_1066: Read-only file system
+[   29.467462] init: createProcessGroup(1066, 121) failed for service 'statsd': Read-only file system
+[   29.469814] systemd[1]: Starting systemd-hostnamed.service - Hostname Service...
+[   29.481201] init: Command 'start netd' action=ro.crypto.state=unencrypted && zygote-start (/system/etc/init/hw/init.rc:830) took 0ms and failed: service netd not found
+[   29.481441] init: processing action (firmware_mounts_complete) from (/system/etc/init/hw/init.rc:421)
+[   29.481554] init: processing action (early-boot) from (/system/etc/init/installd.rc:5)
+[   29.495791] init: Service 'bpfloader' (pid 120) exited with status 0 oneshot service took 0.049000 seconds in background
+[   29.495839] init: Sending signal 9 to service 'bpfloader' (pid 120) process group...
+[   29.495932] libprocessgroup: Successfully killed process cgroup uid 0 pid 120 in 0ms
+[   29.498407] systemd[1]: Starting systemd-logind.service - User Login Management...
+[   29.499059] systemd[1]: systemd-pcrphase.service - TPM2 PCR Barrier (User) was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
+[   29.501083] binder: undelivered death notification, 0000000000000000
+[   29.509926] init: starting service 'vendor.gatekeeper-1-0'...
+[   29.511572] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   29.511641] init: createProcessGroup(1000, 124) failed for service 'vendor.gatekeeper-1-0': Read-only file system
+[   29.512212] init: Control message: Processed ctl.interface_start for 'android.hardware.gatekeeper@1.0::IGatekeeper/default' from pid: 42 (/system/bin/hwservicemanager)
+[   29.513008] init: Control message: Could not find 'android.hardware.biometrics.fingerprint@2.1::IBiometricsFingerprint/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   29.522049] init: Control message: Processed ctl.interface_start for 'android.hardware.gatekeeper@1.0::IGatekeeper/default' from pid: 42 (/system/bin/hwservicemanager)
+[   29.522934] init: Control message: Could not find 'android.hardware.biometrics.fingerprint@2.1::IBiometricsFingerprint/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   29.524913] init: processing action (early-boot) from (/vendor/etc/init/vendor.samsung.hardware.sysinput@1.1-service.rc:2)
+[   29.525215] init: processing action (early-boot) from (/vendor/etc/init/vendor.samsung.hardware.vibrator@2.2-service.rc:1)
+[   29.527731] init: processing action (boot) from (/system/etc/init/hw/init.rc:850)
+[   29.530311] init: Command 'write /sys/fs/f2fs/${dev.mnt.blk.data}/cp_interval 200' action=boot (/system/etc/init/hw/init.rc:879) took 0ms and failed: property 'dev.mnt.blk.data' doesn't exist while expanding '/sys/fs/f2fs/${dev.mnt.blk.data}/cp_interval'
+[   29.530376] init: Command 'write /sys/fs/f2fs/${dev.mnt.blk.data}/gc_urgent_sleep_time 50' action=boot (/system/etc/init/hw/init.rc:880) took 0ms and failed: property 'dev.mnt.blk.data' doesn't exist while expanding '/sys/fs/f2fs/${dev.mnt.blk.data}/gc_urgent_sleep_time'
+[   29.530420] init: Command 'write /sys/fs/f2fs/${dev.mnt.blk.data}/iostat_enable 1' action=boot (/system/etc/init/hw/init.rc:881) took 0ms and failed: property 'dev.mnt.blk.data' doesn't exist while expanding '/sys/fs/f2fs/${dev.mnt.blk.data}/iostat_enable'
+[   29.530470] init: Command 'write /sys/devices/virtual/block/${dev.mnt.blk.data}/queue/discard_max_bytes 134217728' action=boot (/system/etc/init/hw/init.rc:886) took 0ms and failed: property 'dev.mnt.blk.data' doesn't exist while expanding '/sys/devices/virtual/block/${dev.mnt.blk.data}/queue/discard_max_bytes'
+[   29.531417] init: starting service 'hidl_memory'...
+[   29.532702] systemd[1]: ua-reboot-cmds.service - Ubuntu Pro reboot cmds was skipped because of an unmet condition check (ConditionPathExists=/var/lib/ubuntu-advantage/private/machine-token.json).
+[   29.545560] systemd[1]: Starting udisks2.service - Disk Manager...
+[   29.549145] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   29.549199] init: createProcessGroup(1000, 129) failed for service 'hidl_memory': Read-only file system
+[   29.551326] init: sys_prop: invalid command 2
+[   29.552941] init: starting service 'netd-hal-1-1-stub'...
+[   29.552996] systemd[1]: Starting update-machine-info-from-deviceinfo.service - Use information from DeviceInfo, update pretty hostname and chassis info....
+[   29.553939] binder: undelivered death notification, 0000000000000000
+[   29.554896] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   29.554979] init: createProcessGroup(1000, 132) failed for service 'netd-hal-1-1-stub': Read-only file system
+[   29.560778] init: starting service 'healthd'...
+[   29.562440] libprocessgroup: Failed to make and chown /acct/uid_0: Read-only file system
+[   29.562504] init: createProcessGroup(0, 133) failed for service 'healthd': Read-only file system
+[   29.564465] init: starting service 'vendor.audio-hal'...
+[   29.573913] libprocessgroup: Failed to open /dev/stune/foreground/tasks: No such file or directory: No such file or directory
+[   29.573960] libprocessgroup: Failed to apply HighPerformance task profile: No such file or directory
+[   29.574011] systemd[1]: Started urfkill.service - killswitch manager.
+[   29.575578] libprocessgroup: Failed to make and chown /acct/uid_1041: Read-only file system
+[   29.576657] init: createProcessGroup(1041, 137) failed for service 'vendor.audio-hal': Read-only file system
+[   29.581092] init: starting service 'vendor.bluetooth-1-0'...
+[   29.582927] libprocessgroup: Failed to make and chown /acct/uid_1002: Read-only file system
+[   29.582994] init: createProcessGroup(1002, 141) failed for service 'vendor.bluetooth-1-0': Read-only file system
+[   29.593088] systemd[1]: Starting usb-tethering.service - USB Tethering...
+[   29.594164] init: starting service 'vendor.cas-hal-1-2'...
+[   29.595939] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[   29.596007] init: createProcessGroup(1013, 143) failed for service 'vendor.cas-hal-1-2': Read-only file system
+[   29.604209] init: starting service 'vendor.configstore-hal'...
+[   29.612950] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   29.613067] init: createProcessGroup(1000, 144) failed for service 'vendor.configstore-hal': Read-only file system
+[   29.613510] systemd[1]: Starting workaround-session-migration-mtime.service - Workaround session-migration script dir's mtime...
+[   29.619800] init: starting service 'vendor.drm-clearkey-hal-1-3'...
+[   29.621073] binder: undelivered death notification, 0000000000000000
+[   29.624350] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[   29.624423] init: createProcessGroup(1013, 146) failed for service 'vendor.drm-clearkey-hal-1-3': Read-only file system
+[   29.625911] healthd: No battery devices found
+[   29.627348] healthd: battery none chg=
+[   29.629759] init: starting service 'vendor.drm-widevine-hal-1-3'...
+[   29.631612] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[   29.631683] init: createProcessGroup(1013, 147) failed for service 'vendor.drm-widevine-hal-1-3': Read-only file system
+[   29.637400] init: starting service 'vendor.gralloc-2-0'...
+[   29.642598] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   29.642663] init: createProcessGroup(1000, 148) failed for service 'vendor.gralloc-2-0': Read-only file system
+[   29.643255] init: starting service 'vendor.hwcomposer-2-1'...
+[   29.647939] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   29.648010] init: createProcessGroup(1000, 149) failed for service 'vendor.hwcomposer-2-1': Read-only file system
+[   29.649435] init: starting service 'health-hal-2-1-samsung'...
+[   29.649511] init: Opened file '/dev/kmsg', flags 1
+[   29.653902] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   29.653973] init: createProcessGroup(1000, 150) failed for service 'health-hal-2-1-samsung': Read-only file system
+[   29.656873] init: starting service 'vendor.memtrack-hal-1-0'...
+[   29.659939] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   29.660027] init: createProcessGroup(1000, 152) failed for service 'vendor.memtrack-hal-1-0': Read-only file system
+[   29.661083] binder: undelivered death notification, 0000000000000000
+[   29.661657] init: starting service 'vendor.sensors-hal-2-0-multihal'...
+[   29.666031] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   29.666113] init: createProcessGroup(1000, 154) failed for service 'vendor.sensors-hal-2-0-multihal': Read-only file system
+[   29.666266] URfkill[1307]: No configured profile found
+[   29.666885] URfkill[1307]: <warning> No dmi devices found.
+[   29.667368] URfkill[1307]: <warning> Failed to get DMI information
+[   29.668493] init: starting service 'vendor.wifi_hal_legacy'...
+[   29.670824] libprocessgroup: Failed to make and chown /acct/uid_1010: Read-only file system
+[   29.670902] init: createProcessGroup(1010, 155) failed for service 'vendor.wifi_hal_legacy': Read-only file system
+[   29.672023] init: starting service 'ant_hal_service'...
+[   29.673836] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   29.673905] init: createProcessGroup(1000, 156) failed for service 'ant_hal_service': Read-only file system
+[   29.675096] init: starting service 'vendor.samsung.hardware.hyper-default'...
+[   29.678722] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   29.678807] init: createProcessGroup(1000, 157) failed for service 'vendor.samsung.hardware.hyper-default': Read-only file system
+[   29.682408] init: starting service 'vendor.samsung.hardware.light-default'...
+[   29.684122] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   29.684197] init: createProcessGroup(1000, 158) failed for service 'vendor.samsung.hardware.light-default': Read-only file system
+[   29.685743] init: starting service 'vendor.samsung.power-default'...
+[   29.687562] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   29.687634] init: createProcessGroup(1000, 159) failed for service 'vendor.samsung.power-default': Read-only file system
+[   29.693462] URfkill[1307]: Starting urfkilld version 0.6.0
+[   29.696295] init: starting service 'android-hardware-media-c2-hal-1-1'...
+[   29.697583] binder: undelivered death notification, 0000000000000000
+[   29.700177] libprocessgroup: Failed to make and chown /acct/uid_1046: Read-only file system
+[   29.700253] init: createProcessGroup(1046, 160) failed for service 'android-hardware-media-c2-hal-1-1': Read-only file system
+[   29.702451] init: starting service 'sec-camera-provider-4-0'...
+[   29.704177] libprocessgroup: Failed to make and chown /acct/uid_1047: Read-only file system
+[   29.704256] init: createProcessGroup(1047, 161) failed for service 'sec-camera-provider-4-0': Read-only file system
+[   29.709226] init: starting service 'sec-miscpower-2-0'...
+[   29.710488] libprocessgroup: Failed to open /dev/cpuset/camera-daemon/tasks: No such file or directory: No such file or directory
+[   29.710536] libprocessgroup: Failed to apply CameraServiceCapacity task profile: No such file or directory
+[   29.716783] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   29.716853] init: createProcessGroup(1000, 162) failed for service 'sec-miscpower-2-0': Read-only file system
+[   29.717043] init: sys_prop: invalid command 2
+[   29.726348] init: starting service 'drk_hal'...
+[   29.728205] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   29.728274] init: createProcessGroup(1000, 164) failed for service 'drk_hal': Read-only file system
+[   29.741426] init: starting service 'snapserv'...
+[   29.750457] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   29.750523] init: createProcessGroup(1000, 167) failed for service 'snapserv': Read-only file system
+[   29.756792] init: starting service 'sec-sysinput-1-1'...
+[   29.766268] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   29.766333] init: createProcessGroup(1000, 168) failed for service 'sec-sysinput-1-1': Read-only file system
+[   29.773960] init: starting service 'sec-thermal-1-0'...
+[   29.775691] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   29.775754] init: createProcessGroup(1000, 169) failed for service 'sec-thermal-1-0': Read-only file system
+[   29.781224] init: starting service 'sec-vibrator-2-2'...
+[   29.782809] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   29.782873] init: createProcessGroup(1000, 170) failed for service 'sec-vibrator-2-2': Read-only file system
+[   29.789728] init: starting service 'vendor.wifi_hal_ext'...
+[   29.791624] libprocessgroup: Failed to make and chown /acct/uid_1010: Read-only file system
+[   29.791691] init: createProcessGroup(1010, 171) failed for service 'vendor.wifi_hal_ext': Read-only file system
+[   29.793843] lxc[857]: android: confile - ../src/lxc/confile.c:get_config_unsupported_key:170 - Invalid argument - Unsupported config key "lxc.seccomp"
+[   29.804348] init: starting service 'ExynosHWCServiceTW'...
+[   29.806450] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   29.806517] init: createProcessGroup(1000, 172) failed for service 'ExynosHWCServiceTW': Read-only file system
+[   29.813505] init: starting service 'ExynosHWCConfigs'...
+[   29.818780] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   29.818872] init: createProcessGroup(1000, 173) failed for service 'ExynosHWCConfigs': Read-only file system
+[   29.825893] healthd: No battery devices found
+[   29.825931] healthd: Could not open /efs/FactoryApp/batt_cable_count
+[   29.825962] healthd: Could not access rtc_status node
+[   29.827420] init: starting service 'slsi-ofi-1-0'...
+[   29.829941] libprocessgroup: Failed to make and chown /acct/uid_1047: Read-only file system
+[   29.830015] init: createProcessGroup(1047, 175) failed for service 'slsi-ofi-1-0': Read-only file system
+[   29.832171] healthd: /efs/FactoryApp/batt_temp_charge does not exist
+[   29.832223] healthd: failed to open /efs/FactoryApp/batt_temp_charge, errno=2
+[   29.832236] healthd: battery none chg=
+[   29.833586] init: Command 'class_start hal' action=boot (/system/etc/init/hw/init.rc:948) took 302ms and succeeded
+[   29.833802] init: Control message: Could not find 'android.hardware.vibrator@1.0::IVibrator/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   29.833951] init: starting service 'credstore'...
+[   29.835678] libprocessgroup: Failed to make and chown /acct/uid_1076: Read-only file system
+[   29.835745] init: createProcessGroup(1076, 177) failed for service 'credstore': Read-only file system
+[   29.842793] init: starting service 'gpu'...
+[   29.844654] libprocessgroup: Failed to make and chown /acct/uid_1072: Read-only file system
+[   29.844716] init: createProcessGroup(1072, 178) failed for service 'gpu': Read-only file system
+[   29.846567] init: Could not start service 'watchdogd' as part of class 'core': Cannot find '/system/bin/watchdogd_DISABLED': No such file or directory
+[   29.846646] init: Could not start service 'prepare_param' as part of class 'core': Cannot find '/system/bin/prepare_param.sh': No such file or directory
+[   29.847311] init: Could not start service 'swapon' as part of class 'core': Cannot find '/system/bin/sswap': No such file or directory
+[   29.847559] init: Control message: Could not find 'android.hardware.light@2.0::ILight/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   29.847729] init: starting service 'exec 11 (/system/bin/fsverity_init)'...
+[   29.853734] libprocessgroup: Failed to make and chown /acct/uid_0: Read-only file system
+[   29.853812] init: createProcessGroup(0, 179) failed for service 'exec 11 (/system/bin/fsverity_init)': Read-only file system
+[   29.853848] init: SVC_EXEC service 'exec 11 (/system/bin/fsverity_init)' pid 179 (uid 0 gid 0+0 context default) started; waiting...
+[   29.854159] init: starting service 'sec_gnss_service'...
+[   29.856059] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   29.856125] init: createProcessGroup(1000, 180) failed for service 'sec_gnss_service': Read-only file system
+[   29.861712] init: Control message: Processed ctl.restart for 'sec_gnss_service' from pid: 174 (/system/bin/setprop ctl.restart sec_gnss_service)
+[   29.911180] init: Service 'exec 11 (/system/bin/fsverity_init)' (pid 179) exited with status 255 waiting took 0.057000 seconds
+[   29.911224] init: Sending signal 9 to service 'exec 11 (/system/bin/fsverity_init)' (pid 179) process group...
+[   29.911291] libprocessgroup: Successfully killed process cgroup uid 0 pid 179 in 0ms
+[   29.911459] init: processing action (boot) from (/system/etc/init/camera_service.rc:1)
+[   29.911606] init: starting service 'exec 12 (/system/bin/micshm.sh)'...
+[   29.917848] libprocessgroup: Failed to make and chown /acct/uid_0: Read-only file system
+[   29.917932] init: createProcessGroup(0, 187) failed for service 'exec 12 (/system/bin/micshm.sh)': Read-only file system
+[   29.917967] init: SVC_EXEC service 'exec 12 (/system/bin/micshm.sh)' pid 187 (uid 0 gid 0+0 context default) started; waiting...
+[   29.919182] init: sys_prop: invalid command 2
+[   29.997948] init: Control message: Could not find 'android.hardware.sensors@2.1::ISensors/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   30.013119] binder: undelivered death notification, 0000000000000000
+[   30.017480] init: Control message: Could not find 'android.hardware.sensors@2.1::ISensors/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   30.049056] binder: undelivered death notification, 0000000000000001
+[   30.049091] binder: undelivered death notification, 0000000000000000
+[   30.182513] init: Service 'vendor.drm-widevine-hal-1-3' (pid 147) received signal 11
+[   30.182568] init: Sending signal 9 to service 'vendor.drm-widevine-hal-1-3' (pid 147) process group...
+[   30.183139] libprocessgroup: Successfully killed process cgroup uid 1013 pid 147 in 0ms
+[   30.196898] init: Service 'exec 12 (/system/bin/micshm.sh)' (pid 187) exited with status 0 waiting took 0.279000 seconds
+[   30.196948] init: Sending signal 9 to service 'exec 12 (/system/bin/micshm.sh)' (pid 187) process group...
+[   30.197059] libprocessgroup: Successfully killed process cgroup uid 0 pid 187 in 0ms
+[   30.197205] init: processing action (boot) from (/system/etc/init/dumpstate.rc:1)
+[   30.197304] init: processing action (boot) from (/system/etc/init/gsid.rc:20)
+[   30.197409] init: starting service 'exec 13 (/system/bin/gsid run-startup-tasks)'...
+[   30.199046] libprocessgroup: Failed to make and chown /acct/uid_0: Read-only file system
+[   30.199133] init: createProcessGroup(0, 224) failed for service 'exec 13 (/system/bin/gsid run-startup-tasks)': Read-only file system
+[   30.199222] init: processing action (boot) from (/vendor/etc/init/init.exynos9610.rc:316)
+[   30.202841] init: Command 'copy /dev/cpuset/mems /dev/cpuset/abnormal/mems' action=boot (/vendor/etc/init/init.exynos9610.rc:320) took 0ms and failed: Could not read input file '/dev/cpuset/mems': open() failed: No such file or directory
+[   30.214160] init: Unable to set property 'ro.radio.noril' from uid:0 gid:0 pid:23: Read-only property was already set
+[   30.219728] init: Service 'vendor.cas-hal-1-2' (pid 143) received signal 11
+[   30.219801] init: Sending signal 9 to service 'vendor.cas-hal-1-2' (pid 143) process group...
+[   30.219947] libprocessgroup: Successfully killed process cgroup uid 1013 pid 143 in 0ms
+[   30.232207] init: Service 'exec 13 (/system/bin/gsid run-startup-tasks)' (pid 224) exited with status 0 oneshot service took 0.033000 seconds in background
+[   30.232286] init: Sending signal 9 to service 'exec 13 (/system/bin/gsid run-startup-tasks)' (pid 224) process group...
+[   30.232424] libprocessgroup: Successfully killed process cgroup uid 0 pid 224 in 0ms
+[   30.259381] init: Command 'copy /dev/cpuset/mems /dev/cpuset/cached/mems' action=boot (/vendor/etc/init/init.exynos9610.rc:405) took 0ms and failed: Could not read input file '/dev/cpuset/mems': open() failed: No such file or directory
+[   30.260691] init: Command 'copy /dev/cpuset/mems /dev/cpuset/abnormal/mems' action=boot (/vendor/etc/init/init.exynos9610.rc:408) took 0ms and failed: Could not read input file '/dev/cpuset/mems': open() failed: No such file or directory
+[   30.274338] init: processing action (boot) from (/vendor/etc/init/init.vendor.sysfw.rc:1)
+[   30.276154] systemd[1]: Started dbus.service - D-Bus System Message Bus.
+[   30.277190] init: processing action (boot) from (/vendor/etc/init/secure_storage_daemon.rc:16)
+[   30.278271] init: starting service 'secure_storage'...
+[   30.282332] systemd[1]: Started sensorfwd.service - Sensor daemon for the sensor framework.
+[   30.283044] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   30.283169] init: createProcessGroup(1000, 230) failed for service 'secure_storage': Read-only file system
+[   30.286223] init: processing action (boot) from (/vendor/etc/init/vendor.samsung.hardware.security.drk@2.0-service.rc:1)
+[   30.293367] init: processing action (boot) from (/vendor/etc/init/wifi.rc:42)
+[   30.293938] init: processing action (enable_property_trigger) from (<Builtin Action>:0)
+[   30.294399] init: processing action (apexd.status=ready && ro.product.cpu.abilist32=*) from (/system/etc/init/hw/init.rc:92)
+[   30.296798] init: starting service 'boringssl_self_test_apex32'...
+[   30.299803] libprocessgroup: Failed to make and chown /acct/uid_0: Read-only file system
+[   30.299945] init: createProcessGroup(0, 231) failed for service 'boringssl_self_test_apex32': Read-only file system
+[   30.305452] init: SVC_EXEC service 'boringssl_self_test_apex32' pid 231 (uid 0 gid 0+0 context default) started; waiting...
+[   30.305657] init: Service 'vendor.audio-hal' (pid 137) received signal 11
+[   30.305721] init: Sending signal 9 to service 'vendor.audio-hal' (pid 137) process group...
+[   30.305871] libprocessgroup: Successfully killed process cgroup uid 1041 pid 137 in 0ms
+[   30.307451] init: Command 'restart audioserver' action=onrestart (<Service 'vendor.audio-hal' onrestart>:1) took 1ms and failed: service audioserver not found
+[   30.310976] init: Service 'secure_storage' (pid 230) exited with status 14
+[   30.311045] init: Sending signal 9 to service 'secure_storage' (pid 230) process group...
+[   30.311199] libprocessgroup: Successfully killed process cgroup uid 1000 pid 230 in 0ms
+[   30.312555] init: Service 'boringssl_self_test_apex32' (pid 231) exited with status 0 waiting took 0.012000 seconds
+[   30.312636] init: Sending signal 9 to service 'boringssl_self_test_apex32' (pid 231) process group...
+[   30.312787] libprocessgroup: Successfully killed process cgroup uid 0 pid 231 in 0ms
+[   30.313593] init: processing action (apexd.status=ready && ro.product.cpu.abilist64=*) from (/system/etc/init/hw/init.rc:94)
+[   30.313799] init: starting service 'boringssl_self_test_apex64'...
+[   30.316537] libprocessgroup: Failed to make and chown /acct/uid_0: Read-only file system
+[   30.316669] init: createProcessGroup(0, 232) failed for service 'boringssl_self_test_apex64': Read-only file system
+[   30.317985] init: SVC_EXEC service 'boringssl_self_test_apex64' pid 232 (uid 0 gid 0+0 context default) started; waiting...
+[   30.329277] systemd[1]: Finished a50-audio-hidl-compat.service - A50: present the 64-bit audio HIDL compat wrapper to PulseAudio.
+[   30.330428] systemd[1]: bluetooth-touch.service: Deactivated successfully.
+[   30.330638] init: Service 'boringssl_self_test_apex64' (pid 232) exited with status 0 waiting took 0.014000 seconds
+[   30.330729] init: Sending signal 9 to service 'boringssl_self_test_apex64' (pid 232) process group...
+[   30.330899] libprocessgroup: Successfully killed process cgroup uid 0 pid 232 in 0ms
+[   30.330977] systemd[1]: Started bluetooth-touch.service - Bluetooth init for Touch devices.
+[   30.331712] init: processing action (security.perf_harden=1 && sys.init.perf_lsm_hooks=) from (/system/etc/init/hw/init.rc:1023)
+[   30.331951] systemd[1]: click-apparmor.service: Deactivated successfully.
+[   30.332406] systemd[1]: Finished click-apparmor.service - Update Click AppArmor profiles.
+[   30.333064] init: processing action (security.perf_harden=1) from (/system/etc/init/hw/init.rc:1033)
+[   30.333436] systemd[1]: device-hacks.service: Deactivated successfully.
+[   30.333927] systemd[1]: Finished device-hacks.service - Run device's specific hacks..
+[   30.335020] systemd[1]: Finished lxc-android-config-apply-sysctls.service - Apply retroactively per-network-interface sysctls.
+[   30.335971] systemd[1]: Finished lxc-android-config-cleanup-boothooks-backup.service - Cleanup backups created by boot-hooks/new-release.d/000-backup.
+[   30.336214] init: processing action (ro.debuggable=1) from (/system/etc/init/hw/init.rc:1060)
+[   30.336663] init: processing action (ro.persistent_properties.ready=true) from (/system/etc/init/bootstat.rc:67)
+[   30.337217] init: processing action (ro.persistent_properties.ready=true) from (/system/etc/init/bootstat.rc:71)
+[   30.337513] init: starting service 'exec 14 (/system/bin/bootstat --set_system_boot_reason)'...
+[   30.340468] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   30.340609] init: createProcessGroup(1000, 233) failed for service 'exec 14 (/system/bin/bootstat --set_system_boot_reason)': Read-only file system
+[   30.340859] init: processing action (persist.heapprofd.enable= && traced.lazy.heapprofd=) from (/system/etc/init/heapprofd.rc:34)
+[   30.342121] init: processing action (debug.atrace.user_initiated= && persist.traced.enable=1) from (/system/etc/init/perfetto.rc:47)
+[   30.342373] init: starting service 'traced_probes'...
+[   30.342550] init: Opened file '/dev/kmsg', flags 1
+[   30.345622] libprocessgroup: Failed to make and chown /acct/uid_9999: Read-only file system
+[   30.345744] init: createProcessGroup(9999, 234) failed for service 'traced_probes': Read-only file system
+[   30.347889] systemd[1]: Finished rild.service - Wait for rild in the Android container to become ready.
+[   30.348168] init: processing action (persist.traced.enable=1) from (/system/etc/init/perfetto.rc:50)
+[   30.349512] init: starting service 'traced'...
+[   30.349849] init: Created socket '/dev/socket/traced_consumer', mode 666, user 0, group 0
+[   30.350163] init: Created socket '/dev/socket/traced_producer', mode 666, user 0, group 0
+[   30.353696] libprocessgroup: Failed to make and chown /acct/uid_9999: Read-only file system
+[   30.353831] init: createProcessGroup(9999, 235) failed for service 'traced': Read-only file system
+[   30.355650] init: processing action (persist.traced_perf.enable= && sys.init.perf_lsm_hooks=) from (/system/etc/init/traced_perf.rc:39)
+[   30.356800] init: processing action (ro.vendor.multisim.simslotcount=*) from (/vendor/etc/init/init.baseband.rc:46)
+[   30.358415] init: processing action (ro.vendor.multisim.simslotcount=2) from (/vendor/etc/init/init.baseband.rc:52)
+[   30.359400] systemd[1]: Finished ssh-generate-hostkeys.service - Generate SSH hostkeys.
+[   30.360576] systemd[1]: Finished workaround-session-migration-mtime.service - Workaround session-migration script dir's mtime.
+[   30.367577] usb_moded[1490]: /etc/usb-moded/usb-moded.ini: has reappeared after settings migration
+[   30.377587] init: processing action (ro.debuggable=1) from (/vendor/etc/init/init.exynos9610.rc:804)
+[   30.382489] init: processing action (nonencrypted) from (/system/etc/init/hw/init.rc:955)
+[   30.382743] init: starting service 'camera_service'...
+[   30.383992] systemd[1]: e2scrub_reap.service: Deactivated successfully.
+[   30.384609] systemd[1]: Finished e2scrub_reap.service - Remove Stale Online ext4 Metadata Check Snapshots.
+[   30.384832] usb_moded[1490]: Failed to write mac address to /etc/modprobe.d/g_ether.conf
+[   30.390113] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[   30.390240] init: createProcessGroup(1013, 238) failed for service 'camera_service': Read-only file system
+[   30.396699] usb_moded[1490]: CONFIGFS detected
+[   30.406749] init: starting service 'drm'...
+[   30.413764] libprocessgroup: Failed to make and chown /acct/uid_1019: Read-only file system
+[   30.413888] init: createProcessGroup(1019, 239) failed for service 'drm': Read-only file system
+[   30.417496] usb_moded[1490]: /sys/kernel/config/usb_gadget/g1//functions/mass_storage.usb0: mkdir failed: Function not implemented
+[   30.417819] usb_moded[1490]: /sys/kernel/config/usb_gadget/g1//functions/mtp.mtp: mkdir failed: Function not implemented
+[   30.417831] init: starting service 'idmap2d'...
+[   30.417989] usb_moded[1490]: Failed to read mac address from /etc/modprobe.d/g_ether.conf
+[   30.418183] usb_moded[1490]: /sys/kernel/config/usb_gadget/g1//functions/rndis.usb0/wceis: can't open for writing: No such file or directory
+[   30.420754] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   30.420887] init: createProcessGroup(1000, 240) failed for service 'idmap2d': Read-only file system
+[   30.423193] systemd[1]: Started hfd-service.service - HFD system service.
+[   30.429778] init: starting service 'incidentd'...
+[   30.432789] libprocessgroup: Failed to make and chown /acct/uid_1067: Read-only file system
+[   30.432949] init: createProcessGroup(1067, 241) failed for service 'incidentd': Read-only file system
+[   30.434945] usb_moded[1490]: Unable to find $charger device '/sys/class/power_supply/usb'
+[   30.439063] systemd[1]: Starting NetworkManager.service - Network Manager...
+[   30.440701] init: starting service 'installd'...
+[   30.441098] systemd[1]: keyd.service - key remapping daemon was skipped because of an unmet condition check (ConditionPathExistsGlob=/etc/keyd/*.conf).
+[   30.443744] libprocessgroup: Failed to make and chown /acct/uid_0: Read-only file system
+[   30.443889] init: createProcessGroup(0, 242) failed for service 'installd': Read-only file system
+[   30.449484] init: starting service 'keystore'...
+[   30.449706] systemd[1]: Starting mechanicd.service - Manage Android-isms & kernel features on GNU/Linux systems...
+[   30.451488] libprocessgroup: Failed to make and chown /acct/uid_1017: Read-only file system
+[   30.451579] init: createProcessGroup(1017, 243) failed for service 'keystore': Read-only file system
+[   30.453432] init: starting service 'mediaextractor'...
+[   30.456373] libprocessgroup: Failed to make and chown /acct/uid_1040: Read-only file system
+[   30.456455] init: createProcessGroup(1040, 244) failed for service 'mediaextractor': Read-only file system
+[   30.457529] init: starting service 'mediametrics'...
+[   30.459455] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[   30.459520] init: createProcessGroup(1013, 245) failed for service 'mediametrics': Read-only file system
+[   30.465332] systemd[1]: Starting ofono.service - oFono Mobile telephony stack...
+[   30.466678] init: Could not start service 'media' as part of class 'main': Cannot find '/system/bin/mediaserver_HYBRIS_DISABLED': No such file or directory
+[   30.466807] init: starting service 'minimedia'...
+[   30.468828] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[   30.468904] init: createProcessGroup(1013, 246) failed for service 'minimedia': Read-only file system
+[   30.469151] init: sys_prop: invalid command 2
+[   30.470395] usb_moded[1490]: Forcing USB state to connected always. ASK mode non functional!
+[   30.473994] init: Could not start service 'minisf' as part of class 'main': Cannot find '/system/bin/minisfservice': No such file or directory
+[   30.474059] init: Could not start service 'miniaf' as part of class 'main': Cannot find '/system/bin/miniafservice': No such file or directory
+[   30.474131] init: starting service 'storaged'...
+[   30.474192] init: Could not open file '/d/mmc0/mmc0:0001/ext_csd': Failed to open file '/d/mmc0/mmc0:0001/ext_csd': No such file or directory
+[   30.474877] systemd[1]: Starting polkit.service - Authorization Manager...
+[   30.476098] libprocessgroup: Failed to make and chown /acct/uid_0: Read-only file system
+[   30.476165] init: createProcessGroup(0, 247) failed for service 'storaged': Read-only file system
+[   30.483363] systemd[1]: Starting wpa_supplicant.service - WPA supplicant...
+[   30.484434] systemd[1]: Started usb-moded.service - usb-moded USB gadget controller.
+[   30.484815] init: starting service 'wificond'...
+[   30.485681] systemd[1]: Finished a50-gnss-unblock.service - A50: unblock Samsung gpsd (waits for a boot animation that never runs).
+[   30.486813] libprocessgroup: Failed to make and chown /acct/uid_1010: Read-only file system
+[   30.486869] init: createProcessGroup(1010, 248) failed for service 'wificond': Read-only file system
+[   30.491739] systemd[1]: Started systemd-hostnamed.service - Hostname Service.
+[   30.492253] init: starting service 'vendor.media.omx'...
+[   30.494040] libprocessgroup: Failed to make and chown /acct/uid_1046: Read-only file system
+[   30.494103] init: createProcessGroup(1046, 249) failed for service 'vendor.media.omx': Read-only file system
+[   30.497129] init: starting service 'cpboot-daemon'...
+[   30.499236] libprocessgroup: Failed to make and chown /acct/uid_0: Read-only file system
+[   30.499293] init: createProcessGroup(0, 250) failed for service 'cpboot-daemon': Read-only file system
+[   30.505624] init: Could not start service 'argos-daemon' as part of class 'main': Cannot find '/vendor/bin/argosd': No such file or directory
+[   30.505768] init: starting service 'ril-daemon'...
+[   30.505926] init: Created socket '/dev/socket/sap_uim_socket1', mode 660, user 1002, group 1002
+[   30.507953] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[   30.508011] init: createProcessGroup(1001, 251) failed for service 'ril-daemon': Read-only file system
+[   30.508041] systemd[1]: Starting lomiri-location-service.service - Location Services...
+[   30.508947] init: sys_prop: invalid command 2
+[   30.509101] systemd[1]: update-machine-info-from-deviceinfo.service: Deactivated successfully.
+[   30.509438] libprocessgroup: Failed to find SystemServicePerformancetask profile: No such file or directory
+[   30.509536] libprocessgroup: Failed to find SystemServiceCapacityHightask profile: No such file or directory
+[   30.509618] systemd[1]: Finished update-machine-info-from-deviceinfo.service - Use information from DeviceInfo, update pretty hostname and chassis info..
+[   30.518306] init: starting service 'ril-daemon1'...
+[   30.520052] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[   30.520115] init: createProcessGroup(1001, 252) failed for service 'ril-daemon1': Read-only file system
+[   30.525622] init: starting service 'macloader'...
+[   30.527369] libprocessgroup: Failed to make and chown /acct/uid_1010: Read-only file system
+[   30.527425] init: createProcessGroup(1010, 253) failed for service 'macloader': Read-only file system
+[   30.532397] init: starting service 'wlbtd'...
+[   30.533394] usb_moded[1490]: no network gateway
+[   30.538524] libprocessgroup: Failed to make and chown /acct/uid_1010: Read-only file system
+[   30.538595] init: createProcessGroup(1010, 256) failed for service 'wlbtd': Read-only file system
+[   30.555779] init: starting service 'media.swcodec'...
+[   30.557655] libprocessgroup: Failed to make and chown /acct/uid_1046: Read-only file system
+[   30.557716] init: createProcessGroup(1046, 257) failed for service 'media.swcodec': Read-only file system
+[   30.562042] systemd[1]: Started wpa_supplicant.service - WPA supplicant.
+[   30.562042] init: Command 'class_start main' action=nonencrypted (/system/etc/init/hw/init.rc:956) took 179ms and succeeded
+[   30.562191] init: Service 'exec 14 (/system/bin/bootstat --set_system_boot_reason)' (pid 233) exited with status 0 oneshot service took 0.221000 seconds in background
+[   30.562229] init: Sending signal 9 to service 'exec 14 (/system/bin/bootstat --set_system_boot_reason)' (pid 233) process group...
+[   30.562321] libprocessgroup: Successfully killed process cgroup uid 1000 pid 233 in 0ms
+[   30.563438] wpa_supplicant[1535]: Successfully initialized wpa_supplicant
+[   30.565070] init: starting service 'gatekeeperd'...
+[   30.566969] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   30.567034] init: createProcessGroup(1000, 258) failed for service 'gatekeeperd': Read-only file system
+[   30.567749] init: Could not start service 'usbd' as part of class 'late_start': Cannot find '/system/bin/usbd_DISABLED': No such file or directory
+[   30.567856] init: Could not start service 'faced' as part of class 'late_start': Cannot find '/system/bin/faced': No such file or directory
+[   30.567986] init: starting service 'vendor.fps_hal'...
+[   30.569856] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   30.569919] init: createProcessGroup(1000, 261) failed for service 'vendor.fps_hal': Read-only file system
+[   30.571561] systemd[1]: Started nfcd.service - NFC daemon.
+[   30.592591] init: sys_prop: invalid command 2
+[   30.592774] init: Service 'wlbtd' (pid 256) exited with status 0
+[   30.592837] init: Sending signal 9 to service 'wlbtd' (pid 256) process group...
+[   30.593296] libprocessgroup: Successfully killed process cgroup uid 1010 pid 256 in 0ms
+[   30.607929] init: sys_prop: invalid command 2
+[   30.616133] init: sys_prop: invalid command 2
+[   30.621765] mif: cbd: get_cmdline_str: find str androidboot.debug_level=0x4f4c form /proc/cmdline
+[   30.621910] mif: cbd: check_debug_level: androidboot.debug_level=0x4f4c, 0
+[   30.622020] mif: cbd: check_debug_level: debug level=0, cp_debug=0
+[   30.622086] mif: cbd: main: Start CP Boot Daemon (CBD)
+[   30.622150] mif: cbd: main: Daemon Mode
+[   30.622204] mif: cbd: main: SS310 modem
+[   30.622252] mif: cbd: main: boot SHMEM link
+[   30.622300] mif: cbd: main: main SHMEM link
+[   30.622348] mif: cbd: main: partition number : by-name/radio
+[   30.622399] mif: cbd: main: partition path : /dev/block/by-name/radio
+[   30.622439] capability: warning: `cbd' uses deprecated v2 capabilities in a way that may be insecure
+[   30.622660] mif: cbd: main: Call boot start
+[   30.622758] mif: cbd: main: Modem type = 12
+[   30.622828] mif: cbd: main: Boot link = 9
+[   30.622881] mif: cbd: main: Main link = 9
+[   30.623069] mif: cbd: check_board_revision: /proc/device-tree/model_info-system_rev open fail
+[   30.623178] mif: cbd: start_shannon310_boot: CP boot device = /dev/umts_boot0
+[   30.623275] mif: cbd: start_shannon310_boot: CP binary file = /dev/block/by-name/radio
+[   30.623379] mif: cbd: start_shannon310_boot: CP NV file = /mnt/vendor/efs/nv_data.bin
+[   30.623451] mif: cbd: start_shannon310_boot: BOOT link SHMEM
+[   30.623502] mif: cbd: start_shannon310_boot: MAIN link SHMEM
+[   30.623676] systemd[1]: Started mechanicd.service - Manage Android-isms & kernel features on GNU/Linux systems.
+[   30.633841] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   30.637493] init: Control message: Processed ctl.interface_start for 'android.hardware.gatekeeper@1.0::IGatekeeper/default' from pid: 42 (/system/bin/hwservicemanager)
+[   30.639659] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   30.648117] init: Control message: Could not find 'android.hardware.biometrics.fingerprint@2.3::IBiometricsFingerprint/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   30.658720] init: sys_prop: invalid command 2
+[   30.661428] systemd[1]: Started systemd-logind.service - User Login Management.
+[   30.685536] bluebinder[1587]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[   30.685876] bluebinder[1587]: g_io_channel_unref: assertion 'channel != NULL' failed
+[   30.691556] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[   30.692343] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[   30.696470] init: sys_prop: invalid command 2
+[   30.697022] binder: undelivered death notification, 0000000000000000
+[   30.698332] systemd[1]: Started ofono.service - oFono Mobile telephony stack.
+[   30.708655] capability: warning: `ofonod' uses 32-bit capabilities (legacy support in use)
+[   30.711145] init: Control message: Could not find 'android.hardware.radio.config@1.1::IRadioConfig/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   30.713072] init: Control message: Could not find 'android.hardware.radio.config@1.0::IRadioConfig/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   30.718867] init: Control message: Processed ctl.interface_start for 'android.hardware.gatekeeper@1.0::IGatekeeper/default' from pid: 42 (/system/bin/hwservicemanager)
+[   30.720513] init: Control message: Processed ctl.interface_start for 'android.hardware.gatekeeper@1.0::IGatekeeper/default' from pid: 42 (/system/bin/hwservicemanager)
+[   30.741824] systemd[1]: Starting upower.service - Daemon for power management...
+[   30.752052] init: sys_prop: invalid command 2
+[   30.765059] binder: undelivered death notification, 0000000000000000
+[   30.771820] systemd[1]: Started biometryd.service - Mediate access to biometric devices.
+[   30.864929] init: Service 'sec-camera-provider-4-0' (pid 161) received signal 11
+[   30.864994] init: Sending signal 9 to service 'sec-camera-provider-4-0' (pid 161) process group...
+[   30.865073] libprocessgroup: Successfully killed process cgroup uid 1047 pid 161 in 0ms
+[   30.913742] systemd[1]: Starting NetworkManager-dispatcher.service - Network Manager Script Dispatcher Service...
+[   30.940990] init: sys_prop: invalid command 2
+[   30.967875] systemd[1]: Started NetworkManager-dispatcher.service - Network Manager Script Dispatcher Service.
+[   31.006821] NetworkManager[1579]: ((../src/core/devices/nm-device.c:5820)): assertion '<dropped>' failed
+[   31.021915] systemd[1]: Starting usb-moded-udhcpd.service - Busybox's udhcpd, using usb-moded configuration...
+[   31.031472] NetworkManager[1579]: ((../src/core/devices/nm-device.c:5820)): assertion '<dropped>' failed
+[   31.033645] NetworkManager[1579]: ((../src/core/devices/nm-device.c:5820)): assertion '<dropped>' failed
+[   31.035000] systemd[1]: Started usb-moded-udhcpd.service - Busybox's udhcpd, using usb-moded configuration.
+[   31.044444] systemd[1]: Started polkit.service - Authorization Manager.
+[   31.063421] systemd[1]: Started NetworkManager.service - Network Manager.
+[   31.069195] init: Service 'macloader' (pid 253) exited with status 0 oneshot service took 0.541000 seconds in background
+[   31.069256] init: Sending signal 9 to service 'macloader' (pid 253) process group...
+[   31.069342] libprocessgroup: Successfully killed process cgroup uid 1010 pid 253 in 0ms
+[   31.069562] systemd[1]: Reached target network.target - Network.
+[   31.072913] NOTICE: Automounting of tracing to debugfs is deprecated and will be removed in 2030
+[   31.075186] systemd[1]: Started lxc-monitord.service - LXC Container Monitoring Daemon.
+[   31.076813] systemd[1]: lxc.service - LXC Container Initialization and Autoboot Code was skipped because of an unmet condition check (ConditionPathExists=!/lib/systemd/system/lxc-android-config.service).
+[   31.078281] udisksd[1295]: Error creating directory /var/lib/udisks2: Read-only file system
+[   31.083641] URfkill[1307]: <warning> Error opening RFKILL control device, please verify your installation
+[   31.083864] URfkill[1307]: Setting WLAN devices to unblocked
+[   31.084025] URfkill[1307]: Setting BLUETOOTH devices to blocked
+[   31.084118] URfkill[1307]: Setting UWB devices to unblocked
+[   31.084280] URfkill[1307]: Setting WIMAX devices to unblocked
+[   31.084385] URfkill[1307]: Setting WWAN devices to unblocked
+[   31.084482] URfkill[1307]: Setting GPS devices to unblocked
+[   31.084581] URfkill[1307]: Setting FM devices to unblocked
+[   31.084664] URfkill[1307]: Setting NFC devices to unblocked
+[   31.086846] systemd[1]: Starting openvpn.service - OpenVPN service...
+[   31.098685] systemd[1]: Starting ssh.service - OpenBSD Secure Shell server...
+[   31.101178] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:251: Read-only property was already set
+[   31.101868] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:251: Read-only property was already set
+[   31.102440] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:252: Read-only property was already set
+[   31.103575] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:252: Read-only property was already set
+[   31.107311] systemd[1]: Starting systemd-user-sessions.service - Permit User Sessions...
+[   31.107606] systemd[1]: ubuntu-advantage.service - Ubuntu Pro Background Auto Attach was skipped because no trigger condition checks were met.
+[   31.115560] systemd[1]: Starting usb-moded-ssh.service - OpenBSD Secure Shell server - USB moded rescue unit...
+[   31.135953] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   31.136244] init: Control message: Could not find 'android.frameworks.sensorservice@1.0::ISensorManager/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   31.147776] root[1694]: 02default_route_workaround: (lo): up: flushing routing table (proto boot)
+[   31.149235] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:251: Read-only property was already set
+[   31.149765] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:251: Read-only property was already set
+[   31.155963] ofonod[1530]: enum_devices_reply: no battery detected
+[   31.186700] systemd[1]: Finished openvpn.service - OpenVPN service.
+[   31.188457] systemd[1]: Finished systemd-user-sessions.service - Permit User Sessions.
+[   31.194480] systemd[1]: Started accounts-daemon.service - Accounts Service.
+[   31.200324] systemd[1]: Started upower.service - Daemon for power management.
+[   31.208066] systemd[1]: Starting lightdm.service - Light Display Manager...
+[   31.214229] systemd[1]: Starting plymouth-quit-wait.service - Hold until boot process finishes up...
+[   31.247318] systemd[1]: Finished plymouth-quit-wait.service - Hold until boot process finishes up.
+[   31.261175] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   31.261435] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   31.290242] init: Service 'vendor.media.omx' (pid 249) received signal 11
+[   31.290286] init: Sending signal 9 to service 'vendor.media.omx' (pid 249) process group...
+[   31.290375] libprocessgroup: Successfully killed process cgroup uid 1046 pid 249 in 0ms
+[   31.294179] systemd[1]: Started ssh.service - OpenBSD Secure Shell server.
+[   31.303656] systemd[1]: Started usb-tethering.service - USB Tethering.
+[   31.329440] init: Service 'ril-daemon1' (pid 252) exited with status 255
+[   31.329503] init: Sending signal 9 to service 'ril-daemon1' (pid 252) process group...
+[   31.329620] libprocessgroup: Successfully killed process cgroup uid 1001 pid 252 in 0ms
+[   31.330186] init: Sending signal 9 to service 'cpboot-daemon' (pid 250) process group...
+[   31.330281] libprocessgroup: Successfully killed process cgroup uid 0 pid 250 in 0ms
+[   31.330785] init: Command 'restart DIAG-daemon' action=onrestart (<Service 'ril-daemon1' onrestart>:2) took 0ms and failed: service DIAG-daemon not found
+[   31.377181] systemd[1]: Started lightdm.service - Light Display Manager.
+[   31.393047] systemd[1]: Starting a50-audio-route.service - A50: pin PulseAudio playback to sink.primary-out...
+[   31.402419] systemd[1]: Starting aethercast.service - Aethercast Wireless Display...
+[   31.417580] systemd[1]: Starting android-set-boot-completion-property.service - Set boot completion property in Android container...
+[   31.417874] systemd[1]: factory-wipe.service - Factory Wipe Watcher was skipped because of an unmet condition check (ConditionPathExists=/userdata/.factory_wipe).
+[   31.425776] systemd[1]: Starting usb-rescue-mode-off.service - Turn usb-moded rescue mode off...
+[   31.443109] systemd[1]: Started usb-moded-ssh.service - OpenBSD Secure Shell server - USB moded rescue unit.
+[   31.539011] su[1750]: pam_extrausers(su-l:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[   31.539960] su[1750]: (to phablet) root on none
+[   31.545127] usb_moded[1490]: init_done -> reached
+[   31.547352] systemd[1]: Finished usb-rescue-mode-off.service - Turn usb-moded rescue mode off.
+[   31.553038] init: starting service 'sec-camera-provider-4-0'...
+[   31.554939] libprocessgroup: Failed to make and chown /acct/uid_1047: Read-only file system
+[   31.555017] init: createProcessGroup(1047, 319) failed for service 'sec-camera-provider-4-0': Read-only file system
+[   31.559461] libprocessgroup: Failed to open /dev/cpuset/camera-daemon/tasks: No such file or directory: No such file or directory
+[   31.559519] libprocessgroup: Failed to apply CameraServiceCapacity task profile: No such file or directory
+[   31.562962] init: Control message: Processed ctl.interface_start for 'android.hardware.camera.provider@2.4::ICameraProvider/legacy/0' from pid: 42 (/system/bin/hwservicemanager)
+[   31.565028] init: sys_prop: invalid command 2
+[   31.568869] systemd[1]: Starting force-adb.service - Force enable or disable ADB as appropriate...
+[   31.591203] systemd[1]: Started aethercast.service - Aethercast Wireless Display.
+[   31.593096] init: sys_prop: invalid command 2
+[   31.595866] systemd[1]: Started lomiri-location-service.service - Location Services.
+[   31.610503] init: Service 'ril-daemon' (pid 251) exited with status 255
+[   31.610533] init: Sending signal 9 to service 'ril-daemon' (pid 251) process group...
+[   31.610610] libprocessgroup: Successfully killed process cgroup uid 1001 pid 251 in 0ms
+[   31.610819] init: Sending signal 9 to service 'cpboot-daemon' (pid 250) process group...
+[   31.610867] libprocessgroup: Successfully killed process cgroup uid 0 pid 250 in 0ms
+[   31.611274] init: Command 'restart cpboot-daemon5g' action=onrestart (<Service 'ril-daemon' onrestart>:2) took 0ms and failed: service cpboot-daemon5g not found
+[   31.611347] init: Command 'restart DIAG-daemon' action=onrestart (<Service 'ril-daemon' onrestart>:3) took 0ms and failed: service DIAG-daemon not found
+[   31.645367] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   31.679704] systemd[1]: Created slice user-32011.slice - User Slice of UID 32011.
+[   31.680404] init: sys_prop: invalid command 2
+[   31.687027] systemd[1]: Starting user-runtime-dir@32011.service - User Runtime Directory /run/user/32011...
+[   31.698556] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 1.
+[   31.707367] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[   31.722313] init: Control message: Processed ctl.interface_start for 'android.hardware.gatekeeper@1.0::IGatekeeper/default' from pid: 42 (/system/bin/hwservicemanager)
+[   31.724028] init: Service 'camera_service' (pid 238) received signal 11
+[   31.724062] init: Sending signal 9 to service 'camera_service' (pid 238) process group...
+[   31.724150] libprocessgroup: Successfully killed process cgroup uid 1013 pid 238 in 0ms
+[   31.726239] init: processing action (sys.boot_completed=1) from (/system/etc/init/hw/init.rc:995)
+[   31.727905] init: starting service 'exec 15 (/bin/rm -rf /data/per_boot)'...
+[   31.731132] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   31.731210] init: createProcessGroup(1000, 328) failed for service 'exec 15 (/bin/rm -rf /data/per_boot)': Read-only file system
+[   31.731242] init: SVC_EXEC service 'exec 15 (/bin/rm -rf /data/per_boot)' pid 328 (uid 1000 gid 1000+0 context default) started; waiting...
+[   31.751137] init: Untracked pid 309 exited with status 0
+[   31.751254] init: Untracked pid 314 received signal 11
+[   31.754769] init: Service 'exec 15 (/bin/rm -rf /data/per_boot)' (pid 328) exited with status 0 waiting took 0.023000 seconds
+[   31.754806] init: Sending signal 9 to service 'exec 15 (/bin/rm -rf /data/per_boot)' (pid 328) process group...
+[   31.754885] libprocessgroup: Successfully killed process cgroup uid 1000 pid 328 in 0ms
+[   31.756589] init: processing action (sys.boot_completed=1 && sys.bootstat.first_boot_completed=0) from (/system/etc/init/bootstat.rc:77)
+[   31.756686] init: starting service 'exec 16 (/system/bin/bootstat --record_boot_complete --record_boot_reason --record_time_since_factory_reset -l)'...
+[   31.763438] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   31.763525] init: createProcessGroup(1000, 330) failed for service 'exec 16 (/system/bin/bootstat --record_boot_complete --record_boot_reason --record_time_since_factory_reset -l)': Read-only file system
+[   31.773194] init: processing action (sys.boot_completed=1) from (/system/etc/init/flags_health_check.rc:7)
+[   31.784147] init: sys_prop: invalid command 2
+[   31.784149] init: Service 'sec-camera-provider-4-0' (pid 319) received signal 11
+[   31.784180] init: Sending signal 9 to service 'sec-camera-provider-4-0' (pid 319) process group...
+[   31.784247] libprocessgroup: Successfully killed process cgroup uid 1047 pid 319 in 0ms
+[   31.784751] init: processing action (sys.boot_completed=1) from (/system/etc/init/init.halium.rc:40)
+[   31.785555] init: sys_prop: invalid command 2
+[   31.786548] init: processing action (sys.boot_completed=1) from (/system/etc/init/logd.rc:33)
+[   31.786675] init: starting service 'logd-auditctl'...
+[   31.788245] libprocessgroup: Failed to make and chown /acct/uid_1036: Read-only file system
+[   31.788292] init: createProcessGroup(1036, 331) failed for service 'logd-auditctl': Read-only file system
+[   31.795638] init: Service 'exec 16 (/system/bin/bootstat --record_boot_complete --record_boot_reason --record_time_since_factory_reset -l)' (pid 330) exited with status 0 oneshot service took 0.032000 seconds in background
+[   31.795680] init: Sending signal 9 to service 'exec 16 (/system/bin/bootstat --record_boot_complete --record_boot_reason --record_time_since_factory_reset -l)' (pid 330) process group...
+[   31.795748] libprocessgroup: Successfully killed process cgroup uid 1000 pid 330 in 0ms
+[   31.795920] init: processing action (sys.boot_completed=1) from (/vendor/etc/init/snap_utility.rc:22)
+[   31.797257] init: starting service 'snap_utility_64'...
+[   31.798895] libprocessgroup: Failed to make and chown /acct/uid_1047: Read-only file system
+[   31.798940] init: createProcessGroup(1047, 332) failed for service 'snap_utility_64': Read-only file system
+[   31.801857] init: processing action (ro.boot.debug_level=0x4f4c && ro.product.build.type=userdebug && sys.boot_completed=1) from (/vendor/etc/init/snap_utility.rc:37)
+[   31.813274] init: Service 'logd-auditctl' (pid 331) exited with status 0 oneshot service took 0.025000 seconds in background
+[   31.813304] init: Sending signal 9 to service 'logd-auditctl' (pid 331) process group...
+[   31.813371] libprocessgroup: Successfully killed process cgroup uid 1036 pid 331 in 0ms
+[   31.813815] systemd[1]: android-set-boot-completion-property.service: Deactivated successfully.
+[   31.814237] systemd[1]: Finished android-set-boot-completion-property.service - Set boot completion property in Android container.
+[   31.821384] init: processing action (sys.boot_completed=1) from (/vendor/etc/init/snap_utility.rc:49)
+[   31.829039] systemd[1]: force-adb.service: Deactivated successfully.
+[   31.829614] systemd[1]: Finished force-adb.service - Force enable or disable ADB as appropriate.
+[   31.853878] init: sys_prop: invalid command 2
+[   31.915522] loop2: detected capacity change from 0 to 8
+[   31.970243] systemd[1]: Finished user-runtime-dir@32011.service - User Runtime Directory /run/user/32011.
+[   32.010959] systemd[1]: Started udisks2.service - Disk Manager.
+[   32.029768] bluebinder[1879]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[   32.030080] bluebinder[1879]: g_io_channel_unref: assertion 'channel != NULL' failed
+[   32.033289] systemd[1]: Starting user@32011.service - User Manager for UID 32011...
+[   32.037227] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[   32.038473] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[   32.053336] (systemd)[1889]: pam_extrausers(systemd-user:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[   32.245254] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   32.246126] init: Service 'snap_utility_64' (pid 332) exited with status 0 oneshot service took 0.447000 seconds in background
+[   32.246156] init: Sending signal 9 to service 'snap_utility_64' (pid 332) process group...
+[   32.246229] libprocessgroup: Successfully killed process cgroup uid 1047 pid 332 in 0ms
+[   32.344242] systemd[1]: lightdm.service: Main process exited, code=exited, status=1/FAILURE
+[   32.344734] systemd[1]: lightdm.service: Failed with result 'exit-code'.
+[   32.452171] systemd[1]: lightdm.service: Scheduled restart job, restart counter is at 1.
+[   32.485867] systemd[1]: Starting lightdm.service - Light Display Manager...
+[   32.541237] systemd[1]: Started lightdm.service - Light Display Manager.
+[   32.607294] init: sys_prop: invalid command 2
+[   32.646069] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   32.726097] init: Control message: Processed ctl.interface_start for 'android.hardware.gatekeeper@1.0::IGatekeeper/default' from pid: 42 (/system/bin/hwservicemanager)
+[   32.798217] systemd[1]: lightdm.service: Main process exited, code=exited, status=1/FAILURE
+[   32.798721] systemd[1]: lightdm.service: Failed with result 'exit-code'.
+[   32.887365] systemd[1]: Finished click-system-hooks.service - Run Click system-level hooks.
+[   32.952084] systemd[1]: lightdm.service: Scheduled restart job, restart counter is at 2.
+[   32.994081] systemd[1]: Starting lightdm.service - Light Display Manager...
+[   33.044736] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 2.
+[   33.052737] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[   33.067474] init: sys_prop: invalid command 2
+[   33.082847] systemd[1]: Started lightdm.service - Light Display Manager.
+[   33.084480] init: sys_prop: invalid command 2
+[   33.130167] bluebinder[1948]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[   33.130355] bluebinder[1948]: g_io_channel_unref: assertion 'channel != NULL' failed
+[   33.137611] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[   33.138964] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[   33.219163] init: sys_prop: invalid command 2
+[   33.245874] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   33.649849] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   33.672953] systemd[1]: lightdm.service: Main process exited, code=exited, status=1/FAILURE
+[   33.673401] systemd[1]: lightdm.service: Failed with result 'exit-code'.
+[   33.729961] init: Control message: Processed ctl.interface_start for 'android.hardware.gatekeeper@1.0::IGatekeeper/default' from pid: 42 (/system/bin/hwservicemanager)
+[   33.952115] systemd[1]: lightdm.service: Scheduled restart job, restart counter is at 3.
+[   33.981869] systemd[1]: Starting lightdm.service - Light Display Manager...
+[   34.025854] sshd-session[1963]: pam_extrausers(sshd:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[   34.039717] systemd[1]: Started lightdm.service - Light Display Manager.
+[   34.068093] systemd[1]: Created slice user-0.slice - User Slice of UID 0.
+[   34.074459] systemd[1]: Starting user-runtime-dir@0.service - User Runtime Directory /run/user/0...
+[   34.179215] init: sys_prop: invalid command 2
+[   34.250333] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   34.251922] systemd[1]: Finished user-runtime-dir@0.service - User Runtime Directory /run/user/0.
+[   34.257125] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 3.
+[   34.282164] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[   34.287033] systemd[1]: Starting user@0.service - User Manager for UID 0...
+[   34.289358] init: sys_prop: invalid command 2
+[   34.304536] (systemd)[2004]: pam_extrausers(systemd-user:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[   34.317591] init: sys_prop: invalid command 2
+[   34.352180] systemd[1]: Starting systemd-timedated.service - Time & Date Service...
+[   34.357759] systemd[1]: Started snapd.service - Snap Daemon.
+[   34.406861] bluebinder[2027]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[   34.407054] bluebinder[2027]: g_io_channel_unref: assertion 'channel != NULL' failed
+[   34.410858] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[   34.412005] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[   34.577092] init: starting service 'vendor.audio-hal'...
+[   34.578749] libprocessgroup: Failed to make and chown /acct/uid_1041: Read-only file system
+[   34.578823] init: createProcessGroup(1041, 344) failed for service 'vendor.audio-hal': Read-only file system
+[   34.597108] init: starting service 'vendor.cas-hal-1-2'...
+[   34.598720] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[   34.598778] init: createProcessGroup(1013, 346) failed for service 'vendor.cas-hal-1-2': Read-only file system
+[   34.610935] systemd[1]: Started systemd-timedated.service - Time & Date Service.
+[   34.633086] init: starting service 'vendor.drm-widevine-hal-1-3'...
+[   34.634760] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[   34.634819] init: createProcessGroup(1013, 349) failed for service 'vendor.drm-widevine-hal-1-3': Read-only file system
+[   34.658175] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   34.666504] systemd[1]: Finished snapd.seeded.service - Wait until snapd is fully seeded.
+[   34.671993] systemd[1]: snapd.autoimport.service - Auto import assertions from block devices was skipped because no trigger condition checks were met.
+[   34.683575] systemd[1]: lightdm.service: Main process exited, code=exited, status=1/FAILURE
+[   34.684022] systemd[1]: lightdm.service: Failed with result 'exit-code'.
+[   34.737309] init: Control message: Processed ctl.interface_start for 'android.hardware.gatekeeper@1.0::IGatekeeper/default' from pid: 42 (/system/bin/hwservicemanager)
+[   34.761666] systemd[1]: Started user@32011.service - User Manager for UID 32011.
+[   34.764522] systemd[1]: Started session-c1.scope - Session c1 of User phablet.
+[   34.781994] init: Service 'vendor.drm-widevine-hal-1-3' (pid 349) received signal 11
+[   34.782096] init: Sending signal 9 to service 'vendor.drm-widevine-hal-1-3' (pid 349) process group...
+[   34.782261] libprocessgroup: Successfully killed process cgroup uid 1013 pid 349 in 0ms
+[   34.794616] systemd[1]: lightdm.service: Scheduled restart job, restart counter is at 4.
+[   34.803513] systemd[1]: Starting lightdm.service - Light Display Manager...
+[   34.820772] init: sys_prop: invalid command 2
+[   34.847612] init: sys_prop: invalid command 2
+[   34.849811] init: sys_prop: invalid command 2
+[   34.901317] systemd[1]: Started lightdm.service - Light Display Manager.
+[   34.905154] init: sys_prop: invalid command 2
+[   34.929152] init: Service 'vendor.cas-hal-1-2' (pid 346) received signal 11
+[   34.929218] init: Sending signal 9 to service 'vendor.cas-hal-1-2' (pid 346) process group...
+[   34.929359] libprocessgroup: Successfully killed process cgroup uid 1013 pid 346 in 0ms
+[   34.949627] init: sys_prop: invalid command 2
+[   34.963796] init: sys_prop: invalid command 2
+[   35.001500] init: Service 'vendor.audio-hal' (pid 344) received signal 11
+[   35.001554] init: Sending signal 9 to service 'vendor.audio-hal' (pid 344) process group...
+[   35.001682] libprocessgroup: Successfully killed process cgroup uid 1041 pid 344 in 0ms
+[   35.001966] init: Command 'restart audioserver' action=onrestart (<Service 'vendor.audio-hal' onrestart>:1) took 0ms and failed: service audioserver not found
+[   35.156573] systemd[1]: Starting rtkit-daemon.service - RealtimeKit Scheduling Policy Service...
+[   35.168899] systemd[1]: lightdm.service: Main process exited, code=exited, status=1/FAILURE
+[   35.169352] systemd[1]: lightdm.service: Failed with result 'exit-code'.
+[   35.211210] systemd[2004]: Queued start job for default target default.target.
+[   35.213783] systemd[2004]: Created slice app.slice - User Application Slice.
+[   35.214551] systemd[2004]: Created slice session.slice - User Core Session Slice.
+[   35.214632] systemd[2004]: Started launchpadlib-cache-clean.timer - Clean up old files in the Launchpadlib cache.
+[   35.214692] systemd[2004]: Reached target paths.target - Paths.
+[   35.214742] systemd[2004]: Reached target timers.target - Timers.
+[   35.216728] systemd[2004]: Starting dbus.socket - D-Bus User Message Bus Socket...
+[   35.217071] systemd[2004]: Listening on dirmngr.socket - GnuPG network certificate management daemon.
+[   35.217365] systemd[2004]: Listening on gnome-keyring-daemon.socket - GNOME Keyring daemon.
+[   35.217566] systemd[2004]: Listening on gpg-agent-browser.socket - GnuPG cryptographic agent and passphrase cache (access for web browsers).
+[   35.217763] systemd[2004]: Listening on gpg-agent-extra.socket - GnuPG cryptographic agent and passphrase cache (restricted).
+[   35.220381] systemd[2004]: Starting gpg-agent.socket - GnuPG cryptographic agent and passphrase cache...
+[   35.220750] systemd[2004]: Listening on keyboxd.socket - GnuPG public key management service.
+[   35.221265] systemd[2004]: Listening on pk-debconf-helper.socket - debconf communication socket.
+[   35.221329] systemd[2004]: pulseaudio.socket - Sound System was skipped because of an unmet condition check (ConditionUser=!root).
+[   35.221535] systemd[2004]: Listening on snapd.session-agent.socket - REST API socket for snapd user session agent.
+[   35.223888] systemd[2004]: Starting ssh-agent.socket - OpenSSH Agent socket...
+[   35.241684] systemd[2004]: Listening on dbus.socket - D-Bus User Message Bus Socket.
+[   35.254117] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   35.257569] systemd[2004]: Listening on ssh-agent.socket - OpenSSH Agent socket.
+[   35.260280] systemd[2004]: Starting gcr-ssh-agent.socket - GCR ssh-agent wrapper...
+[   35.266979] systemd[2004]: Listening on gpg-agent.socket - GnuPG cryptographic agent and passphrase cache.
+[   35.276812] systemd[1]: lightdm.service: Scheduled restart job, restart counter is at 5.
+[   35.277953] systemd[1]: lightdm.service: Start request repeated too quickly.
+[   35.278016] systemd[1]: lightdm.service: Failed with result 'exit-code'.
+[   35.278372] systemd[1]: Failed to start lightdm.service - Light Display Manager.
+[   35.285160] init: starting service 'secure_storage'...
+[   35.287858] systemd[1]: Started rtkit-daemon.service - RealtimeKit Scheduling Policy Service.
+[   35.287981] libprocessgroup: Failed to make and chown /acct/uid_1000: Read-only file system
+[   35.288086] init: createProcessGroup(1000, 356) failed for service 'secure_storage': Read-only file system
+[   35.309405] init: Service 'secure_storage' (pid 356) exited with status 14
+[   35.309469] init: Sending signal 9 to service 'secure_storage' (pid 356) process group...
+[   35.309605] libprocessgroup: Successfully killed process cgroup uid 1000 pid 356 in 0ms
+[   35.312299] systemd[2004]: Listening on gcr-ssh-agent.socket - GCR ssh-agent wrapper.
+[   35.314835] systemd[2004]: Starting gpg-agent-ssh.socket - GnuPG cryptographic agent (ssh-agent emulation)...
+[   35.351106] systemd[2004]: Listening on gpg-agent-ssh.socket - GnuPG cryptographic agent (ssh-agent emulation).
+[   35.351369] systemd[2004]: Reached target sockets.target - Sockets.
+[   35.351428] systemd[2004]: Reached target basic.target - Basic System.
+[   35.351557] systemd[2004]: mpris-proxy.service - Bluetooth mpris proxy was skipped because of an unmet condition check (ConditionUser=!@system).
+[   35.351595] systemd[2004]: pulseaudio.service - Sound Service was skipped because of an unmet condition check (ConditionUser=!root).
+[   35.351638] systemd[2004]: Reached target default.target - Main User Target.
+[   35.352247] systemd[1]: Started user@0.service - User Manager for UID 0.
+[   35.354145] systemd[2004]: Started audiosystem-passthrough-af.service - audiosystem-passthrough instance implementing AF interface.
+[   35.356883] systemd[2004]: Starting audiosystem-passthrough-qti.service - audiosystem-passthrough instance implementing IQcRilAudio interface...
+[   35.357491] systemd[1]: Started session-2.scope - Session 2 of User root.
+[   35.371462] init: sys_prop: invalid command 2
+[   35.392611] systemd[2004]: audiosystem-passthrough-qti.service: Skipped due to 'exec-condition'.
+[   35.393143] systemd[2004]: Condition check resulted in audiosystem-passthrough-qti.service - audiosystem-passthrough instance implementing IQcRilAudio interface being skipped.
+[   35.393262] init: starting service 'camera_service'...
+[   35.393282] systemd[2004]: Startup finished in 1.070s.
+[   35.396172] libprocessgroup: Failed to make and chown /acct/uid_1013: Read-only file system
+[   35.396290] init: createProcessGroup(1013, 357) failed for service 'camera_service': Read-only file system
+[   35.452141] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 4.
+[   35.489909] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[   35.495538] init: sys_prop: invalid command 2
+[   35.497231] init: starting service 'vendor.media.omx'...
+[   35.499876] libprocessgroup: Failed to make and chown /acct/uid_1046: Read-only file system
+[   35.499978] init: createProcessGroup(1046, 358) failed for service 'vendor.media.omx': Read-only file system
+[   35.501057] libprocessgroup: Failed to find SystemServicePerformancetask profile: No such file or directory
+[   35.501098] libprocessgroup: Failed to find SystemServiceCapacityHightask profile: No such file or directory
+[   35.510751] init: starting service 'ril-daemon'...
+[   35.511096] init: Created socket '/dev/socket/sap_uim_socket1', mode 660, user 1002, group 1002
+[   35.516835] init: sys_prop: invalid command 2
+[   35.517887] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[   35.518005] init: createProcessGroup(1001, 359) failed for service 'ril-daemon': Read-only file system
+[   35.521572] init: starting service 'ril-daemon1'...
+[   35.524358] libprocessgroup: Failed to make and chown /acct/uid_1001: Read-only file system
+[   35.524469] init: createProcessGroup(1001, 360) failed for service 'ril-daemon1': Read-only file system
+[   35.541187] init: starting service 'wlbtd'...
+[   35.543976] libprocessgroup: Failed to make and chown /acct/uid_1010: Read-only file system
+[   35.544116] init: createProcessGroup(1010, 361) failed for service 'wlbtd': Read-only file system
+[   35.573636] init: Service 'wlbtd' (pid 361) exited with status 0
+[   35.573716] init: Sending signal 9 to service 'wlbtd' (pid 361) process group...
+[   35.573877] libprocessgroup: Successfully killed process cgroup uid 1010 pid 361 in 0ms
+[   35.576690] bluebinder[2160]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[   35.576937] bluebinder[2160]: g_io_channel_unref: assertion 'channel != NULL' failed
+[   35.584801] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[   35.587445] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[   35.593063] binder_debug: 4 callbacks suppressed
+[   35.593075] binder: undelivered death notification, 0000000000000000
+[   35.593875] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:360: Read-only property was already set
+[   35.594074] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:360: Read-only property was already set
+[   35.600332] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:360: Read-only property was already set
+[   35.600545] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:360: Read-only property was already set
+[   35.621255] systemd[1]: session-2.scope: Deactivated successfully.
+[   35.667505] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   35.679389] init: Service 'ril-daemon1' (pid 360) exited with status 255
+[   35.679479] init: Sending signal 9 to service 'ril-daemon1' (pid 360) process group...
+[   35.679676] libprocessgroup: Successfully killed process cgroup uid 1001 pid 360 in 0ms
+[   35.680225] init: Sending signal 9 to service 'cpboot-daemon' (pid 250) process group...
+[   35.680419] libprocessgroup: Successfully killed process cgroup uid 0 pid 250 in 0ms
+[   35.683571] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:359: Read-only property was already set
+[   35.683843] init: Command 'restart DIAG-daemon' action=onrestart (<Service 'ril-daemon1' onrestart>:2) took 0ms and failed: service DIAG-daemon not found
+[   35.684580] init: Service 'vendor.media.omx' (pid 358) received signal 11
+[   35.684658] init: Sending signal 9 to service 'vendor.media.omx' (pid 358) process group...
+[   35.684815] libprocessgroup: Successfully killed process cgroup uid 1046 pid 358 in 0ms
+[   35.685394] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:359: Read-only property was already set
+[   35.697710] init: Unable to set property 'ro.ril.svlte1x' from uid:1001 gid:1001 pid:359: Read-only property was already set
+[   35.698108] init: Unable to set property 'ro.ril.svdo' from uid:1001 gid:1001 pid:359: Read-only property was already set
+[   35.738545] init: Control message: Processed ctl.interface_start for 'android.hardware.gatekeeper@1.0::IGatekeeper/default' from pid: 42 (/system/bin/hwservicemanager)
+[   35.798514] sshd-session[2177]: pam_extrausers(sshd:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[   35.825046] mif: cbd: start_shannon310_boot: NV validation TIMEOUT
+[   35.825220] mif: cbd: boot_wake_lock: /sys/power/wake_lock/ss310
+[   35.825252] mif: cbd: start_shannon310_boot: Prepare arguments, read TOC, check NV
+[   35.825335] mif: cbd: std_boot_prepare_args: ERR! DEV(/dev/umts_boot0) open fail (Success)
+[   35.825363] mif: cbd: prepare_boot_args: ERR! std_boot_prepare_args fail
+[   35.825385] mif: cbd: start_shannon310_boot: ERR! prepare_boot_args fail
+[   35.825422] mif: cbd: boot_wake_lock: /sys/power/wake_unlock/ss310
+[   35.825448] mif: cbd: main: start boot fail
+[   35.848325] init: Service 'ril-daemon' (pid 359) exited with status 255
+[   35.848409] init: Sending signal 9 to service 'ril-daemon' (pid 359) process group...
+[   35.848567] libprocessgroup: Successfully killed process cgroup uid 1001 pid 359 in 0ms
+[   35.849044] init: Sending signal 9 to service 'cpboot-daemon' (pid 250) process group...
+[   35.849242] libprocessgroup: Successfully killed process cgroup uid 0 pid 250 in 0ms
+[   35.851152] init: Command 'restart cpboot-daemon5g' action=onrestart (<Service 'ril-daemon' onrestart>:2) took 1ms and failed: service cpboot-daemon5g not found
+[   35.851404] init: Command 'restart DIAG-daemon' action=onrestart (<Service 'ril-daemon' onrestart>:3) took 0ms and failed: service DIAG-daemon not found
+[   35.853886] init: sys_prop: invalid command 2
+[   35.877651] systemd[1]: Started session-4.scope - Session 4 of User root.
+[   35.929134] init: Service 'camera_service' (pid 357) received signal 11
+[   35.929206] init: Sending signal 9 to service 'camera_service' (pid 357) process group...
+[   35.929345] libprocessgroup: Successfully killed process cgroup uid 1013 pid 357 in 0ms
+[   36.059396] init: Control message: Could not find 'android.hardware.audio@5.0::IDevicesFactory/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   36.061380] init: Control message: Could not find 'android.hardware.audio@5.0::IDevicesFactory/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   36.157287] systemd[1]: session-4.scope: Deactivated successfully.
+[   36.258172] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   36.286191] sshd-session[2233]: pam_extrausers(sshd:account): unrecognized ENCRYPT_METHOD value [YESCRYPT]
+[   36.333293] systemd[1]: Started session-5.scope - Session 5 of User root.
+[   36.557171] init: starting service 'sec-camera-provider-4-0'...
+[   36.559838] libprocessgroup: Failed to make and chown /acct/uid_1047: Read-only file system
+[   36.559956] init: createProcessGroup(1047, 386) failed for service 'sec-camera-provider-4-0': Read-only file system
+[   36.561065] libprocessgroup: Failed to open /dev/cpuset/camera-daemon/tasks: No such file or directory: No such file or directory
+[   36.561105] libprocessgroup: Failed to apply CameraServiceCapacity task profile: No such file or directory
+[   36.661811] systemd[1]: bluebinder.service: Scheduled restart job, restart counter is at 5.
+[   36.666234] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   36.693690] systemd[1]: Starting bluebinder.service - Simple proxy for using android binder based bluetooth through vhci....
+[   36.707402] init: Service 'sec-camera-provider-4-0' (pid 386) received signal 11
+[   36.707485] init: Sending signal 9 to service 'sec-camera-provider-4-0' (pid 386) process group...
+[   36.707634] libprocessgroup: Successfully killed process cgroup uid 1047 pid 386 in 0ms
+[   36.707952] init: sys_prop: invalid command 2
+[   36.742476] init: Control message: Processed ctl.interface_start for 'android.hardware.gatekeeper@1.0::IGatekeeper/default' from pid: 42 (/system/bin/hwservicemanager)
+[   36.745168] init: sys_prop: invalid command 2
+[   36.814586] bluebinder[2297]: g_io_channel_shutdown: assertion 'channel != NULL' failed
+[   36.815169] bluebinder[2297]: g_io_channel_unref: assertion 'channel != NULL' failed
+[   36.818186] systemd[1]: bluebinder.service: Failed with result 'protocol'.
+[   36.818777] systemd[1]: Failed to start bluebinder.service - Simple proxy for using android binder based bluetooth through vhci..
+[   36.829073] mif: cbd: main: Call boot start
+[   36.829116] mif: cbd: main: Modem type = 12
+[   36.829138] mif: cbd: main: Boot link = 9
+[   36.829157] mif: cbd: main: Main link = 9
+[   36.829204] mif: cbd: check_board_revision: /proc/device-tree/model_info-system_rev open fail
+[   36.829227] mif: cbd: start_shannon310_boot: CP boot device = /dev/umts_boot0
+[   36.829249] mif: cbd: start_shannon310_boot: CP binary file = /dev/block/by-name/radio
+[   36.829271] mif: cbd: start_shannon310_boot: CP NV file = /mnt/vendor/efs/nv_data.bin
+[   36.829293] mif: cbd: start_shannon310_boot: BOOT link SHMEM
+[   36.829312] mif: cbd: start_shannon310_boot: MAIN link SHMEM
+[   36.833032] binder: undelivered death notification, 0000000000000000
+RC=0

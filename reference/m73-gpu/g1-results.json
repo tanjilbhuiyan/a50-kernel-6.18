@@ -1,0 +1,49 @@
+{
+  "milestone": "M7.3",
+  "stage": "G1b metadata passed; M7.3 in-progress",
+  "g1_result": "failed: raw IORESOURCE_IRQ lookup returned -ENOENT",
+  "g1b_result": "passed: named IRQ getters expose mali0 and both metadata ABIs",
+  "source_tree": "2c8ab17e16c68ae7a72ed3c814f08d39894e5413",
+  "probes": [
+    {
+      "bits": 64,
+      "abi": "11.27",
+      "properties": 82,
+      "pass": true
+    },
+    {
+      "bits": 32,
+      "abi": "11.27",
+      "properties": 82,
+      "pass": true
+    }
+  ],
+  "metadata_gate_enabled": true,
+  "allocations_and_jobs_refused": true,
+  "gpu_execution_tested": false,
+  "dma_import_tested": false,
+  "system_state": "degraded",
+  "jobs": 0,
+  "userdata_rw": true,
+  "usb_root_ssh": true,
+  "restores": [
+    {
+      "test": "g1",
+      "postflight_pass": true,
+      "fsck": "/dev/sda32: clean, 6522/3440640 files, 1983998/13745152 blocks"
+    },
+    {
+      "test": "g1b",
+      "postflight_pass": true,
+      "fsck": "/dev/sda32: clean, 6523/3440640 files, 1986158/13745152 blocks"
+    }
+  ],
+  "final_phone": {
+    "ip": "192.168.0.171",
+    "kernel": "4.14.194",
+    "restore": "2026-11-17 01:04:24",
+    "boot": "2026-11-17 01:04:38",
+    "battery": "99% Charging"
+  },
+  "work_uncommitted": true
+}
