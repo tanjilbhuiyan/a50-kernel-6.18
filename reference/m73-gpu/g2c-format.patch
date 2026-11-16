@@ -1,0 +1,182 @@
+From e3d95f7b8b36a88381e1d0a0bba5e10e5cc4919b Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Tue, 17 Nov 2026 02:14:14 +0600
+Subject: [PATCH] TEST ONLY: M7.3 G2c a50-decon translates WIN_CONFIG formats
+ as the stock driver (do not merge)
+
+G2b found every composer layer submitted as format 2 (RGBA_8888) and
+skipped. M7.2 used the WIN_CONFIG value directly as the IDMA code. As the
+4.14 driver does (helper.c dpu_translate_fmt_to_dpp(), decon_core.c:2574),
+translate the ABI format (Android byte order) to the DPP format (32-bit
+word order; equal to IDMA_IMG_FORMAT for 8888) before programming IDMA0,
+and convert all eight 8888 word orders in the CPU-copy fallback. The
+sampled WIN_CONFIG log adds the DPP code and the source/destination
+geometry. Host test: tools/m73/format_unittest.py.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I23ffe8522cccfbde2b21964a52a5be4787677026
+---
+ drivers/video/fbdev/a50-decon.c | 89 ++++++++++++++++++++++++---------
+ 1 file changed, 65 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/video/fbdev/a50-decon.c b/drivers/video/fbdev/a50-decon.c
+index 3b08e2852..b0697eeaa 100644
+--- a/drivers/video/fbdev/a50-decon.c
++++ b/drivers/video/fbdev/a50-decon.c
+@@ -57,6 +57,7 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
++#include <linux/swab.h>
+ #include <linux/sync_file.h>
+ #include <linux/uaccess.h>
+ #include <linux/wait.h>
+@@ -115,10 +116,55 @@
+ #define WIN_STATE_DISABLED	0
+ #define WIN_STATE_COLOR		1
+ #define WIN_STATE_BUFFER	2
+-#define FMT_ARGB_8888		0	/* word 0xAARRGGBB, as the boot window */
+-#define FMT_ABGR_8888		1	/* word 0xAABBGGRR, bytes R,G,B,A */
+-#define FMT_XRGB_8888		4
+-#define FMT_XBGR_8888		5
++/*
++ * M7.2 used the WIN_CONFIG format value directly as the IDMA code. M7.3 G2c:
++ * as the stock driver (4.14 helper.c dpu_translate_fmt_to_dpp(), called from
++ * decon_core.c:2574), the submitted ABI format (Android byte order, e.g.
++ * RGBA_8888 = bytes R,G,B,A) is translated to the DPP format, whose names give
++ * the 32-bit word order (ABGR = word 0xAABBGGRR = bytes R,G,B,A). For the 8888
++ * formats the DPP enum equals the IDMA_IMG_FORMAT code (cal_9610/regs-dpp.h).
++ */
++#define DPP_ARGB_8888		0	/* word 0xAARRGGBB, as the boot window */
++#define DPP_ABGR_8888		1
++#define DPP_RGBA_8888		2
++#define DPP_BGRA_8888		3
++#define DPP_XRGB_8888		4
++#define DPP_XBGR_8888		5
++#define DPP_RGBX_8888		6
++#define DPP_BGRX_8888		7
++#define FMT_ARGB_8888		DPP_ARGB_8888	/* boot framebuffer */
++
++/* ABI format -> DPP/IDMA code, or -1 if not an 8888 RGB format. */
++static int a50_abi_to_dpp(u32 abi)
++{
++	static const s8 map[8] = {
++		[0] = DPP_BGRA_8888,	/* ARGB_8888 */
++		[1] = DPP_RGBA_8888,	/* ABGR_8888 */
++		[2] = DPP_ABGR_8888,	/* RGBA_8888 */
++		[3] = DPP_ARGB_8888,	/* BGRA_8888 */
++		[4] = DPP_BGRX_8888,	/* XRGB_8888 */
++		[5] = DPP_RGBX_8888,	/* XBGR_8888 */
++		[6] = DPP_XBGR_8888,	/* RGBX_8888 */
++		[7] = DPP_XRGB_8888,	/* BGRX_8888 */
++	};
++
++	return abi < ARRAY_SIZE(map) ? map[abi] : -1;
++}
++
++/* One source word in DPP format @dpp -> the boot framebuffer's ARGB word. */
++static u32 a50_to_argb(u32 v, int dpp)
++{
++	switch (dpp) {
++	case DPP_ARGB_8888:	return v;
++	case DPP_ABGR_8888:	return (v & 0xff00ff00) | ((v >> 16) & 0xff) | ((v & 0xff) << 16);
++	case DPP_RGBA_8888:	return (v >> 8) | (v << 24);
++	case DPP_BGRA_8888:	return swab32(v);
++	case DPP_XRGB_8888:	return v | 0xff000000;
++	case DPP_XBGR_8888:	return (v & 0x0000ff00) | ((v >> 16) & 0xff) | ((v & 0xff) << 16) | 0xff000000;
++	case DPP_RGBX_8888:	return (v >> 8) | 0xff000000;
++	default:		return swab32(v) | 0xff000000;	/* DPP_BGRX_8888 */
++	}
++}
+ 
+ struct a50_win_rect { s32 x, y; u32 w, h; };
+ struct a50_frame { s32 x, y; u32 w, h, f_w, f_h; };
+@@ -157,7 +203,8 @@ static_assert(sizeof(struct a50_win_config_data) == 1040);
+ struct a50_layer {
+ 	struct dma_buf *buf;
+ 	struct dma_fence *acq;
+-	u32 format;
++	u32 format;		/* as submitted (ABI) */
++	int dpp;		/* translated DPP/IDMA code, -1 if unsupported */
+ 	struct a50_frame src, dst;
+ };
+ 
+@@ -430,12 +477,9 @@ static void a50_copy_layer(struct a50_decon *d, struct a50_layer *l)
+ 	struct iosys_map map;
+ 	u32 __iomem *fb = (u32 __iomem *)d->info->screen_base;
+ 	const u32 *src;
+-	bool swap = l->format == FMT_ABGR_8888 || l->format == FMT_XBGR_8888;
+-	bool opaque = l->format == FMT_XRGB_8888 || l->format == FMT_XBGR_8888;
+-	u32 x, y, v;
++	u32 x, y;
+ 
+-	if (l->format != FMT_ARGB_8888 && l->format != FMT_ABGR_8888 &&
+-	    l->format != FMT_XRGB_8888 && l->format != FMT_XBGR_8888) {
++	if (l->dpp < 0) {
+ 		dev_info_ratelimited(d->dev, "win_config: format %u not bridged\n", l->format);
+ 		d->skipped++;
+ 		return;
+@@ -463,14 +507,8 @@ static void a50_copy_layer(struct a50_decon *d, struct a50_layer *l)
+ 		const u32 *s = src + (u64)(l->src.y + y) * l->src.f_w + l->src.x;
+ 		u32 __iomem *o = fb + (u64)(l->dst.y + y) * FB_W + l->dst.x;
+ 
+-		for (x = 0; x < l->dst.w; x++) {
+-			v = s[x];
+-			if (swap)
+-				v = (v & 0xff00ff00) | ((v >> 16) & 0xff) | ((v & 0xff) << 16);
+-			if (opaque)
+-				v |= 0xff000000;
+-			writel_relaxed(v, o + x);
+-		}
++		for (x = 0; x < l->dst.w; x++)
++			writel_relaxed(a50_to_argb(s[x], l->dpp), o + x);
+ 	}
+ 	wmb();
+ 	WRITE_ONCE(d->g2b_stage, "cpu-vunmap-or-end");
+@@ -519,8 +557,7 @@ static void a50_scan_release(struct dma_buf *buf, struct dma_buf_attachment *att
+ 
+ static bool a50_dma_eligible(struct a50_layer *l)
+ {
+-	return (l->format == FMT_ARGB_8888 || l->format == FMT_ABGR_8888 ||
+-		l->format == FMT_XRGB_8888 || l->format == FMT_XBGR_8888) &&
++	return l->dpp >= 0 &&
+ 	       !l->src.x && !l->src.y && l->src.w == FB_W && l->src.h == FB_H &&
+ 	       !l->dst.x && !l->dst.y && l->dst.w == FB_W && l->dst.h == FB_H &&
+ 	       l->src.f_w == FB_W && l->src.f_h >= FB_H &&
+@@ -614,7 +651,7 @@ static void a50_update_work(struct work_struct *w)
+ 		struct sg_table *os = d->scan_sgt;
+ 
+ 		a50_wait_shadow(d);
+-		a50_set_scanout(d, iova, u->layer[0].format);
++		a50_set_scanout(d, iova, u->layer[0].dpp);
+ 		get_dma_buf(u->layer[0].buf);
+ 		d->scan_buf = u->layer[0].buf;
+ 		d->scan_att = att;
+@@ -692,6 +729,7 @@ static int a50_win_config(struct a50_decon *d, void __user *argp)
+ 			}
+ 		}
+ 		l->format = c->format;
++		l->dpp = a50_abi_to_dpp(c->format);
+ 		l->src = c->src;
+ 		l->dst = c->dst;
+ 		u->nlayer++;
+@@ -736,10 +774,13 @@ static int a50_win_config(struct a50_decon *d, void __user *argp)
+ 	}
+ 	if (u->fence->seqno <= 8 || !(u->fence->seqno & 127))
+ 		for (i = 0; i < u->nlayer; i++)
+-			dev_info(d->dev, "G2b WIN_CONFIG: fence=%llu#%llu layers=%d layer=%d format=%u dma_eligible=%d pending=%d\n",
++			dev_info(d->dev, "G2c WIN_CONFIG: fence=%llu#%llu layers=%d layer=%d format=%u dpp=%d src=%ux%u+%d+%d/%ux%u dst=%ux%u+%d+%d dma_eligible=%d pending=%d\n",
+ 				 (unsigned long long)u->fence->context, (unsigned long long)u->fence->seqno,
+-				 u->nlayer, i, u->layer[i].format, a50_dma_eligible(&u->layer[i]),
+-				 atomic_read(&d->remaining));
++				 u->nlayer, i, u->layer[i].format, u->layer[i].dpp,
++				 u->layer[i].src.w, u->layer[i].src.h, u->layer[i].src.x, u->layer[i].src.y,
++				 u->layer[i].src.f_w, u->layer[i].src.f_h,
++				 u->layer[i].dst.w, u->layer[i].dst.h, u->layer[i].dst.x, u->layer[i].dst.y,
++				 a50_dma_eligible(&u->layer[i]), atomic_read(&d->remaining));
+ 	for (i = 1; i < nfd; i++)
+ 		fd_install(fds[i], get_file(sf->file));
+ 	fd_install(fds[0], sf->file);
+-- 
+2.56.1
+

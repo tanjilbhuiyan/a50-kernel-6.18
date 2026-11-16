@@ -1,0 +1,91 @@
+6.18.33-a50-diag+
+44.84
+fence_ctx=1 fence_seq=0 pending=0 win_configs=5 scanned=0 copied=0 dma_fallbacks=0 skipped=0 acq_timeouts=0 completed=0 stage=idle worker_seq=0 worker_layers=0
+layers0=5 layers1=0 layers2=0 layers3=0 layers4=0 worker_format0=0 worker_format1=0 worker_format2=0 worker_format3=0 
+=== winconfig_test 02:25:30
+test1: retire_fence=6 rel_fence=7 remained=1
+test1: retire signalled after 103.0 ms; rel signalled
+test2: empty config retire_fence=-1 (expect -1)
+test3: before acquire signal: unsignalled; after: NOT signalled in 504.0 ms
+test4: 30 flips in 15119.9 ms, 504.0 ms per frame, 60 over 100 ms
+test5: ABI 0 (ARGB bytes) retire NOT signalled
+test5: ABI 2 (RGBA bytes) retire NOT signalled
+test5: ABI 3 (BGRA bytes) retire NOT signalled
+test5: ABI 1 (ABGR bytes) retire NOT signalled
+RESULT: FAIL
+rc=1
+[   46.870245] a50-decon 148b0000.decon_f: G2c WIN_CONFIG: fence=1#5 layers=1 layer=0 format=2 dpp=1 src=1080x2340+0+0/1080x2340 dst=1080x2340+0+0 dma_eligible=1 pending=3
+[   47.374242] a50-decon 148b0000.decon_f: G2c WIN_CONFIG: fence=1#6 layers=1 layer=0 format=2 dpp=1 src=1080x2340+0+0/1080x2340 dst=1080x2340+0+0 dma_eligible=1 pending=3
+[   47.878246] a50-decon 148b0000.decon_f: G2c WIN_CONFIG: fence=1#7 layers=1 layer=0 format=2 dpp=1 src=1080x2340+0+0/1080x2340 dst=1080x2340+0+0 dma_eligible=1 pending=4
+[   48.382253] a50-decon 148b0000.decon_f: G2c WIN_CONFIG: fence=1#8 layers=1 layer=0 format=2 dpp=1 src=1080x2340+0+0/1080x2340 dst=1080x2340+0+0 dma_eligible=1 pending=4
+88.81
+fence_ctx=1 fence_seq=36 pending=0 win_configs=42 scanned=36 copied=0 dma_fallbacks=0 skipped=0 acq_timeouts=0 completed=36 stage=idle worker_seq=36 worker_layers=1
+layers0=6 layers1=36 layers2=0 layers3=0 layers4=0 worker_format0=1 worker_format1=4294967295 worker_format2=4294967295 worker_format3=4294967295 
+   1451 composer@2.1-se /vendor/bin/hw/android.hardware.graphics.composer@2.1-service
+   1511 lomiri-location lomiri-location-serviced --bus system --provider gps::Provider --provider remote::Provider
+ 58:          6          0          0          0          0          0          0          0 GIC-0 231 Level     148b0000.decon_f
+ 59:          5          0          0          0          0          0          0          0 GIC-0 232 Level     148b0000.decon_f
+ 60:          0          0          0          0          0          0          0          0 GIC-0 235 Level     148b0000.decon_f
+ 61:       1995          0          0          0          0          0          0          0     gpc2   3 Edge      a50-decon-te
+ 62:          0          0          0          0          0          0          0          0 GIC-0  98 Level     11500000.mali
+ 63:          0          0          0          0          0          0          0          0 GIC-0  99 Level     11500000.mali
+ 64:         31          0          0          0          0          0          0          0 GIC-0  97 Level     11500000.mali
+ 61:       1995          0          0          0          0          0          0          0     gpc2   3 Edge      a50-decon-te
+ 61:       1995          0          0          0          0          0          0          0     gpc2   3 Edge      a50-decon-te
+106.04
+defer_tee.sh
+kernel-early.txt
+kernel-follow.txt
+lxc.log
+mount.log
+mount_android_safe.sh
+prepare_policy.sh
+runtime_status.sh
+status-output
+teegris-unported.rc
+[    0.000000] Kernel command line: sec_tsp_log=0x40000@0x91244000 sec_disp_log=0x100000@0x91286000 sec_debug_next=0x800000@0x91388000 charging_mode=0x3000 s3cfb.bootloaderfb=0xca000000 lcdtype=9453571 androidboot.carrierid.param.offset=7340608 androidboot.carrierid=BKD consoleblank=0 ehci_hcd.park=3 oops=panic pmic_info=27 ccic_info=1 fg_reset=0 androidboot.emmc_checksum=3 androidboot.sales.param.offset=7340572 sales_code=BKD androidboot.odin_download=1 androidboot.bootloader=A505FDDS9CWA2 androidboot.selinux=enforcing androidboot.product.model=SM-A505F androidboot.ucs_mode=0 androidboot.revision=6 androidboot.hardware=exynos9610 androidboot.warranty_bit=1 androidboot.wb.hs=0e03 androidboot.rp=9 androidboot.wb.snapQB=CUSTOM sec_debug.bin=A androidboot.hmac_mismatch=0 androidboot.sec_atd.tty=/dev/ttySAC0 androidboot.serialno=<redacted> androidboot.ap_serial=<redacted> snd_soc_core.pmdown_time=1000 androidboot.cp_reserved_mem=off skip_initramfs rootwait ro init=/init root=/dev/sda25 androidboot.dtbo_idx=5 \
+[    0.113489] a50-decon 148b0000.decon_f: late IOMMU probe at driver bind, something fishy here!
+[    0.114343] a50-decon 148b0000.decon_f: Adding to iommu group 0
+[    0.114658] a50-decon 148b0000.decon_f: exynos_iommu_attach_device: Attached IOMMU with pgtable 0x0000000881c34000
+[    0.114914] a50-decon 148b0000.decon_f: handover state GLOBAL=0x00000133 TRIG=0x00003010 FRAME_COUNT=3, 5 clocks enabled
+[    0.115629] a50-decon 148b0000.decon_f: fb0 on the boot framebuffer [mem 0xca000000-0xca9fffff]
+[    0.115668] a50-decon 148b0000.decon_f: iommu domain=yes type=0x3 iova 0xca000000 -> 0x00000000ca000000, 0xca9a3f7c -> 0x00000000ca9a3f7c, sysmmu MMU_CTRL=0x00000005 PT_BASE=0x00881c34 CAPA1=0x00000091 rpm_active=1
+[    2.203055] a50-decon 148b0000.decon_f: G2b fence owner: context=1 driver=a50-decon timeline=decon_f seq=0 pending=0 stage=idle worker_seq=0 worker_layers=0 completed=0
+[    2.203103] a50-decon 148b0000.decon_f: 2 s after probe: frames req=1 done=2 start=2 timeouts=0 extra=0 te=125 FRAME_COUNT=4 GLOBAL=0x00000133 TRIG=0x00003010 vsync_on=0 win_configs=0 copied=0 skipped=0 acq_timeouts=0 frame_wait_timeouts=0 scanned=0 dma_fallbacks=0 shadow_wait_timeouts=0 IDMA0=0xca000000 blanks=0 unblanks=0 dcs=0 dcs_timeouts=0
+[    0.000000] Kernel command line: sec_tsp_log=0x40000@0x91244000 sec_disp_log=0x100000@0x91286000 sec_debug_next=0x800000@0x91388000 charging_mode=0x3000 s3cfb.bootloaderfb=0xca000000 lcdtype=9453571 androidboot.carrierid.param.offset=7340608 androidboot.carrierid=BKD consoleblank=0 ehci_hcd.park=3 oops=panic pmic_info=27 ccic_info=1 fg_reset=0 androidboot.emmc_checksum=3 androidboot.sales.param.offset=7340572 sales_code=BKD androidboot.odin_download=1 androidboot.bootloader=A505FDDS9CWA2 androidboot.selinux=enforcing androidboot.product.model=SM-A505F androidboot.ucs_mode=0 androidboot.revision=6 androidboot.hardware=exynos9610 androidboot.warranty_bit=1 androidboot.wb.hs=0e03 androidboot.rp=9 androidboot.wb.snapQB=CUSTOM sec_debug.bin=A androidboot.hmac_mismatch=0 androidboot.sec_atd.tty=/dev/ttySAC0 androidboot.serialno=<redacted> androidboot.ap_serial=<redacted> snd_soc_core.pmdown_time=1000 androidboot.cp_reserved_mem=off skip_initramfs rootwait ro init=/init root=/dev/sda25 androidboot.dtbo_idx=5 \
+[    0.113489] a50-decon 148b0000.decon_f: late IOMMU probe at driver bind, something fishy here!
+[    0.114343] a50-decon 148b0000.decon_f: Adding to iommu group 0
+[    0.114658] a50-decon 148b0000.decon_f: exynos_iommu_attach_device: Attached IOMMU with pgtable 0x0000000881c34000
+[    0.114914] a50-decon 148b0000.decon_f: handover state GLOBAL=0x00000133 TRIG=0x00003010 FRAME_COUNT=3, 5 clocks enabled
+[    0.115629] a50-decon 148b0000.decon_f: fb0 on the boot framebuffer [mem 0xca000000-0xca9fffff]
+[    0.115668] a50-decon 148b0000.decon_f: iommu domain=yes type=0x3 iova 0xca000000 -> 0x00000000ca000000, 0xca9a3f7c -> 0x00000000ca9a3f7c, sysmmu MMU_CTRL=0x00000005 PT_BASE=0x00881c34 CAPA1=0x00000091 rpm_active=1
+[    2.203055] a50-decon 148b0000.decon_f: G2b fence owner: context=1 driver=a50-decon timeline=decon_f seq=0 pending=0 stage=idle worker_seq=0 worker_layers=0 completed=0
+[    2.203103] a50-decon 148b0000.decon_f: 2 s after probe: frames req=1 done=2 start=2 timeouts=0 extra=0 te=125 FRAME_COUNT=4 GLOBAL=0x00000133 TRIG=0x00003010 vsync_on=0 win_configs=0 copied=0 skipped=0 acq_timeouts=0 frame_wait_timeouts=0 scanned=0 dma_fallbacks=0 shadow_wait_timeouts=0 IDMA0=0xca000000 blanks=0 unblanks=0 dcs=0 dcs_timeouts=0
+[   22.163647] init: Parsing file /system/etc/init/blank_screen.rc...
+[   32.730142] a50-decon 148b0000.decon_f: blank: TE during sequence=4 DSIM INTSRC=0x11000000 FIFOCTRL=0x00005507 dcs_timeouts=0
+[   34.070140] a50-decon 148b0000.decon_f: unblank: TE during sequence=4 DSIM INTSRC=0x11000000 FIFOCTRL=0x00005507 dcs_timeouts=0
+[   34.230147] a50-decon 148b0000.decon_f: blank: TE during sequence=9 DSIM INTSRC=0x11000000 FIFOCTRL=0x00005507 dcs_timeouts=0
+[   35.454144] a50-decon 148b0000.decon_f: unblank: TE during sequence=4 DSIM INTSRC=0x11000000 FIFOCTRL=0x00005507 dcs_timeouts=0
+[   35.614150] a50-decon 148b0000.decon_f: blank: TE during sequence=9 DSIM INTSRC=0x11000000 FIFOCTRL=0x00005507 dcs_timeouts=0
+[   36.938149] a50-decon 148b0000.decon_f: unblank: TE during sequence=4 DSIM INTSRC=0x11000000 FIFOCTRL=0x00005507 dcs_timeouts=0
+[   37.098150] a50-decon 148b0000.decon_f: blank: TE during sequence=9 DSIM INTSRC=0x11000000 FIFOCTRL=0x00005507 dcs_timeouts=0
+[   39.222143] a50-decon 148b0000.decon_f: unblank: TE during sequence=4 DSIM INTSRC=0x11000000 FIFOCTRL=0x00005507 dcs_timeouts=0
+[   39.378154] a50-decon 148b0000.decon_f: blank: TE during sequence=9 DSIM INTSRC=0x11000000 FIFOCTRL=0x00005507 dcs_timeouts=0
+[   45.038410] a50-decon 148b0000.decon_f: G2b acquire: out=1#2 layer=0 in=1282#1 signaled_bit=0
+service blank_screen /system/bin/blank_screen
+    user system
+    oneshot
+    group system
+    shutdown critical
+---
+[init.svc.bootanim]: [stopped]
+[init.svc.vendor.hwcomposer-2-1]: [running]
+---
+  etc-lightdm-lightdm.conf.d.mount                                                                                                  loaded    active     mounted                   /etc/lightdm/lightdm.conf.d
+  var-lib-lightdm.mount                                                                                                             loaded    active     mounted                   /var/lib/lightdm
+  var-lib-lightdm\x2ddata.mount                                                                                                     loaded    active     mounted                   /var/lib/lightdm-data
+  var-lib-lomiri\x2dlocation\x2dservice.mount                                                                                       loaded    active     mounted                   /var/lib/lomiri-location-service
+  aethercast.service                                                                                                                loaded    inactive   dead                      Aethercast Wireless Display
+  keep-display-on-during-boot.service                                                                                               loaded    inactive   dead                      Keep the display on during boot
+● lightdm.service                                                                                                                   loaded    failed     failed                    Light Display Manager
+  lomiri-location-service.service                                                                                                   loaded    active     running                   Location Services

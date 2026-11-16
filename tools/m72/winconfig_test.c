@@ -2,7 +2,8 @@
 /*
  * M7.2 D2b: userspace check of S3CFB_WIN_CONFIG on the a50-decon fbdev driver.
  * 1. Allocate a full-screen buffer from /dev/ion (heap 0, the M6.3 ABI), draw a pattern in
- *    Android byte order R,G,B,A (DECON format ABGR_8888), submit it as one BUFFER window,
+ *    Android byte order R,G,B,A (ABI format RGBA_8888, value 2: M7.3 G2c follows the stock driver's
+ *    ABI-to-DPP translation; M7.2 used value 1 with a pass-through driver), submit it as one BUFFER window,
  *    and wait for the retire fence. Expect retire_fence >= 0, rel_fence >= 0, signalled < 500 ms.
  *    Pattern: top half a horizontal gradient magenta -> cyan, bottom half a black/white
  *    checkerboard of 135-pixel squares.
@@ -11,6 +12,9 @@
  *    unsignalled for 300 ms, then signal after the acquire fence is signalled (needs debugfs).
  * 4. (M7.2 D3b) Flip between that buffer and a second one (left half yellow, right half blue) 30 times,
  *    waiting for each retire fence; report the average time per frame. Ends on the second buffer.
+ * 5. (M7.3 G2c) Known colours: four horizontal bands (red, green, blue, white) encoded in turn as ABI
+ *    ARGB_8888, RGBA_8888, BGRA_8888 and ABGR_8888 (byte orders A,R,G,B / R,G,B,A / B,G,R,A / A,B,G,R),
+ *    2 s each. A correct translation shows the same bands throughout.
  * Usage: winconfig_test /dev/fb0 [/sys/kernel/debug/sync/sw_sync]
  */
 #include <errno.h>
@@ -90,7 +94,7 @@ static void fill(struct win_config_data *wd, int buf, int acq)
 	c->acq_fence = acq;
 	c->rel_fence = -1;
 	c->plane_alpha = 255;
-	c->format = 1;			/* ABGR_8888: bytes R,G,B,A */
+	c->format = 2;			/* ABI RGBA_8888: bytes R,G,B,A */
 	c->src = (struct frame){ 0, 0, W, H, W, H };
 	c->dst = (struct frame){ 0, 0, W, H, W, H };
 }
@@ -241,6 +245,41 @@ int main(int argc, char **argv)
 			printf("test4: %d flips in %.1f ms, %.1f ms per frame, %d over 100 ms\n", n,
 			       (now() - t0) * 1e3, (now() - t0) * 1e3 / n, slow);
 			fails += n != 30;
+		}
+	}
+	/* 5: known colours in four byte orders */
+	{
+		static const char *order[4] = { "ARGB", "RGBA", "BGRA", "ABGR" };
+		static const uint32_t abi[4] = { 0, 2, 3, 1 };
+		static const uint8_t band[4][3] = { { 255, 0, 0 }, { 0, 255, 0 }, { 0, 0, 255 }, { 255, 255, 255 } };
+		int k;
+
+		for (k = 0; k < 4; k++) {
+			for (y = 0; y < H; y++) {
+				const uint8_t *c = band[y * 4 / H];
+
+				for (x = 0; x < W; x++) {
+					uint8_t *p = px + 4 * ((size_t)y * W + x);
+					int j;
+
+					for (j = 0; j < 4; j++)
+						p[j] = order[k][j] == 'A' ? 255 : order[k][j] == 'R' ? c[0] :
+						       order[k][j] == 'G' ? c[1] : c[2];
+				}
+			}
+			fill(&wd, a.fd, -1);
+			wd.config[0].format = abi[k];
+			if (ioctl(fb, S3CFB_WIN_CONFIG, &wd) || wd.retire_fence < 0) {
+				perror("known colours");
+				fails++;
+				break;
+			}
+			printf("test5: ABI %u (%s bytes) retire %s\n", abi[k], order[k],
+			       wait_fence(wd.retire_fence, 500) ? "signalled" : "NOT signalled");
+			fflush(stdout);
+			close(wd.retire_fence);
+			close(wd.config[0].rel_fence);
+			sleep(2);
 		}
 	}
 	printf("RESULT: %s\n", fails ? "FAIL" : "PASS");

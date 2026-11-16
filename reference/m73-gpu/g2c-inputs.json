@@ -1,0 +1,72 @@
+{
+ "test": "M7.3 G2c: stock WIN_CONFIG format translation; known colours then GLES",
+ "kernel_branch": "a50-m73-g2c-wip (worktree src/m73/g2b-kernel)",
+ "kernel_commit": "e3d95f7b8",
+ "parent": "530351ed2 (G2b)",
+ "single_variable": "a50-decon ABI->DPP format translation (stock dpu_translate_fmt_to_dpp); sampled log adds geometry",
+ "config": "reference/m73-gpu/g2.config (as G2/G2b)",
+ "dt": "src/m73/dt-g1.img (DTB identical)",
+ "runner": "DT_IMG=src/m73/dt-g1.img tools/m32_run_test.sh src/m73/boot-g2c.img reference/m73-gpu/g2c-dump.txt 192.168.0.171 540",
+ "files": {
+  "src/m73/boot-g2c.img": {
+   "size": 30302208,
+   "sha256": "d6df1ecc7ed57904e6b24c4f83be1d8f33348260094e20f4152b7fffbad60bbc"
+  },
+  "src/m73/g2c-as-built/Image": {
+   "size": 30296072,
+   "sha256": "e47a175398d30081fe5c3c2706d0c33d2c2700153025e6c7ca2f6b8a79a29b0c"
+  },
+  "src/m73/g2c-as-built/.config": {
+   "size": 94166,
+   "sha256": "638b7ff228fc42ac420fbf88df89987301385ea49cc26649524fa4997e617a58"
+  },
+  "src/m73/g2c-as-built/initramfs_data.cpio": {
+   "size": 25954816,
+   "sha256": "c855bb6eee66af35fc8ae2f21f2c85407d6cd46b9bf648b80e9a81672dd192a2"
+  },
+  "reference/m73-gpu/g2.config": {
+   "size": 94079,
+   "sha256": "259bf6e8b9a74a66ebef181f60cbf8dbfac6d9fc2d042316d34b861f990fc70c"
+  },
+  "src/m73/dt-g1.img": {
+   "size": 8388608,
+   "sha256": "dee291ace91ab19f9d241d3c7cd42557e109f066ddf0c38eb69a6a7b1f97625c"
+  },
+  "src/m73/winconfig-test-g2c": {
+   "size": 2225048,
+   "sha256": "3dad711e3b0df810c9803e96b87cd34474ea1071db38eb1ee4ea424bf27ea6da"
+  },
+  "tools/m72/winconfig_test.c": {
+   "size": 8950,
+   "sha256": "5d6e957f054e47148581ad757d12520f8f5b4b0021f783191a2265f2033abfa1"
+  },
+  "tools/m73/format_unittest.py": {
+   "size": 3258,
+   "sha256": "d631657acc348e69c03d3e1864806d8cdaa4ea885dfbbe9790f8c0d4e2a3fe5d"
+  },
+  "tools/m73/build_g2c.sh": {
+   "size": 3017,
+   "sha256": "df23ac92f35efd95f563a8d36e644b69b4daa0f0cd459d377bf72b077a80d447"
+  },
+  "reference/m73-gpu/g2c-format.patch": {
+   "size": 7440,
+   "sha256": "96993f5f836d062f860c912efaadc1318186bb919fb795d69a0f511fcb5bfa0c"
+  },
+  "reference/dt-6.18/images/dtbo.img": {
+   "size": 8388608,
+   "sha256": "6d81cce87faca914d75f024f36e183ae6592e61adc786bbb6c7c47cdd3a151fe"
+  },
+  "reference/stock-images/dt.img": {
+   "size": 8388608,
+   "sha256": "59209aa52dc3b35e2c7cc025c465ed1cdb48dadaa13cf5d1f50324b3bf503547"
+  },
+  "reference/stock-images/dtbo.img": {
+   "size": 8388608,
+   "sha256": "40e47ed1477a8ffb6cbb34e5cb59a1af786c2552544f3b556373f3c553d40d21"
+  },
+  "baseline/ut-26.04-2026-10-19-aa17rf2/boot.img": {
+   "size": 53624832,
+   "sha256": "7d5855efd34e01f09659c7d47ecb0773c30f2acc7443ee87181a0536804086c5"
+  }
+ }
+}
