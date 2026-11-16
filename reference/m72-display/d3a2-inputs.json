@@ -1,0 +1,56 @@
+{
+ "test": "M7.2 D3a2: runtime PM so the DPU SysMMU translates",
+ "kernel_branch": "a50-m72-d3a2-test",
+ "kernel_commit": "b22b17c94",
+ "parent": "17927bb22 (D3a)",
+ "single_variable": "a50-decon: devm_pm_runtime_enable + pm_runtime_resume_and_get (SysMMU resumes, translation on)",
+ "config_identical_to": "src/m64/runtime7/as-built/.config",
+ "dt": "src/m72/dt-d3a.img (unchanged from D3a)",
+ "runner": "DT_IMG=src/m72/dt-d3a.img tools/m32_run_test.sh src/m72/boot-d3a2.img reference/m72-display/d3a2-dump.txt 192.168.0.171 540",
+ "files": {
+  "src/m72/boot-d3a2.img": {
+   "size": 29890560,
+   "sha256": "312ae8beba6461dc41addb8a70c156ea3b8da83f6cb3f4e0a84d861712cddcb2"
+  },
+  "src/ack-6.18/out/m72-d3a2/arch/arm64/boot/Image": {
+   "size": 29884424,
+   "sha256": "9ee9e366858c3389d430306b74ae30a6d49754fe4c5d3bb6f87a19f05583daa5"
+  },
+  "src/ack-6.18/out/m72-d3a2/.config": {
+   "size": 92738,
+   "sha256": "a9378e5063c8e6f0b877e95bb0d1bd56230db30c47de04d1cdd44df1a339cbb2"
+  },
+  "src/ack-6.18/out/m72-d3a2/usr/initramfs_data.cpio": {
+   "size": 25954816,
+   "sha256": "c855bb6eee66af35fc8ae2f21f2c85407d6cd46b9bf648b80e9a81672dd192a2"
+  },
+  "src/m72/dt-d3a.img": {
+   "size": 8388608,
+   "sha256": "92a091412f7cbb6141c2c96d7550aa9a611c252a1bf0810e661636007ea2dfb9"
+  },
+  "src/m72/fb-test": {
+   "size": 2221936,
+   "sha256": "37e11a8b38d61571b67dfeea40dd69358effd3a0129b985f3f80cbc2b86a3d47"
+  },
+  "src/m72/winconfig-test": {
+   "size": 2221336,
+   "sha256": "bfad97ad4d0eac73d51da469b94c8365638f88d4b56d26055cbcd55ba2f42d1a"
+  },
+  "reference/dt-6.18/images/dtbo.img": {
+   "size": 8388608,
+   "sha256": "6d81cce87faca914d75f024f36e183ae6592e61adc786bbb6c7c47cdd3a151fe"
+  },
+  "reference/stock-images/dt.img": {
+   "size": 8388608,
+   "sha256": "59209aa52dc3b35e2c7cc025c465ed1cdb48dadaa13cf5d1f50324b3bf503547"
+  },
+  "reference/stock-images/dtbo.img": {
+   "size": 8388608,
+   "sha256": "40e47ed1477a8ffb6cbb34e5cb59a1af786c2552544f3b556373f3c553d40d21"
+  },
+  "baseline/ut-26.04-2026-10-19-aa17rf2/boot.img": {
+   "size": 53624832,
+   "sha256": "7d5855efd34e01f09659c7d47ecb0773c30f2acc7443ee87181a0536804086c5"
+  }
+ }
+}

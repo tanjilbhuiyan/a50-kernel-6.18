@@ -1,0 +1,89 @@
+From 17927bb228e8e13a08bd84be2640255e9b4a6d5b Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Mon, 16 Nov 2026 15:47:34 +0600
+Subject: [PATCH] TEST ONLY: attach the A50 display to the DPU SysMMU with a
+ boot-framebuffer identity map (do not merge)
+
+M7.2 boot D3a. The decon_f node gets iommus = <&sysmmu_dpu>, so it is
+placed in a default DMA domain, and the reserved boot framebuffer gets
+iommu-addresses equal to its reg, which the IOMMU core installs as a
+direct (identity) mapping before the driver probes. IDMA0, programmed by
+S-Boot with 0xca000000, keeps reading the boot framebuffer once
+translation starts, as Samsung's iovmm_map_oto() arranged in 4.14.
+The driver only adds a probe-time log of the domain, the translation of
+the framebuffer and the SysMMU control register.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I5c38b9507df8e350845fa2e72f2abb0b35a6b0e3
+---
+ arch/arm64/boot/dts/exynos/exynos9610-a50-d2.dts | 15 ++++++++++++++-
+ drivers/video/fbdev/a50-decon.c                  | 14 ++++++++++++++
+ 2 files changed, 28 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610-a50-d2.dts b/arch/arm64/boot/dts/exynos/exynos9610-a50-d2.dts
+index e7ea0eaa9..22196af47 100644
+--- a/arch/arm64/boot/dts/exynos/exynos9610-a50-d2.dts
++++ b/arch/arm64/boot/dts/exynos/exynos9610-a50-d2.dts
+@@ -20,7 +20,7 @@ framebuffer@ca000000 {
+ 	};
+ 
+ 	/* At the root like the stock DT, so the device is /sys/devices/platform/148b0000.decon_f. */
+-	decon_f@148b0000 {
++	decon_f: decon_f@148b0000 {
+ 		compatible = "samsung,a50-decon-handover";
+ 		reg = <0x0 0x148b0000 0x10000>;
+ 		memory-region = <&{/reserved-memory/fb_reserved@ca000000}>;
+@@ -33,5 +33,18 @@ decon_f@148b0000 {
+ 			 <&cmu_dispaud CLK_GOUT_DISPAUD_DPU_ACLK_DECON>,
+ 			 <&cmu_dispaud CLK_GOUT_DISPAUD_DPU_ACLK_DMA>,
+ 			 <&cmu_dispaud CLK_GOUT_DISPAUD_DPU_ACLK_DPP>;
++		/* M7.2 D3a: DMA through the DPU SysMMU (default DMA domain). */
++		iommus = <&sysmmu_dpu>;
+ 	};
+ };
++
++/*
++ * M7.2 D3a: identity-map the boot framebuffer in the display's IOMMU domain,
++ * so IDMA0's base 0xca000000 (programmed by S-Boot) stays valid once
++ * translation starts. Same range as reg, so the core makes it a direct mapping
++ * (of_iommu_get_resv_regions: IOMMU_RESV_DIRECT). Samsung's driver does the same
++ * with iovmm_map_oto() (4.14 dsim_drv.c:1134).
++ */
++&{/reserved-memory/fb_reserved@ca000000} {
++	iommu-addresses = <&decon_f 0x0 0xca000000 0xa00000>;
++};
+diff --git a/drivers/video/fbdev/a50-decon.c b/drivers/video/fbdev/a50-decon.c
+index 01db86f09..b84b07f97 100644
+--- a/drivers/video/fbdev/a50-decon.c
++++ b/drivers/video/fbdev/a50-decon.c
+@@ -38,6 +38,7 @@
+ #include <linux/file.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/interrupt.h>
++#include <linux/iommu.h>
+ #include <linux/io.h>
+ #include <linux/iosys-map.h>
+ #include <linux/ktime.h>
+@@ -650,6 +651,19 @@ static int a50_decon_probe(struct platform_device *pdev)
+ 		return dev_err_probe(dev, ret, "register_framebuffer\n");
+ 	}
+ 	dev_info(dev, "fb%d on the boot framebuffer %pR\n", info->node, fbres);
++	{
++		/* M7.2 D3a diagnostics: IOMMU domain and the boot framebuffer mapping. */
++		struct iommu_domain *dom = iommu_get_domain_for_dev(dev);
++		void __iomem *mmu = ioremap(0x14820000, 0x1000);
++
++		dev_info(dev, "iommu domain=%s type=0x%x iova 0xca000000 -> %pa, 0xca9a3f7c -> %pa, sysmmu MMU_CTRL=0x%08x\n",
++			 dom ? "yes" : "none", dom ? dom->type : 0,
++			 &(phys_addr_t){ dom ? iommu_iova_to_phys(dom, 0xca000000) : 0 },
++			 &(phys_addr_t){ dom ? iommu_iova_to_phys(dom, 0xca9a3f7c) : 0 },
++			 mmu ? readl(mmu) : 0);
++		if (mmu)
++			iounmap(mmu);
++	}
+ 
+ 	a50_decon_trigger(d);
+ 	schedule_delayed_work(&d->report_work, 2 * HZ);
+-- 
+2.56.1
+

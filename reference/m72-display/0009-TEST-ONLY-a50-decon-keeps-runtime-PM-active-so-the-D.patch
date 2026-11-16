@@ -1,0 +1,74 @@
+From b22b17c94423f407752e19b43c6a4c17ff1d00f1 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Mon, 16 Nov 2026 16:06:15 +0600
+Subject: [PATCH] TEST ONLY: a50-decon keeps runtime PM active so the DPU
+ SysMMU translates (do not merge)
+
+M7.2 boot D3a2. D3a attached the display to a DMA domain with the
+boot-framebuffer identity map, but MMU_CTRL read 0: exynos-iommu enables
+translation only while the SysMMU is runtime-PM active, and links the
+SysMMU to the master's runtime PM (DL_FLAG_PM_RUNTIME). Enable runtime PM
+and hold a reference from probe on, so the SysMMU resumes and programs the
+domain's page table. The probe log adds MMU_CTRL, PT_BASE and CAPA1
+(registers the SysMMU driver itself always reads).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I8e308e2b6513204fc67df252fbc6efb78b93975e
+---
+ drivers/video/fbdev/a50-decon.c | 22 +++++++++++++++++++---
+ 1 file changed, 19 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/video/fbdev/a50-decon.c b/drivers/video/fbdev/a50-decon.c
+index b84b07f97..0d950de28 100644
+--- a/drivers/video/fbdev/a50-decon.c
++++ b/drivers/video/fbdev/a50-decon.c
+@@ -46,6 +46,7 @@
+ #include <linux/of.h>
+ #include <linux/of_reserved_mem.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ #include <linux/sync_file.h>
+@@ -574,6 +575,19 @@ static int a50_decon_probe(struct platform_device *pdev)
+ 	if (nclk < 0)
+ 		return dev_err_probe(dev, nclk, "clocks\n");
+ 
++	/*
++	 * M7.2 D3a2: exynos-iommu enables translation only while the SysMMU is
++	 * runtime-PM active, and links it to the master's runtime PM
++	 * (DL_FLAG_PM_RUNTIME). Keep the display active from probe on so the
++	 * SysMMU resumes and programs the domain's page table.
++	 */
++	ret = devm_pm_runtime_enable(dev);
++	if (ret)
++		return dev_err_probe(dev, ret, "runtime pm\n");
++	ret = pm_runtime_resume_and_get(dev);
++	if (ret)
++		return dev_err_probe(dev, ret, "runtime resume\n");
++
+ 	d->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(d->regs))
+ 		return PTR_ERR(d->regs);
+@@ -654,13 +668,15 @@ static int a50_decon_probe(struct platform_device *pdev)
+ 	{
+ 		/* M7.2 D3a diagnostics: IOMMU domain and the boot framebuffer mapping. */
+ 		struct iommu_domain *dom = iommu_get_domain_for_dev(dev);
+-		void __iomem *mmu = ioremap(0x14820000, 0x1000);
++		void __iomem *mmu = ioremap(0x14820000, 0x9000);
+ 
+-		dev_info(dev, "iommu domain=%s type=0x%x iova 0xca000000 -> %pa, 0xca9a3f7c -> %pa, sysmmu MMU_CTRL=0x%08x\n",
++		dev_info(dev, "iommu domain=%s type=0x%x iova 0xca000000 -> %pa, 0xca9a3f7c -> %pa, sysmmu MMU_CTRL=0x%08x PT_BASE=0x%08x CAPA1=0x%08x rpm_active=%d\n",
+ 			 dom ? "yes" : "none", dom ? dom->type : 0,
+ 			 &(phys_addr_t){ dom ? iommu_iova_to_phys(dom, 0xca000000) : 0 },
+ 			 &(phys_addr_t){ dom ? iommu_iova_to_phys(dom, 0xca9a3f7c) : 0 },
+-			 mmu ? readl(mmu) : 0);
++			 mmu ? readl(mmu) : 0, mmu ? readl(mmu + 0x0c) : 0,
++			 mmu ? readl(mmu + 0x874) : 0,
++			 pm_runtime_active(dev));
+ 		if (mmu)
+ 			iounmap(mmu);
+ 	}
+-- 
+2.56.1
+

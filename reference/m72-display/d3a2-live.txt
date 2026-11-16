@@ -1,0 +1,31 @@
+6.18.33-a50-diag+
+[    0.041585] exynos-sysmmu 14820000.iommu: hardware version: 7.2
+[    0.048543] iommu: Default domain type: Translated
+[    0.048568] iommu: DMA domain TLB invalidation policy: strict mode
+[    0.106235] a50-decon 148b0000.decon_f: late IOMMU probe at driver bind, something fishy here!
+[    0.106264] WARNING: CPU: 7 PID: 1 at drivers/iommu/iommu.c:612 __iommu_probe_device+0x1b4/0x464
+[    0.106310] pc : __iommu_probe_device+0x1b4/0x464
+[    0.106318] lr : __iommu_probe_device+0x1b4/0x464
+[    0.106433]  __iommu_probe_device+0x1b4/0x464 (P)
+[    0.106443]  iommu_probe_device+0x30/0x70
+[    0.106451]  of_iommu_configure+0x1d4/0x268
+[    0.106629] a50-decon 148b0000.decon_f: Adding to iommu group 0
+[    0.106798] a50-decon 148b0000.decon_f: exynos_iommu_attach_device: Attached IOMMU with pgtable 0x0000000881a8c000
+[    0.106884] exynos-sysmmu 14820000.iommu: restoring state
+[    0.106908] a50-decon 148b0000.decon_f: handover state GLOBAL=0x00000133 TRIG=0x00003010 FRAME_COUNT=3, 5 clocks enabled
+--- faults so far: 0
+=== fb_test 17:58:45
+id=a50-decon smem=0xca000000 len=10108800 line=4320 1080x2340 bpp=32 r16 g8 b0 a24
+FBIOPAN_DISPLAY: ok
+vsync notifications in 1 s: 61 (last timestamp 68398692296 ns)
+RESULT: PASS
+--- faults: 0
+=== winconfig_test 17:59:13
+test1: retire_fence=6 rel_fence=7 remained=1
+test1: retire signalled after 305.5 ms; rel signalled
+test2: empty config retire_fence=-1 (expect -1)
+test3: before acquire signal: unsignalled; after: signalled in 297.2 ms
+RESULT: PASS
+--- faults: 0
+[    0.107324] a50-decon 148b0000.decon_f: iommu domain=yes type=0x3 iova 0xca000000 -> 0x00000000ca000000, 0xca9a3f7c -> 0x00000000ca9a3f7c, sysmmu MMU_CTRL=0x00000005 PT_BASE=0x00881a8c CAPA1=0x00000091 rpm_active=1
+[    2.117446] a50-decon 148b0000.decon_f: 2 s after probe: frames req=1 done=2 start=2 timeouts=0 extra=0 te=121 FRAME_COUNT=4 GLOBAL=0x00000133 TRIG=0x00003010 vsync_on=0 win_configs=0 copied=0 skipped=0 acq_timeouts=0 frame_wait_timeouts=0

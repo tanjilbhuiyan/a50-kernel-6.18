@@ -1,0 +1,43 @@
+6.18.33-a50-diag+
+[    0.040995] exynos-sysmmu 14820000.iommu: hardware version: 7.2
+[    0.044809] iommu: Default domain type: Translated
+[    0.044823] iommu: DMA domain TLB invalidation policy: strict mode
+[    0.113706] a50-decon 148b0000.decon_f: late IOMMU probe at driver bind, something fishy here!
+[    0.113771] WARNING: CPU: 1 PID: 1 at drivers/iommu/iommu.c:612 __iommu_probe_device+0x1b4/0x464
+[    0.113857] pc : __iommu_probe_device+0x1b4/0x464
+[    0.113873] lr : __iommu_probe_device+0x1b4/0x464
+[    0.114129]  __iommu_probe_device+0x1b4/0x464 (P)
+[    0.114148]  iommu_probe_device+0x30/0x70
+[    0.114166]  of_iommu_configure+0x1d4/0x268
+[    0.114529] a50-decon 148b0000.decon_f: Adding to iommu group 0
+[    0.114855] a50-decon 148b0000.decon_f: exynos_iommu_attach_device: Attached IOMMU with pgtable 0x0000000881718000
+[    0.115068] a50-decon 148b0000.decon_f: handover state GLOBAL=0x00000133 TRIG=0x00003010 FRAME_COUNT=3, 5 clocks enabled
+[    0.115821] a50-decon 148b0000.decon_f: fb0 on the boot framebuffer [mem 0xca000000-0xca9fffff]
+[    0.115856] a50-decon 148b0000.decon_f: iommu domain=yes type=0x3 iova 0xca000000 -> 0x00000000ca000000, 0xca9a3f7c -> 0x00000000ca9a3f7c, sysmmu MMU_CTRL=0x00000000
+[    2.146601] a50-decon 148b0000.decon_f: 2 s after probe: frames req=1 done=2 start=2 timeouts=0 extra=0 te=122 FRAME_COUNT=4 GLOBAL=0x00000133 TRIG=0x00003010 vsync_on=0 win_configs=0 copied=0 skipped=0 acq_timeouts=0 frame_wait_timeouts=0
+--- faults so far:
+0
+=== fb_test 15:57:03
+id=a50-decon smem=0xca000000 len=10108800 line=4320 1080x2340 bpp=32 r16 g8 b0 a24
+FBIOPAN_DISPLAY: ok
+vsync notifications in 1 s: 61 (last timestamp 52948027537 ns)
+RESULT: PASS
+[   51.015800] init: Control message: Could not find 'android.hardware.audio@5.0::IDevicesFactory/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   51.434834] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   51.999390] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   52.019404] init: Control message: Could not find 'android.hardware.audio@5.0::IDevicesFactory/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   52.435703] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+=== winconfig_test 15:57:32
+test1: retire_fence=6 rel_fence=7 remained=1
+test1: retire signalled after 317.3 ms; rel signalled
+test2: empty config retire_fence=-1 (expect -1)
+test3: before acquire signal: unsignalled; after: signalled in 315.7 ms
+RESULT: PASS
+--- faults:
+[   80.551700] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   80.653085] systemd[3295]: Reached target default.target - Main User Target.
+[   81.127868] init: Control message: Could not find 'android.hardware.media.c2@1.0::IComponentStore/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   81.143657] init: Control message: Could not find 'android.hardware.audio@5.0::IDevicesFactory/default' for ctl.interface_start from pid: 42 (/system/bin/hwservicemanager)
+[   81.559339] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
+[   52.950667] a50-decon 148b0000.decon_f: S3CFB_POWER_MODE 2 accepted, panel left on
+[   52.950711] a50-decon 148b0000.decon_f: FBIOBLANK 0 accepted, panel left on
