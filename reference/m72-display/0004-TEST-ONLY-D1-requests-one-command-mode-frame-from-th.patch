@@ -1,0 +1,144 @@
+From 3a9d3da330deaec1c1280bdf6be7afae16e5ac19 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Mon, 16 Nov 2026 13:42:16 +0600
+Subject: [PATCH] TEST ONLY: D1 requests one command-mode frame from the boot
+ framebuffer (do not merge)
+
+M7.2 boot D1, the first display write. 30 s after boot, enable the DPU
+SysMMU clock, draw four colour bands (red, green, blue, white for
+a8r8g8b8) into the boot framebuffer at 0xca000000, and request one frame
+as decon_reg_update_req_and_unmask() does: global shadow update, then
+HW_TRIG_EN set and the DECON trigger mask cleared. After 100 ms the
+trigger is masked again. FRAME_COUNT and status are logged before and
+after, and repeated at about 405 s for the timed dump.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I4cc839acf368a0b8d86a7fbf863497f62e0e602f
+---
+ drivers/soc/samsung/a50-dpu-status.c | 77 ++++++++++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
+
+diff --git a/drivers/soc/samsung/a50-dpu-status.c b/drivers/soc/samsung/a50-dpu-status.c
+index d5d5f9367..720cdd144 100644
+--- a/drivers/soc/samsung/a50-dpu-status.c
++++ b/drivers/soc/samsung/a50-dpu-status.c
+@@ -22,11 +22,21 @@
+  * M7.2 boot D0c changes logging only: every line is also kept in a buffer
+  * and printed again at about 405 s, so it lands in the 420 s timed dump
+  * (D0b's dump held only the last ~50 s of the log). No extra hardware access.
++ *
++ * M7.2 boot D1 adds the first display write, 30 s after boot: enable the DPU
++ * SysMMU clock (IDMA traffic passes the SysMMU, which stays in bypass), draw
++ * four colour bands into the boot framebuffer at 0xca000000, and request
++ * one command-mode frame exactly like decon_reg_update_req_and_unmask():
++ * SHADOW_REG_UPDATE_REQ global, then HW_TRIG_EN set and HW_TRIG_MASK_DECON
++ * cleared. After 100 ms the trigger is masked again
++ * (decon_reg_set_trigger(DISABLE)). Nothing else is written.
+  */
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
++#include <linux/delay.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
++#include <linux/mm.h>
+ #include <linux/kernel.h>
+ #include <linux/printk.h>
+ #include <linux/string.h>
+@@ -93,6 +103,7 @@ static const struct reg idma_regs[] = {
+ 	{ "IN_BASE_ADDR_C", 0x0044 }, { "CFG_ERR_STATE", 0x0870 },
+ };
+ 
++static bool decon_readable;
+ static char a50_log[12288];
+ static size_t a50_len;
+ 
+@@ -185,6 +196,7 @@ static void a50_dpu_status(struct work_struct *w)
+ 		return;
+ 	}
+ 	if (gate_on(g_decon)) {
++		decon_readable = true;
+ 		dump("decon", DECON_BASE, 0x2000, decon_regs, ARRAY_SIZE(decon_regs));
+ 		dump("dsim", DSIM_BASE, 0x100, dsim_regs, ARRAY_SIZE(dsim_regs));
+ 	} else {
+@@ -204,6 +216,70 @@ static void a50_dpu_status(struct work_struct *w)
+ 
+ static DECLARE_WORK(a50_dpu_work, a50_dpu_status);
+ 
++#define FB_W		1080
++#define FB_H		2340
++#define SHADOW_REQ	0x0060
++#define TRIG_CTRL	0x0070
++#define FRAME_CNT	0x02a0
++#define HW_TRIG_EN	BIT(0)
++#define HW_TRIG_MASK	BIT(4)
++
++static void a50_dpu_frame(struct work_struct *w)
++{
++	static const u32 band[4] = { 0xffff0000, 0xff00ff00, 0xff0000ff, 0xffffffff };
++	struct clk *c = __clk_lookup("gout_dispaud_smmu_dpu_clk");
++	void __iomem *decon, *idma;
++	u32 *fb, v, before, after;
++	unsigned int x, y;
++	int ret;
++
++	if (!decon_readable) {
++		say("d1: DECON was not readable at boot, no frame requested\n");
++		return;
++	}
++	ret = c ? clk_prepare_enable(c) : -ENOENT;
++	say("d1: enable gout_dispaud_smmu_dpu_clk ret=%d\n", ret);
++	if (ret)
++		return;
++
++	fb = memremap(0xca000000, FB_W * FB_H * 4, MEMREMAP_WC);
++	decon = ioremap(DECON_BASE, 0x2000);
++	idma = ioremap(IDMA_BASE(0), 0x1000);
++	if (!fb || !decon || !idma) {
++		say("d1: map failed fb=%d decon=%d idma=%d\n", !!fb, !!decon, !!idma);
++		goto out;
++	}
++	for (y = 0; y < FB_H; y++)
++		for (x = 0; x < FB_W; x++)
++			fb[y * FB_W + x] = band[y * 4 / FB_H];
++	wmb();
++
++	before = readl(decon + FRAME_CNT);
++	say("d1: before GLOBAL=0x%08x TRIG=0x%08x FRAME_COUNT=%u\n",
++	    readl(decon + 0x0000), readl(decon + TRIG_CTRL), before);
++	writel(readl(decon + SHADOW_REQ) | BIT(31), decon + SHADOW_REQ);
++	v = readl(decon + TRIG_CTRL);
++	writel((v | HW_TRIG_EN) & ~HW_TRIG_MASK, decon + TRIG_CTRL);
++	msleep(100);
++	after = readl(decon + FRAME_CNT);
++	v = readl(decon + TRIG_CTRL);
++	writel((v & ~HW_TRIG_EN) | HW_TRIG_MASK, decon + TRIG_CTRL);
++	say("d1: after FRAME_COUNT=%u (+%u) GLOBAL=0x%08x PENDING=0x%08x SHADOW=0x%08x TRIG=0x%08x\n",
++	    after, after - before, readl(decon + 0x0000), readl(decon + 0x004c),
++	    readl(decon + SHADOW_REQ), readl(decon + TRIG_CTRL));
++	say("d1: idma0 ENABLE=0x%08x IRQ=0x%08x CFG_ERR=0x%08x\n", readl(idma + 0x0000),
++	    readl(idma + 0x0004), readl(idma + 0x0870));
++out:
++	if (idma)
++		iounmap(idma);
++	if (decon)
++		iounmap(decon);
++	if (fb)
++		memunmap(fb);
++}
++
++static DECLARE_DELAYED_WORK(a50_dpu_frame_work, a50_dpu_frame);
++
+ static void a50_dpu_late(struct work_struct *w)
+ {
+ 	char *p = a50_log, *nl;
+@@ -222,6 +298,7 @@ static DECLARE_DELAYED_WORK(a50_dpu_late_work, a50_dpu_late);
+ static int __init a50_dpu_status_init(void)
+ {
+ 	queue_work(system_unbound_wq, &a50_dpu_work);
++	queue_delayed_work(system_unbound_wq, &a50_dpu_frame_work, 30 * HZ);
+ 	queue_delayed_work(system_unbound_wq, &a50_dpu_late_work, 405 * HZ);
+ 	return 0;
+ }
+-- 
+2.56.1
+
