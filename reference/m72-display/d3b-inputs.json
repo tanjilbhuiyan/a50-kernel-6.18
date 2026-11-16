@@ -1,0 +1,60 @@
+{
+ "test": "M7.2 D3b: DMA scanout of WIN_CONFIG buffers through the DPU SysMMU",
+ "kernel_branch": "a50-m72-d3b-test",
+ "kernel_commit": "97c03597f",
+ "parent": "b22b17c94 (D3a2)",
+ "single_variable": "IDMA0 base/format programmed with the buffer IOVA instead of the CPU copy",
+ "config_identical_to": "src/m64/runtime7/as-built/.config",
+ "dt": "src/m72/dt-d3a.img (unchanged)",
+ "runner": "DT_IMG=src/m72/dt-d3a.img tools/m32_run_test.sh src/m72/boot-d3b.img reference/m72-display/d3b-dump.txt 192.168.0.171 540",
+ "files": {
+  "src/m72/boot-d3b.img": {
+   "size": 29890560,
+   "sha256": "0d3ccbe80b7559659839a1b9852306de4c5d36c258fd4bac6bf3a5c7d956a15a"
+  },
+  "src/ack-6.18/out/m72-d3b/arch/arm64/boot/Image": {
+   "size": 29884424,
+   "sha256": "f8722caa2df5a97026ef80a7fe284ded2e3141687c188e8731b76da250cdbe8f"
+  },
+  "src/ack-6.18/out/m72-d3b/.config": {
+   "size": 92738,
+   "sha256": "a9378e5063c8e6f0b877e95bb0d1bd56230db30c47de04d1cdd44df1a339cbb2"
+  },
+  "src/ack-6.18/out/m72-d3b/usr/initramfs_data.cpio": {
+   "size": 25954816,
+   "sha256": "c855bb6eee66af35fc8ae2f21f2c85407d6cd46b9bf648b80e9a81672dd192a2"
+  },
+  "src/m72/dt-d3a.img": {
+   "size": 8388608,
+   "sha256": "92a091412f7cbb6141c2c96d7550aa9a611c252a1bf0810e661636007ea2dfb9"
+  },
+  "src/m72/fb-test": {
+   "size": 2221936,
+   "sha256": "37e11a8b38d61571b67dfeea40dd69358effd3a0129b985f3f80cbc2b86a3d47"
+  },
+  "src/m72/winconfig-test": {
+   "size": 2222712,
+   "sha256": "2eb6689a32121a66fbf0f6817b6b5d8f7a7e01ac4b2768dbe8a05dc436dad7bb"
+  },
+  "tools/m72/winconfig_test.c": {
+   "size": 7500,
+   "sha256": "e2409167f102b2a0bd3abdb9cb080459f976165868f2d5551c7af55162322e61"
+  },
+  "reference/dt-6.18/images/dtbo.img": {
+   "size": 8388608,
+   "sha256": "6d81cce87faca914d75f024f36e183ae6592e61adc786bbb6c7c47cdd3a151fe"
+  },
+  "reference/stock-images/dt.img": {
+   "size": 8388608,
+   "sha256": "59209aa52dc3b35e2c7cc025c465ed1cdb48dadaa13cf5d1f50324b3bf503547"
+  },
+  "reference/stock-images/dtbo.img": {
+   "size": 8388608,
+   "sha256": "40e47ed1477a8ffb6cbb34e5cb59a1af786c2552544f3b556373f3c553d40d21"
+  },
+  "baseline/ut-26.04-2026-10-19-aa17rf2/boot.img": {
+   "size": 53624832,
+   "sha256": "7d5855efd34e01f09659c7d47ecb0773c30f2acc7443ee87181a0536804086c5"
+  }
+ }
+}

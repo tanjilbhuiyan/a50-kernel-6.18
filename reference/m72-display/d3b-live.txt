@@ -1,0 +1,11 @@
+6.18.33-a50-diag+
+[    0.085708] a50-decon 148b0000.decon_f: iommu domain=yes type=0x3 iova 0xca000000 -> 0x00000000ca000000, 0xca9a3f7c -> 0x00000000ca9a3f7c, sysmmu MMU_CTRL=0x00000005 PT_BASE=0x00881190 CAPA1=0x00000091 rpm_active=1
+[    2.119699] a50-decon 148b0000.decon_f: 2 s after probe: frames req=1 done=2 start=2 timeouts=0 extra=0 te=123 FRAME_COUNT=4 GLOBAL=0x00000133 TRIG=0x00003010 vsync_on=0 win_configs=0 copied=0 skipped=0 acq_timeouts=0 frame_wait_timeouts=0 scanned=0 dma_fal
+=== winconfig_test 18:24:45
+test1: retire_fence=6 rel_fence=7 remained=1
+test1: retire signalled after 25.5 ms; rel signalled
+test2: empty config retire_fence=-1 (expect -1)
+test3: before acquire signal: unsignalled; after: signalled in 14.0 ms
+test4: 30 flips in 504.8 ms, 16.8 ms per frame, 0 over 100 ms
+RESULT: PASS
+--- faults: 0

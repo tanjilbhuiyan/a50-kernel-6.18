@@ -9,6 +9,8 @@
  * 2. Submit a configuration without windows: expect retire_fence == -1.
  * 3. Submit the same buffer with an unsignalled sw_sync acquire fence: the retire fence must stay
  *    unsignalled for 300 ms, then signal after the acquire fence is signalled (needs debugfs).
+ * 4. (M7.2 D3b) Flip between that buffer and a second one (left half yellow, right half blue) 30 times,
+ *    waiting for each retire fence; report the average time per frame. Ends on the second buffer.
  * Usage: winconfig_test /dev/fb0 [/sys/kernel/debug/sync/sw_sync]
  */
 #include <errno.h>
@@ -195,6 +197,50 @@ int main(int argc, char **argv)
 			}
 			close(f.fence);
 			close(tl);
+		}
+	}
+	/* 4: flip between two buffers */
+	{
+		struct ion_allocation_data b = { .len = W * H * 4, .heap_id_mask = 1, .flags = 0 };
+		uint8_t *q;
+		int n, slow = 0;
+		double t;
+
+		if (ioctl(ion, ION_IOC_ALLOC, &b) ||
+		    (q = mmap(NULL, b.len, PROT_READ | PROT_WRITE, MAP_SHARED, b.fd, 0)) == MAP_FAILED) {
+			perror("second buffer");
+			fails++;
+		} else {
+			for (y = 0; y < H; y++)
+				for (x = 0; x < W; x++) {
+					uint8_t *p = q + 4 * ((size_t)y * W + x);
+
+					p[0] = x < W / 2 ? 255 : 0;	/* yellow | blue */
+					p[1] = x < W / 2 ? 255 : 0;
+					p[2] = x < W / 2 ? 0 : 255;
+					p[3] = 255;
+				}
+			t0 = now();
+			for (n = 0; n < 30; n++) {
+				fill(&wd, n & 1 ? b.fd : a.fd, -1);
+				if (n == 29)
+					fill(&wd, b.fd, -1);
+				t = now();
+				if (ioctl(fb, S3CFB_WIN_CONFIG, &wd) || wd.retire_fence < 0) {
+					perror("flip");
+					fails++;
+					break;
+				}
+				if (!wait_fence(wd.retire_fence, 500))
+					slow++;
+				if (now() - t > 0.1)
+					slow++;
+				close(wd.retire_fence);
+				close(wd.config[0].rel_fence);
+			}
+			printf("test4: %d flips in %.1f ms, %.1f ms per frame, %d over 100 ms\n", n,
+			       (now() - t0) * 1e3, (now() - t0) * 1e3 / n, slow);
+			fails += n != 30;
 		}
 	}
 	printf("RESULT: %s\n", fails ? "FAIL" : "PASS");

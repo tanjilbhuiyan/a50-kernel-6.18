@@ -1,0 +1,301 @@
+From 97c03597fa0794a05dcf0ccc255c024aff9927a3 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Mon, 16 Nov 2026 18:13:10 +0600
+Subject: [PATCH] TEST ONLY: a50-decon scans out WIN_CONFIG buffers by DMA
+ through the SysMMU (do not merge)
+
+M7.2 boot D3b. A single full-screen 8888 BUFFER window is mapped on the
+display device (dma_buf_attach/map_attachment, one contiguous IOVA in the
+DPU SysMMU DMA domain), and IDMA0, which feeds window 3 as S-Boot set it
+up, is pointed at it: base address and format field, after the previous
+shadow request has been latched, then a shadow request for all windows
+plus global and one frame (the 4.14 decon_update_regs order). The previous
+buffer stays mapped until the frame that replaces it is done. Other
+configurations, and FBIOPAN_DISPLAY, point IDMA0 back at the boot
+framebuffer, with the CPU copy as before. The log adds scanned,
+dma_fallbacks, shadow_wait_timeouts and the IDMA0 base.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I239f6c180c772c91d8ce94b4cb1f0b1c482370a3
+---
+ drivers/video/fbdev/a50-decon.c | 184 +++++++++++++++++++++++++++++---
+ 1 file changed, 169 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/video/fbdev/a50-decon.c b/drivers/video/fbdev/a50-decon.c
+index 0d950de28..c4ecd34be 100644
+--- a/drivers/video/fbdev/a50-decon.c
++++ b/drivers/video/fbdev/a50-decon.c
+@@ -21,10 +21,12 @@
+  *  - S3CFB_WIN_CONFIG (M7.2 D2b) with the stock 1040-byte argument and the
+  *    stock fence model: one fence per call, returned as retire_fence and as
+  *    rel_fence of every BUFFER window, signalled when the frame is out.
+- *    Until the SysMMU attach (D3), BUFFER windows are not scanned out by
+- *    DMA: after their acquire fences, the driver copies them with the CPU
+- *    into the boot framebuffer (8888 formats, no scaling or blending) and
+- *    sends one frame. Other formats are logged and skipped.
++ *    D3b: a single full-screen 8888 BUFFER window is scanned out by DMA:
++ *    the dma-buf is mapped through the DPU SysMMU and IDMA0 (window 3, as
++ *    S-Boot set it up) is pointed at its IOVA. The previous buffer stays
++ *    mapped until the frame that replaces it is done. Anything else falls
++ *    back to a CPU copy into the boot framebuffer (8888 formats, no scaling
++ *    or blending), with IDMA0 pointed back at the boot framebuffer.
+  *
+  * Register writes: SHADOW_REG_UPDATE_REQ, HW_SW_TRIG_CONTROL and the W1C
+  * INTERRUPT_PENDING/EXTRA_INTERRUPT_PENDING. The panel, DSI, DPP/IDMA and
+@@ -45,7 +47,9 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_reserved_mem.h>
++#include <linux/mutex.h>
+ #include <linux/platform_device.h>
++#include <linux/scatterlist.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+@@ -70,6 +74,14 @@
+ #define HW_TRIG_EN		BIT(0)
+ #define HW_TRIG_MASK_DECON	BIT(4)
+ #define FRAME_COUNT		0x02a0
++#define SHADOW_REQ_ALL_WIN	0x3f
++
++/* 4.14 dpu20/cal_9610/regs-dpp.h; IDMA0 feeds window 3 (D0c) */
++#define IDMA0_BASE		0x14881000
++#define IDMA_IN_CON		0x0008
++#define IDMA_IMG_FORMAT_SHIFT	11
++#define IDMA_IMG_FORMAT_MASK	(0x3f << 11)
++#define IDMA_IN_BASE_ADDR_Y	0x0040
+ 
+ /* 4.14 dpu20/decon.h */
+ #define S3CFB_SET_VSYNC_INT	_IOW('F', 206, __u32)
+@@ -155,6 +167,13 @@ struct a50_decon {
+ 	u64 fence_ctx, fence_seq;
+ 	atomic_t remaining;
+ 	u32 win_configs, copied, skipped, acq_timeouts, frame_waits_timed_out;
++	void __iomem *idma;
++	struct mutex hw_lock;
++	phys_addr_t fb_base;
++	struct dma_buf *scan_buf;
++	struct dma_buf_attachment *scan_att;
++	struct sg_table *scan_sgt;
++	u32 scanned, dma_fallbacks, shadow_waits_timed_out;
+ 	u32 pseudo_palette[16];
+ };
+ 
+@@ -172,7 +191,8 @@ static void a50_decon_trigger(struct a50_decon *d)
+ 	u32 v;
+ 
+ 	spin_lock_irqsave(&d->lock, flags);
+-	writel(readl(d->regs + SHADOW_REQ) | SHADOW_REQ_GLOBAL, d->regs + SHADOW_REQ);
++	writel(readl(d->regs + SHADOW_REQ) | SHADOW_REQ_GLOBAL | SHADOW_REQ_ALL_WIN,
++	       d->regs + SHADOW_REQ);
+ 	v = readl(d->regs + TRIG_CTRL);
+ 	writel((v | HW_TRIG_EN) & ~HW_TRIG_MASK_DECON, d->regs + TRIG_CTRL);
+ 	d->frame_pending = true;
+@@ -255,11 +275,17 @@ static int a50_fb_check_var(struct fb_var_screeninfo *var, struct fb_info *info)
+ 	return 0;
+ }
+ 
++static void a50_show_bootfb_locked(struct a50_decon *d);
++
+ static int a50_fb_pan_display(struct fb_var_screeninfo *var, struct fb_info *info)
+ {
++	struct a50_decon *d = info->par;
++
+ 	if (var->xoffset || var->yoffset)
+ 		return -EINVAL;
+-	a50_decon_trigger(info->par);
++	mutex_lock(&d->hw_lock);
++	a50_show_bootfb_locked(d);
++	mutex_unlock(&d->hw_lock);
+ 	return 0;
+ }
+ 
+@@ -349,22 +375,144 @@ static void a50_copy_layer(struct a50_decon *d, struct a50_layer *l)
+ 	d->copied++;
+ }
+ 
++/* Wait until DECON has latched the previous shadow request (decon_reg_wait_update_done). */
++static void a50_wait_shadow(struct a50_decon *d)
++{
++	int i;
++
++	for (i = 0; i < 200 && readl(d->regs + SHADOW_REQ); i++)
++		usleep_range(100, 200);
++	if (readl(d->regs + SHADOW_REQ))
++		d->shadow_waits_timed_out++;
++}
++
++static void a50_set_scanout(struct a50_decon *d, u32 addr, u32 fmt)
++{
++	u32 con = readl(d->idma + IDMA_IN_CON);
++
++	writel(addr, d->idma + IDMA_IN_BASE_ADDR_Y);
++	writel((con & ~IDMA_IMG_FORMAT_MASK) | (fmt << IDMA_IMG_FORMAT_SHIFT), d->idma + IDMA_IN_CON);
++}
++
++/* Send one frame and wait for frame done; then the previous scanout buffer is no longer read. */
++static void a50_frame_sync(struct a50_decon *d)
++{
++	u32 before = d->frames_done;
++
++	a50_decon_trigger(d);
++	if (!wait_event_timeout(d->frame_wq, d->frames_done != before, msecs_to_jiffies(100)))
++		d->frame_waits_timed_out++;
++}
++
++static void a50_scan_release(struct dma_buf *buf, struct dma_buf_attachment *att, struct sg_table *sgt)
++{
++	if (!buf)
++		return;
++	dma_buf_unmap_attachment_unlocked(att, sgt, DMA_TO_DEVICE);
++	dma_buf_detach(buf, att);
++	dma_buf_put(buf);
++}
++
++static bool a50_dma_eligible(struct a50_layer *l)
++{
++	return (l->format == FMT_ARGB_8888 || l->format == FMT_ABGR_8888 ||
++		l->format == FMT_XRGB_8888 || l->format == FMT_XBGR_8888) &&
++	       !l->src.x && !l->src.y && l->src.w == FB_W && l->src.h == FB_H &&
++	       !l->dst.x && !l->dst.y && l->dst.w == FB_W && l->dst.h == FB_H &&
++	       l->src.f_w == FB_W && l->src.f_h >= FB_H &&
++	       l->buf->size >= (size_t)FB_W * FB_H * 4;
++}
++
++/* Map a layer through the SysMMU; returns the IOVA of one contiguous range or 0. */
++static u32 a50_scan_map(struct a50_decon *d, struct a50_layer *l,
++			struct dma_buf_attachment **attp, struct sg_table **sgtp)
++{
++	struct dma_buf_attachment *att;
++	struct sg_table *sgt;
++	struct scatterlist *sg;
++	dma_addr_t start, next;
++	unsigned int i;
++
++	att = dma_buf_attach(l->buf, d->dev);
++	if (IS_ERR(att))
++		return 0;
++	sgt = dma_buf_map_attachment_unlocked(att, DMA_TO_DEVICE);
++	if (IS_ERR(sgt)) {
++		dma_buf_detach(l->buf, att);
++		return 0;
++	}
++	start = next = sg_dma_address(sgt->sgl);
++	for_each_sgtable_dma_sg(sgt, sg, i) {
++		if (sg_dma_address(sg) != next)
++			break;
++		next += sg_dma_len(sg);
++	}
++	if (next - start < (u64)FB_W * FB_H * 4 || start > U32_MAX - (u64)FB_W * FB_H * 4) {
++		dev_info_ratelimited(d->dev, "scanout: IOVA not contiguous or not 32-bit (%pad, %u segments)\n",
++				     &start, sgt->nents);
++		dma_buf_unmap_attachment_unlocked(att, sgt, DMA_TO_DEVICE);
++		dma_buf_detach(l->buf, att);
++		return 0;
++	}
++	*attp = att;
++	*sgtp = sgt;
++	return start;
++}
++
++/* Point IDMA0 back at the boot framebuffer (pan and CPU-copy paths). */
++static void a50_show_bootfb_locked(struct a50_decon *d)
++{
++	struct dma_buf *ob = d->scan_buf;
++	struct dma_buf_attachment *oa = d->scan_att;
++	struct sg_table *os = d->scan_sgt;
++
++	a50_wait_shadow(d);
++	a50_set_scanout(d, d->fb_base, FMT_ARGB_8888);
++	d->scan_buf = NULL;
++	a50_frame_sync(d);
++	a50_scan_release(ob, oa, os);
++}
++
+ static void a50_update_work(struct work_struct *w)
+ {
+ 	struct a50_update *u = container_of(w, struct a50_update, work);
+ 	struct a50_decon *d = u->d;
+-	u32 before;
++	struct dma_buf_attachment *att = NULL;
++	struct sg_table *sgt = NULL;
++	u32 iova = 0;
+ 	int i;
+ 
+-	for (i = 0; i < u->nlayer; i++) {
++	mutex_lock(&d->hw_lock);
++	for (i = 0; i < u->nlayer; i++)
+ 		if (u->layer[i].acq && dma_fence_wait_timeout(u->layer[i].acq, false, HZ) <= 0)
+ 			d->acq_timeouts++;
+-		a50_copy_layer(d, &u->layer[i]);
++
++	if (u->nlayer == 1 && a50_dma_eligible(&u->layer[0]))
++		iova = a50_scan_map(d, &u->layer[0], &att, &sgt);
++
++	if (iova) {
++		struct dma_buf *ob = d->scan_buf;
++		struct dma_buf_attachment *oa = d->scan_att;
++		struct sg_table *os = d->scan_sgt;
++
++		a50_wait_shadow(d);
++		a50_set_scanout(d, iova, u->layer[0].format);
++		get_dma_buf(u->layer[0].buf);
++		d->scan_buf = u->layer[0].buf;
++		d->scan_att = att;
++		d->scan_sgt = sgt;
++		d->scanned++;
++		a50_frame_sync(d);
++		a50_scan_release(ob, oa, os);
++	} else {
++		if (u->nlayer)
++			d->dma_fallbacks++;
++		for (i = 0; i < u->nlayer; i++)
++			a50_copy_layer(d, &u->layer[i]);
++		a50_show_bootfb_locked(d);
+ 	}
+-	before = d->frames_done;
+-	a50_decon_trigger(d);
+-	if (!wait_event_timeout(d->frame_wq, d->frames_done != before, msecs_to_jiffies(100)))
+-		d->frame_waits_timed_out++;
++	mutex_unlock(&d->hw_lock);
++
+ 	dma_fence_signal(u->fence);
+ 	dma_fence_put(u->fence);
+ 	for (i = 0; i < u->nlayer; i++) {
+@@ -526,11 +674,12 @@ static const struct fb_ops a50_fb_ops = {
+ 
+ static void a50_decon_log(struct a50_decon *d, const char *when)
+ {
+-	dev_info(d->dev, "%s: frames req=%u done=%u start=%u timeouts=%u extra=%u te=%u FRAME_COUNT=%u GLOBAL=0x%08x TRIG=0x%08x vsync_on=%d win_configs=%u copied=%u skipped=%u acq_timeouts=%u frame_wait_timeouts=%u\n",
++	dev_info(d->dev, "%s: frames req=%u done=%u start=%u timeouts=%u extra=%u te=%u FRAME_COUNT=%u GLOBAL=0x%08x TRIG=0x%08x vsync_on=%d win_configs=%u copied=%u skipped=%u acq_timeouts=%u frame_wait_timeouts=%u scanned=%u dma_fallbacks=%u shadow_wait_timeouts=%u IDMA0=0x%08x\n",
+ 		 when, d->frames_req, d->frames_done, d->frame_start, d->timeouts, d->extra_irq,
+ 		 d->te_count, readl(d->regs + FRAME_COUNT), readl(d->regs + GLOBAL_CONTROL),
+ 		 readl(d->regs + TRIG_CTRL), d->vsync_on, d->win_configs, d->copied, d->skipped,
+-		 d->acq_timeouts, d->frame_waits_timed_out);
++		 d->acq_timeouts, d->frame_waits_timed_out, d->scanned, d->dma_fallbacks,
++		 d->shadow_waits_timed_out, readl(d->idma + IDMA_IN_BASE_ADDR_Y));
+ }
+ 
+ static void a50_decon_report(struct work_struct *w)
+@@ -561,6 +710,7 @@ static int a50_decon_probe(struct platform_device *pdev)
+ 	d->dev = dev;
+ 	spin_lock_init(&d->lock);
+ 	spin_lock_init(&d->fence_lock);
++	mutex_init(&d->hw_lock);
+ 	init_waitqueue_head(&d->frame_wq);
+ 	d->fence_ctx = dma_fence_context_alloc(1);
+ 	d->update_wq = alloc_ordered_workqueue("a50-decon-update", WQ_HIGHPRI);
+@@ -597,6 +747,10 @@ static int a50_decon_probe(struct platform_device *pdev)
+ 	if (!rmem || rmem->size < FB_W * FB_H * 4)
+ 		return dev_err_probe(dev, -EINVAL, "framebuffer memory-region\n");
+ 	*fbres = DEFINE_RES_MEM(rmem->base, rmem->size);
++	d->fb_base = rmem->base;
++	d->idma = devm_ioremap(dev, IDMA0_BASE, 0x1000);
++	if (!d->idma)
++		return -ENOMEM;
+ 
+ 	dev_info(dev, "handover state GLOBAL=0x%08x TRIG=0x%08x FRAME_COUNT=%u, %d clocks enabled\n",
+ 		 readl(d->regs + GLOBAL_CONTROL), readl(d->regs + TRIG_CTRL),
+-- 
+2.56.1
+
