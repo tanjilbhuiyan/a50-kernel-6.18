@@ -72,7 +72,7 @@ raw,prefix=Path(sys.argv[1]),sys.argv[2]
 for p in raw.glob('*.txt'):
     s=p.read_text(errors='replace')
     s=re.sub(r'(androidboot\.(?:serialno|ap_serial)=)[^\s\\]+',r'\1<redacted>',s)
-    s=re.sub(r'R28M[A-Z0-9]+','<redacted>',s)
+    s=re.sub(r'R28[M][A-Z0-9]+','<redacted>',s)
     Path(prefix+'-'+p.name).write_text('\n'.join(x.rstrip() for x in s.splitlines())+'\n')
 PY
 exit "$runner_rc"
