@@ -19,7 +19,11 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
   DECON enabled in command mode, TE trigger masked, window 3/IDMA0 reading `0xca000000`, DSI configured, DPU SysMMU
   clock off (`log/2026-11-16-M7.2-d0c-display-state.md`). **D1 PASS (2026-11-16):**
   first 6.18 frame on the panel; the owner saw red/green/blue/white bands, FRAME_COUNT 3→9, format a8r8g8b8
-  (`log/2026-11-16-M7.2-d1-first-frame.md`, kernel `a50-m72-d1-test` `3a9d3da33`). Next: D2, the fbdev DPU20 core. Office network: phone `192.168.181.225`. Log `log/2026-11-14-M7.2-d0-display-probe.md`; kernel test branch `a50-m72-d0-test`
+  (`log/2026-11-16-M7.2-d1-first-frame.md`, kernel `a50-m72-d1-test` `3a9d3da33`). **D2a PASS (2026-11-16):**
+  the `a50-decon` fbdev driver (kernel `a50-m72-d2a2-test` `cd08e9304`, DT `src/m72/dt-d2.img`) gives `/dev/fb0` with
+  frames on pan and 60 Hz TE vsync; the owner saw the test pattern. It needed a 9610 TOP pinctrl GPIO-interrupt fix
+  (bound for the clean stack). `log/2026-11-16-M7.2-d2a-fbdev-driver.md`. Next: D2b (`S3CFB_WIN_CONFIG` and fences),
+  then D3 (SysMMU scanout). Confirm owner presence before every flash. Office network: phone `192.168.181.225`. Log `log/2026-11-14-M7.2-d0-display-probe.md`; kernel test branch `a50-m72-d0-test`
   (`e5b86c629`). Phone restored, post-flight passed, fsck clean. The warning screen is normal during 6.18 boots: don't
   key-recover inside the runner window. M7.3 may start in parallel with G0 (read-only GPU ID probe; check the TOP G3D
   gate first). M7.1 audit and boot ladder:

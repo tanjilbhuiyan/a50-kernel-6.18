@@ -1,0 +1,473 @@
+From a8319f32d4968bd385e5a0db5925653275171c27 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Mon, 16 Nov 2026 14:27:25 +0600
+Subject: [PATCH] TEST ONLY: minimal fbdev driver on the handed-over A50
+ display pipeline (do not merge)
+
+M7.2 boot D2a. a50-decon keeps the command-mode DECON state that S-Boot
+leaves (D0c) and provides an fbdev device on the boot framebuffer, one
+frame per FBIOPAN_DISPLAY (the D1 trigger sequence, masked again on frame
+done), TE vsync timestamps in the platform device's "vsync" attribute while
+S3CFB_SET_VSYNC_INT is on, and no-op S3CFB_POWER_MODE/FBIOBLANK.
+S3CFB_WIN_CONFIG follows in D2b.
+
+exynos9610-a50-d2.dts is the M6.3 SysMMU test DT with simplefb disabled
+and a decon_f@148b0000 node (stock DECON registers, IRQs, TE gpc2-3,
+DISPAUD and DPU SysMMU clocks, the reserved boot framebuffer).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I4f9164d4afb679f2d2764acf84e79bd0e704f038
+---
+ arch/arm64/boot/dts/exynos/Makefile           |   1 +
+ .../boot/dts/exynos/exynos9610-a50-d2.dts     |  37 ++
+ drivers/video/fbdev/Makefile                  |   1 +
+ drivers/video/fbdev/a50-decon.c               | 372 ++++++++++++++++++
+ 4 files changed, 411 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos9610-a50-d2.dts
+ create mode 100644 drivers/video/fbdev/a50-decon.c
+
+diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
+index 59c8e0a36..b1e114f41 100644
+--- a/arch/arm64/boot/dts/exynos/Makefile
++++ b/arch/arm64/boot/dts/exynos/Makefile
+@@ -15,6 +15,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
+ 	exynos8895-dreamlte.dtb		\
+ 	exynos9610-a50.dtb		\
+ 	exynos9610-a50-sysmmu.dtb		\
++	exynos9610-a50-d2.dtb		\
+ 	exynos9810-starlte.dtb		\
+ 	exynos990-c1s.dtb		\
+ 	exynos990-r8s.dtb               \
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610-a50-d2.dts b/arch/arm64/boot/dts/exynos/exynos9610-a50-d2.dts
+new file mode 100644
+index 000000000..e7ea0eaa9
+--- /dev/null
++++ b/arch/arm64/boot/dts/exynos/exynos9610-a50-d2.dts
+@@ -0,0 +1,37 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * TEST ONLY (M7.2 boot D2a): the M6.3 SysMMU test DT plus the display
++ * handover driver node. simplefb is disabled so that the a50-decon fbdev
++ * device owns the boot framebuffer. Values from the stock DT decon_f node
++ * (reference/stock-dt/dt.dtb.0.dts): DECON registers, frame start/done/extra
++ * interrupts SPI 199/200/203, TE on gpc2-3 (hw_te_on pin function 0xf).
++ * The node sits at the root, as in the stock DT, so the platform device is
++ * /sys/devices/platform/148b0000.decon_f, whose "vsync" attribute the stock
++ * composer reads.
++ */
++#include "exynos9610-a50-sysmmu.dts"
++#include <dt-bindings/gpio/gpio.h>
++
++/ {
++	chosen {
++		framebuffer@ca000000 {
++			status = "disabled";
++		};
++	};
++
++	/* At the root like the stock DT, so the device is /sys/devices/platform/148b0000.decon_f. */
++	decon_f@148b0000 {
++		compatible = "samsung,a50-decon-handover";
++		reg = <0x0 0x148b0000 0x10000>;
++		memory-region = <&{/reserved-memory/fb_reserved@ca000000}>;
++		interrupts = <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH>;
++		te-gpios = <&gpc2 3 GPIO_ACTIVE_HIGH>;
++		clocks = <&cmu_top CLK_GOUT_CMU_DISPAUD_DISP>,
++			 <&cmu_dispaud CLK_GOUT_DISPAUD_SMMU_DPU_CLK>,
++			 <&cmu_dispaud CLK_GOUT_DISPAUD_DPU_ACLK_DECON>,
++			 <&cmu_dispaud CLK_GOUT_DISPAUD_DPU_ACLK_DMA>,
++			 <&cmu_dispaud CLK_GOUT_DISPAUD_DPU_ACLK_DPP>;
++	};
++};
+diff --git a/drivers/video/fbdev/Makefile b/drivers/video/fbdev/Makefile
+index b3d12f977..6640200a1 100644
+--- a/drivers/video/fbdev/Makefile
++++ b/drivers/video/fbdev/Makefile
+@@ -126,3 +126,4 @@ obj-$(CONFIG_FB_SIMPLE)           += simplefb.o
+ 
+ # the test framebuffer is last
+ obj-$(CONFIG_FB_VIRTUAL)          += vfb.o
++obj-$(CONFIG_FB)			+= a50-decon.o
+diff --git a/drivers/video/fbdev/a50-decon.c b/drivers/video/fbdev/a50-decon.c
+new file mode 100644
+index 000000000..a4562e860
+--- /dev/null
++++ b/drivers/video/fbdev/a50-decon.c
+@@ -0,0 +1,372 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * TEST ONLY (M7.2 boot D2a), do not merge: minimal fbdev driver for the
++ * Galaxy A50 display pipeline that S-Boot hands over.
++ *
++ * S-Boot leaves DECON-F running in MIPI command mode with window 3 fed by
++ * IDMA0 from the boot framebuffer at 0xca000000, the DSI link configured and
++ * the EA8076 panel on (M7.2 D0c). D1 showed that a frame is sent by the stock
++ * sequence of decon_reg_update_req_and_unmask() (4.14 cal_9610/decon_reg.c):
++ * SHADOW_REG_UPDATE_REQ global, then HW_TRIG_EN set and HW_TRIG_MASK_DECON
++ * cleared; the panel's TE then starts the transfer.
++ *
++ * This driver keeps that state and provides:
++ *  - an fbdev device on the boot framebuffer (a8r8g8b8 1080x2340, D1);
++ *  - one frame per FBIOPAN_DISPLAY: unmask the trigger, mask it again on
++ *    the DECON frame-done interrupt (or after 100 ms);
++ *  - TE timestamps in the sysfs attribute "vsync" of the platform device
++ *    (148b0000.decon_f), notified while S3CFB_SET_VSYNC_INT is on, as the
++ *    stock composer expects;
++ *  - S3CFB_POWER_MODE and FBIOBLANK accepted as no-ops (the panel stays on).
++ * S3CFB_WIN_CONFIG is not implemented yet (D2b).
++ *
++ * Register writes: SHADOW_REG_UPDATE_REQ, HW_SW_TRIG_CONTROL and the W1C
++ * INTERRUPT_PENDING/EXTRA_INTERRUPT_PENDING. The panel, DSI, DPP/IDMA and
++ * SysMMU are not reconfigured; the SysMMU stays in bypass.
++ */
++#include <linux/clk.h>
++#include <linux/delay.h>
++#include <linux/fb.h>
++#include <linux/gpio/consumer.h>
++#include <linux/interrupt.h>
++#include <linux/io.h>
++#include <linux/ktime.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_reserved_mem.h>
++#include <linux/platform_device.h>
++#include <linux/spinlock.h>
++#include <linux/uaccess.h>
++#include <linux/workqueue.h>
++
++#define FB_W			1080
++#define FB_H			2340
++
++/* 4.14 dpu20/cal_9610/regs-decon.h */
++#define GLOBAL_CONTROL		0x0000
++#define INTERRUPT_PENDING	0x004c
++#define EXTRA_INT_PENDING	0x0050
++#define FRAME_DONE_PEND		BIT(13)
++#define FRAME_START_PEND	BIT(12)
++#define EXTRA_PEND		BIT(4)
++#define SHADOW_REQ		0x0060
++#define SHADOW_REQ_GLOBAL	BIT(31)
++#define TRIG_CTRL		0x0070
++#define HW_TRIG_EN		BIT(0)
++#define HW_TRIG_MASK_DECON	BIT(4)
++#define FRAME_COUNT		0x02a0
++
++/* 4.14 dpu20/decon.h */
++#define S3CFB_SET_VSYNC_INT	_IOW('F', 206, __u32)
++#define S3CFB_POWER_MODE	_IOW('F', 223, __u32)
++
++struct a50_decon {
++	struct device *dev;
++	void __iomem *regs;
++	struct fb_info *info;
++	spinlock_t lock;
++	bool frame_pending;
++	bool vsync_on;
++	ktime_t vsync_ts;
++	u32 frames_req, frames_done, frame_start, extra_irq, te_count, timeouts;
++	struct delayed_work timeout_work, report_work, late_work;
++	u32 pseudo_palette[16];
++};
++
++static void a50_decon_mask_locked(struct a50_decon *d)
++{
++	u32 v = readl(d->regs + TRIG_CTRL);
++
++	writel((v & ~HW_TRIG_EN) | HW_TRIG_MASK_DECON, d->regs + TRIG_CTRL);
++	d->frame_pending = false;
++}
++
++static void a50_decon_trigger(struct a50_decon *d)
++{
++	unsigned long flags;
++	u32 v;
++
++	spin_lock_irqsave(&d->lock, flags);
++	writel(readl(d->regs + SHADOW_REQ) | SHADOW_REQ_GLOBAL, d->regs + SHADOW_REQ);
++	v = readl(d->regs + TRIG_CTRL);
++	writel((v | HW_TRIG_EN) & ~HW_TRIG_MASK_DECON, d->regs + TRIG_CTRL);
++	d->frame_pending = true;
++	d->frames_req++;
++	spin_unlock_irqrestore(&d->lock, flags);
++	mod_delayed_work(system_wq, &d->timeout_work, msecs_to_jiffies(100));
++}
++
++static void a50_decon_timeout(struct work_struct *w)
++{
++	struct a50_decon *d = container_of(w, struct a50_decon, timeout_work.work);
++	unsigned long flags;
++
++	spin_lock_irqsave(&d->lock, flags);
++	if (d->frame_pending) {
++		a50_decon_mask_locked(d);
++		d->timeouts++;
++	}
++	spin_unlock_irqrestore(&d->lock, flags);
++}
++
++static irqreturn_t a50_decon_irq(int irq, void *data)
++{
++	struct a50_decon *d = data;
++	u32 pend, ext = 0;
++
++	spin_lock(&d->lock);
++	pend = readl(d->regs + INTERRUPT_PENDING);
++	if (pend & FRAME_START_PEND) {
++		writel(FRAME_START_PEND, d->regs + INTERRUPT_PENDING);
++		d->frame_start++;
++	}
++	if (pend & FRAME_DONE_PEND) {
++		writel(FRAME_DONE_PEND, d->regs + INTERRUPT_PENDING);
++		d->frames_done++;
++		if (d->frame_pending)
++			a50_decon_mask_locked(d);
++	}
++	if (pend & EXTRA_PEND) {
++		writel(EXTRA_PEND, d->regs + INTERRUPT_PENDING);
++		ext = readl(d->regs + EXTRA_INT_PENDING);
++		writel(ext, d->regs + EXTRA_INT_PENDING);
++		d->extra_irq++;
++	}
++	spin_unlock(&d->lock);
++	return IRQ_HANDLED;
++}
++
++static irqreturn_t a50_decon_te_hard(int irq, void *data)
++{
++	struct a50_decon *d = data;
++
++	d->vsync_ts = ktime_get();
++	d->te_count++;
++	return d->vsync_on ? IRQ_WAKE_THREAD : IRQ_HANDLED;
++}
++
++static irqreturn_t a50_decon_te_thread(int irq, void *data)
++{
++	struct a50_decon *d = data;
++
++	sysfs_notify(&d->dev->kobj, NULL, "vsync");
++	return IRQ_HANDLED;
++}
++
++static ssize_t vsync_show(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	struct a50_decon *d = dev_get_drvdata(dev);
++
++	return sysfs_emit(buf, "%llu\n", ktime_to_ns(d->vsync_ts));
++}
++static DEVICE_ATTR_RO(vsync);
++
++static int a50_fb_check_var(struct fb_var_screeninfo *var, struct fb_info *info)
++{
++	if (var->xres != FB_W || var->yres != FB_H || var->bits_per_pixel != 32 ||
++	    var->xoffset || var->yoffset)
++		return -EINVAL;
++	return 0;
++}
++
++static int a50_fb_pan_display(struct fb_var_screeninfo *var, struct fb_info *info)
++{
++	if (var->xoffset || var->yoffset)
++		return -EINVAL;
++	a50_decon_trigger(info->par);
++	return 0;
++}
++
++static int a50_fb_blank(int blank, struct fb_info *info)
++{
++	struct a50_decon *d = info->par;
++
++	dev_info(d->dev, "FBIOBLANK %d accepted, panel left on\n", blank);
++	return 0;
++}
++
++static int a50_fb_setcolreg(unsigned int regno, unsigned int red, unsigned int green,
++			    unsigned int blue, unsigned int transp, struct fb_info *info)
++{
++	u32 *pal = info->pseudo_palette;
++
++	if (regno >= 16)
++		return -EINVAL;
++	pal[regno] = ((transp >> 8) << 24) | ((red >> 8) << 16) | ((green >> 8) << 8) | (blue >> 8);
++	return 0;
++}
++
++static int a50_fb_ioctl(struct fb_info *info, unsigned int cmd, unsigned long arg)
++{
++	struct a50_decon *d = info->par;
++	u32 v;
++
++	switch (cmd) {
++	case S3CFB_SET_VSYNC_INT:
++		if (get_user(v, (u32 __user *)arg))
++			return -EFAULT;
++		d->vsync_on = !!v;
++		return 0;
++	case S3CFB_POWER_MODE:
++		if (get_user(v, (u32 __user *)arg))
++			return -EFAULT;
++		dev_info(d->dev, "S3CFB_POWER_MODE %u accepted, panel left on\n", v);
++		return 0;
++	default:
++		return -ENOTTY;
++	}
++}
++
++static const struct fb_ops a50_fb_ops = {
++	.owner		= THIS_MODULE,
++	FB_DEFAULT_IOMEM_OPS,
++	.fb_check_var	= a50_fb_check_var,
++	.fb_pan_display	= a50_fb_pan_display,
++	.fb_blank	= a50_fb_blank,
++	.fb_setcolreg	= a50_fb_setcolreg,
++	.fb_ioctl	= a50_fb_ioctl,
++	.fb_compat_ioctl = a50_fb_ioctl,
++};
++
++static void a50_decon_log(struct a50_decon *d, const char *when)
++{
++	dev_info(d->dev, "%s: frames req=%u done=%u start=%u timeouts=%u extra=%u te=%u FRAME_COUNT=%u GLOBAL=0x%08x TRIG=0x%08x vsync_on=%d\n",
++		 when, d->frames_req, d->frames_done, d->frame_start, d->timeouts, d->extra_irq,
++		 d->te_count, readl(d->regs + FRAME_COUNT), readl(d->regs + GLOBAL_CONTROL),
++		 readl(d->regs + TRIG_CTRL), d->vsync_on);
++}
++
++static void a50_decon_report(struct work_struct *w)
++{
++	a50_decon_log(container_of(w, struct a50_decon, report_work.work), "2 s after probe");
++}
++
++static void a50_decon_late(struct work_struct *w)
++{
++	a50_decon_log(container_of(w, struct a50_decon, late_work.work), "late");
++}
++
++static int a50_decon_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct clk_bulk_data *clks;
++	struct gpio_desc *te;
++	struct a50_decon *d;
++	struct fb_info *info;
++	struct device_node *np;
++	struct reserved_mem *rmem;
++	struct resource fbres_buf, *fbres = &fbres_buf;
++	int i, irq, nclk, ret;
++
++	d = devm_kzalloc(dev, sizeof(*d), GFP_KERNEL);
++	if (!d)
++		return -ENOMEM;
++	d->dev = dev;
++	spin_lock_init(&d->lock);
++	INIT_DELAYED_WORK(&d->timeout_work, a50_decon_timeout);
++	INIT_DELAYED_WORK(&d->report_work, a50_decon_report);
++	INIT_DELAYED_WORK(&d->late_work, a50_decon_late);
++	platform_set_drvdata(pdev, d);
++
++	nclk = devm_clk_bulk_get_all_enabled(dev, &clks);
++	if (nclk < 0)
++		return dev_err_probe(dev, nclk, "clocks\n");
++
++	d->regs = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(d->regs))
++		return PTR_ERR(d->regs);
++	np = of_parse_phandle(dev->of_node, "memory-region", 0);
++	rmem = np ? of_reserved_mem_lookup(np) : NULL;
++	of_node_put(np);
++	if (!rmem || rmem->size < FB_W * FB_H * 4)
++		return dev_err_probe(dev, -EINVAL, "framebuffer memory-region\n");
++	*fbres = DEFINE_RES_MEM(rmem->base, rmem->size);
++
++	dev_info(dev, "handover state GLOBAL=0x%08x TRIG=0x%08x FRAME_COUNT=%u, %d clocks enabled\n",
++		 readl(d->regs + GLOBAL_CONTROL), readl(d->regs + TRIG_CTRL),
++		 readl(d->regs + FRAME_COUNT), nclk);
++	if ((readl(d->regs + GLOBAL_CONTROL) & 0x3) != 0x3)
++		return dev_err_probe(dev, -ENODEV, "DECON not enabled by the bootloader\n");
++
++	for (i = 0; i < 3; i++) {
++		irq = platform_get_irq(pdev, i);
++		if (irq < 0)
++			return irq;
++		ret = devm_request_irq(dev, irq, a50_decon_irq, 0, dev_name(dev), d);
++		if (ret)
++			return dev_err_probe(dev, ret, "irq %d\n", i);
++	}
++
++	te = devm_gpiod_get(dev, "te", GPIOD_IN);
++	if (IS_ERR(te))
++		return dev_err_probe(dev, PTR_ERR(te), "te gpio\n");
++	irq = gpiod_to_irq(te);
++	if (irq < 0)
++		return dev_err_probe(dev, irq, "te irq\n");
++	ret = devm_request_threaded_irq(dev, irq, a50_decon_te_hard, a50_decon_te_thread,
++					IRQF_TRIGGER_RISING | IRQF_ONESHOT, "a50-decon-te", d);
++	if (ret)
++		return dev_err_probe(dev, ret, "te irq request\n");
++
++	ret = device_create_file(dev, &dev_attr_vsync);
++	if (ret)
++		return ret;
++
++	info = framebuffer_alloc(0, dev);
++	if (!info)
++		return -ENOMEM;
++	d->info = info;
++	info->par = d;
++	info->fbops = &a50_fb_ops;
++	info->pseudo_palette = d->pseudo_palette;
++	strscpy(info->fix.id, "a50-decon", sizeof(info->fix.id));
++	info->fix.smem_start = fbres->start;
++	info->fix.smem_len = FB_W * FB_H * 4;
++	info->fix.type = FB_TYPE_PACKED_PIXELS;
++	info->fix.visual = FB_VISUAL_TRUECOLOR;
++	info->fix.line_length = FB_W * 4;
++	info->fix.accel = FB_ACCEL_NONE;
++	info->var.xres = info->var.xres_virtual = FB_W;
++	info->var.yres = info->var.yres_virtual = FB_H;
++	info->var.bits_per_pixel = 32;
++	info->var.red = (struct fb_bitfield){ 16, 8, 0 };
++	info->var.green = (struct fb_bitfield){ 8, 8, 0 };
++	info->var.blue = (struct fb_bitfield){ 0, 8, 0 };
++	info->var.transp = (struct fb_bitfield){ 24, 8, 0 };
++	info->var.width = 68;	/* mm, stock DT ea8076 size */
++	info->var.height = 147;
++	info->var.activate = FB_ACTIVATE_NOW;
++	info->var.vmode = FB_VMODE_NONINTERLACED;
++	info->screen_base = devm_ioremap_wc(dev, fbres->start, info->fix.smem_len);
++	if (!info->screen_base) {
++		framebuffer_release(info);
++		return -ENOMEM;
++	}
++	info->screen_size = info->fix.smem_len;
++	ret = register_framebuffer(info);
++	if (ret) {
++		framebuffer_release(info);
++		return dev_err_probe(dev, ret, "register_framebuffer\n");
++	}
++	dev_info(dev, "fb%d on the boot framebuffer %pR\n", info->node, fbres);
++
++	a50_decon_trigger(d);
++	schedule_delayed_work(&d->report_work, 2 * HZ);
++	schedule_delayed_work(&d->late_work, 405 * HZ);
++	return 0;
++}
++
++static const struct of_device_id a50_decon_of_match[] = {
++	{ .compatible = "samsung,a50-decon-handover" },
++	{ }
++};
++
++static struct platform_driver a50_decon_driver = {
++	.probe = a50_decon_probe,
++	.driver = {
++		.name = "a50-decon",
++		.of_match_table = a50_decon_of_match,
++		.suppress_bind_attrs = true,
++	},
++};
++builtin_platform_driver(a50_decon_driver);
+-- 
+2.56.1
+

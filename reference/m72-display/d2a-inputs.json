@@ -1,0 +1,65 @@
+{
+ "test": "M7.2 D2a: a50-decon fbdev driver on the handed-over pipeline",
+ "kernel_branch": "a50-m72-d2a-test",
+ "kernel_commit": "a8319f32d",
+ "base": "bd3fe49b2 (M6.4 test-7 source, without the D0-D1 probe)",
+ "variable": "a50-decon driver + DT node (simplefb disabled); hardware actions as D1 (clocks, trigger) plus DECON and TE interrupts",
+ "config_identical_to": "src/m64/runtime7/as-built/.config",
+ "initramfs_identical_to": "src/m64/runtime7/as-built/initramfs_data.cpio",
+ "dt_vs_tested": "exynos9610-a50-sysmmu.dtb + simplefb disabled + root decon_f@148b0000 node (+2 phandles)",
+ "runner": "DT_IMG=src/m72/dt-d2.img tools/m32_run_test.sh src/m72/boot-d2a.img reference/m72-display/d2a-dump.txt 192.168.181.225 540",
+ "files": {
+  "src/m72/boot-d2a.img": {
+   "size": 29890560,
+   "sha256": "07448febda6be01ae9f5e9e10b36dcc8f1b5ffe296b8f1c258fbce5d1c5b8f67"
+  },
+  "src/ack-6.18/out/m72-d2a/arch/arm64/boot/Image": {
+   "size": 29884424,
+   "sha256": "ed0502f8bacf585f871e0e14adf0140874209ac9065639dd673add84ff76c817"
+  },
+  "src/ack-6.18/out/m72-d2a/.config": {
+   "size": 92194,
+   "sha256": "6ab4d7a118248fd8c583fc335a36691b7ad5598c801b84b8aa68e051cdbf680f"
+  },
+  "src/ack-6.18/out/m72-d2a/usr/initramfs_data.cpio": {
+   "size": 25954816,
+   "sha256": "c855bb6eee66af35fc8ae2f21f2c85407d6cd46b9bf648b80e9a81672dd192a2"
+  },
+  "src/m64/runtime7/initramfs.list": {
+   "size": 17222,
+   "sha256": "c1ec9e097c30c980145e68bfb20ee023c2b5f0eca0828ae665d46aa8614c5ce7"
+  },
+  "src/m72/dt-d2.img": {
+   "size": 8388608,
+   "sha256": "28385671e2da775bcd95749eac6367a9a93857b7f336e0257d9552b3178f2710"
+  },
+  "src/ack-6.18/out/m72-d2a/arch/arm64/boot/dts/exynos/exynos9610-a50-d2.dtb": {
+   "size": 17079,
+   "sha256": "b9b2ab195abd5a22af887fbe1a77bb1253572b0b6836e2afc22710364b0879e8"
+  },
+  "src/m72/fb-test": {
+   "size": 2221936,
+   "sha256": "37e11a8b38d61571b67dfeea40dd69358effd3a0129b985f3f80cbc2b86a3d47"
+  },
+  "tools/m72/fb_test.c": {
+   "size": 3404,
+   "sha256": "a7a854e8ae23d06cd8c01c6deb6c15e2bc3db2a4c11e81814adced6e14424ce1"
+  },
+  "reference/dt-6.18/images/dtbo.img": {
+   "size": 8388608,
+   "sha256": "6d81cce87faca914d75f024f36e183ae6592e61adc786bbb6c7c47cdd3a151fe"
+  },
+  "reference/stock-images/dt.img": {
+   "size": 8388608,
+   "sha256": "59209aa52dc3b35e2c7cc025c465ed1cdb48dadaa13cf5d1f50324b3bf503547"
+  },
+  "reference/stock-images/dtbo.img": {
+   "size": 8388608,
+   "sha256": "40e47ed1477a8ffb6cbb34e5cb59a1af786c2552544f3b556373f3c553d40d21"
+  },
+  "baseline/ut-26.04-2026-10-19-aa17rf2/boot.img": {
+   "size": 53624832,
+   "sha256": "7d5855efd34e01f09659c7d47ecb0773c30f2acc7443ee87181a0536804086c5"
+  }
+ }
+}
