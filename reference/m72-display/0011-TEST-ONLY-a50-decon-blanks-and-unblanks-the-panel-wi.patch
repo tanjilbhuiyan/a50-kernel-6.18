@@ -1,0 +1,176 @@
+From 6c1151fb6a1ed2ec9d7a7b32a6c928991706874d Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Mon, 16 Nov 2026 18:36:08 +0600
+Subject: [PATCH] TEST ONLY: a50-decon blanks and unblanks the panel with DCS
+ sleep commands (do not merge)
+
+M7.2 boot D4a. FBIOBLANK and S3CFB_POWER_MODE stop being no-ops. Blank
+(any FB_BLANK_* except UNBLANK; power modes OFF and DOZE_SUSPEND) sends the
+4.14 ea8076_exit() sequence over DSI: DCS 0x28 display off, 20 ms, 0x10
+sleep in, 120 ms. Unblank sends 0x11 sleep out, waits 120 ms, resends the
+current frame and sends 0x29 display on (ea8076_init/ea8076_displayon).
+DCS short writes go through DSIM_PKTHDR with the header-FIFO checks of
+dsim_write_data(). The panel's power GPIOs are not touched. The log
+reports TE during each sequence, DSIM status, and blank/DCS counters.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: Ia348c1755d6ddd6670ce0e3b225d4dcf0c686e39
+---
+ drivers/video/fbdev/a50-decon.c | 88 ++++++++++++++++++++++++++++++---
+ 1 file changed, 82 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/video/fbdev/a50-decon.c b/drivers/video/fbdev/a50-decon.c
+index c4ecd34be..47e724ab5 100644
+--- a/drivers/video/fbdev/a50-decon.c
++++ b/drivers/video/fbdev/a50-decon.c
+@@ -17,7 +17,11 @@
+  *  - TE timestamps in the sysfs attribute "vsync" of the platform device
+  *    (148b0000.decon_f), notified while S3CFB_SET_VSYNC_INT is on, as the
+  *    stock composer expects;
+- *  - S3CFB_POWER_MODE and FBIOBLANK accepted as no-ops (the panel stays on).
++ *  - S3CFB_POWER_MODE and FBIOBLANK (M7.2 D4a): blank sends the EA8076 exit
++ *    sequence over DSI (DCS 0x28 display off, 20 ms, 0x10 sleep in, 120 ms;
++ *    4.14 ea8076_exit), unblank sends 0x11 sleep out, waits 120 ms, resends
++ *    the current frame and sends 0x29 display on (ea8076_init/displayon).
++ *    The panel's power GPIOs are not touched.
+  *  - S3CFB_WIN_CONFIG (M7.2 D2b) with the stock 1040-byte argument and the
+  *    stock fence model: one fence per call, returned as retire_fence and as
+  *    rel_fence of every BUFFER window, signalled when the frame is out.
+@@ -86,6 +90,20 @@
+ /* 4.14 dpu20/decon.h */
+ #define S3CFB_SET_VSYNC_INT	_IOW('F', 206, __u32)
+ #define S3CFB_POWER_MODE	_IOW('F', 223, __u32)
++/* HWC power modes (4.14 decon.h decon_power_mode) */
++#define DECON_POWER_MODE_OFF		0
++#define DECON_POWER_MODE_DOZE		1
++#define DECON_POWER_MODE_NORMAL		2
++#define DECON_POWER_MODE_DOZE_SUSPEND	3
++
++/* 4.14 dpu20/cal_9610/regs-dsim.h */
++#define DSIM_BASE		0x148e0000
++#define DSIM_INTSRC		0x50
++#define DSIM_PKTHDR		0x58
++#define DSIM_FIFOCTRL		0x68
++#define DSIM_FIFOCTRL_FULL_PH	BIT(11)
++#define DSIM_FIFOCTRL_EMPTY_PH	BIT(10)
++#define MIPI_DSI_DCS_SHORT_WRITE	0x05
+ 
+ /*
+  * S3CFB_WIN_CONFIG argument, laid out as 4.14 dpu20/decon.h and
+@@ -174,6 +192,9 @@ struct a50_decon {
+ 	struct dma_buf_attachment *scan_att;
+ 	struct sg_table *scan_sgt;
+ 	u32 scanned, dma_fallbacks, shadow_waits_timed_out;
++	void __iomem *dsim;
++	bool blanked;
++	u32 dcs_sent, dcs_timeouts, blanks, unblanks;
+ 	u32 pseudo_palette[16];
+ };
+ 
+@@ -276,6 +297,53 @@ static int a50_fb_check_var(struct fb_var_screeninfo *var, struct fb_info *info)
+ }
+ 
+ static void a50_show_bootfb_locked(struct a50_decon *d);
++static void a50_frame_sync(struct a50_decon *d);
++
++/* One DCS short write without parameter, as dsim_write_data()/dsim_reg_wr_tx_header(). */
++static int a50_dcs(struct a50_decon *d, u8 cmd)
++{
++	int i;
++
++	for (i = 0; i < 100 && (readl(d->dsim + DSIM_FIFOCTRL) & DSIM_FIFOCTRL_FULL_PH); i++)
++		usleep_range(100, 200);
++	writel(((u32)cmd << 8) | MIPI_DSI_DCS_SHORT_WRITE, d->dsim + DSIM_PKTHDR);
++	for (i = 0; i < 200 && !(readl(d->dsim + DSIM_FIFOCTRL) & DSIM_FIFOCTRL_EMPTY_PH); i++)
++		usleep_range(100, 200);
++	d->dcs_sent++;
++	if (!(readl(d->dsim + DSIM_FIFOCTRL) & DSIM_FIFOCTRL_EMPTY_PH)) {
++		d->dcs_timeouts++;
++		dev_warn(d->dev, "DCS 0x%02x: header FIFO not empty (FIFOCTRL=0x%08x INTSRC=0x%08x)\n",
++			 cmd, readl(d->dsim + DSIM_FIFOCTRL), readl(d->dsim + DSIM_INTSRC));
++		return -ETIMEDOUT;
++	}
++	return 0;
++}
++
++/* Called with hw_lock held. */
++static void a50_set_blank_locked(struct a50_decon *d, bool blank)
++{
++	u32 te0 = d->te_count;
++
++	if (blank == d->blanked)
++		return;
++	if (blank) {
++		a50_dcs(d, 0x28);		/* display off */
++		msleep(20);
++		a50_dcs(d, 0x10);		/* sleep in */
++		msleep(120);
++		d->blanks++;
++	} else {
++		a50_dcs(d, 0x11);		/* sleep out */
++		msleep(120);
++		a50_frame_sync(d);		/* resend the current scanout */
++		a50_dcs(d, 0x29);		/* display on */
++		d->unblanks++;
++	}
++	d->blanked = blank;
++	dev_info(d->dev, "%s: TE during sequence=%u DSIM INTSRC=0x%08x FIFOCTRL=0x%08x dcs_timeouts=%u\n",
++		 blank ? "blank" : "unblank", d->te_count - te0, readl(d->dsim + DSIM_INTSRC),
++		 readl(d->dsim + DSIM_FIFOCTRL), d->dcs_timeouts);
++}
+ 
+ static int a50_fb_pan_display(struct fb_var_screeninfo *var, struct fb_info *info)
+ {
+@@ -293,7 +361,9 @@ static int a50_fb_blank(int blank, struct fb_info *info)
+ {
+ 	struct a50_decon *d = info->par;
+ 
+-	dev_info(d->dev, "FBIOBLANK %d accepted, panel left on\n", blank);
++	mutex_lock(&d->hw_lock);
++	a50_set_blank_locked(d, blank != FB_BLANK_UNBLANK);
++	mutex_unlock(&d->hw_lock);
+ 	return 0;
+ }
+ 
+@@ -654,7 +724,11 @@ static int a50_fb_ioctl(struct fb_info *info, unsigned int cmd, unsigned long ar
+ 	case S3CFB_POWER_MODE:
+ 		if (get_user(v, (u32 __user *)arg))
+ 			return -EFAULT;
+-		dev_info(d->dev, "S3CFB_POWER_MODE %u accepted, panel left on\n", v);
++		if (v > DECON_POWER_MODE_DOZE_SUSPEND)
++			return -EINVAL;
++		mutex_lock(&d->hw_lock);
++		a50_set_blank_locked(d, v == DECON_POWER_MODE_OFF || v == DECON_POWER_MODE_DOZE_SUSPEND);
++		mutex_unlock(&d->hw_lock);
+ 		return 0;
+ 	default:
+ 		return -ENOTTY;
+@@ -674,12 +748,13 @@ static const struct fb_ops a50_fb_ops = {
+ 
+ static void a50_decon_log(struct a50_decon *d, const char *when)
+ {
+-	dev_info(d->dev, "%s: frames req=%u done=%u start=%u timeouts=%u extra=%u te=%u FRAME_COUNT=%u GLOBAL=0x%08x TRIG=0x%08x vsync_on=%d win_configs=%u copied=%u skipped=%u acq_timeouts=%u frame_wait_timeouts=%u scanned=%u dma_fallbacks=%u shadow_wait_timeouts=%u IDMA0=0x%08x\n",
++	dev_info(d->dev, "%s: frames req=%u done=%u start=%u timeouts=%u extra=%u te=%u FRAME_COUNT=%u GLOBAL=0x%08x TRIG=0x%08x vsync_on=%d win_configs=%u copied=%u skipped=%u acq_timeouts=%u frame_wait_timeouts=%u scanned=%u dma_fallbacks=%u shadow_wait_timeouts=%u IDMA0=0x%08x blanks=%u unblanks=%u dcs=%u dcs_timeouts=%u\n",
+ 		 when, d->frames_req, d->frames_done, d->frame_start, d->timeouts, d->extra_irq,
+ 		 d->te_count, readl(d->regs + FRAME_COUNT), readl(d->regs + GLOBAL_CONTROL),
+ 		 readl(d->regs + TRIG_CTRL), d->vsync_on, d->win_configs, d->copied, d->skipped,
+ 		 d->acq_timeouts, d->frame_waits_timed_out, d->scanned, d->dma_fallbacks,
+-		 d->shadow_waits_timed_out, readl(d->idma + IDMA_IN_BASE_ADDR_Y));
++		 d->shadow_waits_timed_out, readl(d->idma + IDMA_IN_BASE_ADDR_Y), d->blanks, d->unblanks,
++		 d->dcs_sent, d->dcs_timeouts);
+ }
+ 
+ static void a50_decon_report(struct work_struct *w)
+@@ -749,7 +824,8 @@ static int a50_decon_probe(struct platform_device *pdev)
+ 	*fbres = DEFINE_RES_MEM(rmem->base, rmem->size);
+ 	d->fb_base = rmem->base;
+ 	d->idma = devm_ioremap(dev, IDMA0_BASE, 0x1000);
+-	if (!d->idma)
++	d->dsim = devm_ioremap(dev, DSIM_BASE, 0x100);
++	if (!d->idma || !d->dsim)
+ 		return -ENOMEM;
+ 
+ 	dev_info(dev, "handover state GLOBAL=0x%08x TRIG=0x%08x FRAME_COUNT=%u, %d clocks enabled\n",
+-- 
+2.56.1
+

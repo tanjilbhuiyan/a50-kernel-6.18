@@ -1,0 +1,60 @@
+{
+ "test": "M7.2 D4a: blank/unblank with DCS sleep commands",
+ "kernel_branch": "a50-m72-d4a-test",
+ "kernel_commit": "6c1151fb6",
+ "parent": "97c03597f (D3b)",
+ "single_variable": "FBIOBLANK/S3CFB_POWER_MODE send the EA8076 DCS off/on sequences over DSI",
+ "config_identical_to": "src/m64/runtime7/as-built/.config",
+ "dt": "src/m72/dt-d3a.img (unchanged)",
+ "runner": "DT_IMG=src/m72/dt-d3a.img tools/m32_run_test.sh src/m72/boot-d4a.img reference/m72-display/d4a-dump.txt 192.168.0.171 540",
+ "files": {
+  "src/m72/boot-d4a.img": {
+   "size": 29890560,
+   "sha256": "b531207c55e9ef2a9a6069177dc4a59adc3ef50f328b1f73fa07c1327444b449"
+  },
+  "src/ack-6.18/out/m72-d4a/arch/arm64/boot/Image": {
+   "size": 29884424,
+   "sha256": "78d66de63b11d615b225667221bbb3cd2a441d309c5526a24071fae11fc3c7de"
+  },
+  "src/ack-6.18/out/m72-d4a/.config": {
+   "size": 92738,
+   "sha256": "a9378e5063c8e6f0b877e95bb0d1bd56230db30c47de04d1cdd44df1a339cbb2"
+  },
+  "src/ack-6.18/out/m72-d4a/usr/initramfs_data.cpio": {
+   "size": 25954816,
+   "sha256": "c855bb6eee66af35fc8ae2f21f2c85407d6cd46b9bf648b80e9a81672dd192a2"
+  },
+  "src/m72/dt-d3a.img": {
+   "size": 8388608,
+   "sha256": "92a091412f7cbb6141c2c96d7550aa9a611c252a1bf0810e661636007ea2dfb9"
+  },
+  "src/m72/blank-test": {
+   "size": 2222624,
+   "sha256": "ac6fbd69bd11dc545f9a98ea47f99f0177830cdbd8a6e0d9d7bccc5d5bf83117"
+  },
+  "tools/m72/blank_test.c": {
+   "size": 3241,
+   "sha256": "d332b353ea9669a9a488888d3b305e5148d1021b4fc4e663adc6203a3eeb8de4"
+  },
+  "src/m72/winconfig-test": {
+   "size": 2222712,
+   "sha256": "2eb6689a32121a66fbf0f6817b6b5d8f7a7e01ac4b2768dbe8a05dc436dad7bb"
+  },
+  "reference/dt-6.18/images/dtbo.img": {
+   "size": 8388608,
+   "sha256": "6d81cce87faca914d75f024f36e183ae6592e61adc786bbb6c7c47cdd3a151fe"
+  },
+  "reference/stock-images/dt.img": {
+   "size": 8388608,
+   "sha256": "59209aa52dc3b35e2c7cc025c465ed1cdb48dadaa13cf5d1f50324b3bf503547"
+  },
+  "reference/stock-images/dtbo.img": {
+   "size": 8388608,
+   "sha256": "40e47ed1477a8ffb6cbb34e5cb59a1af786c2552544f3b556373f3c553d40d21"
+  },
+  "baseline/ut-26.04-2026-10-19-aa17rf2/boot.img": {
+   "size": 53624832,
+   "sha256": "7d5855efd34e01f09659c7d47ecb0773c30f2acc7443ee87181a0536804086c5"
+  }
+ }
+}
