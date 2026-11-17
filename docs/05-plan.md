@@ -143,6 +143,9 @@ Evidence: `log/2026-11-14-M6.4-runtime.md`, `reference/m64-runtime/results.json`
 Tasks: dpu20 DECON/DPP/DSIM + panel forward-port preserving ioctls; Mali kbase
 r26p0 forward-port; G2D only if contract requires.
 DoD: S2 (Lomiri visible, accelerated); 10-minute UI soak without GPU faults.
+Plan change (2026-11-18, owner approved): M7.5 adds a per-boot read-only overlay of `/etc/pulse/touch.pa` without
+`module-droid-discover`, because the crash-looping Android audio HAL blocks PulseAudio, the telephony handler and
+Lomiri's readiness (M7.5 I1). Removed in M10. ADR-0005.
 
 ## M8 — Input: touch, keys, hall, vibrator
 DoD: S3.
@@ -151,7 +154,8 @@ DoD: S3.
 DoD: S4 + S8. The M5 runtime mask of `bluebinder` is removed and multi-user is still reached.
 
 ## M10 — Audio (ABOX + TFA9872)
-DoD: S6. The M5 runtime mask of `a50-audio-route` is removed and multi-user is still reached.
+DoD: S6. The M5 runtime mask of `a50-audio-route` is removed and multi-user is still reached. The ADR-0005
+PulseAudio overlay is removed and PulseAudio loads `module-droid-discover` with the ported drivers.
 
 ## M11 — Modem (modem_v1, mcu_ipc, shm_ipc)
 DoD: S7. The M5 runtime masks of `rild` and `ofono` are removed and multi-user is still reached;

@@ -40,6 +40,8 @@ Current bring-up limits (details in [the M6.4 log](log/2026-11-14-M6.4-runtime.m
   M7.5 integration issues; input is M8. See the [G2h log](log/2026-11-17-M7.3-g2h-memory-abi.md).
 - A per-boot read-only RC bind defers unported TEEGRIS startup, with vendor unchanged and no fake readiness. Secure heaps
   and security-dependent HALs are unsupported; only the measured normal system heap is implemented.
+- Audio is unported (M10). Per [ADR-0005](docs/decisions/ADR-0005-defer-android-audio-hal.md), 6.18 boots overlay
+  PulseAudio's startup script without the Android audio HAL module, so the session can start; there is no sound.
 - Three diagnostic power-service masks remain; automatic suspend and legacy Android task-profile migration are unvalidated.
 - USB networking needs a one-boot override (`usb-moded -f -r`), because cable and charger detection don't work yet (M12).
 - All test boots used the diagnostic kernel build, which dumps its log and reboots after a fixed time.

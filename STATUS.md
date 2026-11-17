@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-17 (I0r complete and restored; Lomiri readiness analysed; everything committed)
+Updated: 2026-11-18 (I1 complete; ADR-0005 audio deferral approved)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -8,7 +8,19 @@ Read this file, then the active ticket and its log. Before trusting anything her
 branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and on the phone. At the end of a session, update
 **RESUME HERE** with commits, branch, image hashes, last test and rollback result, and the next action.
 
-## RESUME HERE (2026-11-17, I0r complete; Claude Code took over from Codex)
+## RESUME HERE (2026-11-18, I1 complete; ADR-0005 approved)
+- **Active ticket:** M7.5. No test active; phone on stock 4.14.194 since 00:21:21 (home **192.168.0.171**), post-flight
+  passed, fsck clean 7058/3440640 files.
+- **I1 result:** Android audio HAL `restarting` → PulseAudio blocked in startup (`pactl` hangs) → telephony handler
+  never takes its bus name → Lomiri READY too late → stopped after 120 s. Log section "I1"; evidence
+  `reference/m75-integration/i1-*`.
+- **Decision:** ADR-0005 (owner approved 2026-11-18): per-boot read-only overlay of `/etc/pulse/touch.pa`
+  (stock sha256 `04046fa3…`) without the `module-droid-discover` block; no audio on 6.18; removed in M10.
+- **Next action:** build I2 = I0 kernel/DT plus the ADR-0005 hook in the embedded runtime (one variable), host-test the
+  hash check and overlay content, then flash on "present, flash I2". Expect PulseAudio, the handler and Lomiri to reach
+  active; then plan the ten-minute soak.
+
+## Earlier handoff (I0r complete; Claude Code took over from Codex; superseded)
 - **Active ticket:** M7.5 (the last open M7 ticket; all four acceptance boxes open). No test active. Phone on stock
   4.14.194 since 16:31:36 (office **192.168.181.225**), post-flight passed, fsck clean 7053/3440640 files.
 - **I0r** (identical repeat of I0, owner present): same failure as I0 to the second; no kernel faults. Evidence
