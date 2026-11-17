@@ -1,0 +1,636 @@
+
+CMD: uname -r
+6.18.33-a50-diag+
+RC=0
+
+CMD: cat /proc/uptime
+40.72 219.74
+RC=0
+
+CMD: sha256sum /run/a50-s1/kbase-memory64 /run/a50-s1/kbase-memory32 /run/a50-s1/ion-smoke64 /run/a50-s1/ion-smoke32
+c38ce94273932f81bbdb0f93ffea8bad59cc4ea334641829137872347b184c46  /run/a50-s1/kbase-memory64
+16b3c33f2685dd90da68a1efaa9168ff41141411a01b4a460806f23150a71c1e  /run/a50-s1/kbase-memory32
+650df95c2b5bf96a6595a8184fb9104ecf0e122807dc63a9643008f226f41053  /run/a50-s1/ion-smoke64
+5eea7732c7035a4e6504ba6a5d51d034075f74f215ef36c64fbc5786cca6ed7e  /run/a50-s1/ion-smoke32
+RC=0
+
+DEFERRALS
+
+CMD: findmnt -no TARGET,SOURCE,OPTIONS /etc/pulse/touch.pa
+/etc/pulse/touch.pa tmpfs[/a50-m75/touch.pa] ro,nosuid,noexec,relatime,size=361960k,mode=755
+RC=0
+
+CMD: findmnt -no TARGET,SOURCE,OPTIONS /usr/lib/aarch64-linux-gnu/gstreamer-1.0/libgsthybris.so
+/usr/lib/aarch64-linux-gnu/gstreamer-1.0/libgsthybris.so tmpfs[/a50-m75/libgsthybris.placeholder] ro,nosuid,noexec,relatime,size=361960k,mode=755
+RC=0
+
+CMD: systemctl show a50-defer-audio.service a50-defer-gsthybris.service -p Id -p ActiveState -p Result
+Result=success
+Id=a50-defer-audio.service
+ActiveState=active
+
+Result=success
+Id=a50-defer-gsthybris.service
+ActiveState=active
+RC=0
+
+OBSERVATION_ONLY: user-manager logging, runtime only; reset by rollback reboot
+set_log_target_rc=0
+set_log_level_rc=0
+
+M75_S1_REGRESSION uptime=70.58
+
+M75_S1_KBASE_MEMORY_64_BEGIN
+kbase memory probe ABI=64 page=4096 context_jobs=disabled
+CASE tracking BEGIN
+PASS tracking prerequisite, duplicate refusal, context/fd cleanup
+CASE tracking PASS
+CASE native BEGIN
+PASS native cached alloc/query/map, both sync directions, bounded errors and eight unmap lifetimes
+CASE native PASS
+CASE pending BEGIN
+PASS pending-cookie map-size refusal, explicit free and double-free refusal
+CASE pending PASS
+CASE dmabuf BEGIN
+PASS dma-buf import/map/query, exporter-fd-close lifetime, data and both cache sync directions
+CASE dmabuf PASS
+CASE user-buffer BEGIN
+PASS aligned user-buffer import/query/reservation/free; unsupported user-import cache sync rejected
+CASE user-buffer PASS
+CASE errors BEGIN
+PASS zero/overcommit/kernel-only alloc, invalid query pointer/address and invalid import fd/pointer/type
+CASE errors PASS
+RESULT: PASS (6 cases, 0 failed)
+M75_S1_KBASE_MEMORY_64_RC=0
+
+M75_S1_KBASE_MEMORY_32_BEGIN
+kbase memory probe ABI=32 page=4096 context_jobs=disabled
+CASE tracking BEGIN
+PASS tracking prerequisite, duplicate refusal, context/fd cleanup
+CASE tracking PASS
+CASE native BEGIN
+PASS native cached alloc/query/map, both sync directions, bounded errors and eight unmap lifetimes
+CASE native PASS
+CASE pending BEGIN
+PASS pending-cookie map-size refusal, explicit free and double-free refusal
+CASE pending PASS
+CASE dmabuf BEGIN
+PASS dma-buf import/map/query, exporter-fd-close lifetime, data and both cache sync directions
+CASE dmabuf PASS
+CASE user-buffer BEGIN
+PASS aligned user-buffer import/query/reservation/free; unsupported user-import cache sync rejected
+CASE user-buffer PASS
+CASE errors BEGIN
+PASS zero/overcommit/kernel-only alloc, invalid query pointer/address and invalid import fd/pointer/type
+CASE errors PASS
+RESULT: PASS (6 cases, 0 failed)
+M75_S1_KBASE_MEMORY_32_RC=0
+
+M75_S1_ION_64_BEGIN (UID=1000 GID=1003)
+heap query: ion_system_heap id=0 flags=0
+replay[0] len=9888512 mask=1 flags=64 PASS
+replay[1] len=4096 mask=1 flags=1 PASS
+replay[2] len=9888512 mask=1 flags=64 PASS
+replay[3] len=4096 mask=1 flags=1 PASS
+replay[4] len=9888512 mask=1 flags=64 PASS
+replay[5] len=4096 mask=1 flags=1 PASS
+replay[6] len=9888512 mask=1 flags=64 PASS
+replay[7] len=4096 mask=1 flags=1 PASS
+replay[8] len=9888512 mask=1 flags=64 PASS
+replay[9] len=4096 mask=1 flags=1 PASS
+replay[10] len=9888512 mask=1 flags=64 PASS
+replay[11] len=4096 mask=1 flags=1 PASS
+replay[12] len=9888512 mask=1 flags=64 PASS
+replay[13] len=4096 mask=1 flags=1 PASS
+replay[14] len=9888512 mask=1 flags=64 PASS
+replay[15] len=4096 mask=1 flags=1 PASS
+replay[16] len=9888512 mask=1 flags=64 PASS
+replay[17] len=4096 mask=1 flags=1 PASS
+replay[18] len=9888512 mask=1 flags=64 PASS
+replay[19] len=4096 mask=1 flags=1 PASS
+replay[20] len=9888512 mask=1 flags=64 PASS
+replay[21] len=4096 mask=1 flags=1 PASS
+replay[22] len=9888512 mask=1 flags=64 PASS
+replay[23] len=4096 mask=1 flags=1 PASS
+replay[24] len=9888512 mask=1 flags=64 PASS
+replay[25] len=4096 mask=1 flags=1 PASS
+replay[26] len=9888512 mask=1 flags=64 PASS
+replay[27] len=4096 mask=1 flags=1 PASS
+replay[28] len=9888512 mask=1 flags=64 PASS
+replay[29] len=4096 mask=1 flags=1 PASS
+replay[30] len=9888512 mask=1 flags=64 PASS
+replay[31] len=4096 mask=1 flags=1 PASS
+PASS: query validation, allocation bounds and copyout fd cleanup
+PASS: tracking balance, dup/close, fork and exec lifetime
+PASS: captured ION allocations and native DMA-BUF behavior
+M75_S1_ION_64_RC=0
+
+M75_S1_ION_32_BEGIN (UID=1000 GID=1003)
+heap query: ion_system_heap id=0 flags=0
+replay[0] len=9888512 mask=1 flags=64 PASS
+replay[1] len=4096 mask=1 flags=1 PASS
+replay[2] len=9888512 mask=1 flags=64 PASS
+replay[3] len=4096 mask=1 flags=1 PASS
+replay[4] len=9888512 mask=1 flags=64 PASS
+replay[5] len=4096 mask=1 flags=1 PASS
+replay[6] len=9888512 mask=1 flags=64 PASS
+replay[7] len=4096 mask=1 flags=1 PASS
+replay[8] len=9888512 mask=1 flags=64 PASS
+replay[9] len=4096 mask=1 flags=1 PASS
+replay[10] len=9888512 mask=1 flags=64 PASS
+replay[11] len=4096 mask=1 flags=1 PASS
+replay[12] len=9888512 mask=1 flags=64 PASS
+replay[13] len=4096 mask=1 flags=1 PASS
+replay[14] len=9888512 mask=1 flags=64 PASS
+replay[15] len=4096 mask=1 flags=1 PASS
+replay[16] len=9888512 mask=1 flags=64 PASS
+replay[17] len=4096 mask=1 flags=1 PASS
+replay[18] len=9888512 mask=1 flags=64 PASS
+replay[19] len=4096 mask=1 flags=1 PASS
+replay[20] len=9888512 mask=1 flags=64 PASS
+replay[21] len=4096 mask=1 flags=1 PASS
+replay[22] len=9888512 mask=1 flags=64 PASS
+replay[23] len=4096 mask=1 flags=1 PASS
+replay[24] len=9888512 mask=1 flags=64 PASS
+replay[25] len=4096 mask=1 flags=1 PASS
+replay[26] len=9888512 mask=1 flags=64 PASS
+replay[27] len=4096 mask=1 flags=1 PASS
+replay[28] len=9888512 mask=1 flags=64 PASS
+replay[29] len=4096 mask=1 flags=1 PASS
+replay[30] len=9888512 mask=1 flags=64 PASS
+replay[31] len=4096 mask=1 flags=1 PASS
+PASS: query validation, allocation bounds and copyout fd cleanup
+PASS: tracking balance, dup/close, fork and exec lifetime
+PASS: captured ION allocations and native DMA-BUF behavior
+M75_S1_ION_32_RC=0
+
+CMD: sh -c lxc-attach -n android -- /system/bin/getprop | grep -E "allocator|gralloc|composer|sys.boot_completed"
+[init.svc.vendor.gralloc-2-0]: [running]
+[init.svc.vendor.hwcomposer-2-1]: [running]
+[init.svc_debug_pid.vendor.gralloc-2-0]: [149]
+[init.svc_debug_pid.vendor.hwcomposer-2-1]: [150]
+[ro.boottime.vendor.gralloc-2-0]: [29261873785]
+[ro.boottime.vendor.hwcomposer-2-1]: [29264990785]
+[sys.boot_completed]: [1]
+RC=0
+
+CMD: findmnt -no TARGET,OPTIONS /userdata
+/userdata rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+RC=0
+faults_after_regression=0
+
+M75_S1_SAMPLE target=90 uptime=90.64
+MainPID=3152 Result=success NRestarts=0
+Id=lomiri-full-greeter.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=52242469  MainPID=2829 Result=success NRestarts=0
+Id=lomiri-telephony-service-handler.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=43688521  MainPID=2132 Result=success NRestarts=0
+Id=pulseaudio.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=34941388
+Id=ubuntu-touch-session-unencrypted.target ActiveState=active SubState=active ActiveEnterTimestampMonotonic=52298637
+system: NFailedUnits=0 NJobs=4 SystemState=starting
+display: fence_ctx=1 fence_seq=1054 pending=0 win_configs=1054 scanned=1054 copied=0 dma_fallbacks=0 skipped=0 acq_timeouts=0 completed=1054 stage=idle worker_seq=1054 worker_layers=1 padded_scanned=1054 scan_full_w=1088 scan_full_h=2352
+irqs:  58: 1057 0 0 0 0 0 0 0 GIC-0 231 Level 148b0000.decon_f| 59: 1056 0 0 0 0 0 0 0 GIC-0 232 Level 148b0000.decon_f| 60: 0 0 0 0 0 0 0 0 GIC-0 235 Level 148b0000.decon_f| 61: 5441 0 0 0 0 0 0 0 gpc2 3 Edge a50-decon-te| 62: 4256 0 0 0 0 0 0 0 GIC-0 98 Level 11500000.mali| 63: 7 0 0 0 0 0 0 0 GIC-0 99 Level 11500000.mali| 64: 5829 0 0 0 0 0 0 0 GIC-0 97 Level 11500000.mali
+mem: MemAvailable: 2536664 kB Shmem: 17776 kB Slab: 131824 kB SUnreclaim: 84440 kB
+dmabuf: Total 24 objects, 102490112 bytes
+lomiri: pid=3152 fds=118 VmRSS:	 405604 kB threads=41
+faults=0
+
+M75_S1_SAMPLE target=120 uptime=120.32
+MainPID=3152 Result=success NRestarts=0
+Id=lomiri-full-greeter.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=52242469  MainPID=2829 Result=success NRestarts=0
+Id=lomiri-telephony-service-handler.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=43688521  MainPID=2132 Result=success NRestarts=0
+Id=pulseaudio.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=34941388
+Id=ubuntu-touch-session-unencrypted.target ActiveState=active SubState=active ActiveEnterTimestampMonotonic=52298637
+system: NFailedUnits=0 NJobs=4 SystemState=starting
+display: fence_ctx=1 fence_seq=1055 pending=0 win_configs=1055 scanned=1055 copied=0 dma_fallbacks=0 skipped=0 acq_timeouts=0 completed=1055 stage=idle worker_seq=1055 worker_layers=1 padded_scanned=1055 scan_full_w=1088 scan_full_h=2352
+irqs:  58: 1058 0 0 0 0 0 0 0 GIC-0 231 Level 148b0000.decon_f| 59: 1057 0 0 0 0 0 0 0 GIC-0 232 Level 148b0000.decon_f| 60: 0 0 0 0 0 0 0 0 GIC-0 235 Level 148b0000.decon_f| 61: 7226 0 0 0 0 0 0 0 gpc2 3 Edge a50-decon-te| 62: 4260 0 0 0 0 0 0 0 GIC-0 98 Level 11500000.mali| 63: 7 0 0 0 0 0 0 0 GIC-0 99 Level 11500000.mali| 64: 5859 0 0 0 0 0 0 0 GIC-0 97 Level 11500000.mali
+mem: MemAvailable: 2493988 kB Shmem: 18540 kB Slab: 134988 kB SUnreclaim: 86284 kB
+dmabuf: Total 24 objects, 102490112 bytes
+lomiri: pid=3152 fds=118 VmRSS:	 409864 kB threads=41
+faults=0
+
+M75_S1_SAMPLE target=150 uptime=150.03
+MainPID=3152 Result=success NRestarts=0
+Id=lomiri-full-greeter.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=52242469  MainPID=2829 Result=success NRestarts=0
+Id=lomiri-telephony-service-handler.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=43688521  MainPID=2132 Result=success NRestarts=0
+Id=pulseaudio.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=34941388
+Id=ubuntu-touch-session-unencrypted.target ActiveState=active SubState=active ActiveEnterTimestampMonotonic=52298637
+system: NFailedUnits=0 NJobs=5 SystemState=starting
+display: fence_ctx=1 fence_seq=1055 pending=0 win_configs=1055 scanned=1055 copied=0 dma_fallbacks=0 skipped=0 acq_timeouts=0 completed=1055 stage=idle worker_seq=1055 worker_layers=1 padded_scanned=1055 scan_full_w=1088 scan_full_h=2352
+irqs:  58: 1058 0 0 0 0 0 0 0 GIC-0 231 Level 148b0000.decon_f| 59: 1057 0 0 0 0 0 0 0 GIC-0 232 Level 148b0000.decon_f| 60: 0 0 0 0 0 0 0 0 GIC-0 235 Level 148b0000.decon_f| 61: 9016 0 0 0 0 0 0 0 gpc2 3 Edge a50-decon-te| 62: 4260 0 0 0 0 0 0 0 GIC-0 98 Level 11500000.mali| 63: 7 0 0 0 0 0 0 0 GIC-0 99 Level 11500000.mali| 64: 5859 0 0 0 0 0 0 0 GIC-0 97 Level 11500000.mali
+mem: MemAvailable: 2529736 kB Shmem: 18640 kB Slab: 132376 kB SUnreclaim: 84456 kB
+dmabuf: Total 24 objects, 102490112 bytes
+lomiri: pid=3152 fds=118 VmRSS:	 409864 kB threads=41
+faults=0
+
+M75_S1_SAMPLE target=180 uptime=180.76
+MainPID=3152 Result=success NRestarts=0
+Id=lomiri-full-greeter.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=52242469  MainPID=2829 Result=success NRestarts=0
+Id=lomiri-telephony-service-handler.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=43688521  MainPID=2132 Result=success NRestarts=0
+Id=pulseaudio.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=34941388
+Id=ubuntu-touch-session-unencrypted.target ActiveState=active SubState=active ActiveEnterTimestampMonotonic=52298637
+system: NFailedUnits=0 NJobs=0 SystemState=running
+display: fence_ctx=1 fence_seq=1056 pending=0 win_configs=1056 scanned=1056 copied=0 dma_fallbacks=0 skipped=0 acq_timeouts=0 completed=1056 stage=idle worker_seq=1056 worker_layers=1 padded_scanned=1056 scan_full_w=1088 scan_full_h=2352
+irqs:  58: 1059 0 0 0 0 0 0 0 GIC-0 231 Level 148b0000.decon_f| 59: 1058 0 0 0 0 0 0 0 GIC-0 232 Level 148b0000.decon_f| 60: 0 0 0 0 0 0 0 0 GIC-0 235 Level 148b0000.decon_f| 61: 10861 0 0 0 0 0 0 0 gpc2 3 Edge a50-decon-te| 62: 4264 0 0 0 0 0 0 0 GIC-0 98 Level 11500000.mali| 63: 7 0 0 0 0 0 0 0 GIC-0 99 Level 11500000.mali| 64: 5884 0 0 0 0 0 0 0 GIC-0 97 Level 11500000.mali
+mem: MemAvailable: 2526832 kB Shmem: 18748 kB Slab: 132968 kB SUnreclaim: 84708 kB
+dmabuf: Total 24 objects, 102490112 bytes
+lomiri: pid=3152 fds=118 VmRSS:	 409884 kB threads=41
+faults=0
+
+M75_S1_SAMPLE target=210 uptime=210.45
+MainPID=3152 Result=success NRestarts=0
+Id=lomiri-full-greeter.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=52242469  MainPID=2829 Result=success NRestarts=0
+Id=lomiri-telephony-service-handler.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=43688521  MainPID=2132 Result=success NRestarts=0
+Id=pulseaudio.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=34941388
+Id=ubuntu-touch-session-unencrypted.target ActiveState=active SubState=active ActiveEnterTimestampMonotonic=52298637
+system: NFailedUnits=0 NJobs=0 SystemState=running
+display: fence_ctx=1 fence_seq=1056 pending=0 win_configs=1056 scanned=1056 copied=0 dma_fallbacks=0 skipped=0 acq_timeouts=0 completed=1056 stage=idle worker_seq=1056 worker_layers=1 padded_scanned=1056 scan_full_w=1088 scan_full_h=2352
+irqs:  58: 1059 0 0 0 0 0 0 0 GIC-0 231 Level 148b0000.decon_f| 59: 1058 0 0 0 0 0 0 0 GIC-0 232 Level 148b0000.decon_f| 60: 0 0 0 0 0 0 0 0 GIC-0 235 Level 148b0000.decon_f| 61: 12645 0 0 0 0 0 0 0 gpc2 3 Edge a50-decon-te| 62: 4264 0 0 0 0 0 0 0 GIC-0 98 Level 11500000.mali| 63: 7 0 0 0 0 0 0 0 GIC-0 99 Level 11500000.mali| 64: 5884 0 0 0 0 0 0 0 GIC-0 97 Level 11500000.mali
+mem: MemAvailable: 2554552 kB Shmem: 18836 kB Slab: 135892 kB SUnreclaim: 86156 kB
+dmabuf: Total 24 objects, 102490112 bytes
+lomiri: pid=3152 fds=118 VmRSS:	 409884 kB threads=41
+faults=0
+
+M75_S1_SAMPLE target=240 uptime=240.13
+MainPID=3152 Result=success NRestarts=0
+Id=lomiri-full-greeter.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=52242469  MainPID=2829 Result=success NRestarts=0
+Id=lomiri-telephony-service-handler.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=43688521  MainPID=2132 Result=success NRestarts=0
+Id=pulseaudio.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=34941388
+Id=ubuntu-touch-session-unencrypted.target ActiveState=active SubState=active ActiveEnterTimestampMonotonic=52298637
+system: NFailedUnits=0 NJobs=1 SystemState=running
+display: fence_ctx=1 fence_seq=1057 pending=0 win_configs=1057 scanned=1057 copied=0 dma_fallbacks=0 skipped=0 acq_timeouts=0 completed=1057 stage=idle worker_seq=1057 worker_layers=1 padded_scanned=1057 scan_full_w=1088 scan_full_h=2352
+irqs:  58: 1060 0 0 0 0 0 0 0 GIC-0 231 Level 148b0000.decon_f| 59: 1059 0 0 0 0 0 0 0 GIC-0 232 Level 148b0000.decon_f| 60: 0 0 0 0 0 0 0 0 GIC-0 235 Level 148b0000.decon_f| 61: 14435 0 0 0 0 0 0 0 gpc2 3 Edge a50-decon-te| 62: 4268 0 0 0 0 0 0 0 GIC-0 98 Level 11500000.mali| 63: 7 0 0 0 0 0 0 0 GIC-0 99 Level 11500000.mali| 64: 5905 0 0 0 0 0 0 0 GIC-0 97 Level 11500000.mali
+mem: MemAvailable: 2545484 kB Shmem: 18920 kB Slab: 135148 kB SUnreclaim: 85540 kB
+dmabuf: Total 24 objects, 102490112 bytes
+lomiri: pid=3152 fds=118 VmRSS:	 409888 kB threads=41
+faults=0
+
+M75_S1_SAMPLE target=270 uptime=270.94
+MainPID=3152 Result=success NRestarts=0
+Id=lomiri-full-greeter.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=52242469  MainPID=2829 Result=success NRestarts=0
+Id=lomiri-telephony-service-handler.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=43688521  MainPID=2132 Result=success NRestarts=0
+Id=pulseaudio.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=34941388
+Id=ubuntu-touch-session-unencrypted.target ActiveState=active SubState=active ActiveEnterTimestampMonotonic=52298637
+system: NFailedUnits=0 NJobs=0 SystemState=running
+display: fence_ctx=1 fence_seq=1057 pending=0 win_configs=1057 scanned=1057 copied=0 dma_fallbacks=0 skipped=0 acq_timeouts=0 completed=1057 stage=idle worker_seq=1057 worker_layers=1 padded_scanned=1057 scan_full_w=1088 scan_full_h=2352
+irqs:  58: 1060 0 0 0 0 0 0 0 GIC-0 231 Level 148b0000.decon_f| 59: 1059 0 0 0 0 0 0 0 GIC-0 232 Level 148b0000.decon_f| 60: 0 0 0 0 0 0 0 0 GIC-0 235 Level 148b0000.decon_f| 61: 16282 0 0 0 0 0 0 0 gpc2 3 Edge a50-decon-te| 62: 4268 0 0 0 0 0 0 0 GIC-0 98 Level 11500000.mali| 63: 7 0 0 0 0 0 0 0 GIC-0 99 Level 11500000.mali| 64: 5905 0 0 0 0 0 0 0 GIC-0 97 Level 11500000.mali
+mem: MemAvailable: 2551376 kB Shmem: 19012 kB Slab: 133048 kB SUnreclaim: 84684 kB
+dmabuf: Total 24 objects, 102490112 bytes
+lomiri: pid=3152 fds=118 VmRSS:	 409888 kB threads=41
+faults=0
+
+M75_S1_SAMPLE target=300 uptime=300.63
+MainPID=3152 Result=success NRestarts=0
+Id=lomiri-full-greeter.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=52242469  MainPID=2829 Result=success NRestarts=0
+Id=lomiri-telephony-service-handler.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=43688521  MainPID=2132 Result=success NRestarts=0
+Id=pulseaudio.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=34941388
+Id=ubuntu-touch-session-unencrypted.target ActiveState=active SubState=active ActiveEnterTimestampMonotonic=52298637
+system: NFailedUnits=0 NJobs=0 SystemState=running
+display: fence_ctx=1 fence_seq=1058 pending=0 win_configs=1058 scanned=1058 copied=0 dma_fallbacks=0 skipped=0 acq_timeouts=0 completed=1058 stage=idle worker_seq=1058 worker_layers=1 padded_scanned=1058 scan_full_w=1088 scan_full_h=2352
+irqs:  58: 1061 0 0 0 0 0 0 0 GIC-0 231 Level 148b0000.decon_f| 59: 1060 0 0 0 0 0 0 0 GIC-0 232 Level 148b0000.decon_f| 60: 0 0 0 0 0 0 0 0 GIC-0 235 Level 148b0000.decon_f| 61: 18066 0 0 0 0 0 0 0 gpc2 3 Edge a50-decon-te| 62: 4272 0 0 0 0 0 0 0 GIC-0 98 Level 11500000.mali| 63: 7 0 0 0 0 0 0 0 GIC-0 99 Level 11500000.mali| 64: 5934 0 0 0 0 0 0 0 GIC-0 97 Level 11500000.mali
+mem: MemAvailable: 2542960 kB Shmem: 19088 kB Slab: 133712 kB SUnreclaim: 84832 kB
+dmabuf: Total 24 objects, 102490112 bytes
+lomiri: pid=3152 fds=118 VmRSS:	 409888 kB threads=41
+faults=0
+
+M75_S1_SAMPLE target=330 uptime=330.39
+MainPID=3152 Result=success NRestarts=0
+Id=lomiri-full-greeter.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=52242469  MainPID=2829 Result=success NRestarts=0
+Id=lomiri-telephony-service-handler.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=43688521  MainPID=2132 Result=success NRestarts=0
+Id=pulseaudio.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=34941388
+Id=ubuntu-touch-session-unencrypted.target ActiveState=active SubState=active ActiveEnterTimestampMonotonic=52298637
+system: NFailedUnits=0 NJobs=0 SystemState=running
+display: fence_ctx=1 fence_seq=1058 pending=0 win_configs=1058 scanned=1058 copied=0 dma_fallbacks=0 skipped=0 acq_timeouts=0 completed=1058 stage=idle worker_seq=1058 worker_layers=1 padded_scanned=1058 scan_full_w=1088 scan_full_h=2352
+irqs:  58: 1061 0 0 0 0 0 0 0 GIC-0 231 Level 148b0000.decon_f| 59: 1060 0 0 0 0 0 0 0 GIC-0 232 Level 148b0000.decon_f| 60: 0 0 0 0 0 0 0 0 GIC-0 235 Level 148b0000.decon_f| 61: 19857 0 0 0 0 0 0 0 gpc2 3 Edge a50-decon-te| 62: 4272 0 0 0 0 0 0 0 GIC-0 98 Level 11500000.mali| 63: 7 0 0 0 0 0 0 0 GIC-0 99 Level 11500000.mali| 64: 5934 0 0 0 0 0 0 0 GIC-0 97 Level 11500000.mali
+mem: MemAvailable: 2511196 kB Shmem: 19168 kB Slab: 134452 kB SUnreclaim: 85480 kB
+dmabuf: Total 24 objects, 102490112 bytes
+lomiri: pid=3152 fds=118 VmRSS:	 409888 kB threads=41
+faults=0
+
+M75_S1_SAMPLE target=360 uptime=360.17
+MainPID=3152 Result=success NRestarts=0
+Id=lomiri-full-greeter.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=52242469  MainPID=2829 Result=success NRestarts=0
+Id=lomiri-telephony-service-handler.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=43688521  MainPID=2132 Result=success NRestarts=0
+Id=pulseaudio.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=34941388
+Id=ubuntu-touch-session-unencrypted.target ActiveState=active SubState=active ActiveEnterTimestampMonotonic=52298637
+system: NFailedUnits=0 NJobs=1 SystemState=running
+display: fence_ctx=1 fence_seq=1059 pending=0 win_configs=1059 scanned=1059 copied=0 dma_fallbacks=0 skipped=0 acq_timeouts=0 completed=1059 stage=idle worker_seq=1059 worker_layers=1 padded_scanned=1059 scan_full_w=1088 scan_full_h=2352
+irqs:  58: 1062 0 0 0 0 0 0 0 GIC-0 231 Level 148b0000.decon_f| 59: 1061 0 0 0 0 0 0 0 GIC-0 232 Level 148b0000.decon_f| 60: 0 0 0 0 0 0 0 0 GIC-0 235 Level 148b0000.decon_f| 61: 21648 0 0 0 0 0 0 0 gpc2 3 Edge a50-decon-te| 62: 4276 0 0 0 0 0 0 0 GIC-0 98 Level 11500000.mali| 63: 7 0 0 0 0 0 0 0 GIC-0 99 Level 11500000.mali| 64: 5962 0 0 0 0 0 0 0 GIC-0 97 Level 11500000.mali
+mem: MemAvailable: 2553688 kB Shmem: 19276 kB Slab: 134212 kB SUnreclaim: 85156 kB
+dmabuf: Total 24 objects, 102490112 bytes
+lomiri: pid=3152 fds=118 VmRSS:	 409904 kB threads=41
+faults=0
+
+M75_S1_SAMPLE target=390 uptime=390.94
+MainPID=3152 Result=success NRestarts=0
+Id=lomiri-full-greeter.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=52242469  MainPID=2829 Result=success NRestarts=0
+Id=lomiri-telephony-service-handler.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=43688521  MainPID=2132 Result=success NRestarts=0
+Id=pulseaudio.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=34941388
+Id=ubuntu-touch-session-unencrypted.target ActiveState=active SubState=active ActiveEnterTimestampMonotonic=52298637
+system: NFailedUnits=0 NJobs=0 SystemState=running
+display: fence_ctx=1 fence_seq=1059 pending=0 win_configs=1059 scanned=1059 copied=0 dma_fallbacks=0 skipped=0 acq_timeouts=0 completed=1059 stage=idle worker_seq=1059 worker_layers=1 padded_scanned=1059 scan_full_w=1088 scan_full_h=2352
+irqs:  58: 1062 0 0 0 0 0 0 0 GIC-0 231 Level 148b0000.decon_f| 59: 1061 0 0 0 0 0 0 0 GIC-0 232 Level 148b0000.decon_f| 60: 0 0 0 0 0 0 0 0 GIC-0 235 Level 148b0000.decon_f| 61: 23496 0 0 0 0 0 0 0 gpc2 3 Edge a50-decon-te| 62: 4276 0 0 0 0 0 0 0 GIC-0 98 Level 11500000.mali| 63: 7 0 0 0 0 0 0 0 GIC-0 99 Level 11500000.mali| 64: 5962 0 0 0 0 0 0 0 GIC-0 97 Level 11500000.mali
+mem: MemAvailable: 2549460 kB Shmem: 19364 kB Slab: 133972 kB SUnreclaim: 84900 kB
+dmabuf: Total 24 objects, 102490112 bytes
+lomiri: pid=3152 fds=118 VmRSS:	 409904 kB threads=41
+faults=0
+
+M75_S1_SAMPLE target=420 uptime=420.59
+MainPID=3152 Result=success NRestarts=0
+Id=lomiri-full-greeter.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=52242469  MainPID=2829 Result=success NRestarts=0
+Id=lomiri-telephony-service-handler.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=43688521  MainPID=2132 Result=success NRestarts=0
+Id=pulseaudio.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=34941388
+Id=ubuntu-touch-session-unencrypted.target ActiveState=active SubState=active ActiveEnterTimestampMonotonic=52298637
+system: NFailedUnits=0 NJobs=0 SystemState=running
+display: fence_ctx=1 fence_seq=1060 pending=0 win_configs=1060 scanned=1060 copied=0 dma_fallbacks=0 skipped=0 acq_timeouts=0 completed=1060 stage=idle worker_seq=1060 worker_layers=1 padded_scanned=1060 scan_full_w=1088 scan_full_h=2352
+irqs:  58: 1063 0 0 0 0 0 0 0 GIC-0 231 Level 148b0000.decon_f| 59: 1062 0 0 0 0 0 0 0 GIC-0 232 Level 148b0000.decon_f| 60: 0 0 0 0 0 0 0 0 GIC-0 235 Level 148b0000.decon_f| 61: 25279 0 0 0 0 0 0 0 gpc2 3 Edge a50-decon-te| 62: 4280 0 0 0 0 0 0 0 GIC-0 98 Level 11500000.mali| 63: 7 0 0 0 0 0 0 0 GIC-0 99 Level 11500000.mali| 64: 5988 0 0 0 0 0 0 0 GIC-0 97 Level 11500000.mali
+mem: MemAvailable: 2477632 kB Shmem: 19440 kB Slab: 145172 kB SUnreclaim: 91752 kB
+dmabuf: Total 24 objects, 102490112 bytes
+lomiri: pid=3152 fds=118 VmRSS:	 409904 kB threads=41
+faults=0
+
+M75_S1_SAMPLE target=450 uptime=450.31
+MainPID=3152 Result=success NRestarts=0
+Id=lomiri-full-greeter.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=52242469  MainPID=2829 Result=success NRestarts=0
+Id=lomiri-telephony-service-handler.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=43688521  MainPID=2132 Result=success NRestarts=0
+Id=pulseaudio.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=34941388
+Id=ubuntu-touch-session-unencrypted.target ActiveState=active SubState=active ActiveEnterTimestampMonotonic=52298637
+system: NFailedUnits=0 NJobs=0 SystemState=running
+display: fence_ctx=1 fence_seq=1060 pending=0 win_configs=1060 scanned=1060 copied=0 dma_fallbacks=0 skipped=0 acq_timeouts=0 completed=1060 stage=idle worker_seq=1060 worker_layers=1 padded_scanned=1060 scan_full_w=1088 scan_full_h=2352
+irqs:  58: 1063 0 0 0 0 0 0 0 GIC-0 231 Level 148b0000.decon_f| 59: 1062 0 0 0 0 0 0 0 GIC-0 232 Level 148b0000.decon_f| 60: 0 0 0 0 0 0 0 0 GIC-0 235 Level 148b0000.decon_f| 61: 27066 0 0 0 0 0 0 0 gpc2 3 Edge a50-decon-te| 62: 4280 0 0 0 0 0 0 0 GIC-0 98 Level 11500000.mali| 63: 7 0 0 0 0 0 0 0 GIC-0 99 Level 11500000.mali| 64: 5988 0 0 0 0 0 0 0 GIC-0 97 Level 11500000.mali
+mem: MemAvailable: 2530728 kB Shmem: 19520 kB Slab: 134308 kB SUnreclaim: 84832 kB
+dmabuf: Total 24 objects, 102490112 bytes
+lomiri: pid=3152 fds=118 VmRSS:	 409904 kB threads=41
+faults=0
+
+M75_S1_SAMPLE target=480 uptime=480.09
+MainPID=3152 Result=success NRestarts=0
+Id=lomiri-full-greeter.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=52242469  MainPID=2829 Result=success NRestarts=0
+Id=lomiri-telephony-service-handler.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=43688521  MainPID=2132 Result=success NRestarts=0
+Id=pulseaudio.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=34941388
+Id=ubuntu-touch-session-unencrypted.target ActiveState=active SubState=active ActiveEnterTimestampMonotonic=52298637
+system: NFailedUnits=0 NJobs=1 SystemState=running
+display: fence_ctx=1 fence_seq=1061 pending=0 win_configs=1061 scanned=1061 copied=0 dma_fallbacks=0 skipped=0 acq_timeouts=0 completed=1061 stage=idle worker_seq=1061 worker_layers=1 padded_scanned=1061 scan_full_w=1088 scan_full_h=2352
+irqs:  58: 1064 0 0 0 0 0 0 0 GIC-0 231 Level 148b0000.decon_f| 59: 1063 0 0 0 0 0 0 0 GIC-0 232 Level 148b0000.decon_f| 60: 0 0 0 0 0 0 0 0 GIC-0 235 Level 148b0000.decon_f| 61: 28855 0 0 0 0 0 0 0 gpc2 3 Edge a50-decon-te| 62: 4284 0 0 0 0 0 0 0 GIC-0 98 Level 11500000.mali| 63: 7 0 0 0 0 0 0 0 GIC-0 99 Level 11500000.mali| 64: 6016 0 0 0 0 0 0 0 GIC-0 97 Level 11500000.mali
+mem: MemAvailable: 2539736 kB Shmem: 19608 kB Slab: 134828 kB SUnreclaim: 85360 kB
+dmabuf: Total 24 objects, 102490112 bytes
+lomiri: pid=3152 fds=118 VmRSS:	 409908 kB threads=41
+faults=0
+
+M75_S1_SAMPLE target=510 uptime=510.80
+MainPID=3152 Result=success NRestarts=0
+Id=lomiri-full-greeter.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=52242469  MainPID=2829 Result=success NRestarts=0
+Id=lomiri-telephony-service-handler.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=43688521  MainPID=2132 Result=success NRestarts=0
+Id=pulseaudio.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=34941388
+Id=ubuntu-touch-session-unencrypted.target ActiveState=active SubState=active ActiveEnterTimestampMonotonic=52298637
+system: NFailedUnits=0 NJobs=0 SystemState=running
+display: fence_ctx=1 fence_seq=1061 pending=0 win_configs=1061 scanned=1061 copied=0 dma_fallbacks=0 skipped=0 acq_timeouts=0 completed=1061 stage=idle worker_seq=1061 worker_layers=1 padded_scanned=1061 scan_full_w=1088 scan_full_h=2352
+irqs:  58: 1064 0 0 0 0 0 0 0 GIC-0 231 Level 148b0000.decon_f| 59: 1063 0 0 0 0 0 0 0 GIC-0 232 Level 148b0000.decon_f| 60: 0 0 0 0 0 0 0 0 GIC-0 235 Level 148b0000.decon_f| 61: 30700 0 0 0 0 0 0 0 gpc2 3 Edge a50-decon-te| 62: 4284 0 0 0 0 0 0 0 GIC-0 98 Level 11500000.mali| 63: 7 0 0 0 0 0 0 0 GIC-0 99 Level 11500000.mali| 64: 6016 0 0 0 0 0 0 0 GIC-0 97 Level 11500000.mali
+mem: MemAvailable: 2527468 kB Shmem: 19696 kB Slab: 134932 kB SUnreclaim: 85260 kB
+dmabuf: Total 24 objects, 102490112 bytes
+lomiri: pid=3152 fds=118 VmRSS:	 409908 kB threads=41
+faults=0
+
+M75_S1_SAMPLE target=540 uptime=540.52
+MainPID=3152 Result=success NRestarts=0
+Id=lomiri-full-greeter.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=52242469  MainPID=2829 Result=success NRestarts=0
+Id=lomiri-telephony-service-handler.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=43688521  MainPID=2132 Result=success NRestarts=0
+Id=pulseaudio.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=34941388
+Id=ubuntu-touch-session-unencrypted.target ActiveState=active SubState=active ActiveEnterTimestampMonotonic=52298637
+system: NFailedUnits=0 NJobs=0 SystemState=running
+display: fence_ctx=1 fence_seq=1062 pending=0 win_configs=1062 scanned=1062 copied=0 dma_fallbacks=0 skipped=0 acq_timeouts=0 completed=1062 stage=idle worker_seq=1062 worker_layers=1 padded_scanned=1062 scan_full_w=1088 scan_full_h=2352
+irqs:  58: 1065 0 0 0 0 0 0 0 GIC-0 231 Level 148b0000.decon_f| 59: 1064 0 0 0 0 0 0 0 GIC-0 232 Level 148b0000.decon_f| 60: 0 0 0 0 0 0 0 0 GIC-0 235 Level 148b0000.decon_f| 61: 32489 0 0 0 0 0 0 0 gpc2 3 Edge a50-decon-te| 62: 4288 0 0 0 0 0 0 0 GIC-0 98 Level 11500000.mali| 63: 7 0 0 0 0 0 0 0 GIC-0 99 Level 11500000.mali| 64: 6037 0 0 0 0 0 0 0 GIC-0 97 Level 11500000.mali
+mem: MemAvailable: 2535624 kB Shmem: 19772 kB Slab: 135064 kB SUnreclaim: 85516 kB
+dmabuf: Total 24 objects, 102490112 bytes
+lomiri: pid=3152 fds=118 VmRSS:	 409908 kB threads=41
+faults=0
+
+M75_S1_SAMPLE target=570 uptime=570.32
+MainPID=3152 Result=success NRestarts=0
+Id=lomiri-full-greeter.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=52242469  MainPID=2829 Result=success NRestarts=0
+Id=lomiri-telephony-service-handler.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=43688521  MainPID=2132 Result=success NRestarts=0
+Id=pulseaudio.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=34941388
+Id=ubuntu-touch-session-unencrypted.target ActiveState=active SubState=active ActiveEnterTimestampMonotonic=52298637
+system: NFailedUnits=0 NJobs=0 SystemState=running
+display: fence_ctx=1 fence_seq=1062 pending=0 win_configs=1062 scanned=1062 copied=0 dma_fallbacks=0 skipped=0 acq_timeouts=0 completed=1062 stage=idle worker_seq=1062 worker_layers=1 padded_scanned=1062 scan_full_w=1088 scan_full_h=2352
+irqs:  58: 1065 0 0 0 0 0 0 0 GIC-0 231 Level 148b0000.decon_f| 59: 1064 0 0 0 0 0 0 0 GIC-0 232 Level 148b0000.decon_f| 60: 0 0 0 0 0 0 0 0 GIC-0 235 Level 148b0000.decon_f| 61: 34279 0 0 0 0 0 0 0 gpc2 3 Edge a50-decon-te| 62: 4288 0 0 0 0 0 0 0 GIC-0 98 Level 11500000.mali| 63: 7 0 0 0 0 0 0 0 GIC-0 99 Level 11500000.mali| 64: 6037 0 0 0 0 0 0 0 GIC-0 97 Level 11500000.mali
+mem: MemAvailable: 2538376 kB Shmem: 19852 kB Slab: 135296 kB SUnreclaim: 85464 kB
+dmabuf: Total 24 objects, 102490112 bytes
+lomiri: pid=3152 fds=118 VmRSS:	 409908 kB threads=41
+faults=0
+
+M75_S1_SAMPLE target=600 uptime=600.07
+MainPID=3152 Result=success NRestarts=0
+Id=lomiri-full-greeter.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=52242469  MainPID=2829 Result=success NRestarts=0
+Id=lomiri-telephony-service-handler.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=43688521  MainPID=2132 Result=success NRestarts=0
+Id=pulseaudio.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=34941388
+Id=ubuntu-touch-session-unencrypted.target ActiveState=active SubState=active ActiveEnterTimestampMonotonic=52298637
+system: NFailedUnits=0 NJobs=1 SystemState=running
+display: fence_ctx=1 fence_seq=1063 pending=0 win_configs=1063 scanned=1063 copied=0 dma_fallbacks=0 skipped=0 acq_timeouts=0 completed=1063 stage=idle worker_seq=1063 worker_layers=1 padded_scanned=1063 scan_full_w=1088 scan_full_h=2352
+irqs:  58: 1066 0 0 0 0 0 0 0 GIC-0 231 Level 148b0000.decon_f| 59: 1065 0 0 0 0 0 0 0 GIC-0 232 Level 148b0000.decon_f| 60: 0 0 0 0 0 0 0 0 GIC-0 235 Level 148b0000.decon_f| 61: 36068 0 0 0 0 0 0 0 gpc2 3 Edge a50-decon-te| 62: 4292 0 0 0 0 0 0 0 GIC-0 98 Level 11500000.mali| 63: 7 0 0 0 0 0 0 0 GIC-0 99 Level 11500000.mali| 64: 6064 0 0 0 0 0 0 0 GIC-0 97 Level 11500000.mali
+mem: MemAvailable: 2534508 kB Shmem: 19936 kB Slab: 135028 kB SUnreclaim: 85416 kB
+dmabuf: Total 24 objects, 102490112 bytes
+lomiri: pid=3152 fds=118 VmRSS:	 409908 kB threads=41
+faults=0
+
+M75_S1_SAMPLE target=630 uptime=630.81
+MainPID=3152 Result=success NRestarts=0
+Id=lomiri-full-greeter.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=52242469  MainPID=2829 Result=success NRestarts=0
+Id=lomiri-telephony-service-handler.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=43688521  MainPID=2132 Result=success NRestarts=0
+Id=pulseaudio.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=34941388
+Id=ubuntu-touch-session-unencrypted.target ActiveState=active SubState=active ActiveEnterTimestampMonotonic=52298637
+system: NFailedUnits=0 NJobs=0 SystemState=running
+display: fence_ctx=1 fence_seq=1063 pending=0 win_configs=1063 scanned=1063 copied=0 dma_fallbacks=0 skipped=0 acq_timeouts=0 completed=1063 stage=idle worker_seq=1063 worker_layers=1 padded_scanned=1063 scan_full_w=1088 scan_full_h=2352
+irqs:  58: 1066 0 0 0 0 0 0 0 GIC-0 231 Level 148b0000.decon_f| 59: 1065 0 0 0 0 0 0 0 GIC-0 232 Level 148b0000.decon_f| 60: 0 0 0 0 0 0 0 0 GIC-0 235 Level 148b0000.decon_f| 61: 37916 0 0 0 0 0 0 0 gpc2 3 Edge a50-decon-te| 62: 4292 0 0 0 0 0 0 0 GIC-0 98 Level 11500000.mali| 63: 7 0 0 0 0 0 0 0 GIC-0 99 Level 11500000.mali| 64: 6064 0 0 0 0 0 0 0 GIC-0 97 Level 11500000.mali
+mem: MemAvailable: 2539904 kB Shmem: 20024 kB Slab: 138212 kB SUnreclaim: 86252 kB
+dmabuf: Total 24 objects, 102490112 bytes
+lomiri: pid=3152 fds=118 VmRSS:	 409908 kB threads=41
+faults=0
+
+M75_S1_SAMPLE target=660 uptime=660.50
+MainPID=3152 Result=success NRestarts=0
+Id=lomiri-full-greeter.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=52242469  MainPID=2829 Result=success NRestarts=0
+Id=lomiri-telephony-service-handler.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=43688521  MainPID=2132 Result=success NRestarts=0
+Id=pulseaudio.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=34941388
+Id=ubuntu-touch-session-unencrypted.target ActiveState=active SubState=active ActiveEnterTimestampMonotonic=52298637
+system: NFailedUnits=0 NJobs=0 SystemState=running
+display: fence_ctx=1 fence_seq=1064 pending=0 win_configs=1064 scanned=1064 copied=0 dma_fallbacks=0 skipped=0 acq_timeouts=0 completed=1064 stage=idle worker_seq=1064 worker_layers=1 padded_scanned=1064 scan_full_w=1088 scan_full_h=2352
+irqs:  58: 1067 0 0 0 0 0 0 0 GIC-0 231 Level 148b0000.decon_f| 59: 1066 0 0 0 0 0 0 0 GIC-0 232 Level 148b0000.decon_f| 60: 0 0 0 0 0 0 0 0 GIC-0 235 Level 148b0000.decon_f| 61: 39701 0 0 0 0 0 0 0 gpc2 3 Edge a50-decon-te| 62: 4296 0 0 0 0 0 0 0 GIC-0 98 Level 11500000.mali| 63: 7 0 0 0 0 0 0 0 GIC-0 99 Level 11500000.mali| 64: 6084 0 0 0 0 0 0 0 GIC-0 97 Level 11500000.mali
+mem: MemAvailable: 2544544 kB Shmem: 20116 kB Slab: 137064 kB SUnreclaim: 87036 kB
+dmabuf: Total 24 objects, 102490112 bytes
+lomiri: pid=3152 fds=118 VmRSS:	 409932 kB threads=41
+faults=0
+
+M75_S1_SAMPLE target=690 uptime=690.21
+MainPID=3152 Result=success NRestarts=0
+Id=lomiri-full-greeter.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=52242469  MainPID=2829 Result=success NRestarts=0
+Id=lomiri-telephony-service-handler.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=43688521  MainPID=2132 Result=success NRestarts=0
+Id=pulseaudio.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=34941388
+Id=ubuntu-touch-session-unencrypted.target ActiveState=active SubState=active ActiveEnterTimestampMonotonic=52298637
+system: NFailedUnits=0 NJobs=1 SystemState=running
+display: fence_ctx=1 fence_seq=1064 pending=0 win_configs=1064 scanned=1064 copied=0 dma_fallbacks=0 skipped=0 acq_timeouts=0 completed=1064 stage=idle worker_seq=1064 worker_layers=1 padded_scanned=1064 scan_full_w=1088 scan_full_h=2352
+irqs:  58: 1067 0 0 0 0 0 0 0 GIC-0 231 Level 148b0000.decon_f| 59: 1066 0 0 0 0 0 0 0 GIC-0 232 Level 148b0000.decon_f| 60: 0 0 0 0 0 0 0 0 GIC-0 235 Level 148b0000.decon_f| 61: 41484 0 0 0 0 0 0 0 gpc2 3 Edge a50-decon-te| 62: 4296 0 0 0 0 0 0 0 GIC-0 98 Level 11500000.mali| 63: 7 0 0 0 0 0 0 0 GIC-0 99 Level 11500000.mali| 64: 6084 0 0 0 0 0 0 0 GIC-0 97 Level 11500000.mali
+mem: MemAvailable: 2574980 kB Shmem: 20200 kB Slab: 135460 kB SUnreclaim: 85496 kB
+dmabuf: Total 24 objects, 102490112 bytes
+lomiri: pid=3152 fds=118 VmRSS:	 409932 kB threads=41
+faults=0
+
+M75_S1_SAMPLE target=720 uptime=720.99
+MainPID=3152 Result=success NRestarts=0
+Id=lomiri-full-greeter.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=52242469  MainPID=2829 Result=success NRestarts=0
+Id=lomiri-telephony-service-handler.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=43688521  MainPID=2132 Result=success NRestarts=0
+Id=pulseaudio.service ActiveState=active SubState=running ActiveEnterTimestampMonotonic=34941388
+Id=ubuntu-touch-session-unencrypted.target ActiveState=active SubState=active ActiveEnterTimestampMonotonic=52298637
+system: NFailedUnits=0 NJobs=0 SystemState=running
+display: fence_ctx=1 fence_seq=1065 pending=0 win_configs=1065 scanned=1065 copied=0 dma_fallbacks=0 skipped=0 acq_timeouts=0 completed=1065 stage=idle worker_seq=1065 worker_layers=1 padded_scanned=1065 scan_full_w=1088 scan_full_h=2352
+irqs:  58: 1068 0 0 0 0 0 0 0 GIC-0 231 Level 148b0000.decon_f| 59: 1067 0 0 0 0 0 0 0 GIC-0 232 Level 148b0000.decon_f| 60: 0 0 0 0 0 0 0 0 GIC-0 235 Level 148b0000.decon_f| 61: 43334 0 0 0 0 0 0 0 gpc2 3 Edge a50-decon-te| 62: 4300 0 0 0 0 0 0 0 GIC-0 98 Level 11500000.mali| 63: 7 0 0 0 0 0 0 0 GIC-0 99 Level 11500000.mali| 64: 6110 0 0 0 0 0 0 0 GIC-0 97 Level 11500000.mali
+mem: MemAvailable: 2576256 kB Shmem: 20288 kB Slab: 135900 kB SUnreclaim: 85632 kB
+dmabuf: Total 24 objects, 102490112 bytes
+lomiri: pid=3152 fds=118 VmRSS:	 409932 kB threads=41
+faults=0
+
+M75_S1_FINAL uptime=721.31
+
+CMD: sh -c journalctl -b --no-pager -o short-monotonic _SYSTEMD_USER_UNIT=lomiri-full-greeter.service | grep -E "GL (renderer|version)|GLSL|EGL|Selected driver" | head -n 20
+RC=0
+
+CMD: sh -c grep -E "GL (renderer|version)|GLSL|Selected driver" /var/log/lightdm/unity-system-compositor.log | tail -n 12
+[2026-11-18 01:45:38.112148] <information> GLRenderer: GL renderer: Mali-G72
+[2026-11-18 01:45:38.112157] <information> GLRenderer: GL version: OpenGL ES 3.2 v1.r26p0-01eac0.###other-sha0123456789ABCDEF0###
+[2026-11-18 01:45:38.112166] <information> GLRenderer: GLSL version: OpenGL ES GLSL ES 3.20
+[2026-11-18 01:45:38.482934] <information> GLRenderer: EGL version: 1.4 Android META-EGL
+[2026-11-18 01:45:38.483234] <information> GLRenderer: GL renderer: Mali-G72
+[2026-11-18 01:45:38.483264] <information> GLRenderer: GL version: OpenGL ES 3.2 v1.r26p0-01eac0.###other-sha0123456789ABCDEF0###
+[2026-11-18 01:45:38.483287] <information> GLRenderer: GLSL version: OpenGL ES GLSL ES 3.20
+[2026-11-18 01:55:49.566505] <information> mirserver: Selected driver: ubports:android2 (version 1.8.0)
+[2026-11-18 01:55:51.375901] <information> GLRenderer: EGL version: 1.4 Android META-EGL
+[2026-11-18 01:55:51.376418] <information> GLRenderer: GL renderer: Mali-G72
+[2026-11-18 01:55:51.376441] <information> GLRenderer: GL version: OpenGL ES 3.2 v1.r26p0-01eac0.###other-sha0123456789ABCDEF0###
+[2026-11-18 01:55:51.376459] <information> GLRenderer: GLSL version: OpenGL ES GLSL ES 3.20
+RC=0
+
+CMD: systemctl --failed --no-pager --plain
+UNIT LOAD ACTIVE SUB DESCRIPTION
+
+0 loaded units listed.
+RC=0
+UNIT LOAD ACTIVE SUB DESCRIPTION
+
+0 loaded units listed.
+
+CMD: sh -c dmesg | grep -E "Unable to handle|SError|Internal error|BUG:|Kernel panic|WARNING: CPU|kbase.*(fault|error)|sysmmu.*fault|dma_fence.*timed out" | tail -n 40
+RC=0
+
+CMD: cat /sys/kernel/debug/dma_buf/bufinfo
+
+Dma-buf Objects:
+size    	flags   	mode    	count   	exp_name	ino     	name
+00004096	00000002	02080007	00000002	system	00000034	<none>
+	Attached Devices:
+Total 0 devices attached
+
+10240000	00000002	02080007	00000006	system-uncached	00000033	<none>
+	Attached Devices:
+	11500000.mali
+	11500000.mali
+Total 2 devices attached
+
+00004096	00000002	02080007	00000001	system	00000032	<none>
+	Attached Devices:
+Total 0 devices attached
+
+00020480	00000002	02080007	00000002	system	00000031	<none>
+	Attached Devices:
+Total 0 devices attached
+
+00004096	00000002	02080007	00000002	system	00000030	<none>
+	Attached Devices:
+Total 0 devices attached
+
+10240000	00000002	02080007	00000006	system-uncached	00000029	<none>
+	Attached Devices:
+	11500000.mali
+	11500000.mali
+Total 2 devices attached
+
+00004096	00000002	02080007	00000002	system	00000028	<none>
+	Attached Devices:
+Total 0 devices attached
+
+10240000	00000002	02080007	00000006	system-uncached	00000027	<none>
+	Attached Devices:
+	11500000.mali
+	11500000.mali
+Total 2 devices attached
+
+00004096	00000002	02080007	00000002	system	00000026	<none>
+	Attached Devices:
+Total 0 devices attached
+
+10240000	00000002	02080007	00000006	system-uncached	00000025	<none>
+	Attached Devices:
+	11500000.mali
+	11500000.mali
+Total 2 devices attached
+
+00004096	00000002	02080007	00000001	system	00000014	<none>
+	Attached Devices:
+Total 0 devices attached
+
+00020480	00000002	02080007	00000002	system	00000013	<none>
+	Attached Devices:
+Total 0 devices attached
+
+00004096	00000002	02080007	00000002	system	00000012	<none>
+	Attached Devices:
+Total 0 devices attached
+
+10240000	00000002	02080007	00000006	system-uncached	00000011	<none>
+	Attached Devices:
+	148b0000.decon_f
+	11500000.mali
+Total 2 devices attached
+
+00004096	00000002	02080007	00000001	system	00000010	<none>
+	Attached Devices:
+Total 0 devices attached
+
+10240000	00000002	02080007	00000003	system-uncached	00000009	<none>
+	Attached Devices:
+	11500000.mali
+Total 1 devices attached
+
+00004096	00000002	02080007	00000001	system	00000008	<none>
+	Attached Devices:
+Total 0 devices attached
+
+10240000	00000002	02080007	00000003	system-uncached	00000007	<none>
+	Attached Devices:
+	11500000.mali
+Total 1 devices attached
+
+00004096	00000002	02080007	00000001	system	00000006	<none>
+	Attached Devices:
+Total 0 devices attached
+
+10240000	00000002	02080007	00000001	system-uncached	00000005	<none>
+	Attached Devices:
+Total 0 devices attached
+
+00004096	00000002	02080007	00000001	system	00000004	<none>
+	Attached Devices:
+Total 0 devices attached
+
+10240000	00000002	02080007	00000001	system-uncached	00000003	<none>
+	Attached Devices:
+Total 0 devices attached
+
+00004096	00000002	02080007	00000001	system	00000002	<none>
+	Attached Devices:
+Total 0 devices attached
+
+10240000	00000002	02080007	00000001	system-uncached	00000001	<none>
+	Attached Devices:
+Total 0 devices attached
+
+
+Total 24 objects, 102490112 bytes
+RC=0

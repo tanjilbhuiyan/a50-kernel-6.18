@@ -143,6 +143,13 @@ Evidence: `log/2026-11-14-M6.4-runtime.md`, `reference/m64-runtime/results.json`
 Tasks: dpu20 DECON/DPP/DSIM + panel forward-port preserving ioctls; Mali kbase
 r26p0 forward-port; G2D only if contract requires.
 DoD: S2 (Lomiri visible, accelerated); 10-minute UI soak without GPU faults.
+DoD evaluation (2026-11-18, owner accepted Option A): **met with limits** on the I4/S1 images (I0 kernel source,
+ADR-0005/0006 runtime). Lomiri becomes READY at about 50 s and composites on Mali-G72 / GLES 3.2 through `a50-decon`
+DMA scanout; Lomiri's own GLES compositing is accepted as S2's "equivalent" of glmark2 (no GL benchmark is installed).
+S1 observed 668 s of READY session with 0 restarts, 0 failed units, flat dma-buf/fd/RSS and no GPU, SysMMU or fence
+faults; kbase/ION/allocator/storage/USB regressions pass. Limits: light load (idle greeter, touch is M8), renderer-line
+attribution inferred from timing, fixed 260 MHz GPU, no audio (ADR-0005) and no hardware codecs (ADR-0006).
+Evidence: `log/2026-11-18-M7.5-i3-handler-startup.md`.
 Plan change (2026-11-18, owner approved): M7.5 adds a per-boot read-only overlay of `/etc/pulse/touch.pa` without
 `module-droid-discover`, because the crash-looping Android audio HAL blocks PulseAudio (M7.5 I1/I2). I2 confirms
 PulseAudio readiness but disproves the proposed handler-on-PulseAudio explanation; the handler/Lomiri blocker remains

@@ -57,4 +57,9 @@ later milestones get tickets when we reach them (evidence first, Rule 1).
 | M7.2 | DPU20 display pipeline and panel | build no / test yes | M7.1 | done (log/2026-11-16-M7.2-d4a-blank-and-close.md) |
 | M7.3 | Mali kbase r26p0 port | build no / test yes | M7.1 | done (G2h stock-controlled native/compat memory checks; limits in ticket) |
 | M7.4 | G2D if required | if required | M7.1 | dropped (measured single-layer path; decision/reopen conditions in ticket) |
-| M7.5 | Accelerated Lomiri integration and soak; M7 DoD | yes | M7.2, M7.3, M7.4 decision | in-progress (I3 finds GStreamer/OMX startup wait; controlled isolation and soak pending) |
+| M7.5 | Accelerated Lomiri integration and soak; M7 DoD | yes | M7.2, M7.3, M7.4 decision | done (log/2026-11-18-M7.5-i3-handler-startup.md; S1 soak, ADR-0005/0006) |
+| M8.1 | Real I2C without freezing 6.18 (unblocks M4.4) | yes | M4.4 | todo |
+| M8.2 | Melfas MMS touchscreen | yes | M8.1 | todo |
+| M8.3 | Volume and power keys | yes | M8.1 (PMIC power key: unverified) | todo |
+| M8.4 | Hall sensor and vibrator | yes | M8.1 where I2C-attached (unverified) | todo |
+| M8.5 | Lomiri input integration, S3 checklist and M8 DoD | yes | M8.2, M8.3, M8.4 | todo |

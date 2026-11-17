@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-18 (I4: session starts on 6.18; ADR-0006 accepted)
+Updated: 2026-11-18 (M7 done; M8 tickets written; next M8.1)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -8,7 +8,30 @@ Read this file, then the active ticket and its log. Before trusting anything her
 branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and on the phone. At the end of a session, update
 **RESUME HERE** with commits, branch, image hashes, last test and rollback result, and the next action.
 
-## RESUME HERE (2026-11-18, I4: session starts on 6.18)
+## RESUME HERE (2026-11-18, M7 done; next M8.1)
+- **Milestone:** M7 closed (owner accepted Option A, 2026-11-18): DoD met with limits, recorded in `docs/05-plan.md`
+  (M7) and `tasks/M7.5-graphics-integration-soak.md`. Evidence: `log/2026-11-18-M7.5-i3-handler-startup.md`.
+- **Phone:** stock 4.14.194 (home **192.168.0.171**), post-flight passed, fsck clean 7070/3440640 files. No test active.
+- **Next ticket:** `tasks/M8.1-real-i2c.md`: real I2C froze 6.18 in M4.4 (tests 2/3, no log); touch (`melfas,mms_ts`
+  0x48 on `i2c@13870000`) depends on it. Start from `log/2026-11-10-M4.4-buses.md` and `docs/08-open-questions.md` #8.
+- **Current test base:** I4/S1 images (I0 kernel source on `a50-m75-i0-test` + ADR-0005/0006 runtime,
+  `tools/m75/build_i4.sh`/`build_s1.sh`). Clean driver stack: `patches/` 0001-0045 (tree `81fe4953`); the ADR-0005/0006
+  hooks live in the runtime (`tools/m75/make_i4_runtime.py`), not in `patches/`.
+- **Open owner question (from 2026-11-17):** serial-prefix regex in `ccc4e48` and `androidboot.em.did` in `f68ca87`
+  remain in history (redacted in the tree); rewrite or not is undecided.
+
+## Earlier handoff (S1 soak complete; superseded)
+- **Active ticket:** M7.5. No test active; phone on stock 4.14.194 (home **192.168.0.171**), post-flight passed, fsck
+  clean 7070/3440640 files.
+- **S1 (ten-minute soak, I4 image with a 900 s timer):** regressions pass (kbase 12/12, ION 64/32, gralloc/hwcomposer,
+  userdata rw); Lomiri and handler same PIDs from READY (52 s) to 720 s with 0 restarts, systemd running/0 failed,
+  dma-buf/fds/RSS flat, 0 fault signatures, Mali IRQs active. Light load: idle greeter, no touch (M8).
+  Log: `log/2026-11-18-M7.5-i3-handler-startup.md`, sections "S1" and "M7.5 acceptance evaluation".
+- **Open for the owner:** accept Lomiri's GLES compositing as S2's "equivalent" of glmark2 (or require a GL client run),
+  and accept the light-load soak; then close M7 and write the M8 tickets.
+- **Images:** I4 `src/m75/boot-i4.img` (session), S1 `src/m75/boot-s1.img` (900 s timer); DT `src/m73/dt-g1.img`.
+
+## Earlier handoff (I4; superseded)
 - **Active ticket:** M7.5. No test active; phone on stock 4.14.194 (home **192.168.0.171**), post-flight passed, fsck
   clean 7064/3440640 files.
 - **I4 result:** with ADR-0005 (PulseAudio without the audio HAL) and ADR-0006 (placeholder over `libgsthybris.so`,

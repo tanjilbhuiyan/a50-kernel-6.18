@@ -20,7 +20,9 @@ The 6.18 kernel boots on the phone, runs Halium's init and brings Ubuntu Touch u
 over USB networking (RNDIS). The Android container boots, its real graphics allocator registers over HIDL, and 64/32-bit
 ION replay passes as Android's system user. [M7.3](log/2026-11-17-M7.3-g2h-memory-abi.md) verifies the measured Mali
 memory paths and greeter presentation through direct DMA. [M7.4](reference/m74-g2d/decision.md) drops G2D for that
-single-layer path; integration/session stability and the soak remain. Current state and next action: [STATUS.md](STATUS.md).
+single-layer path. [M7.5](log/2026-11-18-M7.5-i3-handler-startup.md) completes M7: the Lomiri session becomes ready
+at about 50 s, composites on the Mali-G72 GPU and ran a ten-minute soak without faults (idle greeter; touch is M8).
+Current state and next action: [STATUS.md](STATUS.md).
 
 | Milestone | What | State |
 |---|---|---|
@@ -30,14 +32,14 @@ single-layer path; integration/session stability and the soak remain. Current st
 | M4 | Core SoC: 8 CPUs, ACPM, PMIC regulators, power domains, thermal | done; I2C and CPU frequency deferred |
 | M5 | Ubuntu Touch userspace: systemd multi-user, SSH over USB | done, with limits below |
 | M6 | Android container: binder, ashmem, ION and real allocator startup | done, with runtime limits below |
-| M7 | Display/GPU | M7.1–M7.3 done with limits; M7.4 scoped omission; M7.5 integration/soak next |
+| M7 | Display/GPU: Lomiri UI on the Mali GPU | done with limits (G2D omitted, fixed GPU clock, light-load soak) |
 | M8-M12 | Input, Wi-Fi/Bluetooth, audio, modem, power/charging | planned |
 
 Current bring-up limits (details in [the M6.4 log](log/2026-11-14-M6.4-runtime.md)):
 
 - The four M5 HAL masks are removed. Bluetooth/audio services still fail or retry while their drivers are unported.
-- The greeter renders, but touch is unresponsive and PIN/login untested. Slow startup and a phablet-session exit remain
-  M7.5 integration issues; input is M8. See the [G2h log](log/2026-11-17-M7.3-g2h-memory-abi.md).
+- The Lomiri greeter starts and stays up, but touch is unresponsive and PIN/login untested (input is M8). Real I2C
+  still freezes 6.18 (M4.4), and the touch controller sits on I2C, so that is M8's first task.
 - A per-boot read-only RC bind defers unported TEEGRIS startup, with vendor unchanged and no fake readiness. Secure heaps
   and security-dependent HALs are unsupported; only the measured normal system heap is implemented.
 - Audio is unported (M10). Per [ADR-0005](docs/decisions/ADR-0005-defer-android-audio-hal.md), 6.18 boots overlay
