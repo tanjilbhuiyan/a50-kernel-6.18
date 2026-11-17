@@ -1,0 +1,103 @@
+{
+  "test": "M7.3 G2f metadata handler",
+  "kernel_base": "dce5cdc6e9d1c3cd64f063d5f29e1344e5724756",
+  "kernel_tree": "7253f8a58c52a3aa9c77b6458bd4ce81c28589b4",
+  "source_uncommitted": true,
+  "metadata_native_and_compat_pass": true,
+  "null_partial_input_readonly_output_error_checks_pass": true,
+  "caller_version_reserved_preservation_pass": true,
+  "mir_mode": [
+    1080,
+    2340
+  ],
+  "mir_physical_size_mm": [
+    68,
+    147
+  ],
+  "gl_vendor": "ARM",
+  "gl_renderer": "Mali-G72",
+  "owner_observation": "Recognizable Ubuntu Touch UI",
+  "gpu_execution_and_visible_ui_verified": true,
+  "presentation_path": "CPU copy from rendered buffers to boot framebuffer",
+  "direct_dma_for_real_ui_verified": false,
+  "sampled_source_buffer_extent": [
+    1088,
+    2352
+  ],
+  "visible_extent": [
+    1080,
+    2340
+  ],
+  "stats_snapshots": 174,
+  "sampled_peak_pending": 2,
+  "sampled_average_completed_updates_per_second": 2.855,
+  "rate_note": "Observed completion rate including idle intervals; not a GPU benchmark",
+  "late_display_counters": {
+    "req": 1021,
+    "done": 1022,
+    "start": 1022,
+    "timeouts": 0,
+    "extra": 0,
+    "te": 24753,
+    "FRAME_COUNT": 1024,
+    "GLOBAL": 307,
+    "TRIG": 12304,
+    "vsync_on": 1,
+    "win_configs": 1019,
+    "copied": 1019,
+    "skipped": 0,
+    "acq_timeouts": 0,
+    "frame_wait_timeouts": 0,
+    "scanned": 0,
+    "dma_fallbacks": 1019,
+    "shadow_wait_timeouts": 0,
+    "IDMA0": 3388997632,
+    "blanks": 0,
+    "unblanks": 0,
+    "dcs": 0,
+    "dcs_timeouts": 0
+  },
+  "late_fence_pending": 0,
+  "kernel_panic_observed": false,
+  "gpu_sysmmu_fault_observed": false,
+  "fence_wait_warnings": 0,
+  "systemd_at_300s": {
+    "state": "degraded",
+    "jobs": 0,
+    "failed_units": 1,
+    "failed_unit": "a50-audio-route.service"
+  },
+  "userdata_rw_at_all_three_snapshots": true,
+  "baseline_restored": true,
+  "postflight_pass": true,
+  "baseline_fsck": "/dev/sda32: clean, 7045/3440640 files, 1992124/13745152 blocks",
+  "phone_last_verified": {
+    "ip": "192.168.181.225",
+    "kernel": "4.14.194",
+    "restore": "2026-11-17 13:15:08",
+    "boot": "2026-11-17 13:15:23",
+    "battery": "100% Charging"
+  },
+  "capture_status": {
+    "runner": 0,
+    "watch": 0,
+    "collection": 0,
+    "late": 0,
+    "monitor": 0,
+    "kernel_stream": 124,
+    "kernel_stream_note": "Expected bounded 390-second host stream; separate full timed dump saved"
+  },
+  "limitations": [
+    "Current DMA path rejects padded 1088-pixel source stride",
+    "Focused kbase memory/ioctl validation still pending",
+    "Standalone EGL failure not retested here",
+    "M7 ten-minute soak not performed"
+  ],
+  "owner_later_clarification": {
+    "ui_reached": "login/greeter screen",
+    "startup": "slow by owner observation",
+    "touch": "unresponsive",
+    "pin_entry_tested": false,
+    "logged_in_desktop_verified": false
+  }
+}

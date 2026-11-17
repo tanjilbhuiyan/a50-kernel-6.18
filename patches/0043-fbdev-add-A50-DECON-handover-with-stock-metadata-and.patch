@@ -1,0 +1,1272 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Tue, 17 Nov 2026 15:40:31 +0600
+Subject: [PATCH 43/45] fbdev: add A50 DECON handover with stock metadata and
+ padded DMA scanout
+
+Consolidate the M7.2 and G2b-G2g tested display path. Keep optional register snapshots behind a default-off diagnostic config; retain passive counters for regression observation. Scope remains single-window normal linear buffers on bootloader-configured hardware. Add an explicit driver config and display DT profile.
+
+Change-Id: I53ebdbee46560a1af53bddaf71715b60d22a5e94
+---
+ arch/arm64/boot/dts/exynos/Makefile           |    1 +
+ .../dts/exynos/exynos9610-a50-display.dts     |   50 +
+ drivers/video/fbdev/Kconfig                   |   19 +
+ drivers/video/fbdev/Makefile                  |    2 +
+ drivers/video/fbdev/a50-decon.c               | 1142 +++++++++++++++++
+ 5 files changed, 1214 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos9610-a50-display.dts
+ create mode 100644 drivers/video/fbdev/a50-decon.c
+
+diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
+index 212992485..70a47bde6 100644
+--- a/arch/arm64/boot/dts/exynos/Makefile
++++ b/arch/arm64/boot/dts/exynos/Makefile
+@@ -23,3 +23,4 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
+ 	exynosautov920-sadk.dtb
+ 
+ dtb-$(CONFIG_ARCH_EXYNOS) += exynos9610-a50-sysmmu.dtb
++dtb-$(CONFIG_ARCH_EXYNOS) += exynos9610-a50-display.dtb
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610-a50-display.dts b/arch/arm64/boot/dts/exynos/exynos9610-a50-display.dts
+new file mode 100644
+index 000000000..ccad7e3dd
+--- /dev/null
++++ b/arch/arm64/boot/dts/exynos/exynos9610-a50-display.dts
+@@ -0,0 +1,50 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * A50 DPU SysMMU profile plus the display
++ * handover driver node. simplefb is disabled so that the a50-decon fbdev
++ * device owns the boot framebuffer. Values from the stock DT decon_f node
++ * (reference/stock-dt/dt.dtb.0.dts): DECON registers, frame start/done/extra
++ * interrupts SPI 199/200/203, TE on gpc2-3 (hw_te_on pin function 0xf).
++ * The node sits at the root, as in the stock DT, so the platform device is
++ * /sys/devices/platform/148b0000.decon_f, whose "vsync" attribute the stock
++ * composer reads.
++ */
++#include "exynos9610-a50-sysmmu.dts"
++#include <dt-bindings/gpio/gpio.h>
++
++/ {
++	chosen {
++		framebuffer@ca000000 {
++			status = "disabled";
++		};
++	};
++
++	/* At the root like the stock DT, so the device is /sys/devices/platform/148b0000.decon_f. */
++	decon_f: decon_f@148b0000 {
++		compatible = "samsung,a50-decon-handover";
++		reg = <0x0 0x148b0000 0x10000>;
++		memory-region = <&{/reserved-memory/fb_reserved@ca000000}>;
++		interrupts = <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH>;
++		te-gpios = <&gpc2 3 GPIO_ACTIVE_HIGH>;
++		clocks = <&cmu_top CLK_GOUT_CMU_DISPAUD_DISP>,
++			 <&cmu_dispaud CLK_GOUT_DISPAUD_SMMU_DPU_CLK>,
++			 <&cmu_dispaud CLK_GOUT_DISPAUD_DPU_ACLK_DECON>,
++			 <&cmu_dispaud CLK_GOUT_DISPAUD_DPU_ACLK_DMA>,
++			 <&cmu_dispaud CLK_GOUT_DISPAUD_DPU_ACLK_DPP>;
++		/* M7.2 D3a: DMA through the DPU SysMMU (default DMA domain). */
++		iommus = <&sysmmu_dpu>;
++	};
++};
++
++/*
++ * M7.2 D3a: identity-map the boot framebuffer in the display's IOMMU domain,
++ * so IDMA0's base 0xca000000 (programmed by S-Boot) stays valid once
++ * translation starts. Same range as reg, so the core makes it a direct mapping
++ * (of_iommu_get_resv_regions: IOMMU_RESV_DIRECT). Samsung's driver does the same
++ * with iovmm_map_oto() (4.14 dsim_drv.c:1134).
++ */
++&{/reserved-memory/fb_reserved@ca000000} {
++	iommu-addresses = <&decon_f 0x0 0xca000000 0xa00000>;
++};
+diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
+index a257b7391..e3d45799d 100644
+--- a/drivers/video/fbdev/Kconfig
++++ b/drivers/video/fbdev/Kconfig
+@@ -45,6 +45,25 @@ menuconfig FB
+ 	  (e.g. an accelerated X server) and that are not frame buffer
+ 	  device-aware may cause unexpected results. If unsure, say N.
+ 
++config FB_A50_HANDOVER
++	bool "Samsung Galaxy A50 bootloader display handover"
++	depends on FB && ARM64 && OF && DMA_SHARED_BUFFER && IOMMU_API
++	select FB_IOMEM_HELPERS
++	help
++	  Preserve S-Boot's Exynos9610/EA8076 display setup and provide the
++	  measured stock fbdev metadata, WIN_CONFIG, fence and blanking ABI.
++	  Supports one full-screen linear 8888 buffer through the DPU SysMMU,
++	  including padded pitch, with a limited CPU-copy fallback. No panel
++	  power cycling, scaling, blending, protected content or suspend support.
++
++config FB_A50_DIAGNOSTICS
++	bool "A50 display register snapshots for bring-up"
++	depends on FB_A50_HANDOVER && DEBUG_KERNEL
++	help
++	  Enable the read-only probe, early and late register dumps used by
++	  the recorded display tests. Disabled by default. Passive sysfs
++	  counters remain available independently of this option.
++
+ config FB_HECUBA
+ 	tristate
+ 	depends on FB
+diff --git a/drivers/video/fbdev/Makefile b/drivers/video/fbdev/Makefile
+index b3d12f977..0c37ba2b6 100644
+--- a/drivers/video/fbdev/Makefile
++++ b/drivers/video/fbdev/Makefile
+@@ -126,3 +126,5 @@ obj-$(CONFIG_FB_SIMPLE)           += simplefb.o
+ 
+ # the test framebuffer is last
+ obj-$(CONFIG_FB_VIRTUAL)          += vfb.o
++
++obj-$(CONFIG_FB_A50_HANDOVER) += a50-decon.o
+diff --git a/drivers/video/fbdev/a50-decon.c b/drivers/video/fbdev/a50-decon.c
+new file mode 100644
+index 000000000..7e545b1dc
+--- /dev/null
++++ b/drivers/video/fbdev/a50-decon.c
+@@ -0,0 +1,1142 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Galaxy A50 fbdev handover driver for the display pipeline left by S-Boot.
++ *
++ * S-Boot leaves DECON-F running in MIPI command mode with window 3 fed by
++ * IDMA0 from the boot framebuffer at 0xca000000, the DSI link configured and
++ * the EA8076 panel on (M7.2 D0c). D1 showed that a frame is sent by the stock
++ * sequence of decon_reg_update_req_and_unmask() (4.14 cal_9610/decon_reg.c):
++ * SHADOW_REG_UPDATE_REQ global, then HW_TRIG_EN set and HW_TRIG_MASK_DECON
++ * cleared; the panel's TE then starts the transfer.
++ *
++ * This driver keeps that state and provides:
++ *  - an fbdev device on the boot framebuffer (a8r8g8b8 1080x2340, D1);
++ *  - one frame per FBIOPAN_DISPLAY: unmask the trigger, mask it again on
++ *    the DECON frame-done interrupt (or after 100 ms);
++ *  - TE timestamps in the sysfs attribute "vsync" of the platform device
++ *    (148b0000.decon_f), notified while S3CFB_SET_VSYNC_INT is on, as the
++ *    stock composer expects;
++ *  - S3CFB_POWER_MODE and FBIOBLANK (M7.2 D4a): blank sends the EA8076 exit
++ *    sequence over DSI (DCS 0x28 display off, 20 ms, 0x10 sleep in, 120 ms;
++ *    4.14 ea8076_exit), unblank sends 0x11 sleep out, waits 120 ms, resends
++ *    the current frame and sends 0x29 display on (ea8076_init/displayon).
++ *    The panel's power GPIOs are not touched.
++ *  - S3CFB_WIN_CONFIG (M7.2 D2b) with the stock 1040-byte argument and the
++ *    stock fence model: one fence per call, returned as retire_fence and as
++ *    rel_fence of every BUFFER window, signalled when the frame is out.
++ *    D3b: a single full-screen 8888 BUFFER window is scanned out by DMA:
++ *    the dma-buf is mapped through the DPU SysMMU and IDMA0 (window 3, as
++ *    S-Boot set it up) is pointed at its IOVA. The previous buffer stays
++ *    mapped until the frame that replaces it is done. Anything else falls
++ *    back to a CPU copy into the boot framebuffer (8888 formats, no scaling
++ *    or blending), with IDMA0 pointed back at the boot framebuffer.
++ *
++ * The driver preserves the configured panel/link, uses DCS for blanking,
++ * and programs IDMA source/format/address through the active DPU SysMMU.
++ * Scaling, blending, protected content and power sequencing are unsupported.
++ */
++#include <linux/clk.h>
++#include <linux/delay.h>
++#include <linux/dma-buf.h>
++#include <linux/dma-fence.h>
++#include <linux/fb.h>
++#include <linux/file.h>
++#include <linux/gpio/consumer.h>
++#include <linux/interrupt.h>
++#include <linux/iommu.h>
++#include <linux/io.h>
++#include <linux/iosys-map.h>
++#include <linux/ktime.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_reserved_mem.h>
++#include <linux/mutex.h>
++#include <linux/platform_device.h>
++#include <linux/scatterlist.h>
++#include <linux/pm_runtime.h>
++#include <linux/slab.h>
++#include <linux/spinlock.h>
++#include <linux/swab.h>
++#include <linux/sync_file.h>
++#include <linux/uaccess.h>
++#include <linux/wait.h>
++#include <linux/workqueue.h>
++
++#define FB_W			1080
++#define FB_H			2340
++
++/* 4.14 dpu20/cal_9610/regs-decon.h */
++#define GLOBAL_CONTROL		0x0000
++#define INTERRUPT_PENDING	0x004c
++#define EXTRA_INT_PENDING	0x0050
++#define FRAME_DONE_PEND		BIT(13)
++#define FRAME_START_PEND	BIT(12)
++#define EXTRA_PEND		BIT(4)
++#define SHADOW_REQ		0x0060
++#define SHADOW_REQ_GLOBAL	BIT(31)
++#define TRIG_CTRL		0x0070
++#define HW_TRIG_EN		BIT(0)
++#define HW_TRIG_MASK_DECON	BIT(4)
++#define FRAME_COUNT		0x02a0
++#define SHADOW_REQ_ALL_WIN	0x3f
++
++/* 4.14 dpu20/cal_9610/regs-dpp.h; IDMA0 feeds window 3 (D0c) */
++#define IDMA0_BASE		0x14881000
++#define IDMA_IN_CON		0x0008
++#define IDMA_IMG_FORMAT_SHIFT	11
++#define IDMA_IMG_FORMAT_MASK	(0x3f << 11)
++#define IDMA_SRC_SIZE		0x0010
++#define IDMA_SRC_OFFSET		0x0014
++#define IDMA_IMG_SIZE		0x0018
++#define IDMA_IN_BASE_ADDR_Y	0x0040
++/* dpp_0 restrictions in the stock exynos9610.dts. */
++#define A50_SRC_FULL_W_MAX	65534
++#define A50_SRC_FULL_H_MAX	8190
++
++/* 4.14 dpu20/decon.h */
++#define S3CFB_SET_VSYNC_INT	_IOW('F', 206, __u32)
++#define S3CFB_POWER_MODE	_IOW('F', 223, __u32)
++/* G2f metadata ABI: stock dpu20/decon.h and panels/decon_lcd.h. */
++struct a50_lcd_res_info {
++	u32 width, height, dsc_en, dsc_width, dsc_height;
++};
++
++struct a50_lcd_mres_info {
++	u32 mres_en, mres_number;
++	struct a50_lcd_res_info res_info[5];
++};
++
++struct a50_disp_info {
++	u32 ver, psr_mode;
++	struct a50_lcd_mres_info mres_info;
++	u32 chip_ver;
++	u8 reserved[128];
++};
++
++#define EXYNOS_DISP_INFO _IOW('F', 260, struct a50_disp_info)
++static_assert(sizeof(struct a50_disp_info) == 248);
++static_assert(offsetof(struct a50_disp_info, mres_info) == 8);
++static_assert(offsetof(struct a50_disp_info, chip_ver) == 116);
++static_assert(offsetof(struct a50_disp_info, reserved) == 120);
++static_assert(EXYNOS_DISP_INFO == 0x40f84704);
++
++/* HWC power modes (4.14 decon.h decon_power_mode) */
++#define DECON_POWER_MODE_OFF		0
++#define DECON_POWER_MODE_DOZE		1
++#define DECON_POWER_MODE_NORMAL		2
++#define DECON_POWER_MODE_DOZE_SUSPEND	3
++
++/* 4.14 dpu20/cal_9610/regs-dsim.h */
++#define DSIM_BASE		0x148e0000
++#define DSIM_INTSRC		0x50
++#define DSIM_PKTHDR		0x58
++#define DSIM_FIFOCTRL		0x68
++#define DSIM_FIFOCTRL_FULL_PH	BIT(11)
++#define DSIM_FIFOCTRL_EMPTY_PH	BIT(10)
++#define MIPI_DSI_DCS_SHORT_WRITE	0x05
++
++/*
++ * S3CFB_WIN_CONFIG argument, laid out as 4.14 dpu20/decon.h and
++ * cal_9610/decon_cal.h (enums as 32-bit fields, dma_addr_t 64-bit).
++ * 1040 bytes on arm64, ioctl 0x441046d1 as captured in M1.3.
++ */
++#define A50_MAX_WIN		4
++#define A50_MAX_PLANE		3
++#define WIN_STATE_DISABLED	0
++#define WIN_STATE_COLOR		1
++#define WIN_STATE_BUFFER	2
++/*
++ * M7.2 used the WIN_CONFIG format value directly as the IDMA code. M7.3 G2c:
++ * as the stock driver (4.14 helper.c dpu_translate_fmt_to_dpp(), called from
++ * decon_core.c:2574), the submitted ABI format (Android byte order, e.g.
++ * RGBA_8888 = bytes R,G,B,A) is translated to the DPP format, whose names give
++ * the 32-bit word order (ABGR = word 0xAABBGGRR = bytes R,G,B,A). For the 8888
++ * formats the DPP enum equals the IDMA_IMG_FORMAT code (cal_9610/regs-dpp.h).
++ */
++#define DPP_ARGB_8888		0	/* word 0xAARRGGBB, as the boot window */
++#define DPP_ABGR_8888		1
++#define DPP_RGBA_8888		2
++#define DPP_BGRA_8888		3
++#define DPP_XRGB_8888		4
++#define DPP_XBGR_8888		5
++#define DPP_RGBX_8888		6
++#define DPP_BGRX_8888		7
++#define FMT_ARGB_8888		DPP_ARGB_8888	/* boot framebuffer */
++
++/* ABI format -> DPP/IDMA code, or -1 if not an 8888 RGB format. */
++static int a50_abi_to_dpp(u32 abi)
++{
++	static const s8 map[8] = {
++		[0] = DPP_BGRA_8888,	/* ARGB_8888 */
++		[1] = DPP_RGBA_8888,	/* ABGR_8888 */
++		[2] = DPP_ABGR_8888,	/* RGBA_8888 */
++		[3] = DPP_ARGB_8888,	/* BGRA_8888 */
++		[4] = DPP_BGRX_8888,	/* XRGB_8888 */
++		[5] = DPP_RGBX_8888,	/* XBGR_8888 */
++		[6] = DPP_XBGR_8888,	/* RGBX_8888 */
++		[7] = DPP_XRGB_8888,	/* BGRX_8888 */
++	};
++
++	return abi < ARRAY_SIZE(map) ? map[abi] : -1;
++}
++
++/* One source word in DPP format @dpp -> the boot framebuffer's ARGB word. */
++static u32 a50_to_argb(u32 v, int dpp)
++{
++	switch (dpp) {
++	case DPP_ARGB_8888:	return v;
++	case DPP_ABGR_8888:	return (v & 0xff00ff00) | ((v >> 16) & 0xff) | ((v & 0xff) << 16);
++	case DPP_RGBA_8888:	return (v >> 8) | (v << 24);
++	case DPP_BGRA_8888:	return swab32(v);
++	case DPP_XRGB_8888:	return v | 0xff000000;
++	case DPP_XBGR_8888:	return (v & 0x0000ff00) | ((v >> 16) & 0xff) | ((v & 0xff) << 16) | 0xff000000;
++	case DPP_RGBX_8888:	return (v >> 8) | 0xff000000;
++	default:		return swab32(v) | 0xff000000;	/* DPP_BGRX_8888 */
++	}
++}
++
++struct a50_win_rect { s32 x, y; u32 w, h; };
++struct a50_frame { s32 x, y; u32 w, h, f_w, f_h; };
++struct a50_dpp_params {
++	u64 addr[A50_MAX_PLANE];
++	u32 rot, eq_mode, comp_src, hdr_std, min_luminance, max_luminance;
++};
++struct a50_win_config {
++	u32 state;
++	union {
++		u32 color;
++		struct {
++			s32 fd_idma[A50_MAX_PLANE];
++			s32 acq_fence;
++			s32 rel_fence;
++			s32 plane_alpha;
++			u32 blending, idma_type, format;
++			struct a50_dpp_params dpp_parm;
++			struct a50_win_rect block_area, transparent_area, opaque_area;
++			struct a50_frame src;
++		};
++	};
++	struct a50_frame dst;
++	bool protection;
++	bool compression;
++};
++struct a50_win_config_data {
++	s32 retire_fence;
++	s32 fd_odma;
++	struct a50_win_config config[A50_MAX_WIN + 1];
++	struct { s32 remained_frames; u32 reserved[7]; } extra;
++};
++static_assert(sizeof(struct a50_win_config_data) == 1040);
++#define S3CFB_WIN_CONFIG	_IOW('F', 209, struct a50_win_config_data)
++
++struct a50_layer {
++	struct dma_buf *buf;
++	struct dma_fence *acq;
++	u32 format;		/* as submitted (ABI) */
++	int dpp;		/* translated DPP/IDMA code, -1 if unsupported */
++	bool linear;		/* no rotation, protection or compression */
++	struct a50_frame src, dst;
++};
++
++struct a50_update {
++	struct work_struct work;
++	struct a50_decon *d;
++	struct dma_fence *fence;
++	struct a50_layer layer[A50_MAX_WIN];
++	int nlayer;
++};
++
++struct a50_decon {
++	struct device *dev;
++	void __iomem *regs;
++	struct fb_info *info;
++	spinlock_t lock;
++	bool frame_pending;
++	bool vsync_on;
++	ktime_t vsync_ts;
++	u32 frames_req, frames_done, frame_start, extra_irq, te_count, timeouts;
++	struct delayed_work timeout_work;
++#ifdef CONFIG_FB_A50_DIAGNOSTICS
++	struct delayed_work report_work, late_work;
++#endif
++	wait_queue_head_t frame_wq;
++	struct workqueue_struct *update_wq;
++	spinlock_t fence_lock;
++	u64 fence_ctx, fence_seq;
++	atomic_t remaining;
++	u32 win_configs, copied, skipped, acq_timeouts, frame_waits_timed_out;
++	void __iomem *idma;
++	struct mutex hw_lock;
++	phys_addr_t fb_base;
++	struct dma_buf *scan_buf;
++	struct dma_buf_attachment *scan_att;
++	struct sg_table *scan_sgt;
++	u32 scanned, dma_fallbacks, shadow_waits_timed_out;
++	u32 padded_scanned, scan_full_w, scan_full_h;
++	void __iomem *dsim;
++	bool blanked;
++	u32 dcs_sent, dcs_timeouts, blanks, unblanks;
++	u32 pseudo_palette[16];
++	/* Passive snapshots, never used to control the worker. */
++	const char *g2b_stage;
++	u64 g2b_worker_seq;
++	u32 g2b_worker_layers, g2b_completed;
++	u32 g2b_layer_counts[A50_MAX_WIN + 1], g2b_formats[A50_MAX_WIN];
++};
++
++static ssize_t g2b_stats_show(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	struct a50_decon *d = dev_get_drvdata(dev);
++	ssize_t len;
++	int i;
++
++	if (!d)
++		return -ENODEV;
++	/* No hw_lock: reads must remain available when the update worker is blocked. */
++	len = sysfs_emit(buf, "fence_ctx=%llu fence_seq=%llu pending=%d win_configs=%u scanned=%u copied=%u dma_fallbacks=%u skipped=%u acq_timeouts=%u completed=%u stage=%s worker_seq=%llu worker_layers=%u padded_scanned=%u scan_full_w=%u scan_full_h=%u\n",
++		 (unsigned long long)READ_ONCE(d->fence_ctx),
++		 (unsigned long long)READ_ONCE(d->fence_seq), atomic_read(&d->remaining),
++		 READ_ONCE(d->win_configs), READ_ONCE(d->scanned), READ_ONCE(d->copied),
++		 READ_ONCE(d->dma_fallbacks), READ_ONCE(d->skipped), READ_ONCE(d->acq_timeouts),
++		 READ_ONCE(d->g2b_completed), READ_ONCE(d->g2b_stage),
++		 (unsigned long long)READ_ONCE(d->g2b_worker_seq), READ_ONCE(d->g2b_worker_layers),
++		 READ_ONCE(d->padded_scanned), READ_ONCE(d->scan_full_w), READ_ONCE(d->scan_full_h));
++	for (i = 0; i <= A50_MAX_WIN; i++)
++		len += sysfs_emit_at(buf, len, "layers%d=%u ", i, READ_ONCE(d->g2b_layer_counts[i]));
++	for (i = 0; i < A50_MAX_WIN; i++)
++		len += sysfs_emit_at(buf, len, "worker_format%d=%u ", i, READ_ONCE(d->g2b_formats[i]));
++	return len + sysfs_emit_at(buf, len, "\n");
++}
++static DEVICE_ATTR_RO(g2b_stats);
++static struct attribute *g2b_attrs[] = { &dev_attr_g2b_stats.attr, NULL };
++static const struct attribute_group g2b_group = { .attrs = g2b_attrs };
++
++static void a50_decon_mask_locked(struct a50_decon *d)
++{
++	u32 v = readl(d->regs + TRIG_CTRL);
++
++	writel((v & ~HW_TRIG_EN) | HW_TRIG_MASK_DECON, d->regs + TRIG_CTRL);
++	d->frame_pending = false;
++}
++
++static void a50_decon_trigger(struct a50_decon *d)
++{
++	unsigned long flags;
++	u32 v;
++
++	spin_lock_irqsave(&d->lock, flags);
++	writel(readl(d->regs + SHADOW_REQ) | SHADOW_REQ_GLOBAL | SHADOW_REQ_ALL_WIN,
++	       d->regs + SHADOW_REQ);
++	v = readl(d->regs + TRIG_CTRL);
++	writel((v | HW_TRIG_EN) & ~HW_TRIG_MASK_DECON, d->regs + TRIG_CTRL);
++	d->frame_pending = true;
++	d->frames_req++;
++	spin_unlock_irqrestore(&d->lock, flags);
++	mod_delayed_work(system_wq, &d->timeout_work, msecs_to_jiffies(100));
++}
++
++static void a50_decon_timeout(struct work_struct *w)
++{
++	struct a50_decon *d = container_of(w, struct a50_decon, timeout_work.work);
++	unsigned long flags;
++
++	spin_lock_irqsave(&d->lock, flags);
++	if (d->frame_pending) {
++		a50_decon_mask_locked(d);
++		d->timeouts++;
++	}
++	spin_unlock_irqrestore(&d->lock, flags);
++}
++
++static irqreturn_t a50_decon_irq(int irq, void *data)
++{
++	struct a50_decon *d = data;
++	u32 pend, ext = 0;
++
++	spin_lock(&d->lock);
++	pend = readl(d->regs + INTERRUPT_PENDING);
++	if (pend & FRAME_START_PEND) {
++		writel(FRAME_START_PEND, d->regs + INTERRUPT_PENDING);
++		d->frame_start++;
++	}
++	if (pend & FRAME_DONE_PEND) {
++		writel(FRAME_DONE_PEND, d->regs + INTERRUPT_PENDING);
++		d->frames_done++;
++		wake_up(&d->frame_wq);
++		if (d->frame_pending)
++			a50_decon_mask_locked(d);
++	}
++	if (pend & EXTRA_PEND) {
++		writel(EXTRA_PEND, d->regs + INTERRUPT_PENDING);
++		ext = readl(d->regs + EXTRA_INT_PENDING);
++		writel(ext, d->regs + EXTRA_INT_PENDING);
++		d->extra_irq++;
++	}
++	spin_unlock(&d->lock);
++	return IRQ_HANDLED;
++}
++
++static irqreturn_t a50_decon_te_hard(int irq, void *data)
++{
++	struct a50_decon *d = data;
++
++	d->vsync_ts = ktime_get();
++	d->te_count++;
++	return d->vsync_on ? IRQ_WAKE_THREAD : IRQ_HANDLED;
++}
++
++static irqreturn_t a50_decon_te_thread(int irq, void *data)
++{
++	struct a50_decon *d = data;
++
++	sysfs_notify(&d->dev->kobj, NULL, "vsync");
++	return IRQ_HANDLED;
++}
++
++static ssize_t vsync_show(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	struct a50_decon *d = dev_get_drvdata(dev);
++
++	return sysfs_emit(buf, "%llu\n", ktime_to_ns(d->vsync_ts));
++}
++static DEVICE_ATTR_RO(vsync);
++
++static int a50_fb_check_var(struct fb_var_screeninfo *var, struct fb_info *info)
++{
++	if (var->xres != FB_W || var->yres != FB_H || var->bits_per_pixel != 32 ||
++	    var->xoffset || var->yoffset)
++		return -EINVAL;
++	return 0;
++}
++
++static void a50_show_bootfb_locked(struct a50_decon *d);
++static void a50_frame_sync(struct a50_decon *d);
++
++/* One DCS short write without parameter, as dsim_write_data()/dsim_reg_wr_tx_header(). */
++static int a50_dcs(struct a50_decon *d, u8 cmd)
++{
++	int i;
++
++	for (i = 0; i < 100 && (readl(d->dsim + DSIM_FIFOCTRL) & DSIM_FIFOCTRL_FULL_PH); i++)
++		usleep_range(100, 200);
++	writel(((u32)cmd << 8) | MIPI_DSI_DCS_SHORT_WRITE, d->dsim + DSIM_PKTHDR);
++	for (i = 0; i < 200 && !(readl(d->dsim + DSIM_FIFOCTRL) & DSIM_FIFOCTRL_EMPTY_PH); i++)
++		usleep_range(100, 200);
++	d->dcs_sent++;
++	if (!(readl(d->dsim + DSIM_FIFOCTRL) & DSIM_FIFOCTRL_EMPTY_PH)) {
++		d->dcs_timeouts++;
++		dev_warn(d->dev, "DCS 0x%02x: header FIFO not empty (FIFOCTRL=0x%08x INTSRC=0x%08x)\n",
++			 cmd, readl(d->dsim + DSIM_FIFOCTRL), readl(d->dsim + DSIM_INTSRC));
++		return -ETIMEDOUT;
++	}
++	return 0;
++}
++
++/* Called with hw_lock held. */
++static void a50_set_blank_locked(struct a50_decon *d, bool blank)
++{
++	u32 te0 = d->te_count;
++
++	if (blank == d->blanked)
++		return;
++	if (blank) {
++		a50_dcs(d, 0x28);		/* display off */
++		msleep(20);
++		a50_dcs(d, 0x10);		/* sleep in */
++		msleep(120);
++		d->blanks++;
++	} else {
++		a50_dcs(d, 0x11);		/* sleep out */
++		msleep(120);
++		a50_frame_sync(d);		/* resend the current scanout */
++		a50_dcs(d, 0x29);		/* display on */
++		d->unblanks++;
++	}
++	d->blanked = blank;
++	dev_info(d->dev, "%s: TE during sequence=%u DSIM INTSRC=0x%08x FIFOCTRL=0x%08x dcs_timeouts=%u\n",
++		 blank ? "blank" : "unblank", d->te_count - te0, readl(d->dsim + DSIM_INTSRC),
++		 readl(d->dsim + DSIM_FIFOCTRL), d->dcs_timeouts);
++}
++
++static int a50_fb_pan_display(struct fb_var_screeninfo *var, struct fb_info *info)
++{
++	struct a50_decon *d = info->par;
++
++	if (var->xoffset || var->yoffset)
++		return -EINVAL;
++	mutex_lock(&d->hw_lock);
++	a50_show_bootfb_locked(d);
++	mutex_unlock(&d->hw_lock);
++	return 0;
++}
++
++static int a50_fb_blank(int blank, struct fb_info *info)
++{
++	struct a50_decon *d = info->par;
++
++	mutex_lock(&d->hw_lock);
++	a50_set_blank_locked(d, blank != FB_BLANK_UNBLANK);
++	mutex_unlock(&d->hw_lock);
++	return 0;
++}
++
++static int a50_fb_setcolreg(unsigned int regno, unsigned int red, unsigned int green,
++			    unsigned int blue, unsigned int transp, struct fb_info *info)
++{
++	u32 *pal = info->pseudo_palette;
++
++	if (regno >= 16)
++		return -EINVAL;
++	pal[regno] = ((transp >> 8) << 24) | ((red >> 8) << 16) | ((green >> 8) << 8) | (blue >> 8);
++	return 0;
++}
++
++static const char *a50_fence_driver(struct dma_fence *f)
++{
++	return "a50-decon";
++}
++
++static const char *a50_fence_timeline(struct dma_fence *f)
++{
++	return "decon_f";
++}
++
++static const struct dma_fence_ops a50_fence_ops = {
++	.get_driver_name = a50_fence_driver,
++	.get_timeline_name = a50_fence_timeline,
++};
++
++/* Copy one layer into the boot framebuffer (CPU bridge until D3). */
++static void a50_copy_layer(struct a50_decon *d, struct a50_layer *l)
++{
++	struct iosys_map map;
++	u32 __iomem *fb = (u32 __iomem *)d->info->screen_base;
++	const u32 *src;
++	u32 x, y;
++
++	if (l->dpp < 0) {
++		dev_info_ratelimited(d->dev, "win_config: format %u not bridged\n", l->format);
++		d->skipped++;
++		return;
++	}
++	if (l->src.w != l->dst.w || l->src.h != l->dst.h || l->src.x < 0 || l->src.y < 0 ||
++	    l->dst.x < 0 || l->dst.y < 0 || l->dst.x + l->dst.w > FB_W || l->dst.y + l->dst.h > FB_H ||
++	    l->src.x + l->src.w > l->src.f_w || l->src.y + l->src.h > l->src.f_h ||
++	    (u64)l->src.f_w * l->src.f_h * 4 > l->buf->size) {
++		dev_info_ratelimited(d->dev, "win_config: geometry not bridged src %ux%u+%d+%d/%ux%u dst %ux%u+%d+%d\n",
++				     l->src.w, l->src.h, l->src.x, l->src.y, l->src.f_w, l->src.f_h,
++				     l->dst.w, l->dst.h, l->dst.x, l->dst.y);
++		d->skipped++;
++		return;
++	}
++	WRITE_ONCE(d->g2b_stage, "cpu-access-or-vmap");
++	if (dma_buf_begin_cpu_access(l->buf, DMA_FROM_DEVICE) || dma_buf_vmap(l->buf, &map)) {
++		dev_info_ratelimited(d->dev, "win_config: buffer not mappable\n");
++		d->skipped++;
++		dma_buf_end_cpu_access(l->buf, DMA_FROM_DEVICE);
++		return;
++	}
++	WRITE_ONCE(d->g2b_stage, "cpu-pixels");
++	src = map.vaddr;
++	for (y = 0; y < l->dst.h; y++) {
++		const u32 *s = src + (u64)(l->src.y + y) * l->src.f_w + l->src.x;
++		u32 __iomem *o = fb + (u64)(l->dst.y + y) * FB_W + l->dst.x;
++
++		for (x = 0; x < l->dst.w; x++)
++			writel_relaxed(a50_to_argb(s[x], l->dpp), o + x);
++	}
++	wmb();
++	WRITE_ONCE(d->g2b_stage, "cpu-vunmap-or-end");
++	dma_buf_vunmap(l->buf, &map);
++	dma_buf_end_cpu_access(l->buf, DMA_FROM_DEVICE);
++	d->copied++;
++}
++
++/* Wait until DECON has latched the previous shadow request (decon_reg_wait_update_done). */
++static void a50_wait_shadow(struct a50_decon *d)
++{
++	int i;
++
++	for (i = 0; i < 200 && readl(d->regs + SHADOW_REQ); i++)
++		usleep_range(100, 200);
++	if (readl(d->regs + SHADOW_REQ))
++		d->shadow_waits_timed_out++;
++}
++
++static void a50_set_scanout(struct a50_decon *d, u32 addr, u32 fmt, u32 full_w, u32 full_h)
++{
++	u32 con = readl(d->idma + IDMA_IN_CON);
++
++	/* Stock idma_reg_set_coordinates(): full extent sets the RGB row pitch. */
++	writel(0, d->idma + IDMA_SRC_OFFSET);
++	writel((full_h << 16) | full_w, d->idma + IDMA_SRC_SIZE);
++	writel((FB_H << 16) | FB_W, d->idma + IDMA_IMG_SIZE);
++	writel(addr, d->idma + IDMA_IN_BASE_ADDR_Y);
++	writel((con & ~IDMA_IMG_FORMAT_MASK) | (fmt << IDMA_IMG_FORMAT_SHIFT), d->idma + IDMA_IN_CON);
++	WRITE_ONCE(d->scan_full_w, full_w);
++	WRITE_ONCE(d->scan_full_h, full_h);
++}
++
++/* Send one frame and wait for frame done; then the previous scanout buffer is no longer read. */
++static void a50_frame_sync(struct a50_decon *d)
++{
++	u32 before = d->frames_done;
++
++	a50_decon_trigger(d);
++	if (!wait_event_timeout(d->frame_wq, d->frames_done != before, msecs_to_jiffies(100)))
++		d->frame_waits_timed_out++;
++}
++
++static void a50_scan_release(struct dma_buf *buf, struct dma_buf_attachment *att, struct sg_table *sgt)
++{
++	if (!buf)
++		return;
++	dma_buf_unmap_attachment_unlocked(att, sgt, DMA_TO_DEVICE);
++	dma_buf_detach(buf, att);
++	dma_buf_put(buf);
++}
++
++static u64 a50_dma_bytes(struct a50_layer *l)
++{
++	u64 bytes;
++
++	if (l->dpp < 0 || !l->linear ||
++	    l->src.x || l->src.y || l->src.w != FB_W || l->src.h != FB_H ||
++	    l->dst.x || l->dst.y || l->dst.w != FB_W || l->dst.h != FB_H ||
++	    l->src.f_w < FB_W || l->src.f_w > A50_SRC_FULL_W_MAX ||
++	    l->src.f_h < FB_H || l->src.f_h > A50_SRC_FULL_H_MAX)
++		return 0;
++	/* Validate the whole padded extent, not just the visible tight image. */
++	bytes = (u64)l->src.f_w * l->src.f_h * 4;
++	return bytes <= l->buf->size ? bytes : 0;
++}
++
++static bool a50_dma_eligible(struct a50_layer *l)
++{
++	return a50_dma_bytes(l) != 0;
++}
++
++static bool a50_scan_range_ok(dma_addr_t start, dma_addr_t end, u64 bytes)
++{
++	/* end is exclusive; address zero is the map-failure sentinel. */
++	return bytes && start && start <= U32_MAX && end >= start &&
++	       end - start >= bytes && bytes <= (u64)U32_MAX - start + 1;
++}
++
++/* Map a layer through the SysMMU; returns the IOVA of one contiguous range or 0. */
++static u32 a50_scan_map(struct a50_decon *d, struct a50_layer *l,
++			struct dma_buf_attachment **attp, struct sg_table **sgtp)
++{
++	struct dma_buf_attachment *att;
++	struct sg_table *sgt;
++	struct scatterlist *sg;
++	dma_addr_t start, next;
++	u64 bytes = a50_dma_bytes(l);
++	unsigned int i;
++
++	if (!bytes)
++		return 0;
++	att = dma_buf_attach(l->buf, d->dev);
++	if (IS_ERR(att))
++		return 0;
++	sgt = dma_buf_map_attachment_unlocked(att, DMA_TO_DEVICE);
++	if (IS_ERR(sgt)) {
++		dma_buf_detach(l->buf, att);
++		return 0;
++	}
++	start = next = sg_dma_address(sgt->sgl);
++	for_each_sgtable_dma_sg(sgt, sg, i) {
++		if (sg_dma_address(sg) != next || sg_dma_len(sg) > U64_MAX - next)
++			break;
++		next += sg_dma_len(sg);
++	}
++	if (!a50_scan_range_ok(start, next, bytes)) {
++		dev_info_ratelimited(d->dev, "scanout: IOVA not contiguous or not 32-bit (%pad, %u segments)\n",
++				     &start, sgt->nents);
++		dma_buf_unmap_attachment_unlocked(att, sgt, DMA_TO_DEVICE);
++		dma_buf_detach(l->buf, att);
++		return 0;
++	}
++	*attp = att;
++	*sgtp = sgt;
++	return start;
++}
++
++/* Point IDMA0 back at the boot framebuffer (pan and CPU-copy paths). */
++static void a50_show_bootfb_locked(struct a50_decon *d)
++{
++	struct dma_buf *ob = d->scan_buf;
++	struct dma_buf_attachment *oa = d->scan_att;
++	struct sg_table *os = d->scan_sgt;
++
++	a50_wait_shadow(d);
++	a50_set_scanout(d, d->fb_base, FMT_ARGB_8888, FB_W, FB_H);
++	d->scan_buf = NULL;
++	a50_frame_sync(d);
++	a50_scan_release(ob, oa, os);
++}
++
++static void a50_update_work(struct work_struct *w)
++{
++	struct a50_update *u = container_of(w, struct a50_update, work);
++	struct a50_decon *d = u->d;
++	struct dma_buf_attachment *att = NULL;
++	struct sg_table *sgt = NULL;
++	u32 iova = 0;
++	int i;
++
++	WRITE_ONCE(d->g2b_worker_seq, u->fence->seqno);
++	WRITE_ONCE(d->g2b_worker_layers, u->nlayer);
++	for (i = 0; i < A50_MAX_WIN; i++)
++		WRITE_ONCE(d->g2b_formats[i], i < u->nlayer ? u->layer[i].format : ~0U);
++	WRITE_ONCE(d->g2b_stage, "hw-lock");
++	mutex_lock(&d->hw_lock);
++	WRITE_ONCE(d->g2b_stage, "acquire-fences");
++	for (i = 0; i < u->nlayer; i++) {
++		if (u->layer[i].acq && (u->fence->seqno <= 8 || !(u->fence->seqno & 127)))
++			dev_info(d->dev, "G2b acquire: out=%llu#%llu layer=%d in=%llu#%llu signaled_bit=%d\n",
++				 (unsigned long long)u->fence->context, (unsigned long long)u->fence->seqno, i,
++				 (unsigned long long)u->layer[i].acq->context,
++				 (unsigned long long)u->layer[i].acq->seqno,
++				 test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &u->layer[i].acq->flags));
++		if (u->layer[i].acq && dma_fence_wait_timeout(u->layer[i].acq, false, HZ) <= 0)
++			d->acq_timeouts++;
++	}
++
++	WRITE_ONCE(d->g2b_stage, "dma-map");
++	if (u->nlayer == 1 && a50_dma_eligible(&u->layer[0]))
++		iova = a50_scan_map(d, &u->layer[0], &att, &sgt);
++
++	if (iova) {
++		struct dma_buf *ob = d->scan_buf;
++		struct dma_buf_attachment *oa = d->scan_att;
++		struct sg_table *os = d->scan_sgt;
++
++		a50_wait_shadow(d);
++		a50_set_scanout(d, iova, u->layer[0].dpp, u->layer[0].src.f_w, u->layer[0].src.f_h);
++		get_dma_buf(u->layer[0].buf);
++		d->scan_buf = u->layer[0].buf;
++		d->scan_att = att;
++		d->scan_sgt = sgt;
++		d->scanned++;
++		if (u->layer[0].src.f_w != FB_W)
++			d->padded_scanned++;
++		WRITE_ONCE(d->g2b_stage, "dma-frame-sync");
++		a50_frame_sync(d);
++		a50_scan_release(ob, oa, os);
++	} else {
++		if (u->nlayer)
++			d->dma_fallbacks++;
++		for (i = 0; i < u->nlayer; i++)
++			a50_copy_layer(d, &u->layer[i]);
++		WRITE_ONCE(d->g2b_stage, "bootfb-frame-sync");
++		a50_show_bootfb_locked(d);
++	}
++	mutex_unlock(&d->hw_lock);
++
++	WRITE_ONCE(d->g2b_stage, "signal-release");
++	dma_fence_signal(u->fence);
++	d->g2b_completed++;
++	dma_fence_put(u->fence);
++	for (i = 0; i < u->nlayer; i++) {
++		if (u->layer[i].acq)
++			dma_fence_put(u->layer[i].acq);
++		dma_buf_put(u->layer[i].buf);
++	}
++	atomic_dec(&d->remaining);
++	WRITE_ONCE(d->g2b_stage, "idle");
++	kfree(u);
++}
++
++static int a50_win_config(struct a50_decon *d, void __user *argp)
++{
++	struct a50_win_config_data *wd;
++	struct a50_update *u;
++	struct sync_file *sf = NULL;
++	int fds[A50_MAX_WIN + 1], nfd = 0, i, ret;
++
++	wd = kmalloc(sizeof(*wd), GFP_KERNEL);
++	u = kzalloc(sizeof(*u), GFP_KERNEL);
++	if (!wd || !u) {
++		ret = -ENOMEM;
++		goto out_free;
++	}
++	if (copy_from_user(wd, argp, sizeof(*wd))) {
++		ret = -EFAULT;
++		goto out_free;
++	}
++	d->win_configs++;
++	u->d = d;
++	INIT_WORK(&u->work, a50_update_work);
++
++	for (i = 0; i < A50_MAX_WIN; i++) {
++		struct a50_win_config *c = &wd->config[i];
++		struct a50_layer *l;
++
++		c->rel_fence = -1;
++		if (c->state != WIN_STATE_BUFFER)
++			continue;
++		l = &u->layer[u->nlayer];
++		l->buf = dma_buf_get(c->fd_idma[0]);
++		if (IS_ERR(l->buf)) {
++			ret = PTR_ERR(l->buf);
++			l->buf = NULL;
++			goto out_put;
++		}
++		if (c->acq_fence >= 0) {
++			l->acq = sync_file_get_fence(c->acq_fence);
++			if (!l->acq) {
++				ret = -EINVAL;
++				dma_buf_put(l->buf);
++				l->buf = NULL;
++				goto out_put;
++			}
++		}
++		l->format = c->format;
++		l->dpp = a50_abi_to_dpp(c->format);
++		l->linear = !c->protection && !c->compression && !c->dpp_parm.rot;
++		l->src = c->src;
++		l->dst = c->dst;
++		u->nlayer++;
++	}
++
++	d->g2b_layer_counts[u->nlayer]++;
++	wd->retire_fence = -1;
++	if (!u->nlayer) {
++		/* stock driver: no active window, no retire fence */
++		ret = copy_to_user(argp, wd, sizeof(*wd)) ? -EFAULT : 0;
++		goto out_free;
++	}
++
++	u->fence = kzalloc(sizeof(*u->fence), GFP_KERNEL);
++	if (!u->fence) {
++		ret = -ENOMEM;
++		goto out_put;
++	}
++	dma_fence_init(u->fence, &a50_fence_ops, &d->fence_lock, d->fence_ctx, ++d->fence_seq);
++	sf = sync_file_create(u->fence);
++	if (!sf) {
++		ret = -ENOMEM;
++		goto out_put;
++	}
++	/* one fd for retire, one per BUFFER window for release, all on the same fence */
++	for (nfd = 0; nfd < 1 + u->nlayer; nfd++) {
++		fds[nfd] = get_unused_fd_flags(O_CLOEXEC);
++		if (fds[nfd] < 0) {
++			ret = fds[nfd];
++			goto out_fds;
++		}
++	}
++	wd->retire_fence = fds[0];
++	for (i = 0, nfd = 1; i < A50_MAX_WIN; i++)
++		if (wd->config[i].state == WIN_STATE_BUFFER)
++			wd->config[i].rel_fence = fds[nfd++];
++	wd->extra.remained_frames = atomic_inc_return(&d->remaining);
++	if (copy_to_user(argp, wd, sizeof(*wd))) {
++		atomic_dec(&d->remaining);
++		ret = -EFAULT;
++		goto out_fds;
++	}
++	if (u->fence->seqno <= 8 || !(u->fence->seqno & 127))
++		for (i = 0; i < u->nlayer; i++)
++			dev_info(d->dev, "G2c WIN_CONFIG: fence=%llu#%llu layers=%d layer=%d format=%u dpp=%d src=%ux%u+%d+%d/%ux%u dst=%ux%u+%d+%d dma_eligible=%d pending=%d\n",
++				 (unsigned long long)u->fence->context, (unsigned long long)u->fence->seqno,
++				 u->nlayer, i, u->layer[i].format, u->layer[i].dpp,
++				 u->layer[i].src.w, u->layer[i].src.h, u->layer[i].src.x, u->layer[i].src.y,
++				 u->layer[i].src.f_w, u->layer[i].src.f_h,
++				 u->layer[i].dst.w, u->layer[i].dst.h, u->layer[i].dst.x, u->layer[i].dst.y,
++				 a50_dma_eligible(&u->layer[i]), atomic_read(&d->remaining));
++	for (i = 1; i < nfd; i++)
++		fd_install(fds[i], get_file(sf->file));
++	fd_install(fds[0], sf->file);
++	dma_fence_get(u->fence);	/* reference for the worker */
++	queue_work(d->update_wq, &u->work);
++	dma_fence_put(u->fence);	/* creator's reference; sync_file holds its own */
++	kfree(wd);
++	return 0;
++
++out_fds:
++	while (nfd-- > 0)
++		put_unused_fd(fds[nfd]);
++	fput(sf->file);
++	sf = NULL;
++out_put:
++	if (u->fence && !sf)
++		dma_fence_put(u->fence);
++	for (i = 0; i < u->nlayer; i++) {
++		if (u->layer[i].acq)
++			dma_fence_put(u->layer[i].acq);
++		dma_buf_put(u->layer[i].buf);
++	}
++out_free:
++	kfree(u);
++	kfree(wd);
++	return ret;
++}
++
++static int a50_display_info(void __user *arg)
++{
++	struct a50_disp_info data;
++
++	/* Match stock copy semantics, including caller version/reserved bytes. */
++	if (copy_from_user(&data, arg, sizeof(data)))
++		return -EFAULT;
++	data.psr_mode = 2; /* DECON_MIPI_COMMAND_MODE, already handed over. */
++	data.chip_ver = 9610;
++	/* Exact baseline response, including the panel's 68x147 mres entry. */
++	data.mres_info = (struct a50_lcd_mres_info) {
++		.mres_number = 1,
++		.res_info = { { .width = 68, .height = 147 } },
++	};
++	if (copy_to_user(arg, &data, sizeof(data)))
++		return -EFAULT;
++	return 0;
++}
++
++static int a50_fb_ioctl(struct fb_info *info, unsigned int cmd, unsigned long arg)
++{
++	struct a50_decon *d = info->par;
++	u32 v;
++
++	switch (cmd) {
++	case EXYNOS_DISP_INFO:
++		return a50_display_info((void __user *)arg);
++	case S3CFB_SET_VSYNC_INT:
++		if (get_user(v, (u32 __user *)arg))
++			return -EFAULT;
++		d->vsync_on = !!v;
++		return 0;
++	case S3CFB_WIN_CONFIG:
++		return a50_win_config(d, (void __user *)arg);
++	case S3CFB_POWER_MODE:
++		if (get_user(v, (u32 __user *)arg))
++			return -EFAULT;
++		if (v > DECON_POWER_MODE_DOZE_SUSPEND)
++			return -EINVAL;
++		mutex_lock(&d->hw_lock);
++		a50_set_blank_locked(d, v == DECON_POWER_MODE_OFF || v == DECON_POWER_MODE_DOZE_SUSPEND);
++		mutex_unlock(&d->hw_lock);
++		return 0;
++	default:
++		return -ENOTTY;
++	}
++}
++
++static const struct fb_ops a50_fb_ops = {
++	.owner		= THIS_MODULE,
++	FB_DEFAULT_IOMEM_OPS,
++	.fb_check_var	= a50_fb_check_var,
++	.fb_pan_display	= a50_fb_pan_display,
++	.fb_blank	= a50_fb_blank,
++	.fb_setcolreg	= a50_fb_setcolreg,
++	.fb_ioctl	= a50_fb_ioctl,
++	.fb_compat_ioctl = a50_fb_ioctl,
++};
++
++#ifdef CONFIG_FB_A50_DIAGNOSTICS
++static void a50_decon_log(struct a50_decon *d, const char *when)
++{
++	dev_info(d->dev, "G2b fence owner: context=%llu driver=a50-decon timeline=decon_f seq=%llu pending=%d stage=%s worker_seq=%llu worker_layers=%u completed=%u\n",
++		 (unsigned long long)READ_ONCE(d->fence_ctx), (unsigned long long)READ_ONCE(d->fence_seq),
++		 atomic_read(&d->remaining), READ_ONCE(d->g2b_stage),
++		 (unsigned long long)READ_ONCE(d->g2b_worker_seq), READ_ONCE(d->g2b_worker_layers),
++		 READ_ONCE(d->g2b_completed));
++	dev_info(d->dev, "%s: frames req=%u done=%u start=%u timeouts=%u extra=%u te=%u FRAME_COUNT=%u GLOBAL=0x%08x TRIG=0x%08x vsync_on=%d win_configs=%u copied=%u skipped=%u acq_timeouts=%u frame_wait_timeouts=%u scanned=%u dma_fallbacks=%u shadow_wait_timeouts=%u IDMA0=0x%08x blanks=%u unblanks=%u dcs=%u dcs_timeouts=%u\n",
++		 when, d->frames_req, d->frames_done, d->frame_start, d->timeouts, d->extra_irq,
++		 d->te_count, readl(d->regs + FRAME_COUNT), readl(d->regs + GLOBAL_CONTROL),
++		 readl(d->regs + TRIG_CTRL), d->vsync_on, d->win_configs, d->copied, d->skipped,
++		 d->acq_timeouts, d->frame_waits_timed_out, d->scanned, d->dma_fallbacks,
++		 d->shadow_waits_timed_out, readl(d->idma + IDMA_IN_BASE_ADDR_Y), d->blanks, d->unblanks,
++		 d->dcs_sent, d->dcs_timeouts);
++	dev_info(d->dev, "G2g IDMA geometry: src_size=0x%08x src_offset=0x%08x img_size=0x%08x padded_scanned=%u\n",
++		 readl(d->idma + IDMA_SRC_SIZE), readl(d->idma + IDMA_SRC_OFFSET),
++		 readl(d->idma + IDMA_IMG_SIZE), d->padded_scanned);
++}
++
++static void a50_decon_report(struct work_struct *w)
++{
++	a50_decon_log(container_of(w, struct a50_decon, report_work.work), "2 s after probe");
++}
++
++static void a50_decon_late(struct work_struct *w)
++{
++	a50_decon_log(container_of(w, struct a50_decon, late_work.work), "late");
++}
++
++#endif
++
++static int a50_decon_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct clk_bulk_data *clks;
++	struct gpio_desc *te;
++	struct a50_decon *d;
++	struct fb_info *info;
++	struct device_node *np;
++	struct reserved_mem *rmem;
++	struct resource fbres_buf, *fbres = &fbres_buf;
++	int i, irq, nclk, ret;
++
++	d = devm_kzalloc(dev, sizeof(*d), GFP_KERNEL);
++	if (!d)
++		return -ENOMEM;
++	d->dev = dev;
++	d->g2b_stage = "idle";
++	spin_lock_init(&d->lock);
++	spin_lock_init(&d->fence_lock);
++	mutex_init(&d->hw_lock);
++	init_waitqueue_head(&d->frame_wq);
++	d->fence_ctx = dma_fence_context_alloc(1);
++	d->update_wq = alloc_ordered_workqueue("a50-decon-update", WQ_HIGHPRI);
++	if (!d->update_wq)
++		return -ENOMEM;
++	INIT_DELAYED_WORK(&d->timeout_work, a50_decon_timeout);
++#ifdef CONFIG_FB_A50_DIAGNOSTICS
++	INIT_DELAYED_WORK(&d->report_work, a50_decon_report);
++	INIT_DELAYED_WORK(&d->late_work, a50_decon_late);
++#endif
++	platform_set_drvdata(pdev, d);
++
++	nclk = devm_clk_bulk_get_all_enabled(dev, &clks);
++	if (nclk < 0)
++		return dev_err_probe(dev, nclk, "clocks\n");
++
++	/*
++	 * M7.2 D3a2: exynos-iommu enables translation only while the SysMMU is
++	 * runtime-PM active, and links it to the master's runtime PM
++	 * (DL_FLAG_PM_RUNTIME). Keep the display active from probe on so the
++	 * SysMMU resumes and programs the domain's page table.
++	 */
++	ret = devm_pm_runtime_enable(dev);
++	if (ret)
++		return dev_err_probe(dev, ret, "runtime pm\n");
++	ret = pm_runtime_resume_and_get(dev);
++	if (ret)
++		return dev_err_probe(dev, ret, "runtime resume\n");
++
++	d->regs = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(d->regs))
++		return PTR_ERR(d->regs);
++	np = of_parse_phandle(dev->of_node, "memory-region", 0);
++	rmem = np ? of_reserved_mem_lookup(np) : NULL;
++	of_node_put(np);
++	if (!rmem || rmem->size < FB_W * FB_H * 4)
++		return dev_err_probe(dev, -EINVAL, "framebuffer memory-region\n");
++	*fbres = DEFINE_RES_MEM(rmem->base, rmem->size);
++	d->fb_base = rmem->base;
++	d->idma = devm_ioremap(dev, IDMA0_BASE, 0x1000);
++	d->dsim = devm_ioremap(dev, DSIM_BASE, 0x100);
++	if (!d->idma || !d->dsim)
++		return -ENOMEM;
++
++	dev_info(dev, "handover state GLOBAL=0x%08x TRIG=0x%08x FRAME_COUNT=%u, %d clocks enabled\n",
++		 readl(d->regs + GLOBAL_CONTROL), readl(d->regs + TRIG_CTRL),
++		 readl(d->regs + FRAME_COUNT), nclk);
++	if ((readl(d->regs + GLOBAL_CONTROL) & 0x3) != 0x3)
++		return dev_err_probe(dev, -ENODEV, "DECON not enabled by the bootloader\n");
++
++	for (i = 0; i < 3; i++) {
++		irq = platform_get_irq(pdev, i);
++		if (irq < 0)
++			return irq;
++		ret = devm_request_irq(dev, irq, a50_decon_irq, 0, dev_name(dev), d);
++		if (ret)
++			return dev_err_probe(dev, ret, "irq %d\n", i);
++	}
++
++	te = devm_gpiod_get(dev, "te", GPIOD_IN);
++	if (IS_ERR(te))
++		return dev_err_probe(dev, PTR_ERR(te), "te gpio\n");
++	irq = gpiod_to_irq(te);
++	if (irq < 0)
++		return dev_err_probe(dev, irq, "te irq\n");
++	ret = devm_request_threaded_irq(dev, irq, a50_decon_te_hard, a50_decon_te_thread,
++					IRQF_TRIGGER_RISING | IRQF_ONESHOT, "a50-decon-te", d);
++	if (ret)
++		return dev_err_probe(dev, ret, "te irq request\n");
++
++	ret = device_create_file(dev, &dev_attr_vsync);
++	if (ret)
++		return ret;
++
++	info = framebuffer_alloc(0, dev);
++	if (!info)
++		return -ENOMEM;
++	d->info = info;
++	info->par = d;
++	info->fbops = &a50_fb_ops;
++	info->pseudo_palette = d->pseudo_palette;
++	strscpy(info->fix.id, "a50-decon", sizeof(info->fix.id));
++	info->fix.smem_start = fbres->start;
++	info->fix.smem_len = FB_W * FB_H * 4;
++	info->fix.type = FB_TYPE_PACKED_PIXELS;
++	info->fix.visual = FB_VISUAL_TRUECOLOR;
++	info->fix.line_length = FB_W * 4;
++	info->fix.accel = FB_ACCEL_NONE;
++	info->var.xres = info->var.xres_virtual = FB_W;
++	info->var.yres = info->var.yres_virtual = FB_H;
++	info->var.bits_per_pixel = 32;
++	info->var.red = (struct fb_bitfield){ 16, 8, 0 };
++	info->var.green = (struct fb_bitfield){ 8, 8, 0 };
++	info->var.blue = (struct fb_bitfield){ 0, 8, 0 };
++	info->var.transp = (struct fb_bitfield){ 24, 8, 0 };
++	info->var.width = 68;	/* mm, stock DT ea8076 size */
++	info->var.height = 147;
++	info->var.activate = FB_ACTIVATE_NOW;
++	info->var.vmode = FB_VMODE_NONINTERLACED;
++	info->screen_base = devm_ioremap_wc(dev, fbres->start, info->fix.smem_len);
++	if (!info->screen_base) {
++		framebuffer_release(info);
++		return -ENOMEM;
++	}
++	info->screen_size = info->fix.smem_len;
++	ret = register_framebuffer(info);
++	if (ret) {
++		framebuffer_release(info);
++		return dev_err_probe(dev, ret, "register_framebuffer\n");
++	}
++	dev_info(dev, "fb%d on the boot framebuffer %pR\n", info->node, fbres);
++	/* Diagnostics may be absent if sysfs setup fails; never alter the display path. */
++	ret = devm_device_add_group(dev, &g2b_group);
++	if (ret)
++		dev_warn(dev, "G2b stats creation failed: %d\n", ret);
++#ifdef CONFIG_FB_A50_DIAGNOSTICS
++	{
++		/* M7.2 D3a diagnostics: IOMMU domain and the boot framebuffer mapping. */
++		struct iommu_domain *dom = iommu_get_domain_for_dev(dev);
++		void __iomem *mmu = ioremap(0x14820000, 0x9000);
++
++		dev_info(dev, "iommu domain=%s type=0x%x iova 0xca000000 -> %pa, 0xca9a3f7c -> %pa, sysmmu MMU_CTRL=0x%08x PT_BASE=0x%08x CAPA1=0x%08x rpm_active=%d\n",
++			 dom ? "yes" : "none", dom ? dom->type : 0,
++			 &(phys_addr_t){ dom ? iommu_iova_to_phys(dom, 0xca000000) : 0 },
++			 &(phys_addr_t){ dom ? iommu_iova_to_phys(dom, 0xca9a3f7c) : 0 },
++			 mmu ? readl(mmu) : 0, mmu ? readl(mmu + 0x0c) : 0,
++			 mmu ? readl(mmu + 0x874) : 0,
++			 pm_runtime_active(dev));
++		if (mmu)
++			iounmap(mmu);
++	}
++#endif
++
++	a50_decon_trigger(d);
++#ifdef CONFIG_FB_A50_DIAGNOSTICS
++	schedule_delayed_work(&d->report_work, 2 * HZ);
++	schedule_delayed_work(&d->late_work, 405 * HZ);
++#endif
++	return 0;
++}
++
++static const struct of_device_id a50_decon_of_match[] = {
++	{ .compatible = "samsung,a50-decon-handover" },
++	{ }
++};
++
++static struct platform_driver a50_decon_driver = {
++	.probe = a50_decon_probe,
++	.driver = {
++		.name = "a50-decon",
++		.of_match_table = a50_decon_of_match,
++		.suppress_bind_attrs = true,
++	},
++};
++builtin_platform_driver(a50_decon_driver);

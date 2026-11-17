@@ -9,9 +9,12 @@ continues to hold the separate clean driver series.
 
 - **Base:** https://android.googlesource.com/kernel/common, branch `android17-6.18`,
   commit `d9a614feddce2e8e68767df1d3421305d26a965b` (2026-10-31, Linux 6.18.33).
-- **Series:** `0001` to `0035`. It is the project's clean driver stack: device tree and defconfig, Exynos 9610 clocks,
-  pinctrl, UFS with the `A50_UFS_SAFE` write guard, USB PHY, ACPM, S2MPU09 regulators (read-only), thermal (read-only),
-  and the userdata write allow-list.
+- **Series:** `0001` to `0045`. It is the project's clean driver stack:
+  - `0001`-`0035` (M2-M5): device tree and defconfig, Exynos 9610 clocks, pinctrl, UFS with the `A50_UFS_SAFE` write
+    guard, USB PHY, ACPM, S2MPU09 regulators (read-only), thermal (read-only), and the userdata write allow-list;
+  - `0036`-`0040` (M6): tracepoint and Rust build fixes, and the Exynos ION system-heap ABI on native DMA-BUF heaps;
+  - `0041`-`0045` (M7): the pinctrl GPIO-interrupt fix, display clocks and DPU SysMMU in the DT, the `a50-decon` fbdev
+    driver on the bootloader's display pipeline, and Samsung's Mali r26p0 kbase ported to 6.18 at a fixed GPU clock.
 - **Not included:** diagnostic patches and one-off test patches. They stay with their test evidence under `reference/`.
   The Halium/Ubuntu Touch config flags are in `tools/m51/halium.flags`.
 
@@ -26,13 +29,18 @@ make ARCH=arm64 LLVM=1 O=out a50_firstlight_defconfig
 make ARCH=arm64 LLVM=1 O=out -j"$(nproc)" Image
 ```
 
+The defconfig covers the M2-M5 drivers. The full config of the M7 stack is
+[reference/m75-integration/clean.config](../reference/m75-integration/clean.config);
+`tools/m75/build_clean.py` builds the series with it and the pinned toolchain and runtime from
+[reproduce/m6/](../reproduce/m6/README.md), and checks that the resolved config is unchanged.
+
 The project builds with ACK's clang prebuilt (`clang-r584948c`) through `tools/m22_build.sh`, which also embeds the
 initramfs and applies the Halium flags. Packing for S-Boot is `tools/m22_pack.sh`. Read `docs/06-workflow.md` before
 flashing anything.
 
 ## Regenerating
 
-`tools/export_patches.sh` rewrites this series from the local kernel branch `a50-userdata` and checks that the series
+`tools/export_patches.sh` rewrites this series from the local kernel branch `a50-graphics` and checks that the series
 applied to the base reproduces that branch's tree exactly. Re-run it whenever the clean branch changes.
 
 ## License

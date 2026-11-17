@@ -1,0 +1,134 @@
+{
+  "test": "M7.3 G2h focused kbase memory ABI",
+  "outer_base": "48c9ceb252dd6be6221a70a8cd6c75e32d85d242",
+  "kernel_image_source_tree": "ecb4aab84e0af0b68b6fb0aab5c155aaa2574908",
+  "kernel_branch": "a50-m73-g2g-wip",
+  "kernel_worktree": "src/m73/g2g-kernel",
+  "kernel_changes_this_session": false,
+  "image": "unchanged G2g; no rebuild",
+  "owner_confirmation": "Present, USB connected, Claude idle; run the kbase tests.",
+  "baseline_ip": "192.168.181.225",
+  "baseline_result": "same final helper binaries pass six cases on both ABIs",
+  "context_policy": "BASE_CONTEXT_SYSTEM_MONITOR_SUBMIT_DISABLED per probe context; no job submissions from probes",
+  "source_headers": "actual ported r26p0 UAPI and extracted constants",
+  "files": {
+    "src/m73/boot-g2g.img": {
+      "size": 30302208,
+      "sha256": "42cbbeb884bab6088a2835697bf8446e3edb025e60bde675ed33bcb4544053ad"
+    },
+    "src/m73/dt-g1.img": {
+      "size": 8388608,
+      "sha256": "dee291ace91ab19f9d241d3c7cd42557e109f066ddf0c38eb69a6a7b1f97625c"
+    },
+    "reference/dt-6.18/images/dtbo.img": {
+      "size": 8388608,
+      "sha256": "6d81cce87faca914d75f024f36e183ae6592e61adc786bbb6c7c47cdd3a151fe"
+    },
+    "reference/stock-images/dt.img": {
+      "size": 8388608,
+      "sha256": "59209aa52dc3b35e2c7cc025c465ed1cdb48dadaa13cf5d1f50324b3bf503547"
+    },
+    "reference/stock-images/dtbo.img": {
+      "size": 8388608,
+      "sha256": "40e47ed1477a8ffb6cbb34e5cb59a1af786c2552544f3b556373f3c553d40d21"
+    },
+    "baseline/ut-26.04-2026-10-19-aa17rf2/boot.img": {
+      "size": 53624832,
+      "sha256": "7d5855efd34e01f09659c7d47ecb0773c30f2acc7443ee87181a0536804086c5"
+    },
+    "src/m73/g2h-session/kbase-memory64": {
+      "size": 2252296,
+      "sha256": "c38ce94273932f81bbdb0f93ffea8bad59cc4ea334641829137872347b184c46"
+    },
+    "src/m73/g2h-session/kbase-memory32": {
+      "size": 1756608,
+      "sha256": "16b3c33f2685dd90da68a1efaa9168ff41141411a01b4a460806f23150a71c1e"
+    },
+    "src/m73/g2h-session/memory_constants.h": {
+      "size": 1162,
+      "sha256": "98db74d5f308dc6fdea7ff336f9d8b3ba9bb14bf217687388ed4ace3fb80a501"
+    },
+    "src/m73/g2h-session/backup-hash.txt": {
+      "size": 113,
+      "sha256": "2b9e1952c14a7ac9f9e8a63d62bf2930ca43f1013f024939af4b8b7a9bd95e36"
+    },
+    "tools/m73/kbase_memory_probe.c": {
+      "size": 12659,
+      "sha256": "a55b9b6990020cc364adb6ebd93fbc7104a848527ec1d935a6d0694821f50502"
+    },
+    "tools/m73/build_memory_probe.py": {
+      "size": 2049,
+      "sha256": "3ec05e4d75d8feceaf191bf79dce1f156ec1788158355ca6731b5517b885c6d3"
+    },
+    "tools/m73/run_memory_baseline.sh": {
+      "size": 1123,
+      "sha256": "0d531fc86e28288e1d628550e2310cb77a797b583add7202f0881f5df6974709"
+    },
+    "tools/m73/collect_g2h.sh": {
+      "size": 1611,
+      "sha256": "a0eaad9c02b495f5c83b0f46f181086bbfbd534a953e447e34c940c576bcd969"
+    },
+    "tools/m73/run_g2h.sh": {
+      "size": 4287,
+      "sha256": "b2ffe0e04d134412c2d6f1fc581a3e35ddb3b719c04ce22851d717c80268e3ec"
+    },
+    "tools/m54/watch_ssh.py": {
+      "size": 4321,
+      "sha256": "f656a6f1092266c2214ba0f3afee37ac81b0b62620b7feb57cadf6a71db52bfd"
+    },
+    "tools/m32_run_test.sh": {
+      "size": 4209,
+      "sha256": "0de47c72a2bada4b792214211b32d6bdad03bc24a4a0446fdc383418f20e8d87"
+    },
+    "tools/m24_preflight.sh": {
+      "size": 4118,
+      "sha256": "6beca4aa8634c3e1b687e4242d700a311c89f2f18322398ef7a9d08a3fc13d8e"
+    },
+    "tools/m32_read_618.sh": {
+      "size": 1238,
+      "sha256": "e750045b3417db5a9f9a6aad25e96cf85f1367aef897c45f039e8e440ac765c7"
+    },
+    "src/m73/g2g-kernel/drivers/gpu/arm/midgard/mali_kbase_ioctl.h": {
+      "size": 25980,
+      "sha256": "a7a21754a3cca1f3bda9be4d8bd8d875c3b853031ce0bf604c364955900a5cbd"
+    },
+    "src/m73/g2g-kernel/drivers/gpu/arm/midgard/jm/mali_kbase_jm_ioctl.h": {
+      "size": 6998,
+      "sha256": "58f3fa328d796219dae31bc71789016ffd4f1afbad4ebfa3e187edd09bbc1669"
+    },
+    "src/m73/g2g-kernel/drivers/gpu/arm/midgard/mali_base_kernel.h": {
+      "size": 27257,
+      "sha256": "6a3aeed7ea92634131a93102400e5d0f3e3eed19ae2a836e234f8ed462e79fcb"
+    },
+    "src/m73/g2g-kernel/drivers/gpu/arm/midgard/mali_base_mem_priv.h": {
+      "size": 1744,
+      "sha256": "491a4c733a73b05b980bc0e9753265ecaf24d800e5741607d7a81e2f98f6c13c"
+    },
+    "src/m73/g2g-kernel/drivers/gpu/arm/midgard/jm/mali_base_jm_kernel.h": {
+      "size": 42492,
+      "sha256": "9c75bac372ff9ec87f94263ca3535bca92c0a183b1c0f911f9d1c659032ebfa7"
+    },
+    "src/m73/g2g-kernel/drivers/staging/android/uapi/ion.h": {
+      "size": 5239,
+      "sha256": "91acd3a40f61332bec819f712743933fee5cbef4e765c0b92ac8c1d9a8299087"
+    }
+  },
+  "snapshots": {
+    "src/m73/g2h-session/memory_constants.h": "reference/m73-gpu/g2h-scripts/memory_constants.h",
+    "tools/m73/kbase_memory_probe.c": "reference/m73-gpu/g2h-scripts/kbase_memory_probe.c",
+    "tools/m73/build_memory_probe.py": "reference/m73-gpu/g2h-scripts/build_memory_probe.py",
+    "tools/m73/run_memory_baseline.sh": "reference/m73-gpu/g2h-scripts/run_memory_baseline.sh",
+    "tools/m73/collect_g2h.sh": "reference/m73-gpu/g2h-scripts/collect_g2h.sh",
+    "tools/m73/run_g2h.sh": "reference/m73-gpu/g2h-scripts/run_g2h.sh",
+    "tools/m54/watch_ssh.py": "reference/m73-gpu/g2h-scripts/watch_ssh.py",
+    "tools/m32_run_test.sh": "reference/m73-gpu/g2h-scripts/m32_run_test.sh",
+    "tools/m24_preflight.sh": "reference/m73-gpu/g2h-scripts/m24_preflight.sh",
+    "tools/m32_read_618.sh": "reference/m73-gpu/g2h-scripts/m32_read_618.sh",
+    "src/m73/g2g-kernel/drivers/gpu/arm/midgard/mali_kbase_ioctl.h": "reference/m73-gpu/g2h-scripts/mali_kbase_ioctl.h",
+    "src/m73/g2g-kernel/drivers/gpu/arm/midgard/jm/mali_kbase_jm_ioctl.h": "reference/m73-gpu/g2h-scripts/mali_kbase_jm_ioctl.h",
+    "src/m73/g2g-kernel/drivers/gpu/arm/midgard/mali_base_kernel.h": "reference/m73-gpu/g2h-scripts/mali_base_kernel.h",
+    "src/m73/g2g-kernel/drivers/gpu/arm/midgard/mali_base_mem_priv.h": "reference/m73-gpu/g2h-scripts/mali_base_mem_priv.h",
+    "src/m73/g2g-kernel/drivers/gpu/arm/midgard/jm/mali_base_jm_kernel.h": "reference/m73-gpu/g2h-scripts/mali_base_jm_kernel.h",
+    "src/m73/g2g-kernel/drivers/staging/android/uapi/ion.h": "reference/m73-gpu/g2h-scripts/ion.h"
+  }
+}

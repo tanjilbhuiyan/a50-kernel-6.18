@@ -1,0 +1,22 @@
+{
+  "test": "G2e supplementary read-only observations",
+  "files": {
+    "tools/m73/read_fb_mode.py": {
+      "size": 849,
+      "sha256": "a343bec5d956ab9ca4fce93e5c2844d9a46e48493f3d3a56274173045f1d6fa9"
+    },
+    "src/m73/g2e-session/backup-hash.txt": {
+      "size": 113,
+      "sha256": "2b9e1952c14a7ac9f9e8a63d62bf2930ca43f1013f024939af4b8b7a9bd95e36"
+    }
+  },
+  "fb_layout": "include/uapi/linux/fb.h struct fb_var_screeninfo, 40 32-bit fields",
+  "captures": [
+    "g2e-session-details.txt",
+    "g2e-user-session.txt",
+    "g2e-fb-mode.txt",
+    "g2e-baseline-fb-mode.txt",
+    "g2e-baseline-display.txt"
+  ],
+  "scope": "Read-only session/display logs and same fbdev ioctl on test kernel and restored baseline"
+}

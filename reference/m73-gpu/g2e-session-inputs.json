@@ -1,0 +1,60 @@
+{
+  "test": "M7.3 G2e office test session",
+  "office_phone_ip": "192.168.181.225",
+  "outer_base": "48c9ceb252dd6be6221a70a8cd6c75e32d85d242",
+  "kernel_commit": "dce5cdc6e9d1c3cd64f063d5f29e1344e5724756",
+  "kernel_tree": "b632eb2709cbce0cfad645109d94b5ce4ba9b8cb",
+  "files": {
+    "tools/m73/run_g2e.sh": {
+      "size": 4478,
+      "sha256": "5aadd98ba64565514af2ed25ea96ae25ba4c376a4bf6d320fa569815fedc5665"
+    },
+    "tools/m73/collect_g2e.sh": {
+      "size": 2646,
+      "sha256": "c29100a502ad2c6cd8055c53d74235f0fac694281005d6cfd3a73f414f66b423"
+    },
+    "tools/m73/ion_flags_test.c": {
+      "size": 2109,
+      "sha256": "7f6d16825937ce0a3bf24fc2894339d25c63215962d9d1648781c0b738872ab2"
+    },
+    "src/m73/g2e-session/ion-flags64": {
+      "size": 2221088,
+      "sha256": "2ec694be7da81d1c07ff4326b4d1c783323204dafa4da1a7d4b377cce98a2ba3"
+    },
+    "src/m73/g2e-session/ion-flags32": {
+      "size": 1728784,
+      "sha256": "bfdd3a3d71f943d8d7a5a0d7ea9e7ba090c7278dda697100a4c2cf379492c241"
+    },
+    "tools/m54/watch_ssh.py": {
+      "size": 4321,
+      "sha256": "f656a6f1092266c2214ba0f3afee37ac81b0b62620b7feb57cadf6a71db52bfd"
+    },
+    "tools/m32_run_test.sh": {
+      "size": 4209,
+      "sha256": "0de47c72a2bada4b792214211b32d6bdad03bc24a4a0446fdc383418f20e8d87"
+    },
+    "tools/m24_preflight.sh": {
+      "size": 4118,
+      "sha256": "6beca4aa8634c3e1b687e4242d700a311c89f2f18322398ef7a9d08a3fc13d8e"
+    },
+    "tools/m32_read_618.sh": {
+      "size": 1238,
+      "sha256": "e750045b3417db5a9f9a6aad25e96cf85f1367aef897c45f039e8e440ac765c7"
+    },
+    "src/m73/g2b-kernel/drivers/staging/android/uapi/ion.h": {
+      "size": 5239,
+      "sha256": "91acd3a40f61332bec819f712743933fee5cbef4e765c0b92ac8c1d9a8299087"
+    }
+  },
+  "snapshots": {
+    "tools/m73/run_g2e.sh": "reference/m73-gpu/g2e-scripts/run_g2e.sh",
+    "tools/m73/collect_g2e.sh": "reference/m73-gpu/g2e-scripts/collect_g2e.sh",
+    "tools/m73/ion_flags_test.c": "reference/m73-gpu/g2e-scripts/ion_flags_test.c",
+    "tools/m54/watch_ssh.py": "reference/m73-gpu/g2e-scripts/watch_ssh.py",
+    "tools/m32_run_test.sh": "reference/m73-gpu/g2e-scripts/m32_run_test.sh",
+    "tools/m24_preflight.sh": "reference/m73-gpu/g2e-scripts/m24_preflight.sh",
+    "tools/m32_read_618.sh": "reference/m73-gpu/g2e-scripts/m32_read_618.sh",
+    "src/m73/g2b-kernel/drivers/staging/android/uapi/ion.h": "reference/m73-gpu/g2e-scripts/ion.h"
+  },
+  "procedure": "Natural startup to 100s; native/compat ION hint replay and negative controls; 30s GLES, 12s EGL; direct display only if LightDM inactive; normal timed dump and stock restore. All test helper files in /run tmpfs."
+}

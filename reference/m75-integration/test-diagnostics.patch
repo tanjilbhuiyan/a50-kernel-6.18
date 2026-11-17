@@ -1,0 +1,543 @@
+diff --git a/arch/arm64/Kconfig.debug b/arch/arm64/Kconfig.debug
+index 265c44610..36ee00405 100644
+--- a/arch/arm64/Kconfig.debug
++++ b/arch/arm64/Kconfig.debug
+@@ -20,4 +20,47 @@ config ARM64_RELOC_TEST
+ 	depends on m
+ 	tristate "Relocation testing module"
+ 
++config A50_DIAG
++	bool "Galaxy A50 first-light diagnostics (paints framebuffer bands, writes DRAM markers)"
++	help
++	  Debug aid for bringing up the Samsung Galaxy A50 without a serial
++	  console: paints coloured bands into the bootloader framebuffer and
++	  writes stage markers into DRAM at several points of the boot, then
++	  tries a PSCI SYSTEM_RESET. Never enable on anything else.
++
++config A50_DIAG_RESET_STAGE
++	int "A50 diag: reset the SoC on reaching stage N (0 = never)"
++	depends on A50_DIAG
++	range 0 16
++	default 0
++	help
++	  Writes 1 to the Exynos9610 PMU SWRESET register at the start of
++	  diagnostic stage N (1 setup_arch, 2 arch_initcall, 3 late_initcall).
++	  The resulting boot loop is the only observable signal on the phone.
++	  10..16: bisection points in start_kernel()/kernel_init_freeable(),
++	  see A50_POINT() in init/main.c.
++
++config A50_DIAG_SKIP_MCT
++	bool "A50 diag: skip the Exynos MCT timer init"
++	depends on A50_DIAG && CLKSRC_EXYNOS_MCT
++	help
++	  The stock A50 DT has an exynos4210-mct node whose clocks come from
++	  samsung,exynos9610-clock, which has no 6.18 driver; mct_init_dt()
++	  then panics. Diagnostic switch only.
++
++config A50_DIAG_DUMP_DSS
++	bool "A50 diag: at late_initcall, dump the printk log to the DSS buffer and reboot to Download mode"
++	depends on A50_DIAG
++	help
++	  Appends the printk log to the debug-snapshot log_kernel buffer at
++	  the bootloader's end pointer, then reboots to Download mode by
++	  software. The baseline kernel's /proc/last_kmsg then shows it.
++
++config A50_DIAG_DUMP_AFTER
++	int "A50 diag: when to dump (0 = late_initcall, N = after N s, -1 = only on panic)"
++	depends on A50_DIAG_DUMP_DSS
++	default 0
++	help
++	  Default for the a50_diag.dump_after= parameter. A panic always dumps.
++
+ source "drivers/hwtracing/coresight/Kconfig"
+diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
+index 76f32e424..9822eb9b8 100644
+--- a/arch/arm64/kernel/Makefile
++++ b/arch/arm64/kernel/Makefile
+@@ -85,3 +85,4 @@ endif
+ 
+ # for cleaning
+ subdir- += vdso vdso32
++obj-$(CONFIG_A50_DIAG)			+= a50_diag.o
+diff --git a/arch/arm64/kernel/a50_diag.c b/arch/arm64/kernel/a50_diag.c
+new file mode 100644
+index 000000000..10c14b663
+--- /dev/null
++++ b/arch/arm64/kernel/a50_diag.c
+@@ -0,0 +1,293 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Galaxy A50 first-light diagnostics (CONFIG_A50_DIAG). No console exists on
++ * this phone, so each boot stage paints a band into the bootloader
++ * framebuffer (0xca000000, 1080x2340, 4320 bytes/row assumed ARGB8888) AND
++ * writes a marker into DRAM at 0xf9030000 (inside the debug-snapshot
++ * log_kernel buffer, which the baseline kernel exposes as /proc/last_kmsg
++ * after a reboot). Stage 0 lives in head.S. Band rows: S0 0-49 red, S1 60-109
++ * green, S2 120-169 blue, S3 180-229 white, heartbeat 240-289 blinking.
++ */
++#include <linux/init.h>
++#include <linux/io.h>
++#include <linux/delay.h>
++#include <linux/string.h>
++#include <linux/arm-smccc.h>
++#include <asm/early_ioremap.h>
++#include <asm/cacheflush.h>
++#include <linux/slab.h>
++#include <linux/vmalloc.h>
++#include <linux/kmsg_dump.h>
++#include <linux/moduleparam.h>
++#include <linux/workqueue.h>
++#include <linux/atomic.h>
++#include <linux/syscalls.h>
++
++#define FB_PHYS		0xca000000UL
++#define ROW_BYTES	4320UL
++#define BAND_BYTES	(50UL * ROW_BYTES)	/* 216000, below the 256 KiB early_ioremap slot */
++#define MARK_PHYS	0xf9030000UL
++#define PMU_PHYS	0x11860000UL	/* stock DT: reboot { pmu_base = <0x11860000>; } */
++#define PMU_SWRESET	0x400		/* drivers/soc/samsung/exynos-reboot.c (4.14): writel(1, SWRESET) */
++
++/*
++ * CONFIG_A50_DIAG_RESET_STAGE=N: reset the SoC at the START of stage N. A boot loop
++ * then proves stage N was reached (no console and no readable log exist; the
++ * reset is the only channel validated on the phone, Tests 10/11).
++ */
++static void __noreturn a50_reset_now(void __iomem *pmu)
++{
++	if (pmu)
++		writel(1, pmu + PMU_SWRESET);
++	for (;;)
++		cpu_relax();
++}
++
++#define ARGB_RED	0xffff0000u
++#define ARGB_GREEN	0xff00ff00u
++#define ARGB_BLUE	0xff0000ffu
++#define ARGB_WHITE	0xffffffffu
++#define ARGB_BLACK	0xff000000u
++
++static void __init a50_fill(void __iomem *p, size_t bytes, u32 argb)
++{
++	size_t i;
++
++	for (i = 0; i < bytes; i += 4)
++		writel_relaxed(argb, p + i);
++}
++
++/*
++ * Bisection points (CONFIG_A50_DIAG_RESET_STAGE = 10..16): reset the SoC when
++ * point n is reached. early_ioremap() before the slab allocator, ioremap() after.
++ */
++void __init a50_diag_point(int n)
++{
++	if (n != CONFIG_A50_DIAG_RESET_STAGE)
++		return;
++	if (slab_is_available())
++		a50_reset_now(ioremap(PMU_PHYS, 0x1000));
++	a50_reset_now(early_ioremap(PMU_PHYS, 0x1000));
++}
++
++/* Stage 1: setup_arch(), only early_ioremap() exists yet. */
++void __init a50_diag_stage1(void)
++{
++	void __iomem *p;
++	static const char msg[] = "A50DIAG1 setup_arch\n";
++
++	if (CONFIG_A50_DIAG_RESET_STAGE == 1)
++		a50_reset_now(early_ioremap(PMU_PHYS, 0x1000));
++
++	p = early_ioremap(FB_PHYS + 60 * ROW_BYTES, BAND_BYTES);
++	if (p) {
++		a50_fill(p, BAND_BYTES, ARGB_GREEN);
++		early_iounmap(p, BAND_BYTES);
++	}
++	p = early_ioremap(MARK_PHYS, 0x1000);
++	if (p) {
++		memcpy_toio(p + 0x100, msg, sizeof(msg));
++		early_iounmap(p, 0x1000);
++	}
++}
++
++/* Map a physical range for writing: device mapping if possible, else the linear map (RAM). */
++static void *a50_map(unsigned long phys, size_t size, bool *linear)
++{
++	void *v = (void __force *)ioremap_wc(phys, size);
++
++	*linear = false;
++	if (v)
++		return v;
++	*linear = true;
++	return memremap(phys, size, MEMREMAP_WB);
++}
++
++static void a50_unmap(void *v, size_t size, bool linear)
++{
++	if (!v)
++		return;
++	if (linear) {
++		dcache_clean_inval_poc((unsigned long)v, (unsigned long)v + size);
++		memunmap(v);
++	} else {
++		iounmap((void __iomem *)v);
++	}
++}
++
++static void a50_band(unsigned long row, u32 argb)
++{
++	bool lin;
++	void *v = a50_map(FB_PHYS + row * ROW_BYTES, BAND_BYTES, &lin);
++	size_t i;
++
++	if (!v)
++		return;
++	for (i = 0; i < BAND_BYTES; i += 4)
++		*(volatile u32 *)((char *)v + i) = argb;
++	a50_unmap(v, BAND_BYTES, lin);
++}
++
++static void a50_mark(unsigned long off, const char *s)
++{
++	bool lin;
++	void *v = a50_map(MARK_PHYS, 0x1000, &lin);
++
++	if (!v)
++		return;
++	memcpy((char *)v + off, s, strlen(s) + 1);
++	a50_unmap(v, 0x1000, lin);
++}
++
++#ifdef CONFIG_A50_DIAG_DUMP_DSS
++/*
++ * Readout (validated with the baseline on 2026-11-07): append the whole printk
++ * log to the debug-snapshot log_kernel buffer at the end pointer the bootloader
++ * keeps in the DSS header (0xf9000000 + 0x200, 4.14 lib/debug-snapshot-log.h),
++ * update the pointer, then reboot to Download mode by software (PMU INFORM3 =
++ * 0x12345671, 4.14 drivers/samsung/sec_reboot.c; then SWRESET). S-Boot appends
++ * after the pointer on a software reset, and the baseline's /proc/last_kmsg
++ * shows it after "heimdall flash" with reboot.
++ */
++#define DSS_HDR_PHYS		0xf9000000UL
++#define DSS_LAST_LOGBUF		0x200
++#define LOGK_PHYS		0xf9010000UL
++#define LOGK_SIZE		0x200000UL
++#define LKMSG_MAGIC		0x0000000a6c6c7546ULL	/* "Full\n", 4.14 sec_debug.h */
++#define PMU_INFORM3		0x080c
++#define SEC_RESET_DOWNLOAD	0x12345671
++
++static size_t a50_put(char *log, size_t off, const char *src, size_t len, bool *wrapped)
++{
++	while (len) {
++		size_t n = min(len, (size_t)LOGK_SIZE - off);
++
++		memcpy(log + off, src, n);
++		off += n; src += n; len -= n;
++		if (off == LOGK_SIZE) {
++			off = 0;
++			*wrapped = true;
++		}
++	}
++	return off;
++}
++
++/*
++ * M3.2: the dump must work at any time, including from panic context, so
++ * everything it needs is mapped and allocated in advance (a50_dss_prepare).
++ */
++static char *a50_buf;			/* printk text, 1 MiB, vmalloc'ed at init */
++static char *a50_log;			/* log_kernel mapping */
++static u32 *a50_hdr;			/* DSS header mapping */
++static void __iomem *a50_pmu;		/* PMU mapping */
++static bool a50_hdr_lin, a50_log_lin;	/* true = cached linear map (stock DT): clean before reset */
++static atomic_t a50_dumping = ATOMIC_INIT(0);
++
++static void a50_dss_dump(const char *why)
++{
++	static const char end[] = "===== A50 6.18 DMESG END =====\n";
++	char begin[96];
++	struct kmsg_dump_iter iter;
++	bool wrapped = false;
++	size_t len = 0, off;
++	u32 ptr;
++
++	if (atomic_xchg(&a50_dumping, 1))
++		return;				/* one dump per boot */
++	if (a50_buf && a50_hdr && a50_log) {
++		snprintf(begin, sizeof(begin), "\n===== A50 6.18 DMESG BEGIN (%s) =====\n", why);
++		kmsg_dump_rewind(&iter);
++		kmsg_dump_get_buffer(&iter, false, a50_buf, SZ_1M, &len);
++		ptr = READ_ONCE(a50_hdr[DSS_LAST_LOGBUF / 4]);
++		off = (ptr >= LOGK_PHYS && ptr < LOGK_PHYS + LOGK_SIZE) ? ptr - LOGK_PHYS : 0;
++		off = a50_put(a50_log, off, begin, strlen(begin), &wrapped);
++		off = a50_put(a50_log, off, a50_buf, len, &wrapped);
++		off = a50_put(a50_log, off, end, sizeof(end) - 1, &wrapped);
++		if (wrapped)
++			*(u64 *)(a50_log + LOGK_SIZE - 8) = LKMSG_MAGIC;
++		WRITE_ONCE(a50_hdr[DSS_LAST_LOGBUF / 4], (u32)(LOGK_PHYS + off));
++		if (a50_log_lin)
++			dcache_clean_inval_poc((unsigned long)a50_log, (unsigned long)a50_log + LOGK_SIZE);
++		if (a50_hdr_lin)
++			dcache_clean_inval_poc((unsigned long)a50_hdr, (unsigned long)a50_hdr + 0x1000);
++		dsb(sy);	/* our DT: no-map -> ioremap_wc (Normal-NC); drain before the reset */
++	}
++	if (a50_pmu)
++		writel(SEC_RESET_DOWNLOAD, a50_pmu + PMU_INFORM3);
++	a50_reset_now(a50_pmu);
++}
++
++/* dump on panic: kmsg_dump(KMSG_DUMP_PANIC) runs after the panic text is in the log */
++static void a50_kmsg_dump(struct kmsg_dumper *d, struct kmsg_dump_detail *detail)
++{
++	if (detail->reason == KMSG_DUMP_PANIC)
++		a50_dss_dump("panic");
++}
++static struct kmsg_dumper a50_dumper = { .dump = a50_kmsg_dump };
++
++/* a50_diag.dump_after=N: 0 = at late_initcall_sync, N > 0 = after N s, < 0 = only on panic */
++static int dump_after = CONFIG_A50_DIAG_DUMP_AFTER;
++module_param(dump_after, int, 0444);
++
++static void a50_dump_work_fn(struct work_struct *w)
++{
++	char why[32];
++
++	snprintf(why, sizeof(why), "dump_after=%d", dump_after);
++	/* M5.3: a full userspace may have filesystems mounted read-write; flush them before the reset */
++	pr_info("A50DIAG: sync before the timed dump\n");
++	ksys_sync();
++	pr_info("A50DIAG: sync done\n");
++	a50_dss_dump(why);
++}
++static DECLARE_DELAYED_WORK(a50_dump_work, a50_dump_work_fn);
++
++static int __init a50_dss_prepare(void)
++{
++	a50_buf = vmalloc(SZ_1M);
++	a50_hdr = a50_map(DSS_HDR_PHYS, 0x1000, &a50_hdr_lin);
++	a50_log = a50_map(LOGK_PHYS, LOGK_SIZE, &a50_log_lin);
++	a50_pmu = ioremap(PMU_PHYS, 0x1000);
++	pr_info("A50DIAG: DSS readout armed (buf %d hdr %d log %d%s pmu %d), dump_after=%d\n",
++		!!a50_buf, !!a50_hdr, !!a50_log, a50_log_lin ? " linear" : "", !!a50_pmu, dump_after);
++	kmsg_dump_register(&a50_dumper);
++	if (dump_after > 0)
++		schedule_delayed_work(&a50_dump_work, dump_after * HZ);
++	return 0;
++}
++core_initcall(a50_dss_prepare);
++#endif
++
++static int __init a50_diag_stage2(void)
++{
++	if (CONFIG_A50_DIAG_RESET_STAGE == 2)
++		a50_reset_now(ioremap(PMU_PHYS, 0x1000));
++	a50_band(120, ARGB_BLUE);
++	a50_mark(0x200, "A50DIAG2 arch_initcall\n");
++	return 0;
++}
++arch_initcall(a50_diag_stage2);
++
++static int __init a50_diag_stage3(void)
++{
++	struct arm_smccc_res res;
++	int i;
++
++	if (CONFIG_A50_DIAG_RESET_STAGE == 3)
++		a50_reset_now(ioremap(PMU_PHYS, 0x1000));
++#ifdef CONFIG_A50_DIAG_DUMP_DSS
++	if (dump_after == 0)
++		a50_dss_dump("late_initcall");
++#endif
++	a50_band(180, ARGB_WHITE);
++	a50_mark(0x300, "A50DIAG3 late_initcall\n");
++	for (i = 0; i < 15; i++) {			/* heartbeat, 15 s */
++		a50_band(240, (i & 1) ? ARGB_BLACK : ARGB_WHITE);
++		mdelay(1000);
++	}
++	a50_mark(0x400, "A50DIAG4 trying PSCI SYSTEM_RESET\n");
++	arm_smccc_smc(0x84000009, 0, 0, 0, 0, 0, 0, 0, &res);	/* PSCI_0_2_FN_SYSTEM_RESET */
++	a50_mark(0x500, "A50DIAG5 SYSTEM_RESET returned\n");
++	return 0;
++}
++late_initcall_sync(a50_diag_stage3);
+diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
+index 87a822e5c..441708537 100644
+--- a/arch/arm64/kernel/head.S
++++ b/arch/arm64/kernel/head.S
+@@ -83,6 +83,46 @@
+ 	 *  x21        primary_entry() .. start_kernel()        FDT pointer passed at boot in x0
+ 	 */
+ SYM_CODE_START(primary_entry)
++#ifdef CONFIG_A50_DIAG
++	/*
++	 * A50 DIAG stage 0 (v2): first instructions of the kernel, MMU off, only
++	 * x9-x15 touched (x0-x3 hold the boot arguments). The markers at
++	 * 0xf9030000 come FIRST so that they do not depend on the framebuffer
++	 * being writable; then rows 0-49 of the bootloader framebuffer
++	 * (0xca000000, 4320 bytes per row, ARGB red) are painted, and a second
++	 * marker records that the paint loop completed.
++	 */
++	movz	x9, #0xf903, lsl #16
++	movz	x12, #0x3541			/* "A50DIAG0" little endian */
++	movk	x12, #0x4430, lsl #16
++	movk	x12, #0x4149, lsl #32
++	movk	x12, #0x3047, lsl #48
++	str	x12, [x9]
++	adr	x13, .				/* physical address we are running at */
++	str	x13, [x9, #8]
++	str	x0, [x9, #16]			/* DTB pointer from the bootloader */
++	mrs	x14, CurrentEL
++	str	x14, [x9, #24]
++	movz	x10, #0x3541			/* "A50DIAG6" = markers stored, paint starts */
++	movk	x10, #0x4430, lsl #16
++	movk	x10, #0x4149, lsl #32
++	movk	x10, #0x3647, lsl #48
++	str	x10, [x9, #32]
++	movz	x9, #0xca00, lsl #16
++	mov	x10, #27000			/* 216000 bytes / 8 */
++	movz	x11, #0x0000
++	movk	x11, #0xffff, lsl #16
++	movk	x11, #0xffff, lsl #48		/* 0xffff0000ffff0000 */
++0:	str	x11, [x9], #8
++	subs	x10, x10, #1
++	b.ne	0b
++	movz	x9, #0xf903, lsl #16
++	movz	x10, #0x3541			/* "A50DIAG7" = paint loop finished */
++	movk	x10, #0x4430, lsl #16
++	movk	x10, #0x4149, lsl #32
++	movk	x10, #0x3747, lsl #48
++	str	x10, [x9, #40]
++#endif
+ 	bl	record_mmu_state
+ 	bl	preserve_boot_args
+ 
+diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
+index 56e69b249..c3724aaa5 100644
+--- a/arch/arm64/kernel/setup.c
++++ b/arch/arm64/kernel/setup.c
+@@ -289,6 +289,13 @@ void __init __no_sanitize_address setup_arch(char **cmdline_p)
+ 
+ 	early_fixmap_init();
+ 	early_ioremap_init();
++#ifdef CONFIG_A50_DIAG
++	{
++		extern void a50_diag_stage1(void);
++
++		a50_diag_stage1();
++	}
++#endif
+ 
+ 	setup_machine_fdt(__fdt_pointer);
+ 
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index da09f467a..76e1ca779 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -644,6 +644,11 @@ static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
+ 	u32 local_idx[MCT_NR_LOCAL] = {0};
+ 	int nr_local;
+ 	int ret;
++#ifdef CONFIG_A50_DIAG_SKIP_MCT
++	/* A50 diag: the stock DT MCT clocks (exynos9610-clock) have no 6.18 provider. */
++	pr_info("%s: skipped (CONFIG_A50_DIAG_SKIP_MCT)\n", __func__);
++	return 0;
++#endif
+ 
+ 	nr_local = of_property_count_u32_elems(np, "samsung,local-timers");
+ 	if (nr_local == 0)
+diff --git a/init/main.c b/init/main.c
+index 3e5287361..437dd20e9 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -116,6 +116,13 @@
+ 
+ #include <kunit/test.h>
+ 
++#ifdef CONFIG_A50_DIAG
++void __init a50_diag_point(int n);
++#define A50_POINT(n) a50_diag_point(n)
++#else
++#define A50_POINT(n) do { } while (0)
++#endif
++
+ static int kernel_init(void *);
+ 
+ /*
+@@ -1053,6 +1060,7 @@ void start_kernel(void)
+ 	setup_arch_task_struct_size();
+ #endif
+ 	setup_arch(&command_line);
++	A50_POINT(10);
+ 	/* Static keys and static calls are needed by LSMs */
+ 	jump_label_init();
+ 	static_call_init();
+@@ -1092,6 +1100,7 @@ void start_kernel(void)
+ 	sort_main_extable();
+ 	trap_init();
+ 	mm_core_init();
++	A50_POINT(11);
+ 	maple_tree_init();
+ 	poking_init();
+ 	ftrace_init();
+@@ -1145,6 +1154,7 @@ void start_kernel(void)
+ 	softirq_init();
+ 	timekeeping_init();
+ 	time_init();
++	A50_POINT(12);
+ 
+ 	/* This must be after timekeeping is initialized */
+ 	random_init();
+@@ -1160,6 +1170,7 @@ void start_kernel(void)
+ 
+ 	early_boot_irqs_disabled = false;
+ 	local_irq_enable();
++	A50_POINT(13);
+ 
+ 	kmem_cache_init_late();
+ 
+@@ -1198,6 +1209,7 @@ void start_kernel(void)
+ 		late_time_init();
+ 	sched_clock_init();
+ 	calibrate_delay();
++	A50_POINT(14);
+ 
+ 	arch_cpu_finalize_init();
+ 
+@@ -1231,6 +1243,7 @@ void start_kernel(void)
+ 	kcsan_init();
+ 
+ 	/* Do the rest non-__init'ed, we're now alive */
++	A50_POINT(15);
+ 	rest_init();
+ 
+ 	/*
+@@ -1713,6 +1726,7 @@ static noinline void __init kernel_init_freeable(void)
+ 	padata_init();
+ 	page_alloc_init_late();
+ 
++	A50_POINT(16);
+ 	do_basic_setup();
+ 
+ 	kunit_run_all_tests();
+--- a/drivers/gpu/arm/midgard/mali_kbase_core_linux.c
++++ b/drivers/gpu/arm/midgard/mali_kbase_core_linux.c
+@@ -24,6 +24,10 @@
+ #include <linux/moduleparam.h>
+ #include <linux/irq.h>
+ 
++/* TEST ONLY: keep background vendor clients from submitting work in G1. */
++static bool a50_g1_probe_only;
++module_param(a50_g1_probe_only, bool, 0444);
++MODULE_PARM_DESC(a50_g1_probe_only, "G1 diagnostic: version, context and GPU properties only");
+ #include <mali_kbase_config_defaults.h>
+ #include <gpu/mali_kbase_gpu_regmap.h>
+ #include <mali_kbase_gator.h>
+@@ -1477,6 +1481,10 @@
+ 	struct kbase_context *kctx = NULL;
+ 	struct kbase_device *kbdev = kfile->kbdev;
+ 	void __user *uarg = (void __user *)arg;
++
++	if (a50_g1_probe_only && cmd != KBASE_IOCTL_VERSION_CHECK &&
++	    cmd != KBASE_IOCTL_SET_FLAGS && cmd != KBASE_IOCTL_GET_GPUPROPS)
++		return -EOPNOTSUPP;
+ 
+ 	/* Only these ioctls are available until setup is complete */
+ 	switch (cmd) {

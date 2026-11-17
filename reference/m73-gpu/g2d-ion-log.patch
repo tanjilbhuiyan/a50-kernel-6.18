@@ -1,0 +1,82 @@
+From 596020e39f9dd221e5c98be22bdf78e9c09e23e7 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Tue, 17 Nov 2026 02:37:09 +0600
+Subject: [PATCH] TEST ONLY: M7.3 G2d log rejected and failed ION allocations
+ (do not merge)
+
+G2c: LightDM's Mir reached HWC2, the display and EGL, then failed a gralloc
+allocation with errno 12, and the ION compatibility layer rejects
+unsupported requests without logging. Log every failed allocation with
+return code, length, heap mask, flags and caller (first 64, then every
+256th), and the first 8 successes for comparison. Allocation results are
+unchanged.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I16f32cdff4845c7987dccbf7760024ab61b97653
+---
+ drivers/staging/android/ion_compat.c | 37 ++++++++++++++++++++++++++--
+ 1 file changed, 35 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/android/ion_compat.c b/drivers/staging/android/ion_compat.c
+index 2e1dc211f..41912abcb 100644
+--- a/drivers/staging/android/ion_compat.c
++++ b/drivers/staging/android/ion_compat.c
+@@ -6,13 +6,14 @@
+ #include <linux/fs.h>
+ #include <linux/miscdevice.h>
+ #include <linux/mm.h>
++#include <linux/sched.h>
+ #include <linux/module.h>
+ #include <linux/uaccess.h>
+ 
+ #include "uapi/ion.h"
+ 
+-static int ion_compat_allocate(struct ion_allocation_data *request,
+-			       void __user *argument)
++static int ion_compat_allocate_inner(struct ion_allocation_data *request,
++				     void __user *argument)
+ {
+ 	struct dma_heap *heap;
+ 	struct dma_buf *buffer;
+@@ -53,6 +54,38 @@ static int ion_compat_allocate(struct ion_allocation_data *request,
+ 	return 0;
+ }
+ 
++/*
++ * M7.3 G2d diagnostics (TEST ONLY): log rejected or failed allocations with
++ * the caller and the request, so an unsupported gralloc request (G2c: Mir's
++ * "buffer allocation failed", errno 12) can be identified. The first 64
++ * failures are logged in full, then every 256th; the first 8 successes are
++ * logged for comparison. Results are unchanged.
++ */
++static atomic_t ion_compat_failures = ATOMIC_INIT(0);
++static atomic_t ion_compat_successes = ATOMIC_INIT(0);
++
++static int ion_compat_allocate(struct ion_allocation_data *request,
++			       void __user *argument)
++{
++	u64 len = request->len;
++	u32 mask = request->heap_id_mask, flags = request->flags;
++	int ret = ion_compat_allocate_inner(request, argument);
++	int n;
++
++	if (ret) {
++		n = atomic_inc_return(&ion_compat_failures);
++		if (n <= 64 || !(n % 256))
++			pr_info("ion_compat: G2d alloc FAILED #%d ret=%d len=%llu heap_mask=0x%x flags=0x%x comm=%s pid=%d tgid=%d\n",
++				n, ret, len, mask, flags, current->comm, current->pid, current->tgid);
++	} else {
++		n = atomic_inc_return(&ion_compat_successes);
++		if (n <= 8)
++			pr_info("ion_compat: G2d alloc ok #%d len=%llu heap_mask=0x%x flags=0x%x comm=%s pid=%d\n",
++				n, len, mask, flags, current->comm, current->pid);
++	}
++	return ret;
++}
++
+ static int ion_compat_query(struct ion_heap_query *query)
+ {
+ 	const struct ion_heap_data system = {
+-- 
+2.56.1
+

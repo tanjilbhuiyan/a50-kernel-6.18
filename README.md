@@ -8,8 +8,8 @@ Why: Samsung's 4.14.194 kernel is out of support, and every newer userspace need
 needs `openat2`, for example). Goal, success criteria and non-goals: [docs/00-goal.md](docs/00-goal.md).
 
 > [!WARNING]
-> **Experimental. Not for daily use.** Nothing here gives you a usable phone on 6.18 yet: no display, touch, Wi-Fi,
-> audio, modem or charging. Testing means flashing the BOOT and DTB/DTBO partitions of your own device, which can leave
+> **Experimental. Not for daily use.** The 6.18 display/GPU can render the greeter, but interactive login, touch, Wi-Fi,
+> audio, modem and charging remain incomplete or unverified. Testing flashes the BOOT and DTB/DTBO partitions, which can leave
 > it unbootable until you restore it. The project never writes EFS, SEC_EFS, CPEFS, PARAM, the bootloader or the vendor
 > partition, and its UFS write guard (below) enforces that in the kernel, but you use this at your own risk.
 > SM-A505F only; no other A50 variant has been tested.
@@ -18,7 +18,9 @@ needs `openat2`, for example). Goal, success criteria and non-goals: [docs/00-go
 
 The 6.18 kernel boots on the phone, runs Halium's init and brings Ubuntu Touch up to systemd multi-user. Root SSH works
 over USB networking (RNDIS). The Android container boots, its real graphics allocator registers over HIDL, and 64/32-bit
-ION replay passes as Android's system user. Current state and next action: [STATUS.md](STATUS.md).
+ION replay passes as Android's system user. [M7.3](log/2026-11-17-M7.3-g2h-memory-abi.md) verifies the measured Mali
+memory paths and greeter presentation through direct DMA. [M7.4](reference/m74-g2d/decision.md) drops G2D for that
+single-layer path; integration/session stability and the soak remain. Current state and next action: [STATUS.md](STATUS.md).
 
 | Milestone | What | State |
 |---|---|---|
@@ -28,12 +30,14 @@ ION replay passes as Android's system user. Current state and next action: [STAT
 | M4 | Core SoC: 8 CPUs, ACPM, PMIC regulators, power domains, thermal | done; I2C and CPU frequency deferred |
 | M5 | Ubuntu Touch userspace: systemd multi-user, SSH over USB | done, with limits below |
 | M6 | Android container: binder, ashmem, ION and real allocator startup | done, with runtime limits below |
-| M7 | Display/GPU | next: ABI audit and implementation design |
+| M7 | Display/GPU | M7.1–M7.3 done with limits; M7.4 scoped omission; M7.5 integration/soak next |
 | M8-M12 | Input, Wi-Fi/Bluetooth, audio, modem, power/charging | planned |
 
 Current bring-up limits (details in [the M6.4 log](log/2026-11-14-M6.4-runtime.md)):
 
-- The four M5 HAL masks are removed. Bluetooth/audio/display services still fail or retry while their drivers are unported.
+- The four M5 HAL masks are removed. Bluetooth/audio services still fail or retry while their drivers are unported.
+- The greeter renders, but touch is unresponsive and PIN/login untested. Slow startup and a phablet-session exit remain
+  M7.5 integration issues; input is M8. See the [G2h log](log/2026-11-17-M7.3-g2h-memory-abi.md).
 - A per-boot read-only RC bind defers unported TEEGRIS startup, with vendor unchanged and no fake readiness. Secure heaps
   and security-dependent HALs are unsupported; only the measured normal system heap is implemented.
 - Three diagnostic power-service masks remain; automatic suspend and legacy Android task-profile migration are unvalidated.
@@ -64,9 +68,9 @@ Full plan with each milestone's Definition of Done: [docs/05-plan.md](docs/05-pl
   remaining runtime limits are documented there.
 - **Base:** [ACK](https://android.googlesource.com/kernel/common) branch `android17-6.18`, commit `d9a614fed`
   (2026-10-31), Linux 6.18.33. Built with ACK's clang prebuilt (`clang-r584948c`) via `tools/m22_build.sh`.
-- **A50 changes:** [patches/](patches/README.md), 35 patches that apply to that base with `git am`: device tree and
-  defconfig, Exynos 9610 clocks, pinctrl, UFS, USB PHY, ACPM, S2MPU09 regulators, thermal, and the UFS guard. Where
-  possible they extend the mainline Samsung drivers. Build steps are in [patches/README.md](patches/README.md).
+- **A50 changes:** [patches/](patches/README.md), 45 patches that apply to that base with `git am`: device tree and
+  defconfig, Exynos 9610 clocks, pinctrl, UFS, USB PHY, ACPM, S2MPU09 regulators, thermal, the UFS guard, the ION ABI,
+  the `a50-decon` display driver and the Mali kbase. Where possible they extend the mainline Samsung drivers. Build steps are in [patches/README.md](patches/README.md).
 - **Config:** the `a50_firstlight_defconfig` from the series, plus the Halium/Ubuntu Touch flags in
   [tools/m51/halium.flags](tools/m51/halium.flags).
 - The working kernel tree is a local checkout (`src/`, not in this repository). `tools/export_patches.sh` regenerates

@@ -1,0 +1,113 @@
+{
+  "test": "M7.3 G2g padded-stride DMA",
+  "source_tree": "ecb4aab84e0af0b68b6fb0aab5c155aaa2574908",
+  "logical_parent_tree": "7253f8a58c52a3aa9c77b6458bd4ce81c28589b4",
+  "source_uncommitted": true,
+  "owner_observation": "UI looks correct; smoothness unclear",
+  "native_compat_metadata_regression_pass": true,
+  "natural_ui_active_at_all_snapshots": true,
+  "mir_mode": [
+    1080,
+    2340
+  ],
+  "visible_extent": [
+    1080,
+    2340
+  ],
+  "source_extent": [
+    1088,
+    2352
+  ],
+  "late_display_counters": {
+    "req": 19727,
+    "done": 19728,
+    "start": 19728,
+    "timeouts": 0,
+    "extra": 0,
+    "te": 24911,
+    "FRAME_COUNT": 19730,
+    "GLOBAL": 307,
+    "TRIG": 12304,
+    "vsync_on": 1,
+    "win_configs": 19725,
+    "copied": 0,
+    "skipped": 0,
+    "acq_timeouts": 0,
+    "frame_wait_timeouts": 0,
+    "scanned": 19725,
+    "dma_fallbacks": 0,
+    "shadow_wait_timeouts": 0,
+    "IDMA0": 4278190080,
+    "blanks": 0,
+    "unblanks": 0,
+    "dcs": 0,
+    "dcs_timeouts": 0
+  },
+  "actual_idma_readback": {
+    "src_size": "0x09300440",
+    "src_offset": "0x00000000",
+    "img_size": "0x09240438",
+    "padded_scanned": 19725
+  },
+  "late_queue_pending": 0,
+  "stats_snapshots": 175,
+  "sampled_peak_pending": 2,
+  "active_window_G2g": {
+    "start_uptime": 100.46,
+    "end_uptime": 200.04,
+    "start_completed": 3927,
+    "end_completed": 9899,
+    "completed_per_second": 59.972
+  },
+  "same_window_G2f_cpu_copy": {
+    "start_uptime": 101.56,
+    "end_uptime": 201.15,
+    "start_completed": 202,
+    "end_completed": 503,
+    "completed_per_second": 3.022
+  },
+  "rate_limit_note": "Observed presentation completion rates for this startup workload; not a general GPU benchmark or subjective smoothness claim",
+  "cpu_fallback_restore": "Host-tested; natural G2g UI used zero CPU fallbacks, so not exercised live",
+  "fence_wait_warnings": 0,
+  "gpu_sysmmu_faults_recorded": false,
+  "kernel_panic_recorded": false,
+  "userdata_rw_all_snapshots": true,
+  "systemd_300s": {
+    "state": "degraded",
+    "jobs": 0,
+    "failed_units": 1,
+    "known_failure": "a50-audio-route.service"
+  },
+  "baseline_restored": true,
+  "postflight_pass": true,
+  "baseline_fsck": "/dev/sda32: clean, 7054/3440640 files, 1992243/13745152 blocks",
+  "phone_last_verified": {
+    "ip": "192.168.181.225",
+    "kernel": "4.14.194",
+    "restore": "2026-11-17 13:45:22",
+    "boot": "2026-11-17 13:45:36",
+    "battery": "100% Charging"
+  },
+  "temporary_usb_profile_deleted": true,
+  "capture_status": {
+    "runner": 0,
+    "watch": 0,
+    "collection": 0,
+    "late": 0,
+    "monitor": 0,
+    "kernel_stream": 124,
+    "kernel_stream_note": "Expected bounded 390-second host timeout; separate timed dump saved"
+  },
+  "remaining": [
+    "Focused kbase allocation/import/query/sync validation",
+    "Separate standalone EGL failure",
+    "M7 ten-minute UI soak and later input/hardware milestones"
+  ],
+  "owner_later_clarification": {
+    "ui_reached": "login/greeter screen",
+    "startup": "slow by owner observation",
+    "touch": "unresponsive",
+    "pin_entry_tested": false,
+    "logged_in_desktop_verified": false
+  }
+}

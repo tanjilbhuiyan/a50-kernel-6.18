@@ -1,0 +1,31 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Mon, 16 Nov 2026 14:41:07 +0600
+Subject: [PATCH 41/45] pinctrl: samsung: exynos9610: enable GPIO interrupts on
+ the TOP controller
+
+The TOP pin controller (pinctrl@139b0000, banks gpp0-gpg4) has a combined
+GPIO interrupt (SPI 266) in the DT, but its samsung_pin_ctrl entry has no
+.eint_gpio_init, so no interrupt domain is created and gpiod_to_irq()
+returns -ENXIO for every pin in it. The display TE input gpc2-3 needs it
+(M7.2 D2a: "error -6: te irq"). Add exynos_eint_gpio_init as the gs101 and
+exynos2200 tables do.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I8ffcc71c03aa568a67551cad6caa791c5eb475db
+---
+ drivers/pinctrl/samsung/pinctrl-exynos-arm64.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+index 49210a31f..4a7a08e72 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+@@ -1716,6 +1716,7 @@ static const struct samsung_pin_ctrl exynos9610_pin_ctrl[] __initconst = {
+ 		/* pin-controller instance 4 TOP data */
+ 		.pin_banks	= exynos9610_pin_banks4,
+ 		.nr_banks	= ARRAY_SIZE(exynos9610_pin_banks4),
++		.eint_gpio_init = exynos_eint_gpio_init,
+ 		.suspend	= exynos_pinctrl_suspend,
+ 		.resume		= exynos_pinctrl_resume,
+ 	}, {

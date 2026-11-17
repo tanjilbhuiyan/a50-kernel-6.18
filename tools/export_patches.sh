@@ -1,11 +1,11 @@
 #!/bin/bash
 # Export the clean A50 kernel branch as one ordered patch series in patches/, then prove that the series applied to the
 # ACK base reproduces the branch tree exactly. Uses a temporary index; the kernel checkout and working tree are untouched.
-#   tools/export_patches.sh [BRANCH]      (default a50-userdata, the head of the clean driver stack)
+#   tools/export_patches.sh [BRANCH]      (default a50-graphics, the head of the clean driver stack)
 set -euo pipefail
 REPO=$(cd "$(dirname "$0")/.." && pwd)
 K=$REPO/src/ack-6.18/common
-BR=${1:-a50-userdata}
+BR=${1:-a50-graphics}
 BASE=$(git -C "$K" merge-base "$BR" aosp/android17-6.18)
 OUT=$REPO/patches
 rm -f "$OUT"/[0-9][0-9][0-9][0-9]-*.patch

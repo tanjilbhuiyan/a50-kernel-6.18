@@ -1,0 +1,47 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Tue, 17 Nov 2026 15:39:34 +0600
+Subject: [PATCH 40/45] staging: ion: accept measured Exynos gralloc allocation
+ hints
+
+Preserve cached/noncached backing and unconditional zeroing. Accept NOZEROED and the legacy NEEDS_SYNC hint as no-ops, as exercised in M7.3 G2e through G2h. Protected and unknown flags remain rejected. Omit test-stage allocation logging.
+
+Change-Id: I0939306c4a0319d7b29e01e86c5e268ecadfa868
+---
+ drivers/staging/android/ion_compat.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/staging/android/ion_compat.c b/drivers/staging/android/ion_compat.c
+index 2e1dc211f..ecada896e 100644
+--- a/drivers/staging/android/ion_compat.c
++++ b/drivers/staging/android/ion_compat.c
+@@ -11,6 +11,8 @@
+ 
+ #include "uapi/ion.h"
+ 
++#define ION_COMPAT_FLAG_NEEDS_SYNC_HINT	2
++
+ static int ion_compat_allocate(struct ion_allocation_data *request,
+ 			       void __user *argument)
+ {
+@@ -22,7 +24,19 @@ static int ion_compat_allocate(struct ion_allocation_data *request,
+ 
+ 	if (!(request->heap_id_mask & BIT(0)))
+ 		return -ENODEV;
+-	if (request->flags & ~(ION_FLAG_CACHED | ION_FLAG_MAY_HWRENDER))
++	/*
++	 * M7.3 G2e: the stock gralloc allocator also passes two hint flags (G2d:
++	 * flags 0x48 for framebuffer-size buffers, 0x43 for small ones):
++	 *  - 0x8 ION_FLAG_NOZEROED (Samsung 4.14 uapi ion.h): skip zeroing. Ignored;
++	 *    every buffer is still zeroed by the native system heap, so the
++	 *    stock "no userspace mapping" restriction is not needed for safety.
++	 *  - 0x2: not defined in Samsung's 4.14 header (older upstream ION's
++	 *    ION_FLAG_CACHED_NEEDS_SYNC); Samsung's ION core ignores unknown bits.
++	 *    Accepted as a no-op; caching follows ION_FLAG_CACHED.
++	 * ION_FLAG_PROTECTED and anything else stay unsupported.
++	 */
++	if (request->flags & ~(ION_FLAG_CACHED | ION_COMPAT_FLAG_NEEDS_SYNC_HINT |
++			       ION_FLAG_NOZEROED | ION_FLAG_MAY_HWRENDER))
+ 		return -EOPNOTSUPP;
+ 	if (!request->len)
+ 		return -EINVAL;

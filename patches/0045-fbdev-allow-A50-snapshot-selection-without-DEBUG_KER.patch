@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Tue, 17 Nov 2026 15:48:02 +0600
+Subject: [PATCH 45/45] fbdev: allow A50 snapshot selection without
+ DEBUG_KERNEL
+
+Change-Id: I02b1ac75c64206d6d1fc17c71c755205ba1cec9a
+---
+ drivers/video/fbdev/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
+index e3d45799d..d59614476 100644
+--- a/drivers/video/fbdev/Kconfig
++++ b/drivers/video/fbdev/Kconfig
+@@ -58,7 +58,7 @@ config FB_A50_HANDOVER
+ 
+ config FB_A50_DIAGNOSTICS
+ 	bool "A50 display register snapshots for bring-up"
+-	depends on FB_A50_HANDOVER && DEBUG_KERNEL
++	depends on FB_A50_HANDOVER
+ 	help
+ 	  Enable the read-only probe, early and late register dumps used by
+ 	  the recorded display tests. Disabled by default. Passive sysfs

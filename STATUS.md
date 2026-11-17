@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-17 (G2b cancellation/fence diagnosis complete; baseline restored)
+Updated: 2026-11-17 (I0r complete and restored; Lomiri readiness analysed; everything committed)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -8,7 +8,254 @@ Read this file, then the active ticket and its log. Before trusting anything her
 branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and on the phone. At the end of a session, update
 **RESUME HERE** with commits, branch, image hashes, last test and rollback result, and the next action.
 
-## RESUME HERE (2026-11-17)
+## RESUME HERE (2026-11-17, I0r complete; Claude Code took over from Codex)
+- **Active ticket:** M7.5 (the last open M7 ticket; all four acceptance boxes open). No test active. Phone on stock
+  4.14.194 since 16:31:36 (office **192.168.181.225**), post-flight passed, fsck clean 7053/3440640 files.
+- **I0r** (identical repeat of I0, owner present): same failure as I0 to the second; no kernel faults. Evidence
+  `reference/m75-integration/i0r-*`.
+- **Finding:** Lomiri sends READY from a zero-delay timer just before `exec()`, so READY is late because its main thread
+  blocks on D-Bus calls to `lomiri-telephony-service-handler`, which never takes its bus name on 6.18. PulseAudio never
+  becomes ready on 6.18 either; on stock both are active in under 6 s and Lomiri is ready 4.9 s after start. The
+  handler-blocks-on-PulseAudio link is **unverified**. Full analysis and stock-vs-6.18 table:
+  `log/2026-11-17-M7.5-integration.md`, section "I0 and I0 repeat".
+- **Next action:** I1 = same I0 image (`src/m75/boot-i0.img`, sha256 `9dc35932…`, DT `src/m73/dt-g1.img`), collector
+  additions only (handler and PulseAudio journals, per-thread wchan/stack, timed read-only `pactl info`, pending D-Bus
+  names). Then choose a repair. No mixer/PulseAudio state changes; owner says "present, flash I1" before the flash.
+- **Build from scratch:** `patches/` 0001-0045 reproduce clean tree `81fe4953be31a74851875040fe045b648ec18064`
+  (re-verified with `tools/export_patches.sh`, unchanged). Full config `reference/m75-integration/clean.config`; builder
+  `tools/m75/build_clean.py`. Test diagnostics for I0 stay in `reference/m75-integration/test-diagnostics.patch`.
+- **Kernel branches (local only):** clean `a50-runtime`/`a50-display`/`a50-graphics` in `src/ack-6.18/common` (clean,
+  checked out on `a50-usb`); I0 test `a50-m75-i0-test` `6a8742362` in `src/m75/runtime-kernel`.
+- **Git:** all G2d-G2h, M7.4, M7.5/I0/I0r work and the 45-patch export committed and pushed in this session.
+- **Open owner question:** history still contains a serial prefix in a regex (`ccc4e48`) and `androidboot.em.did` in
+  four M6.4 captures (`f68ca87`); both redacted in the current tree. Rewrite history or not is undecided.
+
+## Earlier handoff (I0 complete; repeat prepared; superseded)
+- **Active ticket:** M7.5. I0 finished normal timed dump and restored stock DTB/DTBO/BOOT **16:04:35**;
+  baseline 4.14.194 boot **16:04:49**, office **192.168.181.225**, **100% Charging**, partition post-flight passed.
+  Saved fsck clean **7060/3440640 files, 1990928/13745152 blocks**. No test active. Phone not rechecked since restore.
+- **I0 result:** six native + six compat memory cases PASS on consolidated image; owner saw recognizable lock/greeter.
+  Lomiri service Type=notify stays activating, then Result=timeout and stop-sigterm. Its user manager is stopped later,
+  hits a five-second stop timeout and is killed; this is recorded in kernel-follow, not a spontaneous kernel crash.
+  M7.5 is not done; no ten-minute soak. Need to trace real readiness before choosing a repair.
+- **Owner requested repeat after interruption:** prepared **tools/m75/run_i0r.sh**, **reference/m75-integration/i0r-inputs.json**,
+  raw **src/m75/i0r-raw/**, session **src/m75/i0r-session/**. Same BOOT, DT, config, ramdisk, helpers and collector;
+  only capture paths/wrapper differ. Original I0 evidence remains intact. Confirm owner presence/USB/Claude idle for
+  this new flash, then fresh pre-flight and run. No repeat boot started yet.
+- **Build/source:** clean-stack heads and exact I0 inputs below unchanged. Isolated src/m75/runtime-kernel clean on
+  a50-m75-i0-test/6a8742362; shared common clean on a50-usb/4fbb731f5. Clean publication build also completed:
+  src/ack-6.18/out/m75-clean/build-results.json; no diagnostic reset code, raw DT/cpio match. It has not been flashed.
+- **Git:** outer 48c9ceb unchanged; all prior work/export and current M7.5 work uncommitted. Local clean kernel commits
+  exist; 45-patch export reproduces clean tree 81fe4953be31a74851875040fe045b648ec18064. No push.
+
+## Earlier handoff (I0 preparation; superseded)
+- **Active ticket:** M7.5 integration. Clean M6/M7 changes committed in the separate kernel repo on new branches:
+  a50-runtime **0d910019236c1ccc07f54f0ac9afe51c31d527d6**, a50-display **af07d6ba93ea5545293a9ba563e143066c1240c2**,
+  a50-graphics **c6588dc0365dffb18473e832af547787759b3ea3**, clean tree **81fe4953be31a74851875040fe045b648ec18064**.
+  **45 exported patches** reproduce that tree exactly. Tests/early-reset code remains separate. Snapshot selector
+  correction is on graphics; display branch has the earlier selector requiring DEBUG_KERNEL for optional snapshots.
+- **I0 active, not a soak:** owner confirmed present/USB/Claude idle. Flash **15:56:39**; USB SSH verified **15:57:36**,
+  6.18.33-a50-diag+ at 10.15.19.82. All six native and compat memory cases pass. Logging-only user-manager log-target
+  journal/log-level info setters passed; runtime in-memory change resets on rollback. Collector diagnoses the failed
+  unencrypted session target; no config/policy/encryption/authentication repair or ten-minute result claimed.
+- **Do not start another boot.** Runner session **43808**, log **src/m75/i0-session/run-session.log**;
+  raw **src/m75/i0-raw/**. Standard 420-second timed DSS dump and stock restore/post-flight/fsck are still pending.
+  Phone currently on test image; last baseline post-flight before this flash passed (4.14.194, 100% Full).
+- **Test source/build:** isolated **src/m75/runtime-kernel**, clean on **a50-m75-i0-test/6a8742362572bbc2a9c3cca2a16cba0f160e07aa**.
+  Shared common remains clean **a50-usb/4fbb731f5**; prior G2f/G2g worktrees untouched. Seven regression suites pass,
+  including broken controls. Compared with G2g: 337 kbase files identical, 36 display static functions identical with
+  diagnostic guards enabled, ION allocation body identical without test logging wrapper. Compiled DTB and cpio identical.
+- **Inputs:** **reference/m75-integration/i0-inputs.json**, 72 hashes/11 frozen copies; config delta only explicit
+  FB_A50_HANDOVER=y and FB_A50_DIAGNOSTICS=y. Backup hash rechecked 22cb95a536489c89a738cae3105859c041a15b298c4140c6a1a018883f7bd896.
+  BOOT **src/m75/boot-i0.img**, SHA **9dc35932904eff7422e4eab6cb63003577627f8391ffa76ae9adf9636d688f52**;
+  DT **src/m73/dt-g1.img**, unchanged dee291ace91ab19f9d241d3c7cd42557e109f066ddf0c38eb69a6a7b1f97625c.
+  Output **src/ack-6.18/out/m75-i0**, frozen **src/m75/i0-as-built/**. Config aeba3e2b3a05a9ab889d720d0f924ddf5adc0cdeb7aa54e34880cdfd99c07a97;
+  Image 3df523e9e5724d7ee8215f7686f9bb7c14053ea7c56b416703e8ac4a960439e9.
+- **Investigation:** baseline phablet reads recovered previous .xsession-errors.old and unit journal. Session target
+  dependency fails; Lomiri got a signal ~209 s then LightDM session exits ~299 s. Notify/stop timeout hypothesis;
+  capture actual service Result before choosing a fix. Working baseline also emits the unencrypted-home warning.
+  Root operations approved for current I0 cycle; do not change encryption or extend hardware masks from that warning.
+- **Outer repo:** HEAD **48c9ceb** unchanged; prior G2d–G2h/M7.4 plus current docs/tools/45-patch export uncommitted.
+  Kernel clean consolidation commits are local only. Log **log/2026-11-17-M7.5-integration.md**. Continue host publication
+  preparation while observing I0; then finish restore/evidence before a new boot. M7/M7.5 remain open; touch is M8.
+
+## Earlier handoff (M7.4 decision complete)
+- **Latest ticket:** M7.4 conditional G2D port **dropped for the measured normal single-layer greeter/display path**.
+  Both stock vendor ABIs tolerate a missing-device initialization query, retaining the Acrylic object; actual G2D
+  task execution still fails without the device. Donor source identifies the task/compat ABI. Tested G2g ELF has no
+  G2D execution functions (matching symbols are clock data); positive G2f/G2g/G2h display results establish this
+  scoped path works without a G2D provider. This is not a universal non-use/fallback claim or G2D hardware validation.
+- **Scope/reopen:** complex composition, video/YUV, scaling/rotation, virtual displays and protected content remain
+  unverified. Reopen M7.4 if a required workload selects failing G2D/M2M processing or otherwise needs G2D. M7.5 must
+  assess required scenes/session stability and soak. Existing startup/phablet-session failure, standalone EGL crash
+  and unresponsive touch remain open; touch is M8. M7.3 done for measured paths; M7 overall still open.
+- **Evidence:** reference/m74-g2d/decision.md, host-audit.json (34 input hashes, both ABI function locations,
+  build/config checks, saved display counters); reproduce with python3 -I tools/m74/audit_g2d.py.
+  Proprietary disassembly stays ignored under src/m74/audit/. Session log log/2026-11-17-M7.4-g2d-decision.md.
+  Ticket/index and current contract/gap tables updated. No phone access, kernel edit/build or flash this session.
+- **Last verified phone (previous G2h session; not rechecked):** stock DTB/DTBO/BOOT restored 2026-11-17 **15:01:33**,
+  baseline **4.14.194** boot **15:01:46**, office **192.168.181.225**, **99% Charging**. Partition post-flight passed,
+  fsck clean **7051/3440640 files, 1990792/13745152 blocks**. No test left active by G2h. Current live state unverified.
+- **Git/artifacts unchanged:** outer **48c9ceb252dd6be6221a70a8cd6c75e32d85d242**, prior G2d–G2h and this audit
+  uncommitted; no push. Shared src/ack-6.18/common clean on **a50-usb/4fbb731f5666f9f241aa2abcd0867f15d4f1232e**.
+  Isolated src/m73/g2g-kernel remains on **a50-m73-g2g-wip/dce5cdc6e9d1c3cd64f063d5f29e1344e5724756**, only
+  drivers/video/fbdev/a50-decon.c dirty; tested tree **ecb4aab84e0af0b68b6fb0aab5c155aaa2574908**. G2f worktree preserved.
+  BOOT src/m73/boot-g2g.img **42cbbeb884bab6088a2835697bf8446e3edb025e60bde675ed33bcb4544053ad**;
+  DT src/m73/dt-g1.img **dee291ace91ab19f9d241d3c7cd42557e109f066ddf0c38eb69a6a7b1f97625c**.
+  Build src/ack-6.18/out/m73-g2g, frozen src/m73/g2g-as-built/; config/cpio unchanged. Further G2h inputs,
+  backup verification and restore evidence are in the earlier handoff below.
+- **Next:** M7.5 integration: consolidate the tested M6/M7 changes onto the clean stack and re-export patches before
+  soak; investigate startup/session failure; then required UI workloads and ten-minute soak with regressions/restore.
+  Do not infer successful login from rendered greeter. Reconfirm owner presence/USB/Claude idle before phone root
+  operations or a new flash. M7.5 implementation and another boot have not started.
+
+## Earlier handoff (G2h complete)
+- **M7.3 done for measured ordinary paths:** G2h final helpers pass six cases each on stock 4.14 and unchanged
+  G2g 6.18, native and compat. Allocation/query/map/both sync directions, pending cookies, heap-0 dma-buf import/data/
+  exporter-fd lifetime, aligned user-buffer reservation and bounded errors/cleanup pass. Probe jobs disabled;
+  real GPU execution/presentation evidence is G2f/G2g. No per-buffer GPU readback or user-import job pinning claim.
+- **Latest result:** 19,574 padded DMA frames, zero CPU copies/fallbacks/skips/acquire/frame/shadow timeouts;
+  final queue idle/pending zero, 165 counter snapshots. No recorded WARN_ON, GPU/SysMMU fault, fence wait or panic.
+  Negative-request driver diagnostics are expected. Source/image/config unchanged; no kernel build this session.
+- **Integration limits:** LightDM active and userdata rw at 160/300/330 s; Android RUNNING. At 300 s systemd degraded,
+  known audio failure plus two transient greeter/user-manager jobs; at 330 s two failures/one job (identities not
+  captured then). Phablet session exits status 1 before greeter; cause unresolved. Owner says greeter appears slowly
+  and touch does not respond. PIN/login untested; no stable logged-in desktop claim. Evdev/touchscreen off, input M8.
+  Standalone EGL failure, six secure/reserved heaps and fixed-260-MHz/no-DVFS limits remain recorded.
+- **Phone last verified:** normal return to Download 15:01:15; stock DTB/DTBO/BOOT restore **2026-11-17 15:01:33**,
+  baseline **4.14.194** boot **15:01:46**, office **192.168.181.225**, **99% Charging**. All three partition hashes and
+  post-flight passed; saved fsck clean **7051/3440640 files, 1990792/13745152 blocks**. No test active. Owner confirmed
+  present/USB/Claude idle for this cycle. No new temporary USB profile created. No further phone work authorized by
+  an old presence confirmation; confirm again for a new flash.
+- **Git:** outer HEAD **48c9ceb252dd6be6221a70a8cd6c75e32d85d242**; nothing committed/pushed this task. Existing
+  G2d/e/f/g and new G2h docs/tools/evidence remain uncommitted. Shared **src/ack-6.18/common** clean on
+  **a50-usb/4fbb731f5666f9f241aa2abcd0867f15d4f1232e**. Preserved G2f worktree unchanged. G2g worktree
+  **src/m73/g2g-kernel**, branch **a50-m73-g2g-wip**, Git base **dce5cdc6e9d1c3cd64f063d5f29e1344e5724756**,
+  still only **drivers/video/fbdev/a50-decon.c** dirty. Exact tested tree **ecb4aab84e0af0b68b6fb0aab5c155aaa2574908**.
+- **Artifacts:** reuse **src/m73/boot-g2g.img**, SHA **42cbbeb884bab6088a2835697bf8446e3edb025e60bde675ed33bcb4544053ad**;
+  **src/m73/dt-g1.img**, SHA **dee291ace91ab19f9d241d3c7cd42557e109f066ddf0c38eb69a6a7b1f97625c**.
+  Build output **src/ack-6.18/out/m73-g2g**, frozen **src/m73/g2g-as-built/**; config/runtime cpio unchanged.
+  Backup hash rechecked **22cb95a536489c89a738cae3105859c041a15b298c4140c6a1a018883f7bd896**.
+  **reference/m73-gpu/g2h-boot-inputs.json** records 25 hashes/16 frozen copies, verified unchanged.
+  Raw **src/m73/g2h-raw/**, published redacted **reference/m73-gpu/g2h-*.txt**; helpers in **src/m73/g2h-session/**.
+  Log **log/2026-11-17-M7.3-g2h-memory-abi.md**, results **reference/m73-gpu/g2h-results.json**, recipe **tools/m73/G2h.md**.
+- **Next ticket:** **M7.4 conditional G2D requirement decision**, using consumer/source evidence. Then M7.5 startup/
+  session integration, consolidation onto clean branches/patch exports and ten-minute soak. M7 overall not complete.
+  Do not start another boot or ticket from orientation alone.
+
+## Earlier handoff (G2g completed)
+- **Owner clarification (after G2g):** 6.18 eventually reaches the login/greeter screen, startup feels slow,
+  and the screen does not respond to touch. PIN entry/authentication was not tested. Prior visible-UI statements
+  mean greeter rendering, not a working logged-in desktop. Current config has INPUT_EVDEV and INPUT_TOUCHSCREEN
+  unset; input bring-up remains M8. Slow startup/session progression should be tracked during M7.5 integration.
+- **Active ticket:** M7.3 remains in progress. **G2g PASS:** real UI buffers (1088x2352, visible 1080x2340) now scan
+  directly through IDMA/SysMMU. **19,725 padded DMA frames, zero CPU copies/fallbacks/skips/acquire/frame/shadow
+  timeouts**. Late source/image registers match 0x09300440 / 0x09240438, offset zero. Queue pending zero/idle.
+  Owner: **"UI looks correct; smoothness unclear"**. Native/compat metadata regression probes pass.
+- **Measured rate:** around uptime 100–200, **59.972 completed updates/s** versus G2f CPU-copy **3.022/s** over the
+  corresponding window. This is workload-specific presentation throughput, not a general GPU benchmark or a
+  claim of subjective smoothness. 175 snapshots, peak pending 2. No recorded GPU/SysMMU faults, fence waits or panic.
+- **Runtime/storage:** LightDM active at 100/200/300 s, correct 1080x2340 mode; Android RUNNING. At 300 s systemd
+  degraded/zero jobs/one known audio-route failure. Userdata rw at all snapshots. Tight bootfb geometry restoration
+  passes the host test; this natural UI run had zero fallback, so restoration was not exercised on the phone.
+- **Phone last verified:** stock restore **2026-11-17 13:45:22**, baseline 4.14.194 boot **13:45:36**;
+  office **192.168.181.225**, **100% Charging**. DTB/DTBO/BOOT post-flight passed; saved fsck clean
+  **7054/3440640 files, 1992243/13745152 blocks**. No test active. Owner present/USB/Claude idle confirmed for G2g.
+  The runner deleted its temporary NetworkManager USB profile after restore.
+- **Git:** outer HEAD **48c9ceb**; no commits/push. Existing G2d/G2e/tracing/G2f and new G2g work remain uncommitted.
+  Shared **src/ack-6.18/common clean on a50-usb/4fbb731f5**. Prior dirty G2f worktree **src/m73/g2b-kernel** is
+  unchanged. New **src/m73/g2g-kernel**, dirty on **a50-m73-g2g-wip**, Git base **dce5cdc6e** plus G2f metadata
+  and G2g stride changes, only **drivers/video/fbdev/a50-decon.c** modified. Candidate tree
+  **ecb4aab84e0af0b68b6fb0aab5c155aaa2574908**. Export **reference/m73-gpu/g2g-padded-stride.patch** applies
+  incrementally to tested G2f tree **7253f8a58c52a3aa9c77b6458bd4ce81c28589b4** and reproduces that exact tree.
+- **Artifacts:** output **src/ack-6.18/out/m73-g2g**, frozen **src/m73/g2g-as-built/**.
+  BOOT **src/m73/boot-g2g.img**, SHA **42cbbeb884bab6088a2835697bf8446e3edb025e60bde675ed33bcb4544053ad**.
+  DT **src/m73/dt-g1.img**, SHA **dee291ace91ab19f9d241d3c7cd42557e109f066ddf0c38eb69a6a7b1f97625c**.
+  Config/DTB/runtime cpio equal G2f. Backup hash rechecked **22cb95a536489c89a738cae3105859c041a15b298c4140c6a1a018883f7bd896**.
+  Exact **33 inputs / 15 snapshots:** **reference/m73-gpu/g2g-boot-inputs.json**, **g2g-scripts/**.
+  Log **log/2026-11-17-M7.3-g2g-padded-scanout.md**, results **reference/m73-gpu/g2g-results.json**;
+  recipe **tools/m73/G2g.md**. Raw ignored **src/m73/g2g-raw/**; published captures redacted.
+- **Next action:** focused kbase allocation/import/query/sync/error-path checks to close M7.3's remaining acceptance
+  item. Keep the separate standalone EGL failure explicit. Then M7.4 G2D decision and M7.5 integration/10-minute
+  soak; this 420-second test does not complete that soak. Reconfirm owner presence/exclusive access before a new flash.
+
+## Earlier handoff (G2f completed)
+- **Active ticket:** M7.3, still in progress. **G2f PASS:** EXYNOS_DISP_INFO now supplies the exact stock metadata;
+  native and compat ABI/error/preservation probes pass. Mir reports **1080x2340**, physical **68x147 mm**, ARM/Mali-G72.
+  Owner confirmed **recognizable Ubuntu Touch UI** on 6.18. GPU rendering reaches visible presentation through the
+  CPU-copy display bridge. This is not direct DMA presentation or M7's completed 10-minute soak.
+- **Display evidence:** real UI buffers are **1088x2352**, visible 1080x2340. Fixed-1080-pitch DMA eligibility rejects
+  that padding. Late counters: **1019 WIN_CONFIGs, 1019 CPU copies, zero scanned/skipped/acquire/frame timeouts**,
+  queue pending zero/idle. 174 snapshots, peak pending 2; ~3 updates/s during active copying (not a GPU benchmark).
+  No recorded fence-wait warnings, kernel panics or GPU/SysMMU faults. No standalone graphics clients launched.
+- **Runtime/storage:** userdata rw at 100/200/300 s. At 300 s systemd degraded, zero jobs, only known
+  a50-audio-route timeout failed. Multi-user and graphical targets active; LightDM remains running. Android RUNNING.
+- **Phone last verified:** stock DTB/DTBO/BOOT restore **2026-11-17 13:15:08**, baseline 4.14.194 boot **13:15:23**;
+  office **192.168.181.225**, **100% Charging**. Partition post-flight passed; saved fsck clean
+  **7045/3440640 files, 1992124/13745152 blocks**. No test active. Owner present/USB/Claude idle confirmed for G2f.
+- **Git:** outer remains `48c9ceb`; no commits or push this session. Prior G2d/G2e/tracing and G2f implementation/
+  tools/evidence remain uncommitted. Shared `src/ack-6.18/common` clean on **a50-usb/4fbb731f5**.
+  Isolated `src/m73/g2b-kernel` dirty on **a50-m73-g2f-wip**, base **dce5cdc6e9d1c3cd64f063d5f29e1344e5724756**,
+  only `drivers/video/fbdev/a50-decon.c` changed. Candidate tree **7253f8a58c52a3aa9c77b6458bd4ce81c28589b4**;
+  exported **reference/m73-gpu/g2f-display-info.patch** reproduces that tree from G2e.
+- **Build/artifacts:** output `src/ack-6.18/out/m73-g2f`, frozen `src/m73/g2f-as-built/`.
+  BOOT **src/m73/boot-g2f.img**, SHA **0c60496fdb454f4a84a472d9245184d5bcdc390f8818eac51fa5eddd2f429b2a**.
+  DT **src/m73/dt-g1.img**, SHA **dee291ace91ab19f9d241d3c7cd42557e109f066ddf0c38eb69a6a7b1f97625c**.
+  Config/DTB/runtime cpio exactly match G2e; backup hash rechecked 22cb95a536489c89a738cae3105859c041a15b298c4140c6a1a018883f7bd896.
+  Exact inputs/frozen scripts `reference/m73-gpu/g2f-boot-inputs.json`, `g2f-boot-scripts/`; recipe `tools/m73/G2f.md`.
+  Log `log/2026-11-17-M7.3-g2f-metadata-boot.md`; results `reference/m73-gpu/g2f-results.json`.
+  Raw ignored `src/m73/g2f-raw/`; published captures redacted. Earlier G2f trace inputs remain historical.
+- **Next action:** audit/add direct scanout for the observed padded 1088-pixel stride (G2g), including correct IDMA
+  source geometry and restoring boot-framebuffer pitch on fallback. Validate geometry/buffer bounds before boot.
+  M7.3 still needs focused kbase allocation/import/query/sync checks; standalone EGL failure and M7 soak remain open.
+  Reconfirm owner presence/exclusive access before another flash. Do not start another test from old confirmation.
+
+## Earlier handoff (G2f tracing; before handler implementation)
+- **Active ticket:** M7.3, in progress. M7.1/M7.2 done. G2c format translation is committed in outer `48c9ceb`;
+  G2d passed direct display/fence tests after unblanking (30 flips, 16.9 ms/frame) and identified rejected heap-0
+  gralloc flags 0x48/0x43. G2e has now tested the hint fix successfully. Rendering/Lomiri acceptance remains open.
+- **Latest G2f tracing result:** both vendor library ABIs call mandatory `EXYNOS_DISP_INFO` (`0x40f84704`,
+  248 bytes) before FBIOGET_VSCREENINFO; a failure returns from hardware-info initialization early. G2e's driver
+  lacks that case and returns -ENOTTY. Baseline phablet metadata query succeeds: ver=2, psr=2, chip=9610,
+  mres disabled/count 1, first entry `(68,147,0,0,0)`. Version/reserved bytes are preserved by the stock handler.
+  All three optional mode queries also return ENOTTY on baseline, with a working library fallback; they need
+  no implementation for that path. Trace/log `reference/m73-gpu/g2f-hwc-mode-trace.md`,
+  `log/2026-11-17-M7.3-g2f-hwc-trace.md`. No kernel changes/build/flash or compositor restart for this tracing task.
+  Rendering remains unverified; a fixed-image boot is still needed.
+- **Latest G2e result:** native and compat replay of the gralloc requests passed allocation, full-buffer zeroing,
+  mmap/sync/close. Protected/unknown flags and unsupported heap remain rejected. Natural gralloc 0x48 succeeds;
+  all six recorded ION failures are deliberate helper negative controls. LightDM/Mir stays active and initializes
+  the stock Mali-G72 GL renderer, but reports a **0x0 mode**; Lomiri repeatedly errors "An output ID must be specified".
+  Final display counters: 79 WIN_CONFIGs, 76 CPU copies (sampled buffers 16x16), zero scanouts/skips/acquire timeouts,
+  pending zero. Zero recorded fence-wait warnings or kernel panics; late frame timeouts zero.
+  Owner saw Samsung warning screen with red/green/blue/white bars at the top, no verified recognizable UI/scene.
+  GLES exits 134, "failed to create composer client", while Mir is active (contention plausible, unverified).
+  EGL still exits 139. Direct-display helper was skipped because LightDM remained active.
+  Evidence/result: `log/2026-11-17-M7.3-g2e-ion-hints.md`, `reference/m73-gpu/g2e-results.json`.
+- **Baseline control:** fresh restored Mir reports 1080x2340/68x147 mm; G2e Mir reports 0x0/0x0 mm, although the same
+  fbdev ioctl gives 1080x2340/68x147 mm on both. Both report pixclock zero; do not infer a missing pixel clock is
+  the cause. Test/control captures `reference/m73-gpu/g2e-{fb-mode,baseline-fb-mode,baseline-display}.txt`.
+- **Phone last verified:** stock restore completed 2026-11-17 **12:26:40**, baseline 4.14.194 boot **12:26:54**;
+  office Wi-Fi **192.168.181.225**, battery 99% Charging at restore. G2f phablet queries confirm baseline still running;
+  no new reboot. Stock DTB/DTBO/BOOT post-flight at G2e restore passed; saved fsck clean
+  (6630/3440640 files, 1989163/13745152 blocks). No test active. Owner present/USB/Claude idle confirmed for this cycle.
+- **Git:** outer HEAD `48c9ceb`; no commits made this session. G2d evidence and G2e preparation/results/tools are
+  uncommitted, along with G2f tracing evidence and the metadata reader. Shared kernel `src/ack-6.18/common` clean on `a50-usb/4fbb731f5`.
+  Isolated `src/m73/g2b-kernel` clean on `a50-m73-g2e-wip/dce5cdc6e9d1c3cd64f063d5f29e1344e5724756`,
+  tree `b632eb2709cbce0cfad645109d94b5ce4ba9b8cb`, parent G2d `596020e39`. No kernel edits this session.
+  Source exports: `g2c-format.patch`, `g2d-ion-log.patch`, `g2e-ion-flags.patch` under `reference/m73-gpu/`.
+- **Tested artifacts:** BOOT `src/m73/boot-g2e.img`, SHA `9202dbc17d63260bbe593ea5775f1698239041a450277c40b818a70aff4614fc`;
+  DT `src/m73/dt-g1.img`, SHA `dee291ace91ab19f9d241d3c7cd42557e109f066ddf0c38eb69a6a7b1f97625c`.
+  Config/DTB/cpio unchanged from G2d; frozen `src/m73/g2e-as-built/`; build output `src/ack-6.18/out/m73-g2e`.
+  Exact inputs: `reference/m73-gpu/g2e-{inputs,session-inputs,observation-inputs}.json`; frozen `g2e-scripts/`.
+  Backup hash rechecked `22cb95a536489c89a738cae3105859c041a15b298c4140c6a1a018883f7bd896`.
+  Raw logs ignored in `src/m73/g2e-raw/`; published copies redacted. Recipe `tools/m73/G2e.md`.
+- **Next action (G2f metadata fix):** implement only EXYNOS_DISP_INFO, with exact 248-byte native/compat layout,
+  stock copy-in/copy-out/error behavior and measured metadata. Preserve caller version/reserved bytes. Validate
+  before building, then boot-test HWC2/Mir dimensions and Lomiri. Do not change pixel clocks or implement the
+  optional mode queries without new evidence. Reconfirm owner presence/exclusive access before that flash.
+
+## Earlier handoff (G2b; superseded by the resume section above)
 - **Active ticket:** `tasks/M7.3-mali-kbase.md`, in progress. M7.1 and M7.2 are done.
   G1b now exposes `/dev/mali0`; native and AArch32 VERSION_CHECK 11.27 and GET_GPUPROPS pass (82 properties each).
   G2 removed the metadata restriction: client `4021_7` queued work but stalled on active fence context 1 (300 warnings),

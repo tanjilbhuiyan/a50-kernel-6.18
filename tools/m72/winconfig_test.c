@@ -56,6 +56,7 @@ struct win_config_data {
 };
 _Static_assert(sizeof(struct win_config_data) == 1040, "S3CFB_WIN_CONFIG size");
 #define S3CFB_WIN_CONFIG _IOW('F', 209, struct win_config_data)
+#define S3CFB_POWER_MODE _IOW('F', 223, uint32_t)
 _Static_assert(S3CFB_WIN_CONFIG == 0x441046d1, "captured ioctl number");
 
 struct ion_allocation_data { uint64_t len; uint32_t heap_id_mask, flags, fd, unused; };
@@ -117,6 +118,12 @@ int main(int argc, char **argv)
 	if (fb < 0 || ion < 0 || ioctl(ion, ION_IOC_ALLOC, &a)) {
 		perror("open fb/ion or ION_IOC_ALLOC");
 		return 1;
+	}
+	/* M7.3 G2d: another client (LightDM's Mir restarts in G2c) may have left the panel blanked. */
+	{
+		uint32_t normal = 2;
+
+		printf("power mode NORMAL: %s\n", ioctl(fb, S3CFB_POWER_MODE, &normal) ? strerror(errno) : "ok");
 	}
 	px = mmap(NULL, a.len, PROT_READ | PROT_WRITE, MAP_SHARED, a.fd, 0);
 	if (px == MAP_FAILED) {

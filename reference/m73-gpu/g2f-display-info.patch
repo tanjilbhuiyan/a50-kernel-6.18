@@ -1,0 +1,69 @@
+diff --git a/drivers/video/fbdev/a50-decon.c b/drivers/video/fbdev/a50-decon.c
+index b0697eeaa..bda5c70d2 100644
+--- a/drivers/video/fbdev/a50-decon.c
++++ b/drivers/video/fbdev/a50-decon.c
+@@ -91,6 +91,30 @@
+ /* 4.14 dpu20/decon.h */
+ #define S3CFB_SET_VSYNC_INT	_IOW('F', 206, __u32)
+ #define S3CFB_POWER_MODE	_IOW('F', 223, __u32)
++/* G2f metadata ABI: stock dpu20/decon.h and panels/decon_lcd.h. */
++struct a50_lcd_res_info {
++	u32 width, height, dsc_en, dsc_width, dsc_height;
++};
++
++struct a50_lcd_mres_info {
++	u32 mres_en, mres_number;
++	struct a50_lcd_res_info res_info[5];
++};
++
++struct a50_disp_info {
++	u32 ver, psr_mode;
++	struct a50_lcd_mres_info mres_info;
++	u32 chip_ver;
++	u8 reserved[128];
++};
++
++#define EXYNOS_DISP_INFO _IOW('F', 260, struct a50_disp_info)
++static_assert(sizeof(struct a50_disp_info) == 248);
++static_assert(offsetof(struct a50_disp_info, mres_info) == 8);
++static_assert(offsetof(struct a50_disp_info, chip_ver) == 116);
++static_assert(offsetof(struct a50_disp_info, reserved) == 120);
++static_assert(EXYNOS_DISP_INFO == 0x40f84704);
++
+ /* HWC power modes (4.14 decon.h decon_power_mode) */
+ #define DECON_POWER_MODE_OFF		0
+ #define DECON_POWER_MODE_DOZE		1
+@@ -809,12 +833,33 @@ static int a50_win_config(struct a50_decon *d, void __user *argp)
+ 	return ret;
+ }
+ 
++static int a50_display_info(void __user *arg)
++{
++	struct a50_disp_info data;
++
++	/* Match stock copy semantics, including caller version/reserved bytes. */
++	if (copy_from_user(&data, arg, sizeof(data)))
++		return -EFAULT;
++	data.psr_mode = 2; /* DECON_MIPI_COMMAND_MODE, already handed over. */
++	data.chip_ver = 9610;
++	/* Exact baseline response, including the panel's 68x147 mres entry. */
++	data.mres_info = (struct a50_lcd_mres_info) {
++		.mres_number = 1,
++		.res_info = { { .width = 68, .height = 147 } },
++	};
++	if (copy_to_user(arg, &data, sizeof(data)))
++		return -EFAULT;
++	return 0;
++}
++
+ static int a50_fb_ioctl(struct fb_info *info, unsigned int cmd, unsigned long arg)
+ {
+ 	struct a50_decon *d = info->par;
+ 	u32 v;
+ 
+ 	switch (cmd) {
++	case EXYNOS_DISP_INFO:
++		return a50_display_info((void __user *)arg);
+ 	case S3CFB_SET_VSYNC_INT:
+ 		if (get_user(v, (u32 __user *)arg))
+ 			return -EFAULT;

@@ -1,0 +1,158 @@
+{
+  "test": "M7.3 G2f metadata handler boot",
+  "outer_base": "48c9ceb252dd6be6221a70a8cd6c75e32d85d242",
+  "kernel_base_commit": "dce5cdc6e9d1c3cd64f063d5f29e1344e5724756",
+  "kernel_tree": "7253f8a58c52a3aa9c77b6458bd4ce81c28589b4",
+  "kernel_branch": "a50-m73-g2f-wip",
+  "source_uncommitted": true,
+  "kernel_worktree": "src/m73/g2b-kernel",
+  "one_variable": "Implement the measured EXYNOS_DISP_INFO metadata ABI; other behavior/config/DTB/runtime unchanged from G2e",
+  "build_output": "src/ack-6.18/out/m73-g2f",
+  "build_method": "Independent output cloned from G2e objects; locked unchanged config, full affected-object compile and final Image link, no -Wno-error override",
+  "baseline_ip": "192.168.181.225",
+  "files": {
+    "src/m73/boot-g2f.img": {
+      "size": 30302208,
+      "sha256": "0c60496fdb454f4a84a472d9245184d5bcdc390f8818eac51fa5eddd2f429b2a"
+    },
+    "src/m73/dt-g1.img": {
+      "size": 8388608,
+      "sha256": "dee291ace91ab19f9d241d3c7cd42557e109f066ddf0c38eb69a6a7b1f97625c"
+    },
+    "reference/dt-6.18/images/dtbo.img": {
+      "size": 8388608,
+      "sha256": "6d81cce87faca914d75f024f36e183ae6592e61adc786bbb6c7c47cdd3a151fe"
+    },
+    "reference/stock-images/dt.img": {
+      "size": 8388608,
+      "sha256": "59209aa52dc3b35e2c7cc025c465ed1cdb48dadaa13cf5d1f50324b3bf503547"
+    },
+    "reference/stock-images/dtbo.img": {
+      "size": 8388608,
+      "sha256": "40e47ed1477a8ffb6cbb34e5cb59a1af786c2552544f3b556373f3c553d40d21"
+    },
+    "baseline/ut-26.04-2026-10-19-aa17rf2/boot.img": {
+      "size": 53624832,
+      "sha256": "7d5855efd34e01f09659c7d47ecb0773c30f2acc7443ee87181a0536804086c5"
+    },
+    "reference/m73-gpu/g2f-display-info.patch": {
+      "size": 2215,
+      "sha256": "f2aeb58921651c7d1215b04274bb45a5cc64a9e68afdc9b6763e0e9bd77e055a"
+    },
+    "tools/m73/build_g2f.sh": {
+      "size": 3065,
+      "sha256": "2bde79f7121b4b335d69ccc5e3ec51c56c5583554e1ff453aeded90eda48c585"
+    },
+    "tools/m73/metadata_unittest.py": {
+      "size": 4540,
+      "sha256": "6488fa4f2a604762601a065d6ce08b5dd5a8b22ae6cfa42407852505ab334b02"
+    },
+    "tools/m73/metadata_probe.c": {
+      "size": 1870,
+      "sha256": "8a1c615e9aabc7b6a46d22e565c57a041db9d25e803285ea2385b6996f1b4bbf"
+    },
+    "tools/m73/build_metadata_probes.py": {
+      "size": 1183,
+      "sha256": "7bf581378e631d096e2b5f6fc90861f1778c4c9485c393b4b35a20095a4f6bec"
+    },
+    "tools/m73/read_display_info.py": {
+      "size": 2415,
+      "sha256": "5920bb68e8d1b97aff2c77227802a8aba5064df589e5ffc025be292db2143225"
+    },
+    "tools/m73/collect_g2f.sh": {
+      "size": 1678,
+      "sha256": "cc4d7ed1444187aa3ff778bb78d8c4a2fc715f77f7a09b40bd817d08e95500a9"
+    },
+    "tools/m73/run_g2f.sh": {
+      "size": 4423,
+      "sha256": "a25d4d78726e7397a04d4e896bd9b3b2e7ba09080727fd90608e43958de84510"
+    },
+    "tools/m54/watch_ssh.py": {
+      "size": 4321,
+      "sha256": "f656a6f1092266c2214ba0f3afee37ac81b0b62620b7feb57cadf6a71db52bfd"
+    },
+    "tools/m32_run_test.sh": {
+      "size": 4209,
+      "sha256": "0de47c72a2bada4b792214211b32d6bdad03bc24a4a0446fdc383418f20e8d87"
+    },
+    "tools/m24_preflight.sh": {
+      "size": 4118,
+      "sha256": "6beca4aa8634c3e1b687e4242d700a311c89f2f18322398ef7a9d08a3fc13d8e"
+    },
+    "tools/m32_read_618.sh": {
+      "size": 1238,
+      "sha256": "e750045b3417db5a9f9a6aad25e96cf85f1367aef897c45f039e8e440ac765c7"
+    },
+    "tools/m22_pack.sh": {
+      "size": 1098,
+      "sha256": "08212aa1743ed07df3447dc8414d634e775a4bc224e945b570a86be1c3757097"
+    },
+    "src/a50-halium/build/pack-boot-image.py": {
+      "size": 2058,
+      "sha256": "b685295db12c167bd804a3801c595f4d3b26812c62906f187e869e3b39f0cb74"
+    },
+    "src/m73/g2f-session/metadata_abi.h": {
+      "size": 870,
+      "sha256": "b2853d398b516057694370a78538caaff2d824f0e8f8b0d7343a6e6c6452d1cc"
+    },
+    "src/m73/g2f-session/metadata64": {
+      "size": 2217280,
+      "sha256": "eda4c6fc86a8b84a03282984f1ef0cd4a9fbbf1c68a55f4aef912c9586a24405"
+    },
+    "src/m73/g2f-session/metadata32": {
+      "size": 1729004,
+      "sha256": "3d89c215003ddf8c135fc2212a926d661a3abac7f8fcdb554b7b3cc04efb7778"
+    },
+    "src/m73/g2f-as-built/.config": {
+      "size": 94166,
+      "sha256": "638b7ff228fc42ac420fbf88df89987301385ea49cc26649524fa4997e617a58"
+    },
+    "src/m73/g2f-as-built/Image": {
+      "size": 30296072,
+      "sha256": "e79e607f34e8700d81c5f706fbd6bc70d5064ebd723ffecc470d8c3e1c91f9fc"
+    },
+    "src/m73/g2f-as-built/System.map": {
+      "size": 3023456,
+      "sha256": "2e75a3729e78d3d3d21507e5711a2dc7e83ec75e170bc56f5bed4b285760eb57"
+    },
+    "src/m73/g2f-as-built/exynos9610-a50-g1.dtb": {
+      "size": 17929,
+      "sha256": "c30e8fb32689b12726ac56581432de2ad9bde55e4017b2afc168b299ccd2ef1a"
+    },
+    "src/m73/g2f-as-built/initramfs_data.cpio": {
+      "size": 25954816,
+      "sha256": "c855bb6eee66af35fc8ae2f21f2c85407d6cd46b9bf648b80e9a81672dd192a2"
+    },
+    "src/m73/g2f-as-built/vmlinux": {
+      "size": 34073352,
+      "sha256": "a890f8e5d6619790322551dbdf4e086706720159c71f4a6e37b326dc11a60dfa"
+    },
+    "src/m73/g2b-kernel/drivers/video/fbdev/a50-decon.c": {
+      "size": 35406,
+      "sha256": "889349649ca43f37657b8f9f34a2fbbc5007384a41b1908758dc8ee31ab8fce8"
+    },
+    "src/m73/g2f-session/backup-hash.txt": {
+      "size": 113,
+      "sha256": "2b9e1952c14a7ac9f9e8a63d62bf2930ca43f1013f024939af4b8b7a9bd95e36"
+    }
+  },
+  "snapshots": {
+    "tools/m73/build_g2f.sh": "reference/m73-gpu/g2f-boot-scripts/build_g2f.sh",
+    "tools/m73/metadata_unittest.py": "reference/m73-gpu/g2f-boot-scripts/metadata_unittest.py",
+    "tools/m73/metadata_probe.c": "reference/m73-gpu/g2f-boot-scripts/metadata_probe.c",
+    "tools/m73/build_metadata_probes.py": "reference/m73-gpu/g2f-boot-scripts/build_metadata_probes.py",
+    "tools/m73/read_display_info.py": "reference/m73-gpu/g2f-boot-scripts/read_display_info.py",
+    "tools/m73/collect_g2f.sh": "reference/m73-gpu/g2f-boot-scripts/collect_g2f.sh",
+    "tools/m73/run_g2f.sh": "reference/m73-gpu/g2f-boot-scripts/run_g2f.sh",
+    "tools/m54/watch_ssh.py": "reference/m73-gpu/g2f-boot-scripts/watch_ssh.py",
+    "tools/m32_run_test.sh": "reference/m73-gpu/g2f-boot-scripts/m32_run_test.sh",
+    "tools/m24_preflight.sh": "reference/m73-gpu/g2f-boot-scripts/m24_preflight.sh",
+    "tools/m32_read_618.sh": "reference/m73-gpu/g2f-boot-scripts/m32_read_618.sh",
+    "tools/m22_pack.sh": "reference/m73-gpu/g2f-boot-scripts/m22_pack.sh",
+    "src/a50-halium/build/pack-boot-image.py": "reference/m73-gpu/g2f-boot-scripts/pack-boot-image.py",
+    "src/m73/g2f-session/metadata_abi.h": "reference/m73-gpu/g2f-boot-scripts/metadata_abi.h"
+  },
+  "procedure": "Native+compat metadata/error checks; natural Mir/Lomiri snapshots at uptime 100/200/300; no competing composer clients; normal timed dump/stock restore/fsck",
+  "confirmation": "Owner confirmed present, USB connected, Claude idle; run G2f.",
+  "backup_sha256": "22cb95a536489c89a738cae3105859c041a15b298c4140c6a1a018883f7bd896"
+}

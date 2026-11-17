@@ -45,7 +45,7 @@ TV tuners). Only the drivers below matter.
 | Display DECON/DPP/DSIM | `video/fbdev/exynos/dpu20/*` | C (mainline exynos DRM covers 5433/7 generation only) | forward-port dpu20 with its ioctl ABI (vendor HWC needs it) | M7 |
 | Panel | `display-lcd_a50_common.dtsi` panel driver | C | port with dpu20 | M7 |
 | GPU | Mali kbase r26p0 | C for vendor ABI (Panfrost supports G72 but not the vendor blob ABI) | port kbase r26p0 (ARM DDK) | M7 |
-| G2D | `gpu/exynos/g2d` | C | port only if HWC requires it (contract capture) | M7 |
+| G2D | `gpu/exynos/g2d` | C | conditional port dropped for measured single-layer path; reopen on required G2D processing ([decision](../reference/m74-g2d/decision.md)) | M7 |
 | Touch | `input/touchscreen/melfas/mss100` | C | port (small) | M8 |
 | Hall, vibrator, LEDs (flash) | `input/misc/hall*.c`, `motor/sec_vib.c`, `leds-sm5713-fled.c` | C | port small drivers / use mainline equivalents | M8 |
 | Wi-Fi + BT | SCSC `misc/samsung/scsc*`, `net/wireless/scsc` | C (93.5 k lines in net/wireless + core) | forward-port SCSC | M9 |

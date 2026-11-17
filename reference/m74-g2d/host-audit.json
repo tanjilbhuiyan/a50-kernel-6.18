@@ -1,0 +1,475 @@
+{
+  "task": "M7.4 G2D requirement decision",
+  "method": "host-only source/binary/build and saved runtime evidence; no phone access",
+  "symbol_note": "32-bit ELF symbols carry Thumb bit; code_address clears it",
+  "consumer_functions": {
+    "lib64/libacryl.so": {
+      "AcrylicCompositorG2D9810::ioctlG2D()": {
+        "symbol_address": "0xf130",
+        "code_address": "0xf130",
+        "size": 384
+      },
+      "AcrylicDevice::open()": {
+        "symbol_address": "0x15da8",
+        "code_address": "0x15da8",
+        "size": 152
+      },
+      "AcrylicDevice::ioctl(int, void*)": {
+        "symbol_address": "0x15e40",
+        "code_address": "0x15e40",
+        "size": 184
+      },
+      "Acrylic::createInstance(char const*)": {
+        "symbol_address": "0x139d0",
+        "code_address": "0x139d0",
+        "size": 688
+      },
+      "AcrylicCompositorG2D9810::AcrylicCompositorG2D9810(HW2DCapability const&, bool)": {
+        "symbol_address": "0xe62c",
+        "code_address": "0xe62c",
+        "size": 324
+      },
+      "AcrylicCompositorG2D9810::executeG2D(int*, unsigned int, bool)": {
+        "symbol_address": "0xf71c",
+        "code_address": "0xf71c",
+        "size": 2204
+      },
+      "AcrylicFactory::createAcrylic(char const*)": {
+        "symbol_address": "0x13ca4",
+        "code_address": "0x13ca4",
+        "size": 120
+      }
+    },
+    "lib64/libexynosdisplay.so": {
+      "ExynosMPP::doPostProcessing(exynos_image&, exynos_image&)": {
+        "symbol_address": "0x55f3c",
+        "code_address": "0x55f3c",
+        "size": 1324
+      },
+      "ExynosMPP::ExynosMPP(ExynosResourceManager*, unsigned int, unsigned int, char const*, unsigned int, unsigned int, unsigned int)": {
+        "symbol_address": "0x506b0",
+        "code_address": "0x506b0",
+        "size": 4244
+      },
+      "ExynosDisplay::doExynosComposition()": {
+        "symbol_address": "0x3888c",
+        "code_address": "0x3888c",
+        "size": 1684
+      }
+    },
+    "lib/libacryl.so": {
+      "AcrylicCompositorG2D9810::executeG2D(int*, unsigned int, bool)": {
+        "symbol_address": "0xb6a1",
+        "code_address": "0xb6a0",
+        "size": 1312
+      },
+      "AcrylicCompositorG2D9810::ioctlG2D()": {
+        "symbol_address": "0xb32d",
+        "code_address": "0xb32c",
+        "size": 212
+      },
+      "AcrylicCompositorG2D9810::AcrylicCompositorG2D9810(HW2DCapability const&, bool)": {
+        "symbol_address": "0xaaed",
+        "code_address": "0xaaec",
+        "size": 232
+      },
+      "Acrylic::createInstance(char const*)": {
+        "symbol_address": "0xe04d",
+        "code_address": "0xe04c",
+        "size": 548
+      },
+      "AcrylicFactory::createAcrylic(char const*)": {
+        "symbol_address": "0xe295",
+        "code_address": "0xe294",
+        "size": 92
+      },
+      "AcrylicDevice::open()": {
+        "symbol_address": "0xf33d",
+        "code_address": "0xf33c",
+        "size": 100
+      },
+      "AcrylicDevice::ioctl(int, void*)": {
+        "symbol_address": "0xf3a1",
+        "code_address": "0xf3a0",
+        "size": 34
+      }
+    },
+    "lib/libexynosdisplay.so": {
+      "ExynosMPP::ExynosMPP(ExynosResourceManager*, unsigned int, unsigned int, char const*, unsigned int, unsigned int, unsigned int)": {
+        "symbol_address": "0x3cb31",
+        "code_address": "0x3cb30",
+        "size": 1164
+      },
+      "ExynosMPP::doPostProcessing(exynos_image&, exynos_image&)": {
+        "symbol_address": "0x3fefd",
+        "code_address": "0x3fefc",
+        "size": 1076
+      },
+      "ExynosDisplay::doExynosComposition()": {
+        "symbol_address": "0x2bd55",
+        "code_address": "0x2bd54",
+        "size": 1108
+      }
+    }
+  },
+  "build_disabled": [
+    "# CONFIG_MODULES is not set",
+    "# CONFIG_MEDIA_SUPPORT is not set",
+    "# CONFIG_DRM is not set"
+  ],
+  "linked_g2d_named_symbols": [
+    {
+      "kind": "d",
+      "name": "g2d_clk_regs"
+    },
+    {
+      "kind": "d",
+      "name": "g2d_clk_regs"
+    },
+    {
+      "kind": "d",
+      "name": "g2d_cmu_info"
+    },
+    {
+      "kind": "d",
+      "name": "g2d_cmu_info"
+    },
+    {
+      "kind": "d",
+      "name": "g2d_div_clks"
+    },
+    {
+      "kind": "d",
+      "name": "g2d_div_clks"
+    },
+    {
+      "kind": "d",
+      "name": "g2d_gate_clks"
+    },
+    {
+      "kind": "d",
+      "name": "g2d_gate_clks"
+    },
+    {
+      "kind": "d",
+      "name": "g2d_mux_clks"
+    },
+    {
+      "kind": "d",
+      "name": "g2d_mux_clks"
+    },
+    {
+      "kind": "d",
+      "name": "g2d_suspend_regs"
+    },
+    {
+      "kind": "d",
+      "name": "mout_aclk_g2d_266_user_p"
+    },
+    {
+      "kind": "d",
+      "name": "mout_aclk_g2d_400_b_p"
+    },
+    {
+      "kind": "d",
+      "name": "mout_aclk_g2d_400_user_p"
+    },
+    {
+      "kind": "d",
+      "name": "mout_clkcmu_g2d_g2d_p"
+    },
+    {
+      "kind": "d",
+      "name": "mout_cmu_g2d_g2d_p"
+    },
+    {
+      "kind": "d",
+      "name": "mout_cmu_g2d_g2d_p"
+    },
+    {
+      "kind": "d",
+      "name": "mout_cmu_g2d_g2d_p"
+    },
+    {
+      "kind": "d",
+      "name": "mout_cmu_g2d_g2d_p"
+    },
+    {
+      "kind": "d",
+      "name": "mout_cmu_g2d_jpeg_p"
+    },
+    {
+      "kind": "d",
+      "name": "mout_cmu_g2d_mscl_p"
+    },
+    {
+      "kind": "d",
+      "name": "mout_cmu_g2d_mscl_p"
+    },
+    {
+      "kind": "d",
+      "name": "mout_cmu_g2d_mscl_p"
+    },
+    {
+      "kind": "d",
+      "name": "mout_pll_g2d_g2d_user_p"
+    },
+    {
+      "kind": "d",
+      "name": "mout_pll_g2d_mscl_user_p"
+    }
+  ],
+  "linked_g2d_named_text_symbols": 0,
+  "runtime": {
+    "g2f": {
+      "late_counters": {
+        "req": 1021,
+        "done": 1022,
+        "start": 1022,
+        "timeouts": 0,
+        "extra": 0,
+        "te": 24753,
+        "FRAME_COUNT": 1024,
+        "GLOBAL": 307,
+        "TRIG": 12304,
+        "vsync_on": 1,
+        "win_configs": 1019,
+        "copied": 1019,
+        "skipped": 0,
+        "acq_timeouts": 0,
+        "frame_wait_timeouts": 0,
+        "scanned": 0,
+        "dma_fallbacks": 1019,
+        "shadow_wait_timeouts": 0,
+        "IDMA0": 3388997632,
+        "blanks": 0,
+        "unblanks": 0,
+        "dcs": 0,
+        "dcs_timeouts": 0
+      },
+      "final_sampled_layer_counts": {
+        "layers0": 0,
+        "layers1": 1009,
+        "layers2": 0,
+        "layers3": 0,
+        "layers4": 0
+      },
+      "final_sampled_win_configs": 1009,
+      "postflight_pass": true,
+      "baseline_fsck": "/dev/sda32: clean, 7045/3440640 files, 1992124/13745152 blocks"
+    },
+    "g2g": {
+      "late_counters": {
+        "req": 19727,
+        "done": 19728,
+        "start": 19728,
+        "timeouts": 0,
+        "extra": 0,
+        "te": 24911,
+        "FRAME_COUNT": 19730,
+        "GLOBAL": 307,
+        "TRIG": 12304,
+        "vsync_on": 1,
+        "win_configs": 19725,
+        "copied": 0,
+        "skipped": 0,
+        "acq_timeouts": 0,
+        "frame_wait_timeouts": 0,
+        "scanned": 19725,
+        "dma_fallbacks": 0,
+        "shadow_wait_timeouts": 0,
+        "IDMA0": 4278190080,
+        "blanks": 0,
+        "unblanks": 0,
+        "dcs": 0,
+        "dcs_timeouts": 0
+      },
+      "final_sampled_layer_counts": {
+        "layers0": 0,
+        "layers1": 19717,
+        "layers2": 0,
+        "layers3": 0,
+        "layers4": 0
+      },
+      "final_sampled_win_configs": 19717,
+      "postflight_pass": true,
+      "baseline_fsck": "/dev/sda32: clean, 7054/3440640 files, 1992243/13745152 blocks"
+    },
+    "g2h": {
+      "late_counters": {
+        "req": 19576,
+        "done": 19577,
+        "start": 19577,
+        "timeouts": 0,
+        "extra": 0,
+        "te": 24845,
+        "FRAME_COUNT": 19579,
+        "GLOBAL": 307,
+        "TRIG": 12304,
+        "vsync_on": 1,
+        "win_configs": 19574,
+        "copied": 0,
+        "skipped": 0,
+        "acq_timeouts": 0,
+        "frame_wait_timeouts": 0,
+        "scanned": 19574,
+        "dma_fallbacks": 0,
+        "shadow_wait_timeouts": 0,
+        "IDMA0": 4261412864,
+        "blanks": 0,
+        "unblanks": 0,
+        "dcs": 0,
+        "dcs_timeouts": 0
+      },
+      "final_sampled_layer_counts": {
+        "layers0": 0,
+        "layers1": 19574,
+        "layers2": 0,
+        "layers3": 0,
+        "layers4": 0
+      },
+      "final_sampled_win_configs": 19574,
+      "postflight_pass": true,
+      "baseline_fsck": "/dev/sda32: clean, 7051/3440640 files, 1990792/13745152 blocks"
+    }
+  },
+  "interpretation": "See decision.md for reviewed branch behavior and scoped decision; these counters do not trace G2D ioctls.",
+  "inputs": {
+    "src/m71/vendor/lib64/libexynosdisplay.so": {
+      "size": 559000,
+      "sha256": "aa93b5099889ddc770a62f3f1414d7165ffd3fde2abecd9e1a6c88a79e9bd922"
+    },
+    "src/m71/vendor/lib64/libacryl.so": {
+      "size": 103336,
+      "sha256": "d9cd2cb6a1944c99fd4aa22fee955830a89848ba723a1900a2c3de303d9327e1"
+    },
+    "src/m71/vendor/lib/libacryl.so": {
+      "size": 71916,
+      "sha256": "ec215d2aaa1cb5646c2bc5eb3581e9e65d8444fdea523c11263879d7d3d8c4b6"
+    },
+    "src/m71/vendor/lib/libexynosdisplay.so": {
+      "size": 413696,
+      "sha256": "157148d33f0317dec7dde93794b9cec18d4d0657ecd0a3c7ebec5b4780dd587f"
+    },
+    "src/m71/vendor/lib64/hw/hwcomposer.exynos9610.so": {
+      "size": 63560,
+      "sha256": "11d725aa1504a75632380bcb265088e2d9534ff1e5162b3b42a6f3d414bd8d0a"
+    },
+    "src/m71/vendor/lib64/hw/gralloc.exynos9610.so": {
+      "size": 80032,
+      "sha256": "3f6a3db62ed60a0f05db2aa00784a133f3eb59d1bdada75dcc8545d4c89691bd"
+    },
+    "src/m71/vendor/lib/hw/hwcomposer.exynos9610.so": {
+      "size": 52688,
+      "sha256": "3393e607d34681e4bdca8fc254f7c16cab261a5ab668aba13472a64a0a6c0342"
+    },
+    "src/m73/g2g-as-built/.config": {
+      "size": 94166,
+      "sha256": "638b7ff228fc42ac420fbf88df89987301385ea49cc26649524fa4997e617a58"
+    },
+    "src/m73/g2g-as-built/vmlinux": {
+      "size": 34073440,
+      "sha256": "0e22226fa441484ad2a5acac303f2f5c8e24e1d2ccab3ffdd7ff3c7470359223"
+    },
+    "reference/m73-gpu/g2f-dump.txt": {
+      "size": 133857,
+      "sha256": "62400ff461f3ccc461ab55c510e0dd34418cca76661a52e98cd7b84691ee7867"
+    },
+    "reference/m73-gpu/g2f-stats.txt": {
+      "size": 217446,
+      "sha256": "120b1c6632766afdb50ca63e37f9f1e33b17d5312e969f17eca099b90d1f7236"
+    },
+    "reference/m73-gpu/g2f-results.json": {
+      "size": 2876,
+      "sha256": "64bd7dc5523e021390b84cde6da0c488996d3ccbcc5c8ec404ff93862bec4581"
+    },
+    "reference/m73-gpu/g2g-dump.txt": {
+      "size": 133967,
+      "sha256": "7b7d3149fef6d65cd37cea0c86537d9c5a98e37c6782102938550e9d9704fe2f"
+    },
+    "reference/m73-gpu/g2g-stats.txt": {
+      "size": 230022,
+      "sha256": "e6b9ffbddd6aa2ad5350bd52954e89f84c75a376c3abc1106baa0061786ec221"
+    },
+    "reference/m73-gpu/g2g-results.json": {
+      "size": 3141,
+      "sha256": "9643dc67bda24afc8ca958c4d4859584cdb039f5fa32c01058c356ed52776d12"
+    },
+    "reference/m73-gpu/g2h-dump.txt": {
+      "size": 134101,
+      "sha256": "f9d67ecfc9597092c4863b23d8463bb214486436fffee5400a1490a87d9d0193"
+    },
+    "reference/m73-gpu/g2h-stats.txt": {
+      "size": 216959,
+      "sha256": "2e248ff83b62fb1a543139592336133a70370c7b35b4e71a53098383548de6cf"
+    },
+    "reference/m73-gpu/g2h-results.json": {
+      "size": 4636,
+      "sha256": "c7b4b3bde110cc5fd65df7e8c5e85d3177e597531b16f5c4807c36e626c96a18"
+    },
+    "src/m71/vendor/SHA256SUMS": {
+      "size": 657,
+      "sha256": "588853b42a2d2e256d6eb913e2f28266696e98d5485f84c531ca9e718c85d1f2"
+    },
+    "reference/contract/README.md": {
+      "size": 4875,
+      "sha256": "541a159d82b652bf2fcf407539c40cfbd88d70101e974c88d6bfd153e1988512"
+    },
+    "reference/contract/display.md": {
+      "size": 1228,
+      "sha256": "4066718857a9b7161134138f307f1c7cbe1323c07d17ced5b6437c51e511a7ce"
+    },
+    "reference/contract/openers-raw.txt": {
+      "size": 6618,
+      "sha256": "65e2d2930a825665f3b008344289c0fd8acb79c48569e53b5521c61b7cfed6c9"
+    },
+    "reference/contract/summary.tsv": {
+      "size": 18346,
+      "sha256": "1868e998776049df8c53e1286052d7a44452bd015d9e4e427febf8cdeed2e16e"
+    },
+    "log/2026-11-14-M7.1-display-gpu-audit.md": {
+      "size": 12651,
+      "sha256": "f7a60128e878c2c754b14e8dfb7a93e56379e0399fc9eb267d2ff04b07b21783"
+    },
+    "src/samsung-a50-4.14-aa17rf2/drivers/gpu/exynos/g2d/g2d_drv.c": {
+      "size": 26934,
+      "sha256": "ae97f935805824870bf22945af0f2ee935dfeb13f4da5ea34cfb90e3abc64e47"
+    },
+    "src/samsung-a50-4.14-aa17rf2/drivers/gpu/exynos/g2d/g2d_uapi.h": {
+      "size": 8174,
+      "sha256": "6fd0d04d6eb182c0c53e13ba4a4a313bcc18cad7186ca39ef68813b2c1db537e"
+    },
+    "src/samsung-a50-4.14-aa17rf2/drivers/gpu/exynos/g2d/Kconfig": {
+      "size": 164,
+      "sha256": "b23f7ec31216b6f753c02f43b588a0b300c6fc86626fbf42e620f5fcdfb93efa"
+    },
+    "src/samsung-a50-4.14-aa17rf2/drivers/gpu/exynos/g2d/Makefile": {
+      "size": 206,
+      "sha256": "9b080e297085bdb98d37f8d6f977b6336ec9d9e169af05711678591713f0e260"
+    },
+    "src/m73/g2g-kernel/drivers/video/fbdev/a50-decon.c": {
+      "size": 37218,
+      "sha256": "94132b934a574fbcacfda510309baf8967d6bfd48035272b8507328f236a3edc"
+    },
+    "src/m73/boot-g2g.img": {
+      "size": 30302208,
+      "sha256": "42cbbeb884bab6088a2835697bf8446e3edb025e60bde675ed33bcb4544053ad"
+    },
+    "src/m73/dt-g1.img": {
+      "size": 8388608,
+      "sha256": "dee291ace91ab19f9d241d3c7cd42557e109f066ddf0c38eb69a6a7b1f97625c"
+    },
+    "reference/m73-gpu/g2h-run.txt": {
+      "size": 789,
+      "sha256": "69582511facf4f5cf3882ce6760743a1a32e8d0b2059f6478f43077633ef4e52"
+    },
+    "reference/m73-gpu/g2h-live.txt": {
+      "size": 189685,
+      "sha256": "910e125b167036db6c02ef16f980c9cdd9005e0255795efe2f7458e6080ced84"
+    },
+    "tools/m74/audit_g2d.py": {
+      "size": 5841,
+      "sha256": "5b8b00b332958fb6aab6085fd158fb79cc208c14598b8b1c1f9905a4d12bbaae"
+    }
+  }
+}

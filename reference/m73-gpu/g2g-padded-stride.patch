@@ -1,0 +1,177 @@
+diff --git a/drivers/video/fbdev/a50-decon.c b/drivers/video/fbdev/a50-decon.c
+index bda5c70d2..860d49f87 100644
+--- a/drivers/video/fbdev/a50-decon.c
++++ b/drivers/video/fbdev/a50-decon.c
+@@ -86,7 +86,13 @@
+ #define IDMA_IN_CON		0x0008
+ #define IDMA_IMG_FORMAT_SHIFT	11
+ #define IDMA_IMG_FORMAT_MASK	(0x3f << 11)
++#define IDMA_SRC_SIZE		0x0010
++#define IDMA_SRC_OFFSET		0x0014
++#define IDMA_IMG_SIZE		0x0018
+ #define IDMA_IN_BASE_ADDR_Y	0x0040
++/* dpp_0 restrictions in the stock exynos9610.dts. */
++#define A50_SRC_FULL_W_MAX	65534
++#define A50_SRC_FULL_H_MAX	8190
+ 
+ /* 4.14 dpu20/decon.h */
+ #define S3CFB_SET_VSYNC_INT	_IOW('F', 206, __u32)
+@@ -229,6 +235,7 @@ struct a50_layer {
+ 	struct dma_fence *acq;
+ 	u32 format;		/* as submitted (ABI) */
+ 	int dpp;		/* translated DPP/IDMA code, -1 if unsupported */
++	bool linear;		/* no rotation, protection or compression */
+ 	struct a50_frame src, dst;
+ };
+ 
+@@ -263,6 +270,7 @@ struct a50_decon {
+ 	struct dma_buf_attachment *scan_att;
+ 	struct sg_table *scan_sgt;
+ 	u32 scanned, dma_fallbacks, shadow_waits_timed_out;
++	u32 padded_scanned, scan_full_w, scan_full_h;
+ 	void __iomem *dsim;
+ 	bool blanked;
+ 	u32 dcs_sent, dcs_timeouts, blanks, unblanks;
+@@ -283,13 +291,14 @@ static ssize_t g2b_stats_show(struct device *dev, struct device_attribute *attr,
+ 	if (!d)
+ 		return -ENODEV;
+ 	/* No hw_lock: reads must remain available when the update worker is blocked. */
+-	len = sysfs_emit(buf, "fence_ctx=%llu fence_seq=%llu pending=%d win_configs=%u scanned=%u copied=%u dma_fallbacks=%u skipped=%u acq_timeouts=%u completed=%u stage=%s worker_seq=%llu worker_layers=%u\n",
++	len = sysfs_emit(buf, "fence_ctx=%llu fence_seq=%llu pending=%d win_configs=%u scanned=%u copied=%u dma_fallbacks=%u skipped=%u acq_timeouts=%u completed=%u stage=%s worker_seq=%llu worker_layers=%u padded_scanned=%u scan_full_w=%u scan_full_h=%u\n",
+ 		 (unsigned long long)READ_ONCE(d->fence_ctx),
+ 		 (unsigned long long)READ_ONCE(d->fence_seq), atomic_read(&d->remaining),
+ 		 READ_ONCE(d->win_configs), READ_ONCE(d->scanned), READ_ONCE(d->copied),
+ 		 READ_ONCE(d->dma_fallbacks), READ_ONCE(d->skipped), READ_ONCE(d->acq_timeouts),
+ 		 READ_ONCE(d->g2b_completed), READ_ONCE(d->g2b_stage),
+-		 (unsigned long long)READ_ONCE(d->g2b_worker_seq), READ_ONCE(d->g2b_worker_layers));
++		 (unsigned long long)READ_ONCE(d->g2b_worker_seq), READ_ONCE(d->g2b_worker_layers),
++		 READ_ONCE(d->padded_scanned), READ_ONCE(d->scan_full_w), READ_ONCE(d->scan_full_h));
+ 	for (i = 0; i <= A50_MAX_WIN; i++)
+ 		len += sysfs_emit_at(buf, len, "layers%d=%u ", i, READ_ONCE(d->g2b_layer_counts[i]));
+ 	for (i = 0; i < A50_MAX_WIN; i++)
+@@ -552,12 +561,18 @@ static void a50_wait_shadow(struct a50_decon *d)
+ 		d->shadow_waits_timed_out++;
+ }
+ 
+-static void a50_set_scanout(struct a50_decon *d, u32 addr, u32 fmt)
++static void a50_set_scanout(struct a50_decon *d, u32 addr, u32 fmt, u32 full_w, u32 full_h)
+ {
+ 	u32 con = readl(d->idma + IDMA_IN_CON);
+ 
++	/* Stock idma_reg_set_coordinates(): full extent sets the RGB row pitch. */
++	writel(0, d->idma + IDMA_SRC_OFFSET);
++	writel((full_h << 16) | full_w, d->idma + IDMA_SRC_SIZE);
++	writel((FB_H << 16) | FB_W, d->idma + IDMA_IMG_SIZE);
+ 	writel(addr, d->idma + IDMA_IN_BASE_ADDR_Y);
+ 	writel((con & ~IDMA_IMG_FORMAT_MASK) | (fmt << IDMA_IMG_FORMAT_SHIFT), d->idma + IDMA_IN_CON);
++	WRITE_ONCE(d->scan_full_w, full_w);
++	WRITE_ONCE(d->scan_full_h, full_h);
+ }
+ 
+ /* Send one frame and wait for frame done; then the previous scanout buffer is no longer read. */
+@@ -579,13 +594,31 @@ static void a50_scan_release(struct dma_buf *buf, struct dma_buf_attachment *att
+ 	dma_buf_put(buf);
+ }
+ 
++static u64 a50_dma_bytes(struct a50_layer *l)
++{
++	u64 bytes;
++
++	if (l->dpp < 0 || !l->linear ||
++	    l->src.x || l->src.y || l->src.w != FB_W || l->src.h != FB_H ||
++	    l->dst.x || l->dst.y || l->dst.w != FB_W || l->dst.h != FB_H ||
++	    l->src.f_w < FB_W || l->src.f_w > A50_SRC_FULL_W_MAX ||
++	    l->src.f_h < FB_H || l->src.f_h > A50_SRC_FULL_H_MAX)
++		return 0;
++	/* Validate the whole padded extent, not just the visible tight image. */
++	bytes = (u64)l->src.f_w * l->src.f_h * 4;
++	return bytes <= l->buf->size ? bytes : 0;
++}
++
+ static bool a50_dma_eligible(struct a50_layer *l)
+ {
+-	return l->dpp >= 0 &&
+-	       !l->src.x && !l->src.y && l->src.w == FB_W && l->src.h == FB_H &&
+-	       !l->dst.x && !l->dst.y && l->dst.w == FB_W && l->dst.h == FB_H &&
+-	       l->src.f_w == FB_W && l->src.f_h >= FB_H &&
+-	       l->buf->size >= (size_t)FB_W * FB_H * 4;
++	return a50_dma_bytes(l) != 0;
++}
++
++static bool a50_scan_range_ok(dma_addr_t start, dma_addr_t end, u64 bytes)
++{
++	/* end is exclusive; address zero is the map-failure sentinel. */
++	return bytes && start && start <= U32_MAX && end >= start &&
++	       end - start >= bytes && bytes <= (u64)U32_MAX - start + 1;
+ }
+ 
+ /* Map a layer through the SysMMU; returns the IOVA of one contiguous range or 0. */
+@@ -596,8 +629,11 @@ static u32 a50_scan_map(struct a50_decon *d, struct a50_layer *l,
+ 	struct sg_table *sgt;
+ 	struct scatterlist *sg;
+ 	dma_addr_t start, next;
++	u64 bytes = a50_dma_bytes(l);
+ 	unsigned int i;
+ 
++	if (!bytes)
++		return 0;
+ 	att = dma_buf_attach(l->buf, d->dev);
+ 	if (IS_ERR(att))
+ 		return 0;
+@@ -608,11 +644,11 @@ static u32 a50_scan_map(struct a50_decon *d, struct a50_layer *l,
+ 	}
+ 	start = next = sg_dma_address(sgt->sgl);
+ 	for_each_sgtable_dma_sg(sgt, sg, i) {
+-		if (sg_dma_address(sg) != next)
++		if (sg_dma_address(sg) != next || sg_dma_len(sg) > U64_MAX - next)
+ 			break;
+ 		next += sg_dma_len(sg);
+ 	}
+-	if (next - start < (u64)FB_W * FB_H * 4 || start > U32_MAX - (u64)FB_W * FB_H * 4) {
++	if (!a50_scan_range_ok(start, next, bytes)) {
+ 		dev_info_ratelimited(d->dev, "scanout: IOVA not contiguous or not 32-bit (%pad, %u segments)\n",
+ 				     &start, sgt->nents);
+ 		dma_buf_unmap_attachment_unlocked(att, sgt, DMA_TO_DEVICE);
+@@ -632,7 +668,7 @@ static void a50_show_bootfb_locked(struct a50_decon *d)
+ 	struct sg_table *os = d->scan_sgt;
+ 
+ 	a50_wait_shadow(d);
+-	a50_set_scanout(d, d->fb_base, FMT_ARGB_8888);
++	a50_set_scanout(d, d->fb_base, FMT_ARGB_8888, FB_W, FB_H);
+ 	d->scan_buf = NULL;
+ 	a50_frame_sync(d);
+ 	a50_scan_release(ob, oa, os);
+@@ -675,12 +711,14 @@ static void a50_update_work(struct work_struct *w)
+ 		struct sg_table *os = d->scan_sgt;
+ 
+ 		a50_wait_shadow(d);
+-		a50_set_scanout(d, iova, u->layer[0].dpp);
++		a50_set_scanout(d, iova, u->layer[0].dpp, u->layer[0].src.f_w, u->layer[0].src.f_h);
+ 		get_dma_buf(u->layer[0].buf);
+ 		d->scan_buf = u->layer[0].buf;
+ 		d->scan_att = att;
+ 		d->scan_sgt = sgt;
+ 		d->scanned++;
++		if (u->layer[0].src.f_w != FB_W)
++			d->padded_scanned++;
+ 		WRITE_ONCE(d->g2b_stage, "dma-frame-sync");
+ 		a50_frame_sync(d);
+ 		a50_scan_release(ob, oa, os);
+@@ -754,6 +792,7 @@ static int a50_win_config(struct a50_decon *d, void __user *argp)
+ 		}
+ 		l->format = c->format;
+ 		l->dpp = a50_abi_to_dpp(c->format);
++		l->linear = !c->protection && !c->compression && !c->dpp_parm.rot;
+ 		l->src = c->src;
+ 		l->dst = c->dst;
+ 		u->nlayer++;
+@@ -906,6 +945,9 @@ static void a50_decon_log(struct a50_decon *d, const char *when)
+ 		 d->acq_timeouts, d->frame_waits_timed_out, d->scanned, d->dma_fallbacks,
+ 		 d->shadow_waits_timed_out, readl(d->idma + IDMA_IN_BASE_ADDR_Y), d->blanks, d->unblanks,
+ 		 d->dcs_sent, d->dcs_timeouts);
++	dev_info(d->dev, "G2g IDMA geometry: src_size=0x%08x src_offset=0x%08x img_size=0x%08x padded_scanned=%u\n",
++		 readl(d->idma + IDMA_SRC_SIZE), readl(d->idma + IDMA_SRC_OFFSET),
++		 readl(d->idma + IDMA_IMG_SIZE), d->padded_scanned);
+ }
+ 
+ static void a50_decon_report(struct work_struct *w)

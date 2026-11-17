@@ -48,7 +48,7 @@ node and which ioctl numbers it issues (M1 task "contract capture").
 | `/dev/mali0` (`/dev/mali` rule) | Mali kbase **r26p0** | libGLES_mali, vulkan.universal9610 | S2 |
 | `/dev/graphics/fb*`, DECON/DPP ioctls | `video/fbdev/exynos/dpu20` | hwcomposer.exynos9610 | S2 |
 | `/dev/ion`, `/dev/ionfd2phys` | ION + exynos heaps | gralloc, HWC, codecs | S2 |
-| `/dev/g2d`, `/dev/fimg2d` | `gpu/exynos/g2d` | HWC (2D blits, may be optional) | S2 (verify) |
+| `/dev/g2d`, `/dev/fimg2d` | `gpu/exynos/g2d` | HWC (2D blits) | Not required for measured single-layer M7 path; other paths unverified ([M7.4 decision](../reference/m74-g2d/decision.md)) |
 | `/dev/seiren`, ALSA cards, `/dev/ttyGS*` no | ABOX + tfa98xx | audio.primary/sec_primary | S6 |
 | `/dev/scsc_*`, `/dev/mx_*`, wlan netdev `swlan0`/`wlan0` | `misc/samsung/scsc*`, `net/wireless/scsc` | wifi HAL, wpa_supplicant, BT HAL (`scsc_h4_`) | S4, S8 |
 | `/dev/umts*`, `/dev/ipc`, `/dev/smd`, `/dev/drb`, `/dev/ramdump_memshare` | `misc/modem_v1`, `mcu_ipc`, `shm_ipc` | cbd (CP boot daemon), RIL | S7 |

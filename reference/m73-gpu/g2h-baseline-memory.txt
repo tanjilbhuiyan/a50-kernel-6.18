@@ -1,0 +1,149 @@
+4.14.194 - Mint-user 1763150940
+3806.81 29975.75
+16b3c33f2685dd90da68a1efaa9168ff41141411a01b4a460806f23150a71c1e  /run/a50-g2h-control/kbase-memory32
+c38ce94273932f81bbdb0f93ffea8bad59cc4ea334641829137872347b184c46  /run/a50-g2h-control/kbase-memory64
+kbase memory probe ABI=64 page=4096 context_jobs=disabled
+CASE tracking BEGIN
+PASS tracking prerequisite, duplicate refusal, context/fd cleanup
+CASE tracking PASS
+CASE native BEGIN
+PASS native cached alloc/query/map, both sync directions, bounded errors and eight unmap lifetimes
+CASE native PASS
+CASE pending BEGIN
+PASS pending-cookie map-size refusal, explicit free and double-free refusal
+CASE pending PASS
+CASE dmabuf BEGIN
+PASS exact stock per-task dma-buf tracker identified (released at child exit)
+PASS dma-buf import/map/query, exporter-fd-close lifetime, data and both cache sync directions
+CASE dmabuf PASS
+CASE user-buffer BEGIN
+PASS aligned user-buffer import/query/reservation/free; unsupported user-import cache sync rejected
+CASE user-buffer PASS
+CASE errors BEGIN
+PASS zero/overcommit/kernel-only alloc, invalid query pointer/address and invalid import fd/pointer/type
+CASE errors PASS
+RESULT: PASS (6 cases, 0 failed)
+G2H_BASELINE_64_RC=0
+kbase memory probe ABI=32 page=4096 context_jobs=disabled
+CASE tracking BEGIN
+PASS tracking prerequisite, duplicate refusal, context/fd cleanup
+CASE tracking PASS
+CASE native BEGIN
+PASS native cached alloc/query/map, both sync directions, bounded errors and eight unmap lifetimes
+CASE native PASS
+CASE pending BEGIN
+PASS pending-cookie map-size refusal, explicit free and double-free refusal
+CASE pending PASS
+CASE dmabuf BEGIN
+PASS exact stock per-task dma-buf tracker identified (released at child exit)
+PASS dma-buf import/map/query, exporter-fd-close lifetime, data and both cache sync directions
+CASE dmabuf PASS
+CASE user-buffer BEGIN
+PASS aligned user-buffer import/query/reservation/free; unsupported user-import cache sync rejected
+CASE user-buffer PASS
+CASE errors BEGIN
+PASS zero/overcommit/kernel-only alloc, invalid query pointer/address and invalid import fd/pointer/type
+CASE errors PASS
+RESULT: PASS (6 cases, 0 failed)
+G2H_BASELINE_32_RC=0
+/userdata rw,noatime,discard,nodelalloc,errors=remount-ro,data=journal
+[ 3791.731281] sec-battery battery: sec_bat_set_polling: Polling time 30/30 sec.
+[ 3791.731426] sec_bat_get_property cable type = 19 sleep_mode = 0
+[ 3791.737191] sec_bat_get_property cable type = 19 sleep_mode = 0
+[ 3791.737850] sm5713_fg_get_property: psp = 0x2e
+[ 3795.334673] etspi_work_func_debug ldo: 0, sleep: 0, tz: 1, spi_value: 0x0, type: et7xx
+[ 3797.879868] ieee80211 phy0: wlbt: I: slsi_mlme_add_scan: scan started for id:0x100, n_channels:38, n_ssids:1, scan_type:2
+[ 3799.375619] sec-battery battery: sec_bat_get_value_by_adc:[2] Temp(277), Temp-ADC(1926)
+[ 3799.377173] sec-battery battery: sec_bat_get_value_by_adc:[6] Temp(284), Temp-ADC(1817)
+[ 3803.497868] audit: audit_lost=1757 audit_rate_limit=0 audit_backlog_limit=64
+[ 3803.497890] audit: kauditd hold queue overflow
+[ 3803.506034] audit: audit_lost=1758 audit_rate_limit=0 audit_backlog_limit=64
+[ 3803.506053] audit: kauditd hold queue overflow
+[ 3803.506551] audit: audit_lost=1759 audit_rate_limit=0 audit_backlog_limit=64
+[ 3803.506567] audit: kauditd hold queue overflow
+[ 3803.534842] ieee80211 phy0: wlbt: I: slsi_scan_complete: Scan count:58 APs
+[ 3803.605404] <keyctl> add_key succeeded(0). type: user, desc: invocation_id
+[ 3803.673877] audit: audit_lost=1760 audit_rate_limit=0 audit_backlog_limit=64
+[ 3803.673890] audit: kauditd hold queue overflow
+[ 3803.691937] audit: audit_lost=1761 audit_rate_limit=0 audit_backlog_limit=64
+[ 3803.691952] audit: kauditd hold queue overflow
+[ 3804.463228] init: sys_prop: invalid command 2
+[ 3804.482459] MISCDBG: pid=6886 comm=audiosystem-pas GOTLOCK minor=65
+[ 3804.482478] MISCDBG: pid=6886 comm=audiosystem-pas DROPPED minor=65
+[ 3804.482484] MISCDBG: pid=6886 comm=audiosystem-pas CALLING-DRIVER-OPEN minor=65
+[ 3804.482498] MISCDBG: pid=6886 comm=audiosystem-pas DRIVER-OPEN-RETURNED minor=65 err=0
+[ 3806.217033] etspi_work_func_debug ldo: 0, sleep: 0, tz: 1, spi_value: 0x0, type: et7xx
+[ 3806.727245] MISCDBG: pid=6976 comm=kbase-memory64 GOTLOCK minor=76
+[ 3806.727284] MISCDBG: pid=6976 comm=kbase-memory64 DROPPED minor=76
+[ 3806.727297] MISCDBG: pid=6976 comm=kbase-memory64 CALLING-DRIVER-OPEN minor=76
+[ 3806.727311] MISCDBG: pid=6976 comm=kbase-memory64 DRIVER-OPEN-RETURNED minor=76 err=0
+[ 3806.727694] mali 11500000.mali: mmap failed -14
+[ 3806.794616] MISCDBG: pid=6977 comm=kbase-memory64 GOTLOCK minor=76
+[ 3806.794664] MISCDBG: pid=6977 comm=kbase-memory64 DROPPED minor=76
+[ 3806.794677] MISCDBG: pid=6977 comm=kbase-memory64 CALLING-DRIVER-OPEN minor=76
+[ 3806.794691] MISCDBG: pid=6977 comm=kbase-memory64 DRIVER-OPEN-RETURNED minor=76 err=0
+[ 3806.795363] mali 11500000.mali: mem_query: gpu_addr: passed parameter is invalid
+[ 3806.795396] mali 11500000.mali: mem_handle: passed parameter is invalid
+[ 3806.795413] mali 11500000.mali: Unknown msync op 255
+[ 3806.795431] mali 11500000.mali: Can't find CPU mapping 0x0000007DA424F000 for VA 0x0000007DA424F000
+[ 3806.795450] mali 11500000.mali: kbase_mem_free called on SAME_VA memory 0x7DA424F000
+[ 3806.820722] MISCDBG: pid=6978 comm=kbase-memory64 GOTLOCK minor=76
+[ 3806.820794] MISCDBG: pid=6978 comm=kbase-memory64 DROPPED minor=76
+[ 3806.820823] MISCDBG: pid=6978 comm=kbase-memory64 CALLING-DRIVER-OPEN minor=76
+[ 3806.820854] MISCDBG: pid=6978 comm=kbase-memory64 DRIVER-OPEN-RETURNED minor=76 err=0
+[ 3806.822420] mali 11500000.mali: mmap failed -12
+[ 3806.872826] MISCDBG: pid=6979 comm=kbase-memory64 GOTLOCK minor=76
+[ 3806.872897] MISCDBG: pid=6979 comm=kbase-memory64 DROPPED minor=76
+[ 3806.872925] MISCDBG: pid=6979 comm=kbase-memory64 CALLING-DRIVER-OPEN minor=76
+[ 3806.872956] MISCDBG: pid=6979 comm=kbase-memory64 DRIVER-OPEN-RETURNED minor=76 err=0
+[ 3806.874253] MISCDBG: pid=6979 comm=kbase-memory64 GOTLOCK minor=95
+[ 3806.874328] MISCDBG: pid=6979 comm=kbase-memory64 DROPPED minor=95
+[ 3806.874356] MISCDBG: pid=6979 comm=kbase-memory64 CALLING-DRIVER-OPEN minor=95
+[ 3806.874384] MISCDBG: pid=6979 comm=kbase-memory64 DRIVER-OPEN-RETURNED minor=95 err=0
+[ 3806.914324] MISCDBG: pid=6980 comm=kbase-memory64 GOTLOCK minor=76
+[ 3806.914395] MISCDBG: pid=6980 comm=kbase-memory64 DROPPED minor=76
+[ 3806.914422] MISCDBG: pid=6980 comm=kbase-memory64 CALLING-DRIVER-OPEN minor=76
+[ 3806.914455] MISCDBG: pid=6980 comm=kbase-memory64 DRIVER-OPEN-RETURNED minor=76 err=0
+[ 3806.946006] MISCDBG: pid=6981 comm=kbase-memory64 GOTLOCK minor=76
+[ 3806.946077] MISCDBG: pid=6981 comm=kbase-memory64 DROPPED minor=76
+[ 3806.946106] MISCDBG: pid=6981 comm=kbase-memory64 CALLING-DRIVER-OPEN minor=76
+[ 3806.946138] MISCDBG: pid=6981 comm=kbase-memory64 DRIVER-OPEN-RETURNED minor=76 err=0
+[ 3806.948414] mali 11500000.mali: GPU allocation attempted with 0 va_pages!
+[ 3806.948570] mali 11500000.mali: Failed to allocate 2 pages (va_pages=1)
+[ 3807.025337] MISCDBG: pid=6984 comm=kbase-memory32 GOTLOCK minor=76
+[ 3807.025375] MISCDBG: pid=6984 comm=kbase-memory32 DROPPED minor=76
+[ 3807.025386] MISCDBG: pid=6984 comm=kbase-memory32 CALLING-DRIVER-OPEN minor=76
+[ 3807.025399] MISCDBG: pid=6984 comm=kbase-memory32 DRIVER-OPEN-RETURNED minor=76 err=0
+[ 3807.025873] mali 11500000.mali: mmap failed -14
+[ 3807.064463] MISCDBG: pid=6985 comm=kbase-memory32 GOTLOCK minor=76
+[ 3807.064538] MISCDBG: pid=6985 comm=kbase-memory32 DROPPED minor=76
+[ 3807.064566] MISCDBG: pid=6985 comm=kbase-memory32 CALLING-DRIVER-OPEN minor=76
+[ 3807.064597] MISCDBG: pid=6985 comm=kbase-memory32 DRIVER-OPEN-RETURNED minor=76 err=0
+[ 3807.065877] mali 11500000.mali: mem_query: gpu_addr: passed parameter is invalid
+[ 3807.065981] mali 11500000.mali: mem_handle: passed parameter is invalid
+[ 3807.066019] mali 11500000.mali: Unknown msync op 255
+[ 3807.066058] mali 11500000.mali: Can't find CPU mapping 0x00000000F7D14000 for VA 0x00000000F7D14000
+[ 3807.066098] mali 11500000.mali: kbase_mem_free called on SAME_VA memory 0xF7D14000
+[ 3807.125589] MISCDBG: pid=6986 comm=kbase-memory32 GOTLOCK minor=76
+[ 3807.125636] MISCDBG: pid=6986 comm=kbase-memory32 DROPPED minor=76
+[ 3807.125650] MISCDBG: pid=6986 comm=kbase-memory32 CALLING-DRIVER-OPEN minor=76
+[ 3807.125666] MISCDBG: pid=6986 comm=kbase-memory32 DRIVER-OPEN-RETURNED minor=76 err=0
+[ 3807.126207] mali 11500000.mali: mmap failed -12
+[ 3807.144482] MISCDBG: pid=6987 comm=kbase-memory32 GOTLOCK minor=76
+[ 3807.144554] MISCDBG: pid=6987 comm=kbase-memory32 DROPPED minor=76
+[ 3807.144581] MISCDBG: pid=6987 comm=kbase-memory32 CALLING-DRIVER-OPEN minor=76
+[ 3807.144613] MISCDBG: pid=6987 comm=kbase-memory32 DRIVER-OPEN-RETURNED minor=76 err=0
+[ 3807.146891] MISCDBG: pid=6987 comm=kbase-memory32 GOTLOCK minor=95
+[ 3807.146961] MISCDBG: pid=6987 comm=kbase-memory32 DROPPED minor=95
+[ 3807.146988] MISCDBG: pid=6987 comm=kbase-memory32 CALLING-DRIVER-OPEN minor=95
+[ 3807.147016] MISCDBG: pid=6987 comm=kbase-memory32 DRIVER-OPEN-RETURNED minor=95 err=0
+[ 3807.183614] MISCDBG: pid=6988 comm=kbase-memory32 GOTLOCK minor=76
+[ 3807.183661] MISCDBG: pid=6988 comm=kbase-memory32 DROPPED minor=76
+[ 3807.183677] MISCDBG: pid=6988 comm=kbase-memory32 CALLING-DRIVER-OPEN minor=76
+[ 3807.183696] MISCDBG: pid=6988 comm=kbase-memory32 DRIVER-OPEN-RETURNED minor=76 err=0
+[ 3807.247326] MISCDBG: pid=6989 comm=kbase-memory32 GOTLOCK minor=76
+[ 3807.247415] MISCDBG: pid=6989 comm=kbase-memory32 DROPPED minor=76
+[ 3807.247455] MISCDBG: pid=6989 comm=kbase-memory32 CALLING-DRIVER-OPEN minor=76
+[ 3807.247501] MISCDBG: pid=6989 comm=kbase-memory32 DRIVER-OPEN-RETURNED minor=76 err=0
+[ 3807.248427] mali 11500000.mali: GPU allocation attempted with 0 va_pages!
+[ 3807.248533] mali 11500000.mali: Failed to allocate 2 pages (va_pages=1)

@@ -1,0 +1,148 @@
+{
+  "test": "M7.3 G2h focused kbase memory ABI",
+  "result": "PASS for measured ordinary memory paths; M7.3 complete with recorded limits",
+  "kernel_changed": false,
+  "image": "unchanged G2g",
+  "boot_sha256": "42cbbeb884bab6088a2835697bf8446e3edb025e60bde675ed33bcb4544053ad",
+  "input_manifest": "g2h-boot-inputs.json",
+  "baseline": "4.14.194",
+  "target": "6.18.33-a50-diag+",
+  "abis": {
+    "native64": {
+      "stock_cases_passed": 6,
+      "target_cases_passed": 6,
+      "stock_rc": 0,
+      "target_rc": 0
+    },
+    "compat32": {
+      "stock_cases_passed": 6,
+      "target_cases_passed": 6,
+      "stock_rc": 0,
+      "target_rc": 0
+    }
+  },
+  "identical_final_binaries_on_both_kernels": true,
+  "probe_job_submission": "disabled per context",
+  "cases": [
+    "tracking prerequisites/duplicate/cleanup",
+    "cached allocation/query/map/both cache sync directions/eight lifetimes/bounded errors",
+    "pending cookie wrong-size map/free/double-free",
+    "heap-0 dma-buf import/map/data/exporter-fd close/sync/cleanup",
+    "aligned user-buffer import/query/reservation/free; sync rejected as on stock",
+    "bounded invalid alloc/query/import errno checks"
+  ],
+  "stock_tracker_exception": "Exactly one CLOEXEC anon_inode:<child pid> from stock dma-buf-trace.c; target descriptor cleanup exact. Prior v1/v2/v3 trial logs are not final results.",
+  "late_display_counters": {
+    "req": 19576,
+    "done": 19577,
+    "start": 19577,
+    "timeouts": 0,
+    "extra": 0,
+    "te": 24845,
+    "FRAME_COUNT": 19579,
+    "GLOBAL": 307,
+    "TRIG": 12304,
+    "vsync_on": 1,
+    "win_configs": 19574,
+    "copied": 0,
+    "skipped": 0,
+    "acq_timeouts": 0,
+    "frame_wait_timeouts": 0,
+    "scanned": 19574,
+    "dma_fallbacks": 0,
+    "shadow_wait_timeouts": 0,
+    "IDMA0": 4261412864,
+    "blanks": 0,
+    "unblanks": 0,
+    "dcs": 0,
+    "dcs_timeouts": 0
+  },
+  "final_sampled_queue": {
+    "fence_ctx": 1,
+    "fence_seq": 19574,
+    "pending": 0,
+    "win_configs": 19574,
+    "scanned": 19574,
+    "copied": 0,
+    "dma_fallbacks": 0,
+    "skipped": 0,
+    "acq_timeouts": 0,
+    "completed": 19574,
+    "stage": "idle",
+    "worker_seq": 19574,
+    "worker_layers": 1,
+    "padded_scanned": 19574,
+    "scan_full_w": 1088,
+    "scan_full_h": 2352
+  },
+  "stats_snapshots": 165,
+  "sampled_peak_pending": 2,
+  "recorded_kernel_panic_warn_gpu_sysmmu_fault_fence_wait": false,
+  "expected_negative_request_diagnostics": true,
+  "runtime": {
+    "lightdm": "active at 160/300/330 s",
+    "android": "RUNNING at 160/300 s",
+    "userdata": "rw at 160/300/330 s",
+    "systemd_160s": {
+      "state": "starting",
+      "jobs": 4,
+      "failed_units": 0
+    },
+    "systemd_300s": {
+      "state": "degraded",
+      "jobs": 2,
+      "failed_units": 1,
+      "failed_unit": "a50-audio-route.service",
+      "transient_jobs": [
+        "user@108.service",
+        "session-c42.scope"
+      ]
+    },
+    "systemd_330s": {
+      "state": "degraded",
+      "jobs": 1,
+      "failed_units": 2,
+      "identities": "not collected at this snapshot"
+    },
+    "session": "phablet LightDM session exits status 1 at +268.39 seconds; greeter starts. Stable logged-in desktop not established; cause unresolved."
+  },
+  "owner_clarification": {
+    "scope": "previous 6.18 UI observations",
+    "ui": "login/greeter after slow startup",
+    "touch": "unresponsive",
+    "pin_entry_tested": false
+  },
+  "baseline_restored": true,
+  "postflight_pass": true,
+  "baseline_fsck": "/dev/sda32: clean, 7051/3440640 files, 1990792/13745152 blocks",
+  "phone_last_verified": {
+    "ip": "192.168.181.225",
+    "kernel": "4.14.194",
+    "restore": "2026-11-17 15:01:33",
+    "boot": "2026-11-17 15:01:46",
+    "battery": "99% Charging"
+  },
+  "temporary_usb_profile_created": false,
+  "capture_status": {
+    "runner": 0,
+    "watch": 0,
+    "collection": 0,
+    "late": 0,
+    "monitor": 0,
+    "saved_fsck": 0,
+    "kernel_stream": 255,
+    "kernel_stream_note": "SSH connection ends during normal timed reboot; saved timed dump and continuous stream are present"
+  },
+  "limits": [
+    "No GPU-produced readback on each test buffer",
+    "No external-resource user-import job pinning test",
+    "User-import cache sync rejected EINVAL on both kernels",
+    "Six reserved/secure ION heaps unsupported",
+    "Fixed 260 MHz, no DVFS",
+    "Standalone test_egl userspace crash unresolved",
+    "Startup/session integration and ten-minute soak remain M7.5",
+    "Input remains M8; PIN/login usability untested"
+  ],
+  "next": "M7.4 conditional G2D decision, then M7.5 integration/soak; no next boot started",
+  "committed_this_task": false
+}
