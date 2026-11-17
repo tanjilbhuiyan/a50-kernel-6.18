@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-18 (I1 complete; ADR-0005 audio deferral approved)
+Updated: 2026-11-18 (I2 complete; handler blocking point still open)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -8,7 +8,18 @@ Read this file, then the active ticket and its log. Before trusting anything her
 branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and on the phone. At the end of a session, update
 **RESUME HERE** with commits, branch, image hashes, last test and rollback result, and the next action.
 
-## RESUME HERE (2026-11-18, I1 complete; ADR-0005 approved)
+## RESUME HERE (2026-11-18, I2 complete)
+- **Active ticket:** M7.5. No test active; phone on stock 4.14.194 (home **192.168.0.171**), post-flight passed, fsck
+  clean 7055/3440640 files.
+- **I2 (ADR-0005 runtime):** PulseAudio active at 35.8 s with the overlay, but the telephony handler and Lomiri still
+  time out. The handler blocks early, before its D-Bus connection (1 thread on 6.18 vs 4 on stock); I1's PulseAudio
+  link was wrong. Log section "I2"; ADR-0005 has an update note. Evidence `reference/m75-integration/i2-*` once
+  published; raw `src/m75/i2-raw/`.
+- **Next action:** I3 = same I2 image, collector-only: handler maps, decoded ppoll fds, unix socket paths, environment,
+  manual handler run with Qt/Mir/Wayland debug under a timeout. Owner says "present, flash I3" first.
+- Builds: `tools/m75/build_i2.sh` (I0 kernel + `src/m75/i2-runtime`), BOOT `src/m75/boot-i2.img` `53d23d82…`.
+
+## Earlier handoff (I1 complete; ADR-0005 approved; superseded)
 - **Active ticket:** M7.5. No test active; phone on stock 4.14.194 since 00:21:21 (home **192.168.0.171**), post-flight
   passed, fsck clean 7058/3440640 files.
 - **I1 result:** Android audio HAL `restarting` → PulseAudio blocked in startup (`pactl` hangs) → telephony handler

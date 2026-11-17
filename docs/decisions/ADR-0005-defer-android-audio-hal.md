@@ -35,3 +35,9 @@ Android audio HAL, mixer settings, volumes and stored stream state are not touch
   as working.
 - M10's DoD gains: this overlay is removed and PulseAudio uses `module-droid-discover` with the ported drivers.
 - Any other rootfs file overlay needs its own ADR.
+
+## Update (2026-11-18, M7.5 I2)
+I2 verified the decision's effect: PulseAudio is active at 35.8 s with the overlay. Context item 2 was wrong: the
+telephony handler still times out with PulseAudio working, and it blocks before creating a D-Bus connection or a
+PulseAudio client (log section "I2"). The decision stands for PulseAudio itself; the handler/Lomiri stall has another
+cause, investigated separately.

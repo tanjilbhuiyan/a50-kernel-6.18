@@ -1,0 +1,28 @@
+--- halium-init-runtime (I0)
++++ halium-init-runtime (I2)
+@@ -398,6 +398,25 @@
+ ExecStartPre=/bin/sh /run/a50-m64/prepare_policy.sh
+ A50M64_UNIT
+ busybox chroot "${rootmnt}" /bin/sh /run/a50-m64/runtime_status.sh </dev/null >"${rootmnt}/dev/kmsg" 2>&1 &
++# M7.5 I2 (ADR-0005): runtime-only PulseAudio overlay without the unported Android audio HAL module.
++mkdir -p "${rootmnt}/run/a50-m75" "${rootmnt}/run/systemd/system/user@32011.service.d"
++busybox cp /a50/m75/defer_audio.sh /a50/m75/touch.pa "${rootmnt}/run/a50-m75/"
++cat > "${rootmnt}/run/systemd/system/a50-defer-audio.service" <<'A50M75_UNIT'
++[Unit]
++Description=A50 6.18: start PulseAudio without the unported Android audio HAL (ADR-0005)
++DefaultDependencies=no
++After=local-fs.target
++Before=user@32011.service
++[Service]
++Type=oneshot
++RemainAfterExit=yes
++ExecStart=/bin/sh /run/a50-m75/defer_audio.sh
++A50M75_UNIT
++cat > "${rootmnt}/run/systemd/system/user@32011.service.d/90-a50-audio.conf" <<'A50M75_UNIT'
++[Unit]
++Wants=a50-defer-audio.service
++After=a50-defer-audio.service
++A50M75_UNIT
+ exec busybox switch_root ${rootmnt} ${init} "$@" </dev/null >/dev/kmsg 2>&1
+ echo "Something went badly wrong in the initramfs."
+ panic "Please file a bug on initramfs-tools."

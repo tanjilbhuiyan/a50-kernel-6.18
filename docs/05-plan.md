@@ -144,8 +144,9 @@ Tasks: dpu20 DECON/DPP/DSIM + panel forward-port preserving ioctls; Mali kbase
 r26p0 forward-port; G2D only if contract requires.
 DoD: S2 (Lomiri visible, accelerated); 10-minute UI soak without GPU faults.
 Plan change (2026-11-18, owner approved): M7.5 adds a per-boot read-only overlay of `/etc/pulse/touch.pa` without
-`module-droid-discover`, because the crash-looping Android audio HAL blocks PulseAudio, the telephony handler and
-Lomiri's readiness (M7.5 I1). Removed in M10. ADR-0005.
+`module-droid-discover`, because the crash-looping Android audio HAL blocks PulseAudio (M7.5 I1/I2). I2 confirms
+PulseAudio readiness but disproves the proposed handler-on-PulseAudio explanation; the handler/Lomiri blocker remains
+under investigation. Overlay removed in M10. ADR-0005 and its I2 correction.
 
 ## M8 — Input: touch, keys, hall, vibrator
 DoD: S3.
