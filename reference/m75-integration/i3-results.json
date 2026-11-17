@@ -1,0 +1,141 @@
+{
+  "test": "M7.5 I3 handler startup diagnosis",
+  "i2_commit": "2fe93af",
+  "boot_sha256": "53d23d829e6eff7028be0d2478e01171e4f0b7258c87474b9076acbc53457b59",
+  "image_changed_from_i2": false,
+  "kernel_changed": false,
+  "soak": false,
+  "handler_threads": {
+    "stock": 4,
+    "target_early": 1
+  },
+  "early_poll_fds": [
+    {
+      "fd": 5,
+      "events": "0x39",
+      "revents": "0x0",
+      "descriptor": {
+        "target": "socket:[89949]",
+        "fdinfo": "pos:\t0\nflags:\t02\nmnt_id:\t10\nino:\t89949\nscm_fds: 0",
+        "unix": {
+          "type": "0001",
+          "state": "03",
+          "bound_path": null
+        },
+        "peer": {
+          "local_address": "",
+          "peer_address": "",
+          "peer_credentials": {
+            "pid": 2823,
+            "uid": 32011,
+            "gid": 32011
+          },
+          "peer_exe": "/usr/bin/lomiri-telephony-service-handler"
+        }
+      }
+    },
+    {
+      "fd": 8,
+      "events": "0x38",
+      "revents": "0x0",
+      "descriptor": {
+        "target": "pipe:[89951]",
+        "fdinfo": "pos:\t0\nflags:\t01\nmnt_id:\t15\nino:\t89951"
+      }
+    },
+    {
+      "fd": 9,
+      "events": "0x39",
+      "revents": "0x0",
+      "descriptor": {
+        "target": "pipe:[89952]",
+        "fdinfo": "pos:\t0\nflags:\t00\nmnt_id:\t15\nino:\t89952"
+      }
+    }
+  ],
+  "qpa_plugin_recorded_in_early_maps": false,
+  "target_startup_environment_matches_stock": true,
+  "manual_child": {
+    "pid": 4465,
+    "returncode": -15,
+    "timeout": true,
+    "seconds_limit": 25,
+    "log_bytes": 0,
+    "elapsed": 25.022
+  },
+  "manual_note": "Both bus names unowned before launch; original display choice retained; no Qt/Mir/Wayland output; timeout child reaped and owned group terminated. Not normal-service readiness.",
+  "supplemental_inspection": {
+    "uptime": 295.11,
+    "parent_pid": 11330,
+    "parent_exe": "/usr/bin/lomiri-telephony-service-handler",
+    "child_pid": 11333,
+    "child_exe": "/usr/lib/aarch64-linux-gnu/gstreamer1.0/gstreamer-1.0/gst-plugin-scanner",
+    "child_threads": 6,
+    "child_wait": "__futex_wait",
+    "method": "Actual parent/child relationship plus executable stack return-site candidates; not an unwound backtrace",
+    "symbolic_matches": [
+      "libgsthybris call at 0x92d4 to media_codec_list_count_codecs; next instruction 0x92d8 is a captured candidate",
+      "libmedia_compat_layer: media_codec_list_count_codecs",
+      "libstagefright: OmxInfoBuilder::buildMediaCodecList and MediaCodecList constructor",
+      "android.hardware.media.omx@1.0: IOmxStore getServiceInternal",
+      "libhidlbase: getRawServiceInternal"
+    ],
+    "supporting_android_state": "vendor.media.omx restarting; IOmxStore/default unavailable in log"
+  },
+  "conclusion": "Handler startup waits for GStreamer plugin scanning; scanner is stalled in the hybris Android codec-discovery/service path. A controlled exclusion is still needed to prove the repair. QPA/display-plugin hypothesis is unsupported by these captures.",
+  "normal_session": "Still misses readiness deadline; no repair or working login claimed",
+  "audio": "ADR-0005 retained; pactl succeeds at all four early query captures",
+  "late_display_counters": {
+    "req": 19762,
+    "done": 19763,
+    "start": 19763,
+    "timeouts": 0,
+    "extra": 0,
+    "te": 24934,
+    "FRAME_COUNT": 19765,
+    "GLOBAL": 307,
+    "TRIG": 12304,
+    "vsync_on": 1,
+    "win_configs": 19760,
+    "copied": 0,
+    "skipped": 0,
+    "acq_timeouts": 0,
+    "frame_wait_timeouts": 0,
+    "scanned": 19760,
+    "dma_fallbacks": 0,
+    "shadow_wait_timeouts": 0,
+    "IDMA0": 4261412864,
+    "blanks": 0,
+    "unblanks": 0,
+    "dcs": 0,
+    "dcs_timeouts": 0
+  },
+  "counter_snapshots": 175,
+  "kernel_fault_recorded": false,
+  "userdata": "rw in saved collector/late captures",
+  "baseline_restored": true,
+  "postflight_pass": true,
+  "baseline_fsck": "/dev/sda32: clean, 7064/3440640 files, 1991215/13745152 blocks",
+  "phone_last_verified": {
+    "ip": "192.168.0.171",
+    "restore": "2026-11-18 01:19:08",
+    "boot": "2026-11-18 01:19:22",
+    "kernel": "4.14.194",
+    "battery": "100% Charging"
+  },
+  "capture_status": {
+    "runner": 0,
+    "watch": 0,
+    "collection": 0,
+    "late": 0,
+    "monitor": 0,
+    "manual_log": 0,
+    "saved_fsck": 0,
+    "kernel_stream": 124,
+    "kernel_stream_note": "Bounded SSH stream ends at host timeout; independent timed dump saved"
+  },
+  "inputs": "i3-inputs.json (81 hashes) and i3-extra-inputs.json (supplemental read-only source)",
+  "symbol_checks": "i3-symbol-checks.json",
+  "next": "Controlled isolation of libgsthybris codec discovery with normal software plugins retained, then verify normal service readiness before the ten-minute soak",
+  "i3_committed": false
+}

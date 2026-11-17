@@ -1,0 +1,27 @@
+--- halium-init-runtime (I2)
++++ halium-init-runtime (I4)
+@@ -417,6 +417,24 @@
+ Wants=a50-defer-audio.service
+ After=a50-defer-audio.service
+ A50M75_UNIT
++# M7.5 I4 (ADR-0006): runtime-only placeholder over libgsthybris.so; the Android OMX codec service is unavailable.
++busybox cp /a50/m75/defer_gsthybris.sh /a50/m75/libgsthybris.placeholder "${rootmnt}/run/a50-m75/"
++cat > "${rootmnt}/run/systemd/system/a50-defer-gsthybris.service" <<'A50M75_UNIT'
++[Unit]
++Description=A50 6.18: keep GStreamer's plugin scan out of the unavailable Android OMX service (ADR-0006)
++DefaultDependencies=no
++After=local-fs.target
++Before=user@32011.service
++[Service]
++Type=oneshot
++RemainAfterExit=yes
++ExecStart=/bin/sh /run/a50-m75/defer_gsthybris.sh
++A50M75_UNIT
++cat > "${rootmnt}/run/systemd/system/user@32011.service.d/91-a50-gsthybris.conf" <<'A50M75_UNIT'
++[Unit]
++Wants=a50-defer-gsthybris.service
++After=a50-defer-gsthybris.service
++A50M75_UNIT
+ exec busybox switch_root ${rootmnt} ${init} "$@" </dev/null >/dev/kmsg 2>&1
+ echo "Something went badly wrong in the initramfs."
+ panic "Please file a bug on initramfs-tools."

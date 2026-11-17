@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-18 (I2 complete; handler blocking point still open)
+Updated: 2026-11-18 (I4: session starts on 6.18; ADR-0006 accepted)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -8,7 +8,56 @@ Read this file, then the active ticket and its log. Before trusting anything her
 branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and on the phone. At the end of a session, update
 **RESUME HERE** with commits, branch, image hashes, last test and rollback result, and the next action.
 
-## RESUME HERE (2026-11-18, I2 complete)
+## RESUME HERE (2026-11-18, I4: session starts on 6.18)
+- **Active ticket:** M7.5. No test active; phone on stock 4.14.194 (home **192.168.0.171**), post-flight passed, fsck
+  clean 7064/3440640 files.
+- **I4 result:** with ADR-0005 (PulseAudio without the audio HAL) and ADR-0006 (placeholder over `libgsthybris.so`,
+  now **accepted**), the telephony handler is active at 42.8 s, Lomiri READY at 48.2 s, session targets active, stable
+  to 330 s, systemd `running` with 0 failed units. Log: `log/2026-11-18-M7.5-i3-handler-startup.md`, section "I4".
+- **Image:** `tools/m75/build_i4.sh` (I0 kernel + `src/m75/i4-runtime`), BOOT `src/m75/boot-i4.img` `6ee6c0fe…`,
+  DT `src/m73/dt-g1.img`.
+- **Next action:** the ten-minute UI soak on the I4 image (M7.5 acceptance 2): needs a longer timed-dump window than
+  420 s, renderer evidence (Lomiri's GL renderer line, DMA counters), fence/memory sampling, and the M6
+  allocator/ION/storage/USB regression checks. Owner says "present, flash <name>" before each flash.
+- **Gaps:** `gst-inspect-1.0` is absent on the rootfs; touch is M8; no audio (M10) or hardware codecs (M13).
+
+## Earlier handoff (I2/I3; superseded)
+- **Active ticket:** M7.5 remains open; no ten-minute soak or stable normal session yet. **I2 committed as 2fe93af**
+  (verified audio deferral and corrected diagnosis), no push. I3 tools/evidence/handoff are uncommitted.
+- **I3 result:** original handler has one thread; stock control has four. Startup environment matches stock. No QPA
+  plugin/libmirclient appears in early maps; the same-environment 25-second debug copy times out with zero Qt/Mir/
+  Wayland output. Both handler bus names were unowned before that copy; its group was terminated/reaped. No original
+  service restart or display-backend change. GUI-plugin explanation is unsupported by this run.
+- **Concrete blocking lead:** at uptime 295.11, restarted handler **11330** waits in ppoll with direct child **11333**,
+  gst-plugin-scanner, six threads/futex wait. Executable return-site candidates and installed-library symbol checks
+  identify **libgsthybris -> media_codec_list_count_codecs -> Stagefright codec list -> IOmxStore/HIDL getService**.
+  The candidate at plugin offset 0x92d8 is immediately after its call to codec enumeration. Android vendor.media.omx
+  is restarting and IOmxStore/default unavailable. This is not a formally unwound backtrace or a tested repair.
+- **Other results:** PulseAudio/pactl stay responsive with unchanged ADR-0005. Normal handler/Lomiri still time out.
+  Final display **19,760 direct DMA frames**, zero copies/fallbacks/skips/acquire/frame/shadow timeouts; no recorded
+  kernel/GPU/SysMMU fault or fence wait. Userdata rw. No acceptance box newly closed from this diagnostic alone.
+- **Phone last verified:** normal timed Download **01:18:51**, stock DTB/DTBO/BOOT restore **2026-11-18 01:19:08**,
+  baseline **4.14.194** boot **01:19:22**, home **192.168.0.171**, **100% Charging**. Partition post-flight passed;
+  fsck clean **7064/3440640 files, 1991215/13745152 blocks**. No test active. Owner presence/USB/Claude idle was
+  confirmed for I3; do not reuse it for another flash. Subsequent symbol copies were read-only as phablet.
+- **Exact I3 input:** unchanged I2 BOOT **src/m75/boot-i2.img**,
+  **53d23d829e6eff7028be0d2478e01171e4f0b7258c87474b9076acbc53457b59**. Same DT **src/m73/dt-g1.img**,
+  dee291ace91ab19f9d241d3c7cd42557e109f066ddf0c38eb69a6a7b1f97625c. No kernel/config/DT/ramdisk rebuild.
+  I2 frozen **src/m75/i2-as-built/** and runtime **src/m75/i2-runtime/**. Acquisition manifest i3-inputs.json has
+  81 hashes/five original snapshots; supplemental source separately hashed in i3-extra-inputs.json. Backup verified
+  22cb95a536489c89a738cae3105859c041a15b298c4140c6a1a018883f7bd896. Raw src/m75/i3-raw/, session i3-session/.
+- **Evidence:** log/2026-11-18-M7.5-i3-handler-startup.md; reference/m75-integration/i3-results.json,
+  i3-stack-sites.txt and i3-symbol-checks.json. Private library copies under src/m75/i3-symbols/ are not published.
+  Helper tests pass fd bounds, non-consuming peer query, filtered environment and owned-child timeout cleanup.
+- **Kernel unchanged:** shared common clean **a50-usb/4fbb731f5**; isolated **src/m75/runtime-kernel** clean
+  **a50-m75-i0-test/6a8742362572bbc2a9c3cca2a16cba0f160e07aa**. Clean graphics c6588dc03 / tree
+  81fe4953be31a74851875040fe045b648ec18064 and 45-patch export unchanged; prior G2f/G2g worktrees preserved.
+- **Next:** controlled test isolating **libgsthybris during GStreamer discovery**, retaining software plugins and a
+  fresh temporary registry; verify normal handler bus names/Lomiri READY before a runtime deferral or soak. Do not
+  use a stock registry to pretend hardware codecs work. Any policy deferral needs its scope/removal milestone
+  documented; ADR-0005 audio stays unchanged. No next test or policy change has been started. Touch remains M8.
+
+## Earlier handoff (I2 complete; superseded)
 - **Active ticket:** M7.5. No test active; phone on stock 4.14.194 (home **192.168.0.171**), post-flight passed, fsck
   clean 7055/3440640 files.
 - **I2 (ADR-0005 runtime):** PulseAudio active at 35.8 s with the overlay, but the telephony handler and Lomiri still

@@ -1,0 +1,122 @@
+{
+  "test": "M7.5 I3 startup wait symbolic checks",
+  "method": "Restored userspace libraries read as phablet; map captured file offsets through ELF PT_LOAD before symbol lookup",
+  "limit": "Executable stack words are return-site candidates, not an unwound backtrace; function pointers may also appear",
+  "files": {
+    "gsthybris.so": {
+      "sha256": "26ffd94d8cc8b6efff993ae7fc8b6bbf1dbca2b2c2fc9487ef631d2fdcfba0a9",
+      "sites": [
+        {
+          "file_offset": "0x92d8",
+          "virtual_address": "0x92d8",
+          "executable_load_segment": true,
+          "containing_exported_symbols": []
+        },
+        {
+          "file_offset": "0x188f0",
+          "virtual_address": "0x188f0",
+          "executable_load_segment": true,
+          "containing_exported_symbols": []
+        }
+      ]
+    },
+    "media_compat.so": {
+      "sha256": "bdcaa50f0c2d49f3c6a65831e23423b1c8c7748a052d479845b92141ff1f58b9",
+      "sites": [
+        {
+          "file_offset": "0x27ff8",
+          "virtual_address": "0x27ff8",
+          "executable_load_segment": true,
+          "containing_exported_symbols": [
+            {
+              "name": "media_codec_list_count_codecs",
+              "start": "0x27fb4",
+              "size": 156
+            }
+          ]
+        }
+      ]
+    },
+    "hidlbase.so": {
+      "sha256": "3843981a636079ea12af4b5002b233f104482515e09655ee3d42e0922f8298bb",
+      "sites": [
+        {
+          "file_offset": "0x5bfac",
+          "virtual_address": "0x5bfac",
+          "executable_load_segment": true,
+          "containing_exported_symbols": []
+        },
+        {
+          "file_offset": "0x5c9d4",
+          "virtual_address": "0x5c9d4",
+          "executable_load_segment": true,
+          "containing_exported_symbols": [
+            {
+              "name": "android::hardware::details::getRawServiceInternal(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&, bool, bool)",
+              "start": "0x5c49c",
+              "size": 1908
+            }
+          ]
+        }
+      ]
+    },
+    "omx.so": {
+      "sha256": "c94f02b78b6e1e1d05e85f63a14f74eaad8161ff7fe9edf74f8226c96363cdca",
+      "sites": [
+        {
+          "file_offset": "0x62ee8",
+          "virtual_address": "0x62ee8",
+          "executable_load_segment": true,
+          "containing_exported_symbols": [
+            {
+              "name": "android::sp<android::hardware::media::omx::V1_0::IOmxStore> android::hardware::details::getServiceInternal<android::hardware::media::omx::V1_0::BpHwOmxStore, android::hardware::media::omx::V1_0::IOmxStore, void, void>(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&, bool, bool)",
+              "start": "0x62e14",
+              "size": 624
+            }
+          ]
+        }
+      ]
+    },
+    "stagefright.so": {
+      "sha256": "ac3e820f4fa843b79c7584b07e69caf0518a4e54d59d509f6ef6c15741e0d2e4",
+      "sites": [
+        {
+          "file_offset": "0x15e1a0",
+          "virtual_address": "0x15e1a0",
+          "executable_load_segment": true,
+          "containing_exported_symbols": [
+            {
+              "name": "android::OmxInfoBuilder::buildMediaCodecList(android::MediaCodecListWriter*)",
+              "start": "0x15e148",
+              "size": 2584
+            }
+          ]
+        },
+        {
+          "file_offset": "0x136808",
+          "virtual_address": "0x136808",
+          "executable_load_segment": true,
+          "containing_exported_symbols": [
+            {
+              "name": "android::MediaCodecList::MediaCodecList(std::__1::vector<android::MediaCodecListBuilderBase*, std::__1::allocator<android::MediaCodecListBuilderBase*> >)",
+              "start": "0x136664",
+              "size": 1188
+            }
+          ]
+        },
+        {
+          "file_offset": "0x1396d0",
+          "virtual_address": "0x1396d0",
+          "executable_load_segment": true,
+          "containing_exported_symbols": []
+        },
+        {
+          "file_offset": "0x1365c4",
+          "virtual_address": "0x1365c4",
+          "executable_load_segment": true,
+          "containing_exported_symbols": []
+        }
+      ]
+    }
+  }
+}

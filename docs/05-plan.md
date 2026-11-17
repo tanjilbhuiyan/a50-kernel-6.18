@@ -147,6 +147,9 @@ Plan change (2026-11-18, owner approved): M7.5 adds a per-boot read-only overlay
 `module-droid-discover`, because the crash-looping Android audio HAL blocks PulseAudio (M7.5 I1/I2). I2 confirms
 PulseAudio readiness but disproves the proposed handler-on-PulseAudio explanation; the handler/Lomiri blocker remains
 under investigation. Overlay removed in M10. ADR-0005 and its I2 correction.
+Plan change (2026-11-18, owner approved Option A): M7.5 I4 tests a per-boot read-only placeholder over
+`libgsthybris.so`, because GStreamer's per-boot plugin scan stalls in Android OMX codec discovery (M7.5 I3) and blocks
+the telephony handler and Lomiri. Removed when MFC/OMX works (M13). ADR-0006, accepted on I4 (handler and Lomiri ready, systemd running).
 
 ## M8 — Input: touch, keys, hall, vibrator
 DoD: S3.
@@ -168,6 +171,7 @@ DoD: S5, S9; 10 suspend/resume cycles; charge state correct. The runtime masks o
 no `systemd.mask=` remains in the built-in command line.
 
 ## M13 — Stretch: camera, MFC, sensors, GNSS, Waydroid
+MFC: the ADR-0006 `libgsthybris.so` placeholder is removed once `vendor.media.omx` stays running.
 DoD per item, optional.
 
 ## Future candidates (not in project DoD; need an accepted ADR first)

@@ -57,4 +57,4 @@ later milestones get tickets when we reach them (evidence first, Rule 1).
 | M7.2 | DPU20 display pipeline and panel | build no / test yes | M7.1 | done (log/2026-11-16-M7.2-d4a-blank-and-close.md) |
 | M7.3 | Mali kbase r26p0 port | build no / test yes | M7.1 | done (G2h stock-controlled native/compat memory checks; limits in ticket) |
 | M7.4 | G2D if required | if required | M7.1 | dropped (measured single-layer path; decision/reopen conditions in ticket) |
-| M7.5 | Accelerated Lomiri integration and soak; M7 DoD | yes | M7.2, M7.3, M7.4 decision | in-progress (clean-stack consolidation; session failure investigation before soak) |
+| M7.5 | Accelerated Lomiri integration and soak; M7 DoD | yes | M7.2, M7.3, M7.4 decision | in-progress (I3 finds GStreamer/OMX startup wait; controlled isolation and soak pending) |
