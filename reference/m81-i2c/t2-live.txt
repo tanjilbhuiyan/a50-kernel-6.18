@@ -1,0 +1,278 @@
+
+CMD: uname -r
+6.18.33-a50-diag+
+RC=0
+
+CMD: cat /proc/uptime
+38.76 224.86
+RC=0
+
+CMD: sh -c dmesg | grep -i -E "i2c|s3c|13870000|watchdog|lockup|hung_task" | head -n 40
+[   30.947070] init: Could not start service 'watchdogd' as part of class 'core': Cannot find '/system/bin/watchdogd_DISABLED': No such file or directory
+RC=0
+
+CMD: sh -c ls -l /sys/bus/i2c/devices/ /dev/i2c-* 2>&1
+crw------- 1 root root 89, 0 Apr 30  2026 /dev/i2c-0
+
+/sys/bus/i2c/devices/:
+total 0
+lrwxrwxrwx 1 root root 0 Jan  1  1970 i2c-0 -> ../../../devices/platform/13870000.i2c/i2c-0
+RC=0
+
+CMD: sh -c for a in /sys/bus/i2c/devices/i2c-*; do echo "$a $(cat $a/name 2>/dev/null) of_node=$(readlink $a/of_node 2>/dev/null)"; done
+/sys/bus/i2c/devices/i2c-0 s3c2410-i2c of_node=../../../../firmware/devicetree/base/i2c@13870000
+RC=0
+
+CMD: sh -c cat /sys/kernel/debug/pinctrl/139b0000.pinctrl*/pinmux-pins 2>/dev/null | grep -E "gpp1-[01]" ; cat /sys/kernel/debug/pinctrl/139b0000.pinctrl*/pinconf-groups 2>/dev/null | grep -A2 i2c4
+pin 8 (gpp1-0): 13870000.i2c (GPIO UNCLAIMED) function i2c4-bus group gpp1-0
+pin 9 (gpp1-1): 13870000.i2c (GPIO UNCLAIMED) function i2c4-bus group gpp1-1
+RC=1
+
+CMD: sh -c grep -E "13870000|i2c" /proc/interrupts
+ 58:          0          0          0          0          0          0          0          0 GIC-0 283 Level     13870000.i2c
+RC=0
+
+CMD: sh -c for f in watchdog nmi_watchdog soft_watchdog watchdog_thresh softlockup_panic hardlockup_panic hung_task_timeout_secs; do printf "%s=%s\n" $f "$(cat /proc/sys/kernel/$f 2>/dev/null)"; done
+watchdog=1
+nmi_watchdog=1
+soft_watchdog=1
+watchdog_thresh=10
+softlockup_panic=1
+hardlockup_panic=1
+hung_task_timeout_secs=0
+RC=0
+
+M81_T2_XFER uptime=75.67
+irq_before:  58: 0 0 0 0 0 0 0 0 GIC-0 283 Level 13870000.i2c
+timeout: failed to execute process: Permission denied (os error 13)
+i2c_read_rc=126
+timeout: failed to execute process: Permission denied (os error 13)
+i2c_read_rc=126
+timeout: failed to execute process: Permission denied (os error 13)
+i2c_read_rc=126
+irq_after:  58: 0 0 0 0 0 0 0 0 GIC-0 283 Level 13870000.i2c
+
+CMD: sh -c dmesg | grep -i -E "i2c|s3c|13870000" | tail -n 20
+RC=0
+
+CMD: sh -c cat /sys/kernel/debug/gpio 2>/dev/null | head -n 60
+gpiochip0: 4 GPIOs, parent: platform/11080000.pinctrl, gph0:
+
+gpiochip1: 3 GPIOs, parent: platform/11080000.pinctrl, gph1:
+
+gpiochip2: 6 GPIOs, parent: platform/11850000.pinctrl, etc0:
+
+gpiochip3: 8 GPIOs, parent: platform/11850000.pinctrl, gpa0:
+
+gpiochip4: 8 GPIOs, parent: platform/11850000.pinctrl, gpa1:
+
+gpiochip5: 8 GPIOs, parent: platform/11850000.pinctrl, gpa2:
+
+gpiochip6: 5 GPIOs, parent: platform/11850000.pinctrl, gpq0:
+
+gpiochip7: 1 GPIOs, parent: platform/11c20000.pinctrl, gpm0:
+
+gpiochip8: 1 GPIOs, parent: platform/11c20000.pinctrl, gpm1:
+
+gpiochip9: 1 GPIOs, parent: platform/11c20000.pinctrl, gpm2:
+
+gpiochip10: 1 GPIOs, parent: platform/11c20000.pinctrl, gpm3:
+
+gpiochip11: 1 GPIOs, parent: platform/11c20000.pinctrl, gpm4:
+
+gpiochip12: 1 GPIOs, parent: platform/11c20000.pinctrl, gpm5:
+
+gpiochip13: 1 GPIOs, parent: platform/11c20000.pinctrl, gpm6:
+
+gpiochip14: 1 GPIOs, parent: platform/11c20000.pinctrl, gpm7:
+
+gpiochip15: 1 GPIOs, parent: platform/11c20000.pinctrl, gpm8:
+
+gpiochip16: 1 GPIOs, parent: platform/11c20000.pinctrl, gpm9:
+
+gpiochip17: 1 GPIOs, parent: platform/11c20000.pinctrl, gpm10:
+
+gpiochip18: 1 GPIOs, parent: platform/11c20000.pinctrl, gpm11:
+
+gpiochip19: 1 GPIOs, parent: platform/11c20000.pinctrl, gpm12:
+
+gpiochip20: 1 GPIOs, parent: platform/11c20000.pinctrl, gpm13:
+
+gpiochip21: 1 GPIOs, parent: platform/11c20000.pinctrl, gpm14:
+
+gpiochip22: 1 GPIOs, parent: platform/11c20000.pinctrl, gpm15:
+
+gpiochip23: 1 GPIOs, parent: platform/11c20000.pinctrl, gpm16:
+
+gpiochip24: 1 GPIOs, parent: platform/11c20000.pinctrl, gpm17:
+
+gpiochip25: 1 GPIOs, parent: platform/11c20000.pinctrl, gpm18:
+
+gpiochip26: 1 GPIOs, parent: platform/11c20000.pinctrl, gpm19:
+
+gpiochip27: 1 GPIOs, parent: platform/11c20000.pinctrl, gpm20:
+
+gpiochip28: 1 GPIOs, parent: platform/11c20000.pinctrl, gpm21:
+
+gpiochip29: 1 GPIOs, parent: platform/11c20000.pinctrl, gpm22:
+
+RC=0
+
+M81_T2_READ target=120 uptime=120.49
+PLL_CON0_MUX_CLKCMU_PERI_BUS_USER          0x10030100 0x00000010
+PLL_CON2_MUX_CLKCMU_PERI_BUS_USER          0x10030108 0x00000000
+PLL_CON0_MUX_CLKCMU_PERI_IP_USER           0x10030120 0x00000010
+PLL_CON2_MUX_CLKCMU_PERI_IP_USER           0x10030128 0x00000000
+PLL_CON0_MUX_CLKCMU_PERI_UART_USER         0x10030140 0x00000010
+CMU_PERI_CONTROLLER_OPTION                 0x10030800 0x30000000
+CLK_CON_DIV_DIV_CLK_PERI_I2C               0x10031800 0x00000001
+CLK_CON_GAT_GATE_CLK_PERI_I2C              0x10032008 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_GPIO_PCLK            0x10032048 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_0_PCLK           0x1003204c 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_1_PCLK           0x10032050 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_2_PCLK           0x10032054 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_3_PCLK           0x10032058 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_4_PCLK           0x1003205c 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_5_PCLK           0x10032060 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_6_PCLK           0x10032064 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_MCT_PCLK             0x1003206c 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_PWM_MOTOR_PCLK_S0    0x10032074 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_BUS_CLK              0x10032078 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_CLK              0x1003207c 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_WDT_CLUSTER0_PCLK    0x100320cc 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_WDT_CLUSTER1_PCLK    0x100320d0 0x00200000
+    gate: manual=0 value=1 hwacg=0
+QCH_CON_I2C_0_QCH                          0x1003301c 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_I2C_1_QCH                          0x10033020 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_I2C_2_QCH                          0x10033024 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_I2C_3_QCH                          0x10033028 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_I2C_4_QCH                          0x1003302c 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_I2C_5_QCH                          0x10033030 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_I2C_6_QCH                          0x10033034 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_PERI_CMU_PERI_QCH                  0x10033044 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_PWM_MOTOR_QCH                      0x10033048 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+GICD_CTLR                                  0x12301000 0x00000001
+GICD_ISENABLER8 (ids 256-287)              0x12301120 0x0800001c
+GICD_ISPENDR8 (ids 256-287)                0x12301220 0x00400000
+GICD_ISACTIVER8 (ids 256-287)              0x12301320 0x00000000
+GICD_ICFGR17 (ids 272-287)                 0x12301c44 0x55555555
+GICD_ITARGETSR (ids 276-279)               0x12301914 0x01010101
+GICD_ITARGETSR (ids 280-283)               0x12301918 0x01010101
+GICD_ITARGETSR (ids 284-287)               0x1230191c 0x01010101
+SPI 247 (id 279): enabled=0 pending=0 active=0
+SPI 248 (id 280): enabled=0 pending=0 active=0
+SPI 249 (id 281): enabled=0 pending=0 active=0
+SPI 250 (id 282): enabled=0 pending=0 active=0
+SPI 251 (id 283): enabled=1 pending=0 active=0
+SPI 252 (id 284): enabled=0 pending=0 active=0
+SPI 253 (id 285): enabled=0 pending=0 active=0
+refuse_i2c_controller=ok
+regread_rc=0
+session: NRestarts=0 ActiveState=active
+system: NFailedUnits=0 SystemState=starting
+
+M81_T2_READ target=200 uptime=200.68
+PLL_CON0_MUX_CLKCMU_PERI_BUS_USER          0x10030100 0x00000010
+PLL_CON2_MUX_CLKCMU_PERI_BUS_USER          0x10030108 0x00000000
+PLL_CON0_MUX_CLKCMU_PERI_IP_USER           0x10030120 0x00000010
+PLL_CON2_MUX_CLKCMU_PERI_IP_USER           0x10030128 0x00000000
+PLL_CON0_MUX_CLKCMU_PERI_UART_USER         0x10030140 0x00000010
+CMU_PERI_CONTROLLER_OPTION                 0x10030800 0x30000000
+CLK_CON_DIV_DIV_CLK_PERI_I2C               0x10031800 0x00000001
+CLK_CON_GAT_GATE_CLK_PERI_I2C              0x10032008 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_GPIO_PCLK            0x10032048 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_0_PCLK           0x1003204c 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_1_PCLK           0x10032050 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_2_PCLK           0x10032054 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_3_PCLK           0x10032058 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_4_PCLK           0x1003205c 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_5_PCLK           0x10032060 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_6_PCLK           0x10032064 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_MCT_PCLK             0x1003206c 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_PWM_MOTOR_PCLK_S0    0x10032074 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_BUS_CLK              0x10032078 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_CLK              0x1003207c 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_WDT_CLUSTER0_PCLK    0x100320cc 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_WDT_CLUSTER1_PCLK    0x100320d0 0x00200000
+    gate: manual=0 value=1 hwacg=0
+QCH_CON_I2C_0_QCH                          0x1003301c 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_I2C_1_QCH                          0x10033020 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_I2C_2_QCH                          0x10033024 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_I2C_3_QCH                          0x10033028 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_I2C_4_QCH                          0x1003302c 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_I2C_5_QCH                          0x10033030 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_I2C_6_QCH                          0x10033034 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_PERI_CMU_PERI_QCH                  0x10033044 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_PWM_MOTOR_QCH                      0x10033048 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+GICD_CTLR                                  0x12301000 0x00000001
+GICD_ISENABLER8 (ids 256-287)              0x12301120 0x0800001c
+GICD_ISPENDR8 (ids 256-287)                0x12301220 0x00400000
+GICD_ISACTIVER8 (ids 256-287)              0x12301320 0x00000000
+GICD_ICFGR17 (ids 272-287)                 0x12301c44 0x55555555
+GICD_ITARGETSR (ids 276-279)               0x12301914 0x01010101
+GICD_ITARGETSR (ids 280-283)               0x12301918 0x01010101
+GICD_ITARGETSR (ids 284-287)               0x1230191c 0x01010101
+SPI 247 (id 279): enabled=0 pending=0 active=0
+SPI 248 (id 280): enabled=0 pending=0 active=0
+SPI 249 (id 281): enabled=0 pending=0 active=0
+SPI 250 (id 282): enabled=0 pending=0 active=0
+SPI 251 (id 283): enabled=1 pending=0 active=0
+SPI 252 (id 284): enabled=0 pending=0 active=0
+SPI 253 (id 285): enabled=0 pending=0 active=0
+refuse_i2c_controller=ok
+regread_rc=0
+session: NRestarts=0 ActiveState=active
+system: NFailedUnits=0 SystemState=running
+
+CMD: sh -c dmesg | grep -c -E "Unable to handle|SError|Internal error|BUG:|Kernel panic|soft lockup|hard LOCKUP|blocked for more than"
+0
+RC=1
+
+CMD: sh -c dmesg | grep -E "soft lockup|hard LOCKUP|blocked for more than|i2c" | tail -n 20
+RC=0

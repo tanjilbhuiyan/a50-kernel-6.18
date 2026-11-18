@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
 Date: Tue, 17 Nov 2026 15:41:12 +0600
-Subject: [PATCH 44/45] gpu: mali: port Samsung r26p0 kbase for fixed-clock A50
+Subject: [PATCH 44/48] gpu: mali: port Samsung r26p0 kbase for fixed-clock A50
  operation
 
 Preserve the stock native/compat ioctl ABI, Samsung boost requests and the tested allocation/import/sync/job paths. Carry the 6.18 API and VMA changes, named IRQ acquisition and soft-job cancellation fix from M7.3 G1b through G2h. The platform uses the measured 260 MHz boot clock and always-on domain; protected rendering and DVFS remain unsupported. Exclude the metadata-only diagnostic gate. Original Samsung/ARM copyright and license headers are retained.

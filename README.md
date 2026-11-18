@@ -38,8 +38,9 @@ Current state and next action: [STATUS.md](STATUS.md).
 Current bring-up limits (details in [the M6.4 log](log/2026-11-14-M6.4-runtime.md)):
 
 - The four M5 HAL masks are removed. Bluetooth/audio services still fail or retry while their drivers are unported.
-- The Lomiri greeter starts and stays up, but touch is unresponsive and PIN/login untested (input is M8). Real I2C
-  still freezes 6.18 (M4.4), and the touch controller sits on I2C, so that is M8's first task.
+- The Lomiri greeter starts and stays up, but touch is unresponsive and PIN/login untested (input is M8). I2C works
+  since M8.1 with CMU_PERI left to the bootloader ([ADR-0007](docs/decisions/ADR-0007-cmu-peri-bootloader-clocks.md));
+  the touch controller does not answer yet (presumably unpowered), which is M8.2.
 - A per-boot read-only RC bind defers unported TEEGRIS startup, with vendor unchanged and no fake readiness. Secure heaps
   and security-dependent HALs are unsupported; only the measured normal system heap is implemented.
 - Audio is unported (M10). Per [ADR-0005](docs/decisions/ADR-0005-defer-android-audio-hal.md), 6.18 boots overlay
@@ -74,9 +75,9 @@ Full plan with each milestone's Definition of Done: [docs/05-plan.md](docs/05-pl
   remaining runtime limits are documented there.
 - **Base:** [ACK](https://android.googlesource.com/kernel/common) branch `android17-6.18`, commit `d9a614fed`
   (2026-10-31), Linux 6.18.33. Built with ACK's clang prebuilt (`clang-r584948c`) via `tools/m22_build.sh`.
-- **A50 changes:** [patches/](patches/README.md), 45 patches that apply to that base with `git am`: device tree and
+- **A50 changes:** [patches/](patches/README.md), 48 patches that apply to that base with `git am`: device tree and
   defconfig, Exynos 9610 clocks, pinctrl, UFS, USB PHY, ACPM, S2MPU09 regulators, thermal, the UFS guard, the ION ABI,
-  the `a50-decon` display driver and the Mali kbase. Where possible they extend the mainline Samsung drivers. Build steps are in [patches/README.md](patches/README.md).
+  the `a50-decon` display driver, the Mali kbase and I2C. Where possible they extend the mainline Samsung drivers. Build steps are in [patches/README.md](patches/README.md).
 - **Config:** the `a50_firstlight_defconfig` from the series, plus the Halium/Ubuntu Touch flags in
   [tools/m51/halium.flags](tools/m51/halium.flags).
 - The working kernel tree is a local checkout (`src/`, not in this repository). `tools/export_patches.sh` regenerates

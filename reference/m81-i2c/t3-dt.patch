@@ -1,0 +1,64 @@
+From d13609f8bc214fa5cf302ba6c7c460cb1be1dcea Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Wed, 18 Nov 2026 12:10:51 +0600
+Subject: [PATCH] TEST ONLY: M8.1 T3 register CMU_PERI and use the real I2C bus
+ clock (do not merge)
+
+T1 with one variable changed: the clock provider. CMU_PERI is registered as
+in M4.4 (0x8000 window, manual gate mode) and i2c@13870000 uses
+CLK_GOUT_PERI_I2C_4_PCLK instead of the fixed boot clock. Tests whether the
+6.18 CMU_PERI takeover plus the probe's clk_disable reproduces the M4.4
+freeze.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I92f4cb039edfdc71f19e64789960d659e10b5534
+---
+ arch/arm64/boot/dts/exynos/Makefile           |  1 +
+ .../dts/exynos/exynos9610-a50-i2c-cmu.dts     | 26 +++++++++++++++++++
+ 2 files changed, 27 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos9610-a50-i2c-cmu.dts
+
+diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
+index cfca08165..2d7c7d0cc 100644
+--- a/arch/arm64/boot/dts/exynos/Makefile
++++ b/arch/arm64/boot/dts/exynos/Makefile
+@@ -26,3 +26,4 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos9610-a50-sysmmu.dtb
+ dtb-$(CONFIG_ARCH_EXYNOS) += exynos9610-a50-display.dtb
+ dtb-$(CONFIG_ARCH_EXYNOS) += exynos9610-a50-gpu.dtb
+ dtb-$(CONFIG_ARCH_EXYNOS) += exynos9610-a50-i2c.dtb
++dtb-$(CONFIG_ARCH_EXYNOS) += exynos9610-a50-i2c-cmu.dtb
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610-a50-i2c-cmu.dts b/arch/arm64/boot/dts/exynos/exynos9610-a50-i2c-cmu.dts
+new file mode 100644
+index 000000000..7182fda90
+--- /dev/null
++++ b/arch/arm64/boot/dts/exynos/exynos9610-a50-i2c-cmu.dts
+@@ -0,0 +1,26 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * TEST ONLY (M8.1 T3): T1 with one variable changed, the I2C clock provider. CMU_PERI is registered as M4.4 did
++ * (samsung,exynos9610-cmu-peri, 0x8000 window, so the driver uses its manual gate mode) and i2c@13870000 uses its real
++ * bus clock CLK_GOUT_PERI_I2C_4_PCLK instead of T1's fixed boot clock. No client devices, no transfers.
++ */
++#include "exynos9610-a50-i2c.dts"
++
++/delete-node/ &peri_bus_bootclk;
++
++/ {
++	cmu_peri: clock-controller@10030000 {
++		compatible = "samsung,exynos9610-cmu-peri";
++		reg = <0x0 0x10030000 0x8000>;
++		#clock-cells = <1>;
++		clocks = <&oscclk>,
++			 <&cmu_top CLK_DOUT_CMU_PERI_BUS>,
++			 <&cmu_top CLK_DOUT_CMU_PERI_IP>,
++			 <&cmu_top CLK_DOUT_CMU_PERI_UART>;
++		clock-names = "oscclk", "dout_cmu_peri_bus", "dout_cmu_peri_ip", "dout_cmu_peri_uart";
++	};
++};
++
++&i2c_4 {
++	clocks = <&cmu_peri CLK_GOUT_PERI_I2C_4_PCLK>;
++};
+-- 
+2.56.1
+

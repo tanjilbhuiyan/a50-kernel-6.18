@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-18 (M7 done; M8 tickets written; next M8.1)
+Updated: 2026-11-18 (M8.1 done; ADR-0007; next M8.2)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -8,7 +8,22 @@ Read this file, then the active ticket and its log. Before trusting anything her
 branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and on the phone. At the end of a session, update
 **RESUME HERE** with commits, branch, image hashes, last test and rollback result, and the next action.
 
-## RESUME HERE (2026-11-18, M7 done; next M8.1)
+## RESUME HERE (2026-11-18, M8.1 done; next M8.2)
+- **Phone:** stock 4.14.194 (office **192.168.181.225**; home 192.168.0.171), post-flight passed, fsck clean
+  7060/3440640 files. No test active.
+- **M8.1 done** (`log/2026-11-18-M8.1-i2c.md`): the M4.4 freeze bisects to the 6.18 CMU_PERI clock driver (T1 vs T3,
+  hard lockup caught by the buddy detector). ADR-0007 keeps CMU_PERI in the bootloader's state with fixed PERI clocks
+  (CMU_PERI control moved to M12). Clean branch `a50-input` (worktree `src/m81/clean-kernel`): I2C buses 0/1/3/4/6 +
+  defconfig; `patches/` 0001-0048 reproduce tree `aa8bfbcf`. T4 on the phone: all five buses probe, session healthy.
+- **Next ticket:** `tasks/M8.2-melfas-touch.md`. The touch controller (0x48 on `i2c@13870000`, now `i2c-3`) NACKs:
+  first describe and enable its supply (`tsp_ldo_en`, a GPIO `regulator-fixed` in stock dtbo.3 ~2196), then choose the
+  driver (mainline `melfas_mip4`/`mms114` vs Samsung `mss100`), never writing controller firmware.
+- **Test base:** test branch `a50-m81-t4-test` (`3ef73d12e`) = I4 test kernel + `a50-input`; build `tools/m81/build_t4.sh`
+  (T1 config: I2C + lockup detectors with panic); BOOT `src/m81/boot-t1.img` (Image identical), DT `src/m81/dt-t4.img`.
+  Runners need a tmpfs sized for their tools (two static tools are 2.2 MB each).
+- **Open owner question (from 2026-11-17):** history rewrite for `ccc4e48`/`f68ca87` identifiers, undecided.
+
+## Earlier handoff (M7 done; superseded)
 - **Milestone:** M7 closed (owner accepted Option A, 2026-11-18): DoD met with limits, recorded in `docs/05-plan.md`
   (M7) and `tasks/M7.5-graphics-integration-soak.md`. Evidence: `log/2026-11-18-M7.5-i3-handler-startup.md`.
 - **Phone:** stock 4.14.194 (home **192.168.0.171**), post-flight passed, fsck clean 7070/3440640 files. No test active.

@@ -1,0 +1,81 @@
+From bd485fcde688a31fb56f7ba20fa82a8134d78199 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Wed, 18 Nov 2026 02:40:56 +0600
+Subject: [PATCH] TEST ONLY: M8.1 T1 I2C bus 4 probe on a fixed boot clock (do
+ not merge)
+
+Adds exynos9610-a50-i2c.dts: the I4 hardware set plus i2c@13870000 with the
+stock pins (gpp1-1/gpp1-0, function 2), IRQ (SPI 251) and 400 kHz bus speed,
+no client devices. CMU_PERI stays unregistered: the bootloader leaves every
+PERI gate on and every I2C Q-channel with CLOCK_REQ=1 (M8.1 R1), so the
+controller uses a fixed clock at the measured PERI bus rate (66.625 MHz,
+the stock parent of GATE_I2C_4_QCH) and the driver never gates the block.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I812900baf17a5699040297ae8d2ac3368bdb7162
+---
+ arch/arm64/boot/dts/exynos/Makefile           |  1 +
+ .../boot/dts/exynos/exynos9610-a50-i2c.dts    | 42 +++++++++++++++++++
+ 2 files changed, 43 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos9610-a50-i2c.dts
+
+diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
+index bfd9c5461..cfca08165 100644
+--- a/arch/arm64/boot/dts/exynos/Makefile
++++ b/arch/arm64/boot/dts/exynos/Makefile
+@@ -25,3 +25,4 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
+ dtb-$(CONFIG_ARCH_EXYNOS) += exynos9610-a50-sysmmu.dtb
+ dtb-$(CONFIG_ARCH_EXYNOS) += exynos9610-a50-display.dtb
+ dtb-$(CONFIG_ARCH_EXYNOS) += exynos9610-a50-gpu.dtb
++dtb-$(CONFIG_ARCH_EXYNOS) += exynos9610-a50-i2c.dtb
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610-a50-i2c.dts b/arch/arm64/boot/dts/exynos/exynos9610-a50-i2c.dts
+new file mode 100644
+index 000000000..cb09b1efc
+--- /dev/null
++++ b/arch/arm64/boot/dts/exynos/exynos9610-a50-i2c.dts
+@@ -0,0 +1,42 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * TEST ONLY (M8.1 T1): the I4 hardware set plus I2C bus 4 (i2c@13870000), probe only, no client devices.
++ *
++ * CMU_PERI is deliberately not registered: the bootloader leaves every PERI gate enabled and every I2C Q-channel
++ * with CLOCK_REQ=1 (M8.1 R1, /dev/mem read). The controller gets a fixed clock at the PERI bus rate measured on
++ * 6.18 (dout_cmu_peri_bus 66625000 Hz), which stock uses as the parent of GATE_I2C_4_QCH (4.14 clk-exynos9610.c),
++ * so the driver's clk_enable/clk_disable never gate the block. Pins, function, IRQ and bus speed are stock
++ * (dt.dtb.0 i2c4-bus gpp1-1/gpp1-0 function 2; SPI 251; dtbo samsung,i2c-max-bus-freq 400000).
++ */
++#include "exynos9610-a50-gpu.dts"
++
++/ {
++	peri_bus_bootclk: peri-bus-boot-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <66625000>;
++	};
++
++	i2c_4: i2c@13870000 {
++		compatible = "samsung,s3c2440-i2c";
++		reg = <0x0 0x13870000 0x100>;
++		interrupts = <GIC_SPI 251 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&peri_bus_bootclk>;
++		clock-names = "i2c";
++		pinctrl-names = "default";
++		pinctrl-0 = <&i2c4_bus>;
++		samsung,i2c-sda-delay = <100>;
++		samsung,i2c-max-bus-freq = <400000>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++	};
++};
++
++&pinctrl_top {
++	i2c4_bus: i2c4-bus {
++		samsung,pins = "gpp1-1", "gpp1-0";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++};
+-- 
+2.56.1
+

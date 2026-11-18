@@ -160,6 +160,9 @@ the telephony handler and Lomiri. Removed when MFC/OMX works (M13). ADR-0006, ac
 
 ## M8 — Input: touch, keys, hall, vibrator
 DoD: S3.
+Plan change (2026-11-18, owner approved Option A): I2C (M8.1) runs with CMU_PERI left in the bootloader's state and the
+controllers on a fixed clock at the measured PERI bus rate; registering the 6.18 CMU_PERI driver reproduced the M4.4
+freeze (M8.1 T3). ADR-0007; CMU_PERI control moves to M12.
 
 ## M9 — Wi-Fi + Bluetooth (SCSC)
 DoD: S4 + S8. The M5 runtime mask of `bluebinder` is removed and multi-user is still reached.
@@ -175,7 +178,8 @@ none of the four M5 HAL masks remains in the built-in command line (the power ma
 ## M12 — Power: battery/charger, suspend, devfreq, USB modes
 DoD: S5, S9; 10 suspend/resume cycles; charge state correct. The runtime masks of `repowerd.service`,
 `a50-enable-autosuspend.service` and `sleep.target` are removed with automatic suspend working, and
-no `systemd.mask=` remains in the built-in command line.
+no `systemd.mask=` remains in the built-in command line. CMU_PERI is registered (validated mode) and the ADR-0007 fixed
+PERI clocks are replaced by real clocks.
 
 ## M13 — Stretch: camera, MFC, sensors, GNSS, Waydroid
 MFC: the ADR-0006 `libgsthybris.so` placeholder is removed once `vendor.media.omx` stays running.

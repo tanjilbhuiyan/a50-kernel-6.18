@@ -40,7 +40,7 @@ later milestones get tickets when we reach them (evidence first, Rule 1).
 | M4.1 | All 8 CPUs online | yes | M3 | done (log/2026-11-10-M4.1-smp.md) |
 | M4.2 | ACPM firmware IPC for Exynos 9610 | yes | M3 | done (log/2026-11-10-M4.2-acpm.md) |
 | M4.3 | S2MPU09 and S2MPB03 PMICs, regulators | yes | M4.2, M4.4 | S2MPU09 done; S2MPB03 waits for I2C |
-| M4.4 | I2C, PWM, keys, PL330 DMA | yes | M3 | blocked (real I2C freezes 6.18) |
+| M4.4 | I2C, PWM, keys, PL330 DMA | yes | M3 | I2C done in M8.1; keys → M8.3; PL330 open (no consumer yet) |
 | M4.5 | Power domains | yes | M3 | done (read-only; log/2026-11-10-M4.5-power-domains.md) |
 | M4.6 | Thermal (TMU) | yes | M3 | done (log/2026-11-10-M4.6-thermal.md) |
 | M4.7 | CPU frequency via ACPM DVFS | yes | M4.1, M4.2, M4.6 | dropped from M4 (owner decision 2026-11-10) |
@@ -58,7 +58,7 @@ later milestones get tickets when we reach them (evidence first, Rule 1).
 | M7.3 | Mali kbase r26p0 port | build no / test yes | M7.1 | done (G2h stock-controlled native/compat memory checks; limits in ticket) |
 | M7.4 | G2D if required | if required | M7.1 | dropped (measured single-layer path; decision/reopen conditions in ticket) |
 | M7.5 | Accelerated Lomiri integration and soak; M7 DoD | yes | M7.2, M7.3, M7.4 decision | done (log/2026-11-18-M7.5-i3-handler-startup.md; S1 soak, ADR-0005/0006) |
-| M8.1 | Real I2C without freezing 6.18 (unblocks M4.4) | yes | M4.4 | todo |
+| M8.1 | Real I2C without freezing 6.18 (unblocks M4.4) | yes | M4.4 | done (log/2026-11-18-M8.1-i2c.md; ADR-0007) |
 | M8.2 | Melfas MMS touchscreen | yes | M8.1 | todo |
 | M8.3 | Volume and power keys | yes | M8.1 (PMIC power key: unverified) | todo |
 | M8.4 | Hall sensor and vibrator | yes | M8.1 where I2C-attached (unverified) | todo |

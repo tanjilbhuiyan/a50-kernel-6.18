@@ -1,0 +1,166 @@
+
+CMD: uname -r
+6.18.33-a50-diag+
+RC=0
+
+CMD: sha256sum /run/a50-r1/regread
+125d3b60226643cda3e7363e447d8c2b138b66be8385300a3ba11e1bad5dc844  /run/a50-r1/regread
+RC=0
+
+CMD: sh -c grep -i -E "1003|1230|1383|1384|1386|1387|1389" /proc/iomem
+RC=1
+
+CMD: sh -c dmesg | grep -i -E "i2c|s3c|cmu.?peri" | head -n 30
+RC=0
+
+M81_R1_READ target=70 uptime=70.10
+PLL_CON0_MUX_CLKCMU_PERI_BUS_USER          0x10030100 0x00000010
+PLL_CON2_MUX_CLKCMU_PERI_BUS_USER          0x10030108 0x00000000
+PLL_CON0_MUX_CLKCMU_PERI_IP_USER           0x10030120 0x00000010
+PLL_CON2_MUX_CLKCMU_PERI_IP_USER           0x10030128 0x00000000
+PLL_CON0_MUX_CLKCMU_PERI_UART_USER         0x10030140 0x00000010
+CMU_PERI_CONTROLLER_OPTION                 0x10030800 0x30000000
+CLK_CON_DIV_DIV_CLK_PERI_I2C               0x10031800 0x00000001
+CLK_CON_GAT_GATE_CLK_PERI_I2C              0x10032008 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_GPIO_PCLK            0x10032048 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_0_PCLK           0x1003204c 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_1_PCLK           0x10032050 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_2_PCLK           0x10032054 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_3_PCLK           0x10032058 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_4_PCLK           0x1003205c 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_5_PCLK           0x10032060 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_6_PCLK           0x10032064 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_MCT_PCLK             0x1003206c 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_PWM_MOTOR_PCLK_S0    0x10032074 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_BUS_CLK              0x10032078 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_CLK              0x1003207c 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_WDT_CLUSTER0_PCLK    0x100320cc 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_WDT_CLUSTER1_PCLK    0x100320d0 0x00200000
+    gate: manual=0 value=1 hwacg=0
+QCH_CON_I2C_0_QCH                          0x1003301c 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_I2C_1_QCH                          0x10033020 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_I2C_2_QCH                          0x10033024 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_I2C_3_QCH                          0x10033028 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_I2C_4_QCH                          0x1003302c 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_I2C_5_QCH                          0x10033030 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_I2C_6_QCH                          0x10033034 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_PERI_CMU_PERI_QCH                  0x10033044 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_PWM_MOTOR_QCH                      0x10033048 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+GICD_CTLR                                  0x12301000 0x00000001
+GICD_ISENABLER8 (ids 256-287)              0x12301120 0x0000001c
+GICD_ISPENDR8 (ids 256-287)                0x12301220 0x00400000
+GICD_ISACTIVER8 (ids 256-287)              0x12301320 0x00000000
+GICD_ICFGR17 (ids 272-287)                 0x12301c44 0x55555555
+GICD_ITARGETSR (ids 276-279)               0x12301914 0x01010101
+GICD_ITARGETSR (ids 280-283)               0x12301918 0x01010101
+GICD_ITARGETSR (ids 284-287)               0x1230191c 0x01010101
+SPI 247 (id 279): enabled=0 pending=0 active=0
+SPI 248 (id 280): enabled=0 pending=0 active=0
+SPI 249 (id 281): enabled=0 pending=0 active=0
+SPI 250 (id 282): enabled=0 pending=0 active=0
+SPI 251 (id 283): enabled=0 pending=0 active=0
+SPI 252 (id 284): enabled=0 pending=0 active=0
+SPI 253 (id 285): enabled=0 pending=0 active=0
+refuse_i2c_controller=ok
+regread_rc=0
+
+M81_R1_READ target=200 uptime=200.95
+PLL_CON0_MUX_CLKCMU_PERI_BUS_USER          0x10030100 0x00000010
+PLL_CON2_MUX_CLKCMU_PERI_BUS_USER          0x10030108 0x00000000
+PLL_CON0_MUX_CLKCMU_PERI_IP_USER           0x10030120 0x00000010
+PLL_CON2_MUX_CLKCMU_PERI_IP_USER           0x10030128 0x00000000
+PLL_CON0_MUX_CLKCMU_PERI_UART_USER         0x10030140 0x00000010
+CMU_PERI_CONTROLLER_OPTION                 0x10030800 0x30000000
+CLK_CON_DIV_DIV_CLK_PERI_I2C               0x10031800 0x00000001
+CLK_CON_GAT_GATE_CLK_PERI_I2C              0x10032008 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_GPIO_PCLK            0x10032048 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_0_PCLK           0x1003204c 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_1_PCLK           0x10032050 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_2_PCLK           0x10032054 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_3_PCLK           0x10032058 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_4_PCLK           0x1003205c 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_5_PCLK           0x10032060 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_6_PCLK           0x10032064 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_MCT_PCLK             0x1003206c 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_PWM_MOTOR_PCLK_S0    0x10032074 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_BUS_CLK              0x10032078 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_I2C_CLK              0x1003207c 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_WDT_CLUSTER0_PCLK    0x100320cc 0x00200000
+    gate: manual=0 value=1 hwacg=0
+CLK_CON_GAT_GOUT_PERI_WDT_CLUSTER1_PCLK    0x100320d0 0x00200000
+    gate: manual=0 value=1 hwacg=0
+QCH_CON_I2C_0_QCH                          0x1003301c 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_I2C_1_QCH                          0x10033020 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_I2C_2_QCH                          0x10033024 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_I2C_3_QCH                          0x10033028 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_I2C_4_QCH                          0x1003302c 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_I2C_5_QCH                          0x10033030 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_I2C_6_QCH                          0x10033034 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_PERI_CMU_PERI_QCH                  0x10033044 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+QCH_CON_PWM_MOTOR_QCH                      0x10033048 0x003f0002
+    qch: enable=0 clock_req=1 ignore_force_pm=0
+GICD_CTLR                                  0x12301000 0x00000001
+GICD_ISENABLER8 (ids 256-287)              0x12301120 0x0000001c
+GICD_ISPENDR8 (ids 256-287)                0x12301220 0x00400000
+GICD_ISACTIVER8 (ids 256-287)              0x12301320 0x00000000
+GICD_ICFGR17 (ids 272-287)                 0x12301c44 0x55555555
+GICD_ITARGETSR (ids 276-279)               0x12301914 0x01010101
+GICD_ITARGETSR (ids 280-283)               0x12301918 0x01010101
+GICD_ITARGETSR (ids 284-287)               0x1230191c 0x01010101
+SPI 247 (id 279): enabled=0 pending=0 active=0
+SPI 248 (id 280): enabled=0 pending=0 active=0
+SPI 249 (id 281): enabled=0 pending=0 active=0
+SPI 250 (id 282): enabled=0 pending=0 active=0
+SPI 251 (id 283): enabled=0 pending=0 active=0
+SPI 252 (id 284): enabled=0 pending=0 active=0
+SPI 253 (id 285): enabled=0 pending=0 active=0
+refuse_i2c_controller=ok
+regread_rc=0
+
+CMD: sh -c dmesg | grep -c -E "Unable to handle|SError|Internal error|BUG:|Kernel panic"
+0
+RC=1
