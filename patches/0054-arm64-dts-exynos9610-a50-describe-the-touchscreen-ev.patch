@@ -1,0 +1,29 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Wed, 18 Nov 2026 13:42:43 +0600
+Subject: [PATCH 54/54] arm64: dts: exynos9610-a50: describe the touchscreen
+ event format
+
+The A50's MSS100 firmware does not report its MIP4 event format; give the
+stock values (format 8, 12-byte events).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I42c59ab29ec70c39763bc630ba7d62ed1cc43797
+---
+ arch/arm64/boot/dts/exynos/exynos9610-a50.dts | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610-a50.dts b/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
+index 3ba023002..7abb415ce 100644
+--- a/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
++++ b/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
+@@ -205,6 +205,9 @@ touchscreen@48 {
+ 		ce-gpios = <&gpg3 1 GPIO_ACTIVE_HIGH>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&touch_irq_pins>;
++		/* The firmware reports no event format; O: melfas,event_info = <0x08 0x0c>. */
++		melfas,event-format = <8>;
++		melfas,event-size = <12>;
+ 	};
+ };
+ 

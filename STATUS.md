@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-18 (M8.1 done; ADR-0007; next M8.2)
+Updated: 2026-11-18 (M8.2 done; next M8.3)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -8,7 +8,34 @@ Read this file, then the active ticket and its log. Before trusting anything her
 branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and on the phone. At the end of a session, update
 **RESUME HERE** with commits, branch, image hashes, last test and rollback result, and the next action.
 
-## RESUME HERE (2026-11-18, M8.1 done; next M8.2)
+## RESUME HERE (2026-11-18, M8.2 done; next M8.3)
+- **Phone:** stock 4.14.194 (office **192.168.181.225**; home 192.168.0.171), post-flight passed, fsck clean
+  7071/3440640 files. No test active.
+- **M8.2 done:** touch works on 6.18 (owner operated Lomiri by touch). Mainline `melfas_mip4` + format 8 + DT
+  event-format fallback + zero-size fix; `patches/` 0001-0054 reproduce tree `a1fc593a`. Blank-state power and the
+  start-up empty-interrupt storm moved to M12 (owner Option A, plan change). Log `log/2026-11-18-M8.2-touch.md`.
+- **Next ticket:** `tasks/M8.3-keys.md`. Live DT has `gpio-keys`; M4.4 used gpa1-5 (vol up), gpa1-6 (vol down),
+  gpa1-7 (power) but never booted with them; confirm against stock DT/4.14 source (power key may come from the PMIC).
+  evdev is already enabled; `CONFIG_KEYBOARD_GPIO` (needs `INPUT_KEYBOARD`) is not yet.
+- **Test base:** `a50-m82-p3-test` (`edd18a66c`; TEST ONLY READY_STATUS probe on top of P1 + `a50-input`); build
+  `tools/m82/build_p3.sh`. Clean branch `a50-input` (`src/m81/clean-kernel`).
+- **Open owner question (from 2026-11-17):** history rewrite for `ccc4e48`/`f68ca87` identifiers, undecided.
+
+## Earlier handoff (M8.2 touch works; superseded)
+- **Phone:** stock 4.14.194 (office **192.168.181.225**; home 192.168.0.171), post-flight passed, fsck clean
+  7071/3440640 files. No test active.
+- **M8.2 P3r:** touch works on 6.18; the owner operated Lomiri by touch (System Information showed 6.18, Terminal
+  opened). Mainline `melfas_mip4` + event format 8 + DT event-format fallback + zero-size fix; DT node with the LDO
+  (gpg3-1) as chip enable and gpa0-0 level-low IRQ; evdev enabled. `patches/` 0001-0054 reproduce tree `a1fc593a`.
+  Log `log/2026-11-18-M8.2-touch.md`.
+- **Open in M8.2 (acceptance 3):** the controller stays powered when the panel blanks, and it storms with empty
+  interrupts (INT held low, READY_STATUS 0xa0) from probe until the first touch; stock storms too (265k IRQs) but is
+  quiet later. Decide whether to fix now or carry with M12 power work.
+- **Test base:** `a50-m82-p3-test` (`edd18a66c`) = P1 test kernel + `a50-input` + TEST ONLY READY_STATUS probe; build
+  `tools/m82/build_p3.sh`; BOOT `src/m82/boot-p3.img`, DT `src/m82/dt-p3.img`. Clean branch `a50-input`
+  (`src/m81/clean-kernel`).
+
+## Earlier handoff (M8.1 done; superseded)
 - **Phone:** stock 4.14.194 (office **192.168.181.225**; home 192.168.0.171), post-flight passed, fsck clean
   7060/3440640 files. No test active.
 - **M8.1 done** (`log/2026-11-18-M8.1-i2c.md`): the M4.4 freeze bisects to the 6.18 CMU_PERI clock driver (T1 vs T3,

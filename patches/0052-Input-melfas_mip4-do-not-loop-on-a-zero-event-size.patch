@@ -1,0 +1,31 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Wed, 18 Nov 2026 13:42:30 +0600
+Subject: [PATCH 52/54] Input: melfas_mip4 - do not loop on a zero event size
+
+The interrupt handler walks the packet in steps of the event size the
+controller reported at probe time. If the controller reports a size of 0
+(or the query failed), the loop never advances and the threaded handler
+spins until the soft lockup detector fires, as seen with Samsung MSS100
+firmware. Drop such packets instead.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I80154e5350b32f868e235f75ad3004ad48d84a72
+---
+ drivers/input/touchscreen/melfas_mip4.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/input/touchscreen/melfas_mip4.c b/drivers/input/touchscreen/melfas_mip4.c
+index 94f8ad13f..b9502d1ca 100644
+--- a/drivers/input/touchscreen/melfas_mip4.c
++++ b/drivers/input/touchscreen/melfas_mip4.c
+@@ -640,6 +640,9 @@ static irqreturn_t mip4_interrupt(int irq, void *dev_id)
+ 
+ 	if (alert) {
+ 		dev_dbg(&client->dev, "Alert: %d\n", ts->buf[0]);
++	} else if (!ts->event_size) {
++		dev_err_ratelimited(&client->dev,
++				    "Unknown event size, packet dropped\n");
+ 	} else {
+ 		for (i = 0; i < size; i += ts->event_size) {
+ 			error = mip4_handle_packet(ts, &ts->buf[i]);

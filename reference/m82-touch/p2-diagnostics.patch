@@ -1,0 +1,71 @@
+From 2ce7448d48f00aff6fe5809af9f65b39e105fc2b Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Wed, 18 Nov 2026 13:21:37 +0600
+Subject: [PATCH] TEST ONLY: M8.2 P2 melfas_mip4 diagnostics and
+ zero-event-size guard (do not merge)
+
+P1 saw an empty-packet interrupt storm, then packets decoded as "Unknown key: 1"
+until the threaded handler soft-locked: consistent with the chip reporting
+event size 0, which never advances the decode loop. Log the raw
+EVENT_SUPPORTED_FUNC reply at probe and the raw bytes of the first packets,
+count empty packets instead of logging each, and skip decoding when the
+event size is 0.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I004077b6b837c824bfd40bd0eeb9056b97655d83
+---
+ drivers/input/touchscreen/melfas_mip4.c | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/input/touchscreen/melfas_mip4.c b/drivers/input/touchscreen/melfas_mip4.c
+index 94f8ad13f..8518e2db9 100644
+--- a/drivers/input/touchscreen/melfas_mip4.c
++++ b/drivers/input/touchscreen/melfas_mip4.c
+@@ -352,6 +352,9 @@ static int mip4_query_device(struct mip4_ts *ts)
+ 	} else {
+ 		ts->event_format = get_unaligned_le16(&buf[4]);
+ 		ts->event_size = buf[6];
++		/* M8.2 P2 diagnostics (TEST ONLY): the raw MIP4 EVENT_SUPPORTED_FUNC reply. */
++		dev_info(&ts->client->dev, "P2 event info raw: %7ph -> format %u size %u\n",
++			 buf, ts->event_format, ts->event_size);
+ 		dev_dbg(&ts->client->dev, "event_format: %d, event_size: %d\n",
+ 			ts->event_format, ts->event_size);
+ 
+@@ -624,7 +627,11 @@ static irqreturn_t mip4_interrupt(int irq, void *dev_id)
+ 
+ 	/* Check size */
+ 	if (!size) {
+-		dev_err(&client->dev, "Empty packet\n");
++		/* M8.2 P2 (TEST ONLY): count empty packets instead of logging each one. */
++		static unsigned int p2_empty;
++
++		if (!(p2_empty++ % 20000))
++			dev_info(&client->dev, "P2 empty packets: %u\n", p2_empty);
+ 		goto out;
+ 	}
+ 
+@@ -638,8 +645,21 @@ static irqreturn_t mip4_interrupt(int irq, void *dev_id)
+ 		goto out;
+ 	}
+ 
++	{
++		/* M8.2 P2 (TEST ONLY): raw bytes of the first 40 non-empty packets, then every 500th. */
++		static unsigned int p2_pkts;
++
++		if (p2_pkts < 40 || !(p2_pkts % 500))
++			dev_info(&client->dev, "P2 packet #%u info 0x%02x size %u alert %d data %*ph\n",
++				 p2_pkts, size | (alert ? 0x80 : 0), size, alert, min_t(int, size, 24), ts->buf);
++		p2_pkts++;
++	}
++
+ 	if (alert) {
+ 		dev_dbg(&client->dev, "Alert: %d\n", ts->buf[0]);
++	} else if (!ts->event_size) {
++		/* M8.2 P2 (TEST ONLY): event size 0 would never advance the loop below (P1 soft lockup). */
++		dev_err_ratelimited(&client->dev, "P2 event size 0, packet not decoded\n");
+ 	} else {
+ 		for (i = 0; i < size; i += ts->event_size) {
+ 			error = mip4_handle_packet(ts, &ts->buf[i]);
+-- 
+2.56.1
+

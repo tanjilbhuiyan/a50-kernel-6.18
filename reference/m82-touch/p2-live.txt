@@ -1,0 +1,291 @@
+
+CMD: uname -r
+6.18.33-a50-diag+
+RC=0
+
+CMD: cat /proc/uptime
+40.58 220.44
+RC=0
+
+CMD: sh -c dmesg | grep -i -E "mip4|melfas|0048|touchscreen|input:" | head -n 60
+[   24.000487] init: Sending signal 9 to service 'exec 2 (/system/bin/vndk-detect)' (pid 45) process group...
+[   37.704767] mip4_ts 3-0048: P2 empty packets: 20001
+RC=0
+
+M82_P2_EINT_IDLE
+GPA0_CON           0x11850020 0x0000000f
+GPA0_DAT           0x11850024 0x0000004e
+GPA0_PUD           0x11850028 0x00111110
+WKUP_ECON_gpa0     0x11850700 0x00000000
+WKUP_FLTCON_gpa0   0x11850800 0x00000000
+WKUP_EMASK_gpa0    0x11850900 0x000000ff
+WKUP_EPEND_gpa0    0x11850a00 0x00000001
+GICD_ISENABLER1    0x12301104 0x00ffffff
+GICD_ISPENDR1      0x12301204 0x00000000
+GICD_ISACTIVER1    0x12301304 0x00000000
+GICD_ICFGR2        0x12301c08 0x55555555
+sample  0: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample  1: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample  2: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample  3: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample  4: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample  5: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample  6: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample  7: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample  8: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample  9: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample 10: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample 11: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample 12: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample 13: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample 14: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample 15: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample 16: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample 17: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample 18: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample 19: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+WKUP_ECON gpa0-0 type=0 (0=level low,1=level high,2=falling,3=rising,4=both)
+refuse_other=ok
+eintread_rc=0
+
+CMD: sh -c for d in /sys/bus/i2c/devices/*-0048; do echo "$d driver=$(readlink $d/driver)"; for a in product_id ic_name fw_version hw_version; do printf "  %s=" $a; cat $d/$a 2>&1; done; done
+/sys/bus/i2c/devices/3-0048 driver=../../../../../../bus/i2c/drivers/mip4_ts
+  product_id=1004
+  ic_name=
+  fw_version=EEEE 0301 1130 2F02
+  hw_version=2019-A50
+RC=0
+
+CMD: cat /proc/bus/input/devices
+I: Bus=0018 Vendor=13c5 Product=1004 Version=0000
+N: Name="MELFAS MIP4 Touchscreen"
+P: Phys=3-0048/input0
+S: Sysfs=/devices/platform/soc@0/13870000.i2c/i2c-3/3-0048/input/input0
+U: Uniq=
+H: Handlers=event0
+B: PROP=2
+B: EV=b
+B: KEY=400 0 0 0 0 0
+B: ABS=6e3800001000003
+
+RC=0
+
+CMD: sh -c grep -i -E "mip4|melfas|gpa0|i2c" /proc/interrupts
+ 58:          0          0          0          0          0          0          0          0 GIC-0 279 Level     13830000.i2c
+ 59:          0          0          0          0          0          0          0          0 GIC-0 280 Level     13840000.i2c
+ 60:          0          0          0          0          0          0          0          0 GIC-0 282 Level     13860000.i2c
+ 61:     246316          0          0          0          0          0          0          0 GIC-0 283 Level     13870000.i2c
+ 62:          0          0          0          0          0          0          0          0 GIC-0 285 Level     13890000.i2c
+ 70:      49248          0          0          0          0          0          0          0     gpa0   0 Level     mip4_ts
+RC=0
+
+CMD: sh -c grep -i -E "gpg3|gpa0|ce|mip4" /sys/kernel/debug/gpio | head -n 20
+gpiochip3: 8 GPIOs, parent: platform/11850000.pinctrl, gpa0:
+gpiochip45: 6 GPIOs, parent: platform/139b0000.pinctrl, gpg3:
+ gpio-1   (                    |ce                  ) out hi
+RC=0
+
+CMD: sh -c cat /sys/kernel/debug/pinctrl/11850000.pinctrl*/pinmux-pins 2>/dev/null | grep -E "gpa0-0"
+pin 6 (gpa0-0): 3-0048 (GPIO UNCLAIMED) function touch-irq-pins group gpa0-0
+RC=0
+
+M82_P2_TOUCH_CAPTURE uptime=80.58 (owner drags a finger on the screen)
+irq_before:  70: 109762 0 0 0 0 0 0 0 gpa0 0 Level mip4_ts
+device /dev/input/event0 name "MELFAS MIP4 Touchscreen"
+abs MT_X min 0 max 4095 res 0
+abs MT_Y min 0 max 4095 res 0
+abs MT_SLOT min 0 max 9 res 0
+abs MT_PRESSURE min 0 max 255 res 0
+abs MT_TOUCH_MAJOR min 0 max 255 res 0
+capturing 60 s (no grab)
+summary contacts=0 x_events=0 y_events=0 syn=0 other=0 x_range=-1..-1 y_range=-1..-1
+evcap_rc=0
+
+M82_P2_EINT_TOUCH_A
+GPA0_CON           0x11850020 0x0000000f
+GPA0_DAT           0x11850024 0x0000004f
+GPA0_PUD           0x11850028 0x00111110
+WKUP_ECON_gpa0     0x11850700 0x00000000
+WKUP_FLTCON_gpa0   0x11850800 0x00000000
+WKUP_EMASK_gpa0    0x11850900 0x000000fe
+WKUP_EPEND_gpa0    0x11850a00 0x00000000
+GICD_ISENABLER1    0x12301104 0x00ffffff
+GICD_ISPENDR1      0x12301204 0x00000000
+GICD_ISACTIVER1    0x12301304 0x00000000
+GICD_ICFGR2        0x12301c08 0x55555555
+sample  0: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  1: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  2: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  3: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  4: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  5: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  6: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  7: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  8: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  9: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 10: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 11: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 12: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 13: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 14: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 15: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 16: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 17: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 18: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 19: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+WKUP_ECON gpa0-0 type=0 (0=level low,1=level high,2=falling,3=rising,4=both)
+refuse_other=ok
+
+M82_P2_EINT_TOUCH_B
+GPA0_CON           0x11850020 0x0000000f
+GPA0_DAT           0x11850024 0x0000004f
+GPA0_PUD           0x11850028 0x00111110
+WKUP_ECON_gpa0     0x11850700 0x00000000
+WKUP_FLTCON_gpa0   0x11850800 0x00000000
+WKUP_EMASK_gpa0    0x11850900 0x000000fe
+WKUP_EPEND_gpa0    0x11850a00 0x00000000
+GICD_ISENABLER1    0x12301104 0x00ffffff
+GICD_ISPENDR1      0x12301204 0x00000000
+GICD_ISACTIVER1    0x12301304 0x00000000
+GICD_ICFGR2        0x12301c08 0x55555555
+sample  0: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  1: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  2: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  3: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  4: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  5: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  6: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  7: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  8: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  9: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 10: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 11: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 12: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 13: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 14: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 15: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 16: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample 17: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 18: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 19: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+WKUP_ECON gpa0-0 type=0 (0=level low,1=level high,2=falling,3=rising,4=both)
+refuse_other=ok
+irq_after:  70: 113465 0 0 0 0 0 0 0 gpa0 0 Level mip4_ts
+
+CMD: sh -c dmesg | grep -E "P2 " | head -n 80
+[  103.475347] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  103.493307] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  103.510793] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  103.527857] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  103.545316] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  103.562709] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  103.580116] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  103.597549] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  103.618115] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  103.634112] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  107.288457] mip4_ts 3-0048: P2 packet #3000 info 0x18 size 24 alert 0 data 11 01 83 34 92 42 03 30 00 00 03 02 12 01 68 4c c2 42 03 30 00 00 03 02
+[  108.888719] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  108.909314] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  108.929314] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  108.942548] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  108.962108] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  108.977347] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  109.001313] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  109.014103] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  109.030099] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  109.046991] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  113.893323] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  113.904280] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  113.925315] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  113.939191] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  113.954090] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  113.963558] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  113.975540] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  113.987561] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  113.999517] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  114.011561] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  115.905765] mip4_ts 3-0048: P2 packet #3500 info 0x0c size 12 alert 0 data 12 01 5b 9c 42 42 03 30 00 00 03 02
+[  118.905322] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  118.917313] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  118.926098] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  118.941314] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  118.953313] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  118.962112] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  118.977315] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  118.982192] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  118.993788] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  119.008651] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  121.657187] mip4_ts 3-0048: P2 packet #4000 info 0x78 size 120 alert 0 data 12 00 b9 c6 d8 00 00 00 00 00 00 00 11 00 ce da 34 00 00 00 00 00 00 00
+[  123.910122] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  123.920905] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  123.932845] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  123.944899] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  123.956882] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  123.968878] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  123.980898] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  123.997313] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  124.004887] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  124.016825] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  128.921931] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  128.932969] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  128.943882] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  128.954916] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  128.965886] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  128.976888] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  128.989793] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  129.001787] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  129.009937] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  129.025315] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  129.553316] mip4_ts 3-0048: P2 packet #4500 info 0x0c size 12 alert 0 data 11 01 b8 14 f4 42 03 30 00 00 03 02
+[  133.925320] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  133.929921] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  133.940889] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  133.951869] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  133.962824] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  133.973808] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  133.989312] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  133.997796] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  134.009786] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  134.017904] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  136.152575] mip4_ts 3-0048: P2 packet #5000 info 0x0c size 12 alert 0 data 11 01 40 14 54 42 03 30 00 00 03 02
+[  138.931934] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  138.943860] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  138.955786] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  138.967726] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  138.979653] mip4_ts 3-0048: P2 event size 0, packet not decoded
+RC=0
+
+CMD: sh -c dmesg | grep -i -E "mip4|melfas" | tail -n 20
+[  133.940889] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  133.951869] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  133.962824] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  133.973808] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  133.989312] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  133.997796] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  134.009786] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  134.017904] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  136.152575] mip4_ts 3-0048: P2 packet #5000 info 0x0c size 12 alert 0 data 11 01 40 14 54 42 03 30 00 00 03 02
+[  138.931924] mip4_interrupt: 393 callbacks suppressed
+[  138.931934] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  138.943860] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  138.955786] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  138.967726] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  138.979653] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  138.991606] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  139.003550] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  139.015534] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  139.027455] mip4_ts 3-0048: P2 event size 0, packet not decoded
+[  139.039372] mip4_ts 3-0048: P2 event size 0, packet not decoded
+RC=0
+
+M82_P2_READ target=160 uptime=160.25
+session: NRestarts=0 ActiveState=active
+system: NFailedUnits=0 SystemState=starting
+
+M82_P2_READ target=200 uptime=200.88
+session: NRestarts=0 ActiveState=active
+system: NFailedUnits=0 SystemState=running
+
+CMD: sh -c dmesg | grep -c -E "Unable to handle|SError|Internal error|BUG:|Kernel panic|soft lockup|hard LOCKUP"
+0
+RC=1

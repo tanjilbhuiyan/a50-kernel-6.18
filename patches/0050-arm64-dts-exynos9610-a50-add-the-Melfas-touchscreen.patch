@@ -1,0 +1,61 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Wed, 18 Nov 2026 12:58:46 +0600
+Subject: [PATCH 50/54] arm64: dts: exynos9610-a50: add the Melfas touchscreen
+
+The Galaxy A50's touch controller is a Melfas MSS100 on I2C bus 4 at
+address 0x48, speaking MIP4. Its 3.0 V supply is a GPIO-switched LDO on
+gpg3-1, used as the MIP4 chip enable, and its interrupt is gpa0-0, level
+low, with the pin in external-interrupt mode as in the stock device tree.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: Ie0e6a2a08d5d55231fe3b3af7c92aede67734f99
+---
+ arch/arm64/boot/dts/exynos/exynos9610-a50.dts | 27 +++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610-a50.dts b/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
+index 7576e5487..3ba023002 100644
+--- a/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
++++ b/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
+@@ -10,6 +10,8 @@
+ /dts-v1/;
+ 
+ #include "exynos9610.dtsi"
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/interrupt-controller/irq.h>
+ 
+ / {
+ 	model = "Samsung Galaxy A50 (SM-A505F)";
+@@ -189,6 +191,31 @@ &i2c_4 {
+ 	samsung,i2c-sda-delay = <100>;
+ 	samsung,i2c-max-bus-freq = <400000>;
+ 	status = "okay";
++
++	/*
++	 * Melfas MSS100 (O: mms_ts@48). Its 3.0 V supply is a GPIO-switched LDO
++	 * (O: tsp_ldo_en, gpg3-1 active high), used here as the MIP4 chip enable;
++	 * the interrupt is gpa0-0, level low as the stock driver requests it.
++	 */
++	touchscreen@48 {
++		compatible = "melfas,mip4_ts";
++		reg = <0x48>;
++		interrupt-parent = <&gpa0>;
++		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++		ce-gpios = <&gpg3 1 GPIO_ACTIVE_HIGH>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&touch_irq_pins>;
++	};
++};
++
++&pinctrl_alive {
++	/* O: mms_ts on_state (attn-irq): gpa0-0 as external interrupt, no pull. */
++	touch_irq_pins: touch-irq-pins {
++		samsung,pins = "gpa0-0";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
++	};
+ };
+ 
+ &i2c_6 {

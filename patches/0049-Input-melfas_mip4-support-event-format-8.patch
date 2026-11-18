@@ -1,0 +1,64 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Wed, 18 Nov 2026 12:58:28 +0600
+Subject: [PATCH 49/54] Input: melfas_mip4 - support event format 8
+
+Samsung's MSS100 touchscreen firmware on the Galaxy A50 reports MIP4 event
+format 8 (12-byte packets). It is format 3 with a 2-byte Z value in bytes
+5-6, so size, pressure and touch axes move up by one byte. Accept the
+format at probe time and decode it; the packet type is taken from the
+high nibble of byte 0 as for format 3. The layout follows Samsung's
+EVENT_FORMAT_WITH_PRESSURE_2BYTE handling in their MSS100 driver.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: Idf84d3534db050f0d7f7c2b848aa06ad79044938
+---
+ drivers/input/touchscreen/melfas_mip4.c | 21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/input/touchscreen/melfas_mip4.c b/drivers/input/touchscreen/melfas_mip4.c
+index 869884219..94f8ad13f 100644
+--- a/drivers/input/touchscreen/melfas_mip4.c
++++ b/drivers/input/touchscreen/melfas_mip4.c
+@@ -355,7 +355,8 @@ static int mip4_query_device(struct mip4_ts *ts)
+ 		dev_dbg(&ts->client->dev, "event_format: %d, event_size: %d\n",
+ 			ts->event_format, ts->event_size);
+ 
+-		if (ts->event_format == 2 || ts->event_format > 3)
++		if (ts->event_format == 2 ||
++		    (ts->event_format > 3 && ts->event_format != 8))
+ 			dev_warn(&ts->client->dev,
+ 				 "Unknown event format %d\n", ts->event_format);
+ 	}
+@@ -497,6 +498,23 @@ static void mip4_report_touch(struct mip4_ts *ts, u8 *packet)
+ 		}
+ 		break;
+ 
++	case 8:
++		/* Touch + Force(Pressure), with a 2-byte Z value in packet[5..6] */
++		id = (packet[0] & 0x0F) - 1;
++		hover = packet[1] & BIT(2);
++		palm = packet[1] & BIT(1);
++		state = packet[1] & BIT(0);
++		x = ((packet[2] & 0x0F) << 8) | packet[3];
++		y = (((packet[2] >> 4) & 0x0F) << 8) |
++			packet[4];
++		size = packet[7];
++		pressure_stage = (packet[8] & 0xF0) >> 4;
++		pressure = ((packet[8] & 0x0F) << 8) |
++			packet[9];
++		touch_major = packet[10];
++		touch_minor = packet[11];
++		break;
++
+ 	case 3:
+ 	default:
+ 		/* Touch + Force(Pressure) */
+@@ -551,6 +569,7 @@ static int mip4_handle_packet(struct mip4_ts *ts, u8 *packet)
+ 		break;
+ 
+ 	case 3:
++	case 8:
+ 		type = (packet[0] & 0xF0) >> 4;
+ 		break;
+ 

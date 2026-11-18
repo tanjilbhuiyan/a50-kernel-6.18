@@ -1,0 +1,62 @@
+From edd18a66cd1620166c16f6956b4b771a9c1725bd Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Wed, 18 Nov 2026 13:43:43 +0600
+Subject: [PATCH] TEST ONLY: M8.2 P3 count empty packets and probe MIP4
+ READY_STATUS (do not merge)
+
+Log the first empty packets with the READY_STATUS value (0x0600), clear the
+log status (0x77) as Samsung's MSS100 driver does, and log the first
+non-empty packets with the event format/size in use.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I6e368b057c87827040782b9f15bc0e1079e368c3
+---
+ drivers/input/touchscreen/melfas_mip4.c | 29 ++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/input/touchscreen/melfas_mip4.c b/drivers/input/touchscreen/melfas_mip4.c
+index 69fa0b364..77c261571 100644
+--- a/drivers/input/touchscreen/melfas_mip4.c
++++ b/drivers/input/touchscreen/melfas_mip4.c
+@@ -645,10 +645,37 @@ static irqreturn_t mip4_interrupt(int irq, void *dev_id)
+ 
+ 	/* Check size */
+ 	if (!size) {
+-		dev_err(&client->dev, "Empty packet\n");
++		/*
++		 * M8.2 P3 (TEST ONLY): P1/P2 saw INT held low with empty packets from probe until the
++		 * first touch. Count them, read MIP4 READY_STATUS (0x0600) and, as Samsung's MSS100
++		 * driver does for status 0x77 (log), write LOG_TRIGGER (0x1014) = 0.
++		 */
++		static unsigned int p3_empty;
++		u8 st_cmd[2] = { MIP4_R0_CTRL, MIP4_R1_CTRL_READY_STATUS };
++		u8 st = 0xff;
++		int st_err = mip4_i2c_xfer(ts, st_cmd, sizeof(st_cmd), &st, 1);
++
++		if (!st_err && st == 0x77) {
++			u8 clr[3] = { 0x10, 0x14, 0x00 };
++
++			i2c_master_send(client, clr, sizeof(clr));
++		}
++		if (p3_empty < 10 || !(p3_empty % 20000))
++			dev_info(&client->dev, "P3 empty packet #%u ready_status 0x%02x err %d\n",
++				 p3_empty, st, st_err);
++		p3_empty++;
+ 		goto out;
+ 	}
+ 
++	{
++		static unsigned int p3_pkts;
++
++		if (p3_pkts < 10 || !(p3_pkts % 1000))
++			dev_info(&client->dev, "P3 packet #%u info 0x%02x size %u format %u event_size %u\n",
++				 p3_pkts, ts->buf[0], size, ts->event_format, ts->event_size);
++		p3_pkts++;
++	}
++
+ 	/* Read packet data */
+ 	cmd[0] = MIP4_R0_EVENT;
+ 	cmd[1] = MIP4_R1_EVENT_PACKET_DATA;
+-- 
+2.56.1
+

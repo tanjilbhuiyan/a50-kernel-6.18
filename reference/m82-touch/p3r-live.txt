@@ -1,0 +1,280 @@
+
+CMD: uname -r
+6.18.33-a50-diag+
+RC=0
+
+CMD: cat /proc/uptime
+37.16 218.37
+RC=0
+
+CMD: sh -c dmesg | grep -i -E "mip4|melfas|0048|touchscreen|input:" | head -n 60
+[   24.343848] mip4_ts 3-0048: P3 empty packet #1 ready_status 0xa0 err 0
+[   24.344176] mip4_ts 3-0048: P3 empty packet #2 ready_status 0xa0 err 0
+[   24.344495] mip4_ts 3-0048: P3 empty packet #3 ready_status 0xa0 err 0
+[   24.344814] mip4_ts 3-0048: P3 empty packet #4 ready_status 0xa0 err 0
+[   24.345130] mip4_ts 3-0048: P3 empty packet #5 ready_status 0xa0 err 0
+[   24.345447] mip4_ts 3-0048: P3 empty packet #6 ready_status 0xa0 err 0
+[   24.345763] mip4_ts 3-0048: P3 empty packet #7 ready_status 0xa0 err 0
+[   24.346080] mip4_ts 3-0048: P3 empty packet #8 ready_status 0xa0 err 0
+[   24.346398] mip4_ts 3-0048: P3 empty packet #9 ready_status 0xa0 err 0
+[   30.004836] systemd[1]: Starting systemd-timesyncd.service - Network Time Synchronization...
+RC=0
+
+M82_P3_EINT_IDLE
+GPA0_CON           0x11850020 0x0000000f
+GPA0_DAT           0x11850024 0x0000004e
+GPA0_PUD           0x11850028 0x00111110
+WKUP_ECON_gpa0     0x11850700 0x00000000
+WKUP_FLTCON_gpa0   0x11850800 0x00000000
+WKUP_EMASK_gpa0    0x11850900 0x000000ff
+WKUP_EPEND_gpa0    0x11850a00 0x00000001
+GICD_ISENABLER1    0x12301104 0x00ffffff
+GICD_ISPENDR1      0x12301204 0x00000000
+GICD_ISACTIVER1    0x12301304 0x00000000
+GICD_ICFGR2        0x12301c08 0x55555555
+sample  0: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample  1: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample  2: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample  3: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample  4: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=1
+sample  5: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample  6: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample  7: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample  8: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample  9: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample 10: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample 11: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample 12: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample 13: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample 14: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample 15: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample 16: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample 17: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample 18: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample 19: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+WKUP_ECON gpa0-0 type=0 (0=level low,1=level high,2=falling,3=rising,4=both)
+refuse_other=ok
+eintread_rc=0
+
+CMD: sh -c for d in /sys/bus/i2c/devices/*-0048; do echo "$d driver=$(readlink $d/driver)"; for a in product_id ic_name fw_version hw_version; do printf "  %s=" $a; cat $d/$a 2>&1; done; done
+/sys/bus/i2c/devices/3-0048 driver=../../../../../../bus/i2c/drivers/mip4_ts
+  product_id=1004
+  ic_name=
+  fw_version=EEEE 0301 1130 2F02
+  hw_version=2019-A50
+RC=0
+
+CMD: cat /proc/bus/input/devices
+I: Bus=0018 Vendor=13c5 Product=1004 Version=0000
+N: Name="MELFAS MIP4 Touchscreen"
+P: Phys=3-0048/input0
+S: Sysfs=/devices/platform/soc@0/13870000.i2c/i2c-3/3-0048/input/input0
+U: Uniq=
+H: Handlers=event0
+B: PROP=2
+B: EV=b
+B: KEY=400 0 0 0 0 0
+B: ABS=6e3800001000003
+
+RC=0
+
+CMD: sh -c grep -i -E "mip4|melfas|gpa0|i2c" /proc/interrupts
+ 58:          0          0          0          0          0          0          0          0 GIC-0 279 Level     13830000.i2c
+ 59:          0          0          0          0          0          0          0          0 GIC-0 280 Level     13840000.i2c
+ 60:          0          0          0          0          0          0          0          0 GIC-0 282 Level     13860000.i2c
+ 61:     102194          0          0          0          0          0          0          0 GIC-0 283 Level     13870000.i2c
+ 62:          0          0          0          0          0          0          0          0 GIC-0 285 Level     13890000.i2c
+ 70:      10212          0          0          0          0          0          0          0     gpa0   0 Level     mip4_ts
+RC=0
+
+CMD: sh -c grep -i -E "gpg3|gpa0|ce|mip4" /sys/kernel/debug/gpio | head -n 20
+gpiochip3: 8 GPIOs, parent: platform/11850000.pinctrl, gpa0:
+gpiochip45: 6 GPIOs, parent: platform/139b0000.pinctrl, gpg3:
+ gpio-1   (                    |ce                  ) out hi
+RC=0
+
+CMD: sh -c cat /sys/kernel/debug/pinctrl/11850000.pinctrl*/pinmux-pins 2>/dev/null | grep -E "gpa0-0"
+pin 6 (gpa0-0): 3-0048 (GPIO UNCLAIMED) function touch-irq-pins group gpa0-0
+RC=0
+
+M82_P3_TOUCH_CAPTURE uptime=80.22 (owner drags a finger on the screen)
+irq_before:  70: 13099 0 0 0 0 0 0 0 gpa0 0 Level mip4_ts
+device /dev/input/event0 name "MELFAS MIP4 Touchscreen"
+abs MT_X min 0 max 4095 res 0
+abs MT_Y min 0 max 4095 res 0
+abs MT_SLOT min 0 max 9 res 0
+abs MT_PRESSURE min 0 max 255 res 0
+abs MT_TOUCH_MAJOR min 0 max 255 res 0
+capturing 60 s (no grab)
+1794989529.083142 type 3 code 57 value 38
+1794989529.083142 type 3 code 53 value 1186
+1794989529.083142 type 3 code 54 value 2758
+1794989529.083142 type 1 code 330 value 1
+1794989529.083142 type 3 code 0 value 1186
+1794989529.083142 type 3 code 1 value 2758
+1794989529.083142 type 0 code 0 value 0
+1794989529.099282 type 3 code 53 value 1182
+1794989529.099282 type 3 code 54 value 2752
+1794989529.099282 type 3 code 0 value 1182
+1794989529.099282 type 3 code 1 value 2752
+1794989529.099282 type 3 code 47 value 1
+1794989529.099282 type 3 code 57 value 39
+1794989529.099282 type 3 code 53 value 2024
+1794989529.099282 type 3 code 54 value 2264
+1794989529.099282 type 0 code 0 value 0
+1794989529.115808 type 3 code 47 value 0
+1794989529.115808 type 3 code 53 value 1160
+1794989529.115808 type 3 code 54 value 2730
+1794989529.115808 type 3 code 0 value 1160
+1794989529.115808 type 3 code 1 value 2730
+1794989529.115808 type 0 code 0 value 0
+1794989529.130969 type 3 code 53 value 1118
+1794989529.130969 type 3 code 54 value 2690
+1794989529.130969 type 3 code 0 value 1118
+1794989529.130969 type 3 code 1 value 2690
+1794989529.130969 type 0 code 0 value 0
+1794989529.146972 type 3 code 53 value 1084
+1794989529.146972 type 3 code 54 value 2658
+1794989529.146972 type 3 code 0 value 1084
+1794989529.146972 type 3 code 1 value 2658
+1794989529.146972 type 0 code 0 value 0
+1794989529.163640 type 3 code 53 value 1060
+1794989529.163640 type 3 code 54 value 2634
+1794989529.163640 type 3 code 0 value 1060
+1794989529.163640 type 3 code 1 value 2634
+1794989529.163640 type 0 code 0 value 0
+1794989529.179071 type 3 code 53 value 1046
+1794989529.179071 type 3 code 54 value 2620
+1794989529.179071 type 3 code 0 value 1046
+1794989529.179071 type 3 code 1 value 2620
+1794989529.179071 type 0 code 0 value 0
+1794989529.195116 type 3 code 53 value 1070
+1794989529.195116 type 3 code 0 value 1070
+1794989529.195116 type 0 code 0 value 0
+1794989529.211122 type 3 code 53 value 1110
+1794989529.211122 type 3 code 54 value 2626
+1794989529.211122 type 3 code 0 value 1110
+1794989529.211122 type 3 code 1 value 2626
+1794989529.211122 type 3 code 47 value 1
+1794989529.211122 type 3 code 53 value 2052
+1794989529.211122 type 3 code 54 value 2280
+1794989529.211122 type 0 code 0 value 0
+1794989529.227603 type 3 code 47 value 0
+1794989529.227603 type 3 code 53 value 1186
+1794989529.227603 type 3 code 54 value 2658
+1794989529.227603 type 3 code 0 value 1186
+1794989529.227603 type 3 code 1 value 2658
+1794989529.227603 type 3 code 47 value 1
+1794989529.227603 type 3 code 53 value 2148
+summary contacts=56 x_events=943 y_events=871 syn=888 other=1975 x_range=62..4086 y_range=38..4090
+evcap_rc=0
+
+M82_P3_EINT_TOUCH_A
+GPA0_CON           0x11850020 0x0000000f
+GPA0_DAT           0x11850024 0x0000004f
+GPA0_PUD           0x11850028 0x00111110
+WKUP_ECON_gpa0     0x11850700 0x00000000
+WKUP_FLTCON_gpa0   0x11850800 0x00000000
+WKUP_EMASK_gpa0    0x11850900 0x000000fe
+WKUP_EPEND_gpa0    0x11850a00 0x00000000
+GICD_ISENABLER1    0x12301104 0x00ffffff
+GICD_ISPENDR1      0x12301204 0x00000000
+GICD_ISACTIVER1    0x12301304 0x00000000
+GICD_ICFGR2        0x12301c08 0x55555555
+sample  0: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  1: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  2: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  3: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  4: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  5: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  6: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  7: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  8: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  9: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 10: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 11: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 12: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 13: gpa0-0 level=0 con_func=0xf epend=0 gic_spi0_pending=0
+sample 14: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 15: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 16: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 17: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 18: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 19: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+WKUP_ECON gpa0-0 type=0 (0=level low,1=level high,2=falling,3=rising,4=both)
+refuse_other=ok
+
+M82_P3_EINT_TOUCH_B
+GPA0_CON           0x11850020 0x0000000f
+GPA0_DAT           0x11850024 0x0000004f
+GPA0_PUD           0x11850028 0x00111110
+WKUP_ECON_gpa0     0x11850700 0x00000000
+WKUP_FLTCON_gpa0   0x11850800 0x00000000
+WKUP_EMASK_gpa0    0x11850900 0x000000fe
+WKUP_EPEND_gpa0    0x11850a00 0x00000000
+GICD_ISENABLER1    0x12301104 0x00ffffff
+GICD_ISPENDR1      0x12301204 0x00000000
+GICD_ISACTIVER1    0x12301304 0x00000000
+GICD_ICFGR2        0x12301c08 0x55555555
+sample  0: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  1: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  2: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  3: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  4: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  5: gpa0-0 level=0 con_func=0xf epend=1 gic_spi0_pending=0
+sample  6: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  7: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  8: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample  9: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 10: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 11: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 12: gpa0-0 level=1 con_func=0xf epend=1 gic_spi0_pending=0
+sample 13: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 14: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 15: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 16: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 17: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 18: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+sample 19: gpa0-0 level=1 con_func=0xf epend=0 gic_spi0_pending=0
+WKUP_ECON gpa0-0 type=0 (0=level low,1=level high,2=falling,3=rising,4=both)
+refuse_other=ok
+irq_after:  70: 14204 0 0 0 0 0 0 0 gpa0 0 Level mip4_ts
+
+CMD: sh -c dmesg | grep -E "P3 " | head -n 60
+[  131.073122] mip4_ts 3-0048: P3 packet #2000 info 0x0c size 12 format 8 event_size 12
+RC=0
+
+CMD: sh -c dmesg | grep -i -E "mip4|melfas" | tail -n 20
+[  135.726063] mip4_ts 3-0048: Unknown event type: 11
+[  135.726068] mip4_ts 3-0048: Unknown key: 0
+[  135.726073] mip4_ts 3-0048: Unknown key: 0
+[  135.726077] mip4_ts 3-0048: Unknown key: 0
+[  135.726081] mip4_ts 3-0048: Unknown key: 0
+[  135.726084] mip4_ts 3-0048: Unknown key: 0
+[  137.198788] mip4_ts 3-0048: Unknown event type: 8
+[  137.198806] mip4_ts 3-0048: Unknown event type: 11
+[  137.198812] mip4_ts 3-0048: Unknown key: 0
+[  137.198816] mip4_ts 3-0048: Unknown key: 0
+[  137.198821] mip4_ts 3-0048: Unknown key: 0
+[  137.198826] mip4_ts 3-0048: Unknown key: 0
+[  137.198829] mip4_ts 3-0048: Unknown key: 0
+[  139.045945] mip4_ts 3-0048: Unknown event type: 8
+[  139.045963] mip4_ts 3-0048: Unknown event type: 11
+[  139.045968] mip4_ts 3-0048: Unknown key: 0
+[  139.045973] mip4_ts 3-0048: Unknown key: 0
+[  139.045978] mip4_ts 3-0048: Unknown key: 0
+[  139.045983] mip4_ts 3-0048: Unknown key: 0
+[  139.045987] mip4_ts 3-0048: Unknown key: 0
+RC=0
+
+M82_P3_READ target=160 uptime=160.76
+session: NRestarts=0 ActiveState=active
+system: NFailedUnits=0 SystemState=starting
+
+M82_P3_READ target=200 uptime=200.41
+session: NRestarts=0 ActiveState=active
+system: NFailedUnits=0 SystemState=running
+
+CMD: sh -c dmesg | grep -c -E "Unable to handle|SError|Internal error|BUG:|Kernel panic|soft lockup|hard LOCKUP"
+0
+RC=1

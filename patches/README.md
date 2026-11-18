@@ -9,14 +9,16 @@ continues to hold the separate clean driver series.
 
 - **Base:** https://android.googlesource.com/kernel/common, branch `android17-6.18`,
   commit `d9a614feddce2e8e68767df1d3421305d26a965b` (2026-10-31, Linux 6.18.33).
-- **Series:** `0001` to `0048`. It is the project's clean driver stack:
+- **Series:** `0001` to `0054`. It is the project's clean driver stack:
   - `0001`-`0035` (M2-M5): device tree and defconfig, Exynos 9610 clocks, pinctrl, UFS with the `A50_UFS_SAFE` write
     guard, USB PHY, ACPM, S2MPU09 regulators (read-only), thermal (read-only), and the userdata write allow-list;
   - `0036`-`0040` (M6): tracepoint and Rust build fixes, and the Exynos ION system-heap ABI on native DMA-BUF heaps;
   - `0041`-`0045` (M7): the pinctrl GPIO-interrupt fix, display clocks and DPU SysMMU in the DT, the `a50-decon` fbdev
     driver on the bootloader's display pipeline, and Samsung's Mali r26p0 kbase ported to 6.18 at a fixed GPU clock;
   - `0046`-`0048` (M8): the I2C controllers (buses 0/1/3/4/6) on a fixed PERI clock with CMU_PERI left to the
-    bootloader ([ADR-0007](../docs/decisions/ADR-0007-cmu-peri-bootloader-clocks.md)), and I2C in the defconfig.
+    bootloader ([ADR-0007](../docs/decisions/ADR-0007-cmu-peri-bootloader-clocks.md)), and I2C in the defconfig;
+  - `0049`-`0054` (M8): the Melfas MSS100 touchscreen on mainline `melfas_mip4` (event format 8, a zero-event-size fix,
+    the event format from the device tree when the firmware reports none), its DT node, and evdev in the defconfig.
 - **Not included:** diagnostic patches and one-off test patches. They stay with their test evidence under `reference/`.
   The Halium/Ubuntu Touch config flags are in `tools/m51/halium.flags`.
 
@@ -33,7 +35,8 @@ make ARCH=arm64 LLVM=1 O=out -j"$(nproc)" Image
 
 The defconfig covers the M2-M5 drivers. The full config of the M7 stack is
 [reference/m75-integration/clean.config](../reference/m75-integration/clean.config) (it covers `0001`-`0045`; for
-`0046`-`0048` also set `CONFIG_I2C=y`, `CONFIG_I2C_CHARDEV=y` and `CONFIG_I2C_S3C2410=y`, as the defconfig does);
+`0046`-`0054` also set `CONFIG_I2C=y`, `CONFIG_I2C_CHARDEV=y`, `CONFIG_I2C_S3C2410=y`, `CONFIG_INPUT_EVDEV=y`,
+`CONFIG_INPUT_TOUCHSCREEN=y` and `CONFIG_TOUCHSCREEN_MELFAS_MIP4=y`, as the defconfig does);
 `tools/m75/build_clean.py` builds the series with it and the pinned toolchain and runtime from
 [reproduce/m6/](../reproduce/m6/README.md), and checks that the resolved config is unchanged.
 

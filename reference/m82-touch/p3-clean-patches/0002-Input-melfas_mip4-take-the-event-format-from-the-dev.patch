@@ -1,0 +1,80 @@
+From 84d84f6d1927e1706a8f06a61884944e4ac711bf Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Wed, 18 Nov 2026 13:42:43 +0600
+Subject: [PATCH 2/3] Input: melfas_mip4 - take the event format from the
+ device tree if unreported
+
+Samsung's MSS100 firmware (Galaxy A50) answers the MIP4 information
+registers but reports an event size of 0 and no event format, while it
+sends format 8 events of 12 bytes; Samsung's own driver takes both from
+its device tree. Add optional melfas,event-format and melfas,event-size
+properties that are used only when the controller reports no event size.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I27854c14fae05d9d7440cb4f498299d93fe084de
+---
+ .../input/touchscreen/melfas_mip4.txt         |  5 ++++
+ drivers/input/touchscreen/melfas_mip4.c       | 29 ++++++++++++++++---
+ 2 files changed, 30 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/input/touchscreen/melfas_mip4.txt b/Documentation/devicetree/bindings/input/touchscreen/melfas_mip4.txt
+index b2ab5498e..d6d4a061d 100644
+--- a/Documentation/devicetree/bindings/input/touchscreen/melfas_mip4.txt
++++ b/Documentation/devicetree/bindings/input/touchscreen/melfas_mip4.txt
+@@ -7,6 +7,11 @@ Required properties:
+ 
+ Optional properties:
+ - ce-gpios: GPIO connected to the CE (chip enable) pin of the chip
++- melfas,event-format: MIP4 event packet format, used only when the controller
++  firmware does not report one (it reports an event size of 0), as with Samsung
++  MSS100 firmware
++- melfas,event-size: size in bytes of one event in that format (required with
++  melfas,event-format)
+ 
+ Example:
+ 	i2c@00000000 {
+diff --git a/drivers/input/touchscreen/melfas_mip4.c b/drivers/input/touchscreen/melfas_mip4.c
+index b9502d1ca..69fa0b364 100644
+--- a/drivers/input/touchscreen/melfas_mip4.c
++++ b/drivers/input/touchscreen/melfas_mip4.c
+@@ -355,12 +355,33 @@ static int mip4_query_device(struct mip4_ts *ts)
+ 		dev_dbg(&ts->client->dev, "event_format: %d, event_size: %d\n",
+ 			ts->event_format, ts->event_size);
+ 
+-		if (ts->event_format == 2 ||
+-		    (ts->event_format > 3 && ts->event_format != 8))
+-			dev_warn(&ts->client->dev,
+-				 "Unknown event format %d\n", ts->event_format);
+ 	}
+ 
++	/*
++	 * Some firmware (Samsung MSS100) does not report its event format and
++	 * size; the device tree may then provide them.
++	 */
++	if (!ts->event_size) {
++		u32 format, size;
++
++		if (!device_property_read_u32(&ts->client->dev,
++					      "melfas,event-format", &format) &&
++		    !device_property_read_u32(&ts->client->dev,
++					      "melfas,event-size", &size) &&
++		    size > 0 && size <= MIP4_BUF_SIZE) {
++			ts->event_format = format;
++			ts->event_size = size;
++			dev_dbg(&ts->client->dev,
++				"event format %u, size %u from device tree\n",
++				format, size);
++		}
++	}
++
++	if (ts->event_format == 2 ||
++	    (ts->event_format > 3 && ts->event_format != 8))
++		dev_warn(&ts->client->dev,
++			 "Unknown event format %d\n", ts->event_format);
++
+ 	return 0;
+ }
+ 
+-- 
+2.56.1
+

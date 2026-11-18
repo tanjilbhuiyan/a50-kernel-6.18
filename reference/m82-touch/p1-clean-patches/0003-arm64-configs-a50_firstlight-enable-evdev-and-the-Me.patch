@@ -1,0 +1,26 @@
+From a48e48969479e90d5d6c64422027146140997b73 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Wed, 18 Nov 2026 12:58:46 +0600
+Subject: [PATCH 3/3] arm64: configs: a50_firstlight: enable evdev and the
+ Melfas MIP4 touchscreen
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I82eb1670a62f8ee57966747382e3bc98dc4c2720
+---
+ arch/arm64/configs/a50_firstlight_defconfig | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm64/configs/a50_firstlight_defconfig b/arch/arm64/configs/a50_firstlight_defconfig
+index 65899a043..fffe5ae1a 100644
+--- a/arch/arm64/configs/a50_firstlight_defconfig
++++ b/arch/arm64/configs/a50_firstlight_defconfig
+@@ -132,3 +132,6 @@ CONFIG_EXYNOS9610_TMU=y
+ CONFIG_I2C=y
+ CONFIG_I2C_CHARDEV=y
+ CONFIG_I2C_S3C2410=y
++CONFIG_INPUT_EVDEV=y
++CONFIG_INPUT_TOUCHSCREEN=y
++CONFIG_TOUCHSCREEN_MELFAS_MIP4=y
+-- 
+2.56.1
+
