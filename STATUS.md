@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-19 (M8 publication validated; home phone reachable)
+Updated: 2026-11-19 (M8 build/evidence committed; home phone reachable)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -18,8 +18,11 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
   `src/m83/publication-clone/` with its own generated source/payload/output. All 79 locked inputs match publication;
   normalized configs/raw DTB/cpio match across paths. Optional caches supply only locked public Git objects/downloads.
   Storage/sense tests, tracked-input drift and dirty-source refusal checks pass. Public asset URLs return HTTP 200.
-- **Publication state:** outer main still **99b81eb**, no new commit/push yet; M8.3 evidence/tools, 56-patch export and
-  M8 reproducer staged. `log/2026-11-19-publish-m8.md` and `reference/m83-publication/` record validation. Commit/push next.
+- **Publication source commit:** **4cea5f0bc2615dea7d83edd57f194b5b93d112b3** on outer **main** includes all M8.3
+  K1-K8 evidence/tools, 56-patch export and public M8 build. This handoff update follows that source commit; remote
+  destination is **origin/main**. `log/2026-11-19-publish-m8.md` and `reference/m83-publication/` record validation.
+- **New-clone command:** `python3 -I tools/reproduce_m8.py --jobs 16`; prerequisites/outputs in `reproduce/m8/README.md`.
+  No private inputs or existing src required. Clean build passes, but its exact Image has not been phone-flashed.
 - **Kernel branches unchanged:** common a50-usb/4fbb731f5, clean a50-input/e0c2610f9, runtime a50-m83-k1-test/3a823204f.
   M8.3 remains open on the intermittent shared USB issue; key acceptance checks/export are met. M8.4 not started.
 
