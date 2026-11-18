@@ -1,0 +1,445 @@
+{
+ "test": "M8.3 K3: K1 image; phone-side key capture 40-340 s and per-second USB/jobs/state samples 50-70 s plus logind/usb-moded journals, written to kmsg at ~395 s",
+ "kernel_branch": "a50-m83-k1-test (src/m75/runtime-kernel) = a50-m82-p3-test + merge a50-input",
+ "kernel_commit": "3a823204f",
+ "parent": "a50-m75-i0-test 6a8742362 (I4 kernel source)",
+ "boot": "src/m83/boot-k1.img",
+ "boot_sha256": "c3065218cea7c1ebc45c3b5fa7000720cfa6a422572fe1ace03187dd9b1b5e20",
+ "dt": "src/m83/dt-k1.img",
+ "dt_sha256": "f76fb19420cfb55bf20c55b6c830304d27b0324f5bebd8cc63c9f0906d1f1578",
+ "change": "vs P3: + gpio-keys DT node and key-pins; + CONFIG_INPUT_KEYBOARD, KEYBOARD_GPIO (KEYBOARD_ATKBD off)",
+ "owner_confirmation": "present, flash K3 (office network)",
+ "backup_rechecked": true,
+ "files": {
+  "reference/dt-6.18/images/dtbo.img": {
+   "size": 8388608,
+   "sha256": "6d81cce87faca914d75f024f36e183ae6592e61adc786bbb6c7c47cdd3a151fe"
+  },
+  "reference/stock-images/dt.img": {
+   "size": 8388608,
+   "sha256": "59209aa52dc3b35e2c7cc025c465ed1cdb48dadaa13cf5d1f50324b3bf503547"
+  },
+  "reference/stock-images/dtbo.img": {
+   "size": 8388608,
+   "sha256": "40e47ed1477a8ffb6cbb34e5cb59a1af786c2552544f3b556373f3c553d40d21"
+  },
+  "baseline/ut-26.04-2026-10-19-aa17rf2/boot.img": {
+   "size": 53624832,
+   "sha256": "7d5855efd34e01f09659c7d47ecb0773c30f2acc7443ee87181a0536804086c5"
+  },
+  "src/m75/backup-hash.txt": {
+   "size": 113,
+   "sha256": "2b9e1952c14a7ac9f9e8a63d62bf2930ca43f1013f024939af4b8b7a9bd95e36"
+  },
+  "reference/m75-integration/source-equivalence.txt": {
+   "size": 418,
+   "sha256": "17f69cd2b156a4414c0dd877ec4e01dc8444fa198eee692e126e86f4fb0cb07f"
+  },
+  "reference/m75-integration/test-diagnostics.patch": {
+   "size": 17514,
+   "sha256": "fbc2bf3b38c98e781f345e3b37da9455d3b4486d5036657e57010910e1c4e700"
+  },
+  "tools/m75/build.sh": {
+   "size": 3138,
+   "sha256": "5b2b6ab5339bca7630f5d870498a28532024c07d0fc5533e260a5a5bf4700a54"
+  },
+  "tools/m73/kbase_memory_probe.c": {
+   "size": 12659,
+   "sha256": "a55b9b6990020cc364adb6ebd93fbc7104a848527ec1d935a6d0694821f50502"
+  },
+  "tools/m73/build_memory_probe.py": {
+   "size": 2049,
+   "sha256": "3ec05e4d75d8feceaf191bf79dce1f156ec1788158355ca6731b5517b885c6d3"
+  },
+  "tools/m54/watch_ssh.py": {
+   "size": 4321,
+   "sha256": "f656a6f1092266c2214ba0f3afee37ac81b0b62620b7feb57cadf6a71db52bfd"
+  },
+  "tools/m32_run_test.sh": {
+   "size": 4209,
+   "sha256": "0de47c72a2bada4b792214211b32d6bdad03bc24a4a0446fdc383418f20e8d87"
+  },
+  "tools/m32_read_618.sh": {
+   "size": 1238,
+   "sha256": "e750045b3417db5a9f9a6aad25e96cf85f1367aef897c45f039e8e440ac765c7"
+  },
+  "tools/m24_preflight.sh": {
+   "size": 4118,
+   "sha256": "6beca4aa8634c3e1b687e4242d700a311c89f2f18322398ef7a9d08a3fc13d8e"
+  },
+  "tools/m22_pack.sh": {
+   "size": 1098,
+   "sha256": "08212aa1743ed07df3447dc8414d634e775a4bc224e945b570a86be1c3757097"
+  },
+  "patches/0001-arm64-dts-exynos-add-Samsung-Galaxy-A50-exynos9610-f.patch": {
+   "size": 10026,
+   "sha256": "d53bc7cb7e6ffb5cb3d37c7f80d6d940e8984ef0546fd525e8ac86a11713d1c8"
+  },
+  "patches/0002-arm64-dts-exynos9610-a50-add-dtb-hw_rev-window-and-d.patch": {
+   "size": 2331,
+   "sha256": "150b68225a0dd17f68cbf30ab828f62ec4a2cddf55a5054121016c320838d108"
+  },
+  "patches/0003-arm64-configs-add-a50_firstlight_defconfig.patch": {
+   "size": 5544,
+   "sha256": "62313a820f707d406c3ebc0cb659f5ae3cc5414c9ac67e4e3050b62ac8b7ffe0"
+  },
+  "patches/0004-arm64-dts-exynos9610-a50-move-ramoops-to-the-S-Boot-.patch": {
+   "size": 3524,
+   "sha256": "3194c4d7037a46cbedb841164c01af166635b74c0b310676e6f4360231c82e0d"
+  },
+  "patches/0005-arm64-dts-exynos9610-a50-drop-ramoops-keep-sec_debug.patch": {
+   "size": 2233,
+   "sha256": "9cb79b3c54d4c1163abe28e7342292c2d2293497d4fee6021a50c7e475462aa5"
+  },
+  "patches/0006-clk-samsung-Implement-automatic-clock-gating-mode-fo.patch": {
+   "size": 27519,
+   "sha256": "2a0707a2ec37afd29dc3f618e16047b79b9d0475226ebc4f0e2b68af5a3794b5"
+  },
+  "patches/0007-clk-samsung-avoid-warning-message-on-legacy-Exynos-a.patch": {
+   "size": 1832,
+   "sha256": "400e29de64b5b4becabc50b1583285c8cf21ad85a535b5d9037a4763121333f1"
+  },
+  "patches/0008-clk-samsung-fix-sysreg-save-restore-when-PM-is-enabl.patch": {
+   "size": 6529,
+   "sha256": "adc9db417cbcfa2dc8407000fe9cab1e85c7b30d492f8424eeb398f6357b01b4"
+  },
+  "patches/0009-dt-bindings-clock-samsung-Add-Exynos9610-CMU-binding.patch": {
+   "size": 38031,
+   "sha256": "658fecdf7ab47dddf59ed100fa93223eb841e3df20fc49985f0bf47d0325bb8d"
+  },
+  "patches/0010-dt-bindings-soc-exynos-sysreg-Add-Exynos9610-SYSREG-.patch": {
+   "size": 2422,
+   "sha256": "cb0f33ea466efccbbebc71ba40f1a49064738d131ff252c447dcd7f13d1ddf82"
+  },
+  "patches/0011-clk-samsung-clk-pll-Add-support-for-pll_1061x.patch": {
+   "size": 4193,
+   "sha256": "80f2701d6a95b87c6d202db9e9f2c559e344d997e5dc5548c0ef7d0d8bff8110"
+  },
+  "patches/0012-clk-samsung-Introduce-Exynos9610-clock-controller-dr.patch": {
+   "size": 181158,
+   "sha256": "a78b99e25338c46d18d5ded7fd1628d9da16e3972d51375cf1983e57295d84a0"
+  },
+  "patches/0013-arm64-dts-exynos9610-add-CMU-TOP-FSYS-and-USB-nodes.patch": {
+   "size": 3183,
+   "sha256": "a694c7578fa4a2a2c17608f0ab0de56fd7d2f8d2c50568a049f66cf26077e5d7"
+  },
+  "patches/0014-clk-samsung-exynos9610-register-the-CMU_TOP-FSYS_UFS.patch": {
+   "size": 1578,
+   "sha256": "821c65ad8f686151df94edb96ca872b08fcaa93770211f76565645687b07981d"
+  },
+  "patches/0015-dt-bindings-pinctrl-samsung-Add-exynos9610-pinctrl-c.patch": {
+   "size": 1189,
+   "sha256": "30b8c9f8effc93b05efe30237ae4eb8844cd52a2b22dc3414cf403f21b79bdcf"
+  },
+  "patches/0016-pinctrl-samsung-Add-Exynos9610-pinctrl-configuration.patch": {
+   "size": 7737,
+   "sha256": "3bed980eb084810e88d4567fac158eb46ba57db46dfb17b95ed50a4782e0715c"
+  },
+  "patches/0017-dt-bindings-pinctrl-samsung-Add-exynos9610-wakeup-ei.patch": {
+   "size": 1392,
+   "sha256": "a662f7cbf7372c796c8ad195663724748fac411911c634c255debdece4a65795"
+  },
+  "patches/0018-arm64-dts-exynos9610-add-the-six-pin-controllers-and.patch": {
+   "size": 13417,
+   "sha256": "6e1894702f02ea4e85475d74bce5ec1330dcc9ecac575db06e901a6b6eef62fc"
+  },
+  "patches/0019-scsi-ufs-core-add-A50_UFS_SAFE-default-deny-write-gu.patch": {
+   "size": 5654,
+   "sha256": "b5ad067b3c72c863d45c647381ccd48adbccecc9c67ce3be94855d8cf8b38732"
+  },
+  "patches/0020-phy-samsung-ufs-add-Exynos9610-UFS-PHY-data.patch": {
+   "size": 7030,
+   "sha256": "90c2f2e556cf080d3da065e7f344f48045ba7b2d0753e1e4cbaed1ce1f77c877"
+  },
+  "patches/0021-scsi-ufs-exynos-add-Exynos9610-variant.patch": {
+   "size": 6952,
+   "sha256": "306bb9a7ae05abb572c6791765ef9696c1107d4753183353f1530301e70a61b7"
+  },
+  "patches/0022-arm64-dts-exynos9610-add-PMU-syscon-FSYS-sysreg-UFS-.patch": {
+   "size": 4065,
+   "sha256": "c9bab18f77f343844e57659e23d70113f08bfa3eae110002eaa7c282fa75b8e5"
+  },
+  "patches/0023-scsi-ufs-core-A50_UFS_SAFE-exhaustive-self-test-befo.patch": {
+   "size": 5026,
+   "sha256": "af8984afb4734676893eff2d0de1e20212ef13f96910c44b7312b7534c98bd62"
+  },
+  "patches/0024-phy-exynos5-usbdrd-add-Exynos9610-USB-2.0-PHY-arm64-.patch": {
+   "size": 10488,
+   "sha256": "b3b0e6d32ab87caa7d2ae70dfdd0bcc4158387fe96cac906a73f2310a89a274d"
+  },
+  "patches/0025-arm64-dts-exynos9610-a50-placeholder-USB-supplies-PM.patch": {
+   "size": 1165,
+   "sha256": "703e59ba3e187f7429a54d3c4869745ef4366a0137acaa4054a0cdd6d0ee8b21"
+  },
+  "patches/0026-phy-exynos5-usbdrd-9610-force-the-PIPE3-inputs-of-th.patch": {
+   "size": 1425,
+   "sha256": "621375a629196465bcaec265bd834523831fc0783d009dda1f69f9ddc00beae2"
+  },
+  "patches/0027-arm64-configs-a50_firstlight-boot-all-CPUs.patch": {
+   "size": 1061,
+   "sha256": "d29ca872b95b96d48a603369b46d2f27cedb0877ccc0a89fac4f3cdf5341c7fa"
+  },
+  "patches/0028-firmware-samsung-acpm-add-Exynos9610-mailbox-exynos-.patch": {
+   "size": 8347,
+   "sha256": "256deb18344170ea12f80c8ecaea404851d7d096193b489ec26e6d04af2f13d2"
+  },
+  "patches/0029-regulator-add-read-only-S2MPU09-regulators-over-ACPM.patch": {
+   "size": 15657,
+   "sha256": "821a720cf490c065c7434b998214ab8122e831f80d9c015618bfd35731cca32e"
+  },
+  "patches/0030-arm64-dts-exynos9610-a50-use-the-real-USB-supplies.patch": {
+   "size": 1213,
+   "sha256": "5f7c2c8f39e60f760b2d26de975de45cba295d6fb45f3cf44a135aa5c30af9ed"
+  },
+  "patches/0031-thermal-samsung-add-read-only-Exynos-9610-TMU-driver.patch": {
+   "size": 8198,
+   "sha256": "4cbf11c09f80f75714e90bb6cbf87701bc796d61d19b0c191a794f66291e8c23"
+  },
+  "patches/0032-phy-exynos5-usbdrd-9610-the-device-only-port-has-no-.patch": {
+   "size": 1241,
+   "sha256": "44d8184132b6274b02ae4bb3f8ab4faf9672025ca47d14c8fb5094886a34cb92"
+  },
+  "patches/0033-scsi-ufs-A50_UFS_SAFE-optional-allow-list-for-writes.patch": {
+   "size": 7887,
+   "sha256": "d0b21cee9f454bd56371cd647bd714eba50f114300e79e7810d8e329fcc70304"
+  },
+  "patches/0034-scsi-ufs-A50_UFS_SAFE-report-a-denied-command-as-DAT.patch": {
+   "size": 1577,
+   "sha256": "15c43c32fa86e7ee3c3d39e1c5014e357aaa320d359feaeb91caa2682967d608"
+  },
+  "patches/0035-scsi-ufs-preserve-unsupported-sense-for-blocked-disc.patch": {
+   "size": 1595,
+   "sha256": "15fb6b5a643448090cb28caf0f52fe8bb0b56502c6bfd9aa1ce8e74a9d55aeb4"
+  },
+  "patches/0036-tracing-guard-device-PM-tracepoint-exports-with-CONF.patch": {
+   "size": 993,
+   "sha256": "b4ecaac2063d77ec5b5f48cfbf497a48921433bf5a998c7209bfcc48944be99b"
+  },
+  "patches/0037-rust-initialize-block-KABI-reservations-only-when-en.patch": {
+   "size": 1535,
+   "sha256": "43b3797d20565bc6e9cdecea9b0a1d01e971d79cf5d2917dea4288a7f744cd98"
+  },
+  "patches/0038-rust-build-dma-buf-abstractions-only-with-DMA_SHARED.patch": {
+   "size": 818,
+   "sha256": "f55e50cf0ac1c5b11b7c39b7fdd2e54c2e461decccc4da089cccb526eb70c079"
+  },
+  "patches/0039-staging-add-Exynos-ION-system-heap-ABI-on-native-DMA.patch": {
+   "size": 13715,
+   "sha256": "ddf2113772f4aaa22e6f94b2d2e8ced5aa630da03ce7eb8b5e0388b07aefb15d"
+  },
+  "patches/0040-staging-ion-accept-measured-Exynos-gralloc-allocatio.patch": {
+   "size": 2117,
+   "sha256": "e6f6165e2f382abf6afed781616b3fe72005d73532af35dd2ddc64f660ba78d6"
+  },
+  "patches/0041-pinctrl-samsung-exynos9610-enable-GPIO-interrupts-on.patch": {
+   "size": 1449,
+   "sha256": "11b2a6d0da6faf2657a76754e6e1ad9f9e42871055df43fa97ffdf3b4c7a02a3"
+  },
+  "patches/0042-arm64-dts-exynos9610-a50-add-DISPAUD-clocks-and-DPU-.patch": {
+   "size": 2161,
+   "sha256": "b6a1e8fa38b959d37e81f86a7d8befe35ebe0dab30f0a9cf694a385c738ed013"
+  },
+  "patches/0043-fbdev-add-A50-DECON-handover-with-stock-metadata-and.patch": {
+   "size": 44116,
+   "sha256": "337e960f5d53bfd5c6dbc839fa1ae4ae3fa90a12a101930fc6c86748d1f8ccf5"
+  },
+  "patches/0044-gpu-mali-port-Samsung-r26p0-kbase-for-fixed-clock-A5.patch": {
+   "size": 3494985,
+   "sha256": "6649a66bc810c400e4d8a6ba9a11e6ab1f3a613738d9b98086a567fa3219a9a5"
+  },
+  "patches/0045-fbdev-allow-A50-snapshot-selection-without-DEBUG_KER.patch": {
+   "size": 892,
+   "sha256": "9f382dec9e28f72d15fbffc802b591d26ac7b58393af263c9a313fafa1a4aa5b"
+  },
+  "src/m75/i2-runtime/halium-init-runtime": {
+   "size": 11186,
+   "sha256": "55d6b8e43937e925547293543b6a25238bcd52e4fa65869ee831974bb9c2bf21"
+  },
+  "src/m75/i2-runtime/initramfs.list": {
+   "size": 18977,
+   "sha256": "45b0d228c4eeddb17d6ca0d31adca60bbd22e9c4189dbf69708b5b5014dfc61e"
+  },
+  "src/m75/i2-runtime/payload/defer_audio.sh": {
+   "size": 1551,
+   "sha256": "d631b10875126b368d47898b5506714a68e5cd37a4f771dcfcd24bbe977193c8"
+  },
+  "src/m75/i2-runtime/payload/touch.pa": {
+   "size": 5162,
+   "sha256": "275b1ea6a3b8800f938a706a1ba81cda68b65a33a9edfae75f5d480b5e70175a"
+  },
+  "tools/m75/defer_audio.sh": {
+   "size": 1551,
+   "sha256": "d631b10875126b368d47898b5506714a68e5cd37a4f771dcfcd24bbe977193c8"
+  },
+  "tools/m75/defer_audio_test.sh": {
+   "size": 2470,
+   "sha256": "acf8fb3da847009ce00d749f2826bc38e0ea423dee88d9b657abad2ae1cbe2ae"
+  },
+  "tools/m75/audio/touch.pa.stock": {
+   "size": 5202,
+   "sha256": "04046fa3fa4ff1247705034f42fe03457d57414cdb7a9336e74246419666ccd0"
+  },
+  "tools/m75/audio/touch.pa.adr0005": {
+   "size": 5162,
+   "sha256": "275b1ea6a3b8800f938a706a1ba81cda68b65a33a9edfae75f5d480b5e70175a"
+  },
+  "tools/m75/make_i2_runtime.py": {
+   "size": 3088,
+   "sha256": "6d30948e5fa8cf2f57c17ea88c61d52722712141f53b99eb382de5d72912f6ab"
+  },
+  "reference/m75-integration/i2-init-delta.patch": {
+   "size": 1235,
+   "sha256": "4ea8fe99bdea068296daf564be007eebdfeb8e84b83f03b03f5d1eb8141a5a47"
+  },
+  "docs/decisions/ADR-0005-defer-android-audio-hal.md": {
+   "size": 2937,
+   "sha256": "09b9349feb31401ea66716ef16b3caef76ccaf6f325bdd78dec759c632293c0e"
+  },
+  "src/m75/i4-runtime/halium-init-runtime": {
+   "size": 11954,
+   "sha256": "bf08d740fdf516171e10a3060c40f4ffd42755400ac7322f9ae1c7d16cab3f61"
+  },
+  "src/m75/i4-runtime/initramfs.list": {
+   "size": 19283,
+   "sha256": "4db743b8220690fe96b914c3c07d92d0c5453811bf02f83b3381f9f31ea4782c"
+  },
+  "src/m75/i4-runtime/payload/defer_gsthybris.sh": {
+   "size": 1740,
+   "sha256": "91afa16326620407cd10abe1a9898e6ede3a295bec88caf47b7f82669ddcfee0"
+  },
+  "src/m75/i4-runtime/payload/libgsthybris.placeholder": {
+   "size": 214,
+   "sha256": "3ee135f94d447e41e35d228975c96d0f223455fc03184d99d6db74fd240c46a9"
+  },
+  "tools/m75/defer_gsthybris.sh": {
+   "size": 1740,
+   "sha256": "91afa16326620407cd10abe1a9898e6ede3a295bec88caf47b7f82669ddcfee0"
+  },
+  "tools/m75/defer_gsthybris_test.sh": {
+   "size": 2849,
+   "sha256": "d700257e489b88b2d7e682b56734630ae2da8bebc21b0f2fdc05426fbf6b58e1"
+  },
+  "tools/m75/gst/libgsthybris.placeholder": {
+   "size": 214,
+   "sha256": "3ee135f94d447e41e35d228975c96d0f223455fc03184d99d6db74fd240c46a9"
+  },
+  "tools/m75/make_i4_runtime.py": {
+   "size": 3355,
+   "sha256": "579856f87dc0a03c12104dc67b45452abf78fd7b2b57896f98b908f601cd622a"
+  },
+  "tools/m75/build_i4.sh": {
+   "size": 3572,
+   "sha256": "4d65da54035117a416265c46a83d133231792378ef4bca6608ae4840c924e56c"
+  },
+  "reference/m75-integration/i4-init-delta.patch": {
+   "size": 1117,
+   "sha256": "bfd0adb70753ecec157c2513004ed16526f130bb1968416d04360122c2fcc181"
+  },
+  "docs/decisions/ADR-0006-defer-gst-hybris-codecs.md": {
+   "size": 2754,
+   "sha256": "c5051aba82a8a26e833bc215fdbf132109072e89e4d58aa55cbcb0a799a983f4"
+  },
+  "tools/m81/build_t1.sh": {
+   "size": 5430,
+   "sha256": "e5736efda6ea5550f86a64feff79518aa8155690454d6cbb7cceeed4c867ec44"
+  },
+  "tools/dt_table.py": {
+   "size": 7313,
+   "sha256": "f601fa4f6fb98ed558cdad2617ab9c01e9353a6bb59691c5367860358d1fd10d"
+  },
+  "tools/m81/build_t4.sh": {
+   "size": 5467,
+   "sha256": "0a3b325a754f36561c38a79cd97c28eac5a3da0347c9ce605487372f33614578"
+  },
+  "src/m82/p1-as-built/initramfs_data.cpio": {
+   "size": 25965568,
+   "sha256": "2970e1aa2366a1ede69fb22a83a66c3d59361e53a05fbebe095a6f9ab25484ae"
+  },
+  "tools/m82/build_p1.sh": {
+   "size": 5750,
+   "sha256": "67a1f2e5246a2a7f78884da6aef6d0416e1f24e5fa976a4a3227600439e4e3ad"
+  },
+  "tools/m82/evcap.c": {
+   "size": 2952,
+   "sha256": "9063082dabcfae1417fc63d0e4f2340b281b29ff4d04681e970c50019e8a721f"
+  },
+  "src/m82/evcap": {
+   "size": 2220696,
+   "sha256": "f4b8e1e6e1c37a0c7279405e007e9bec1daa2ad71798e50c44f027c4fe4b307a"
+  },
+  "tools/m82/mip4_format_test.py": {
+   "size": 5858,
+   "sha256": "9c7447979263c6584564df6c5f1dbf8c83d6c4ecca935e398f0edde737081034"
+  },
+  "tools/m82/build_p2.sh": {
+   "size": 5761,
+   "sha256": "7912f29eba4115b137a17235f550384fd78e187d29693eaa5bd44ae3e35aacca"
+  },
+  "tools/m82/build_p3.sh": {
+   "size": 5767,
+   "sha256": "93951f16db248b9a82ac6717f68a434dca1c84983b2dc1861fcbc59803d6b5aa"
+  },
+  "reference/m82-touch/p3-ready-status-probe.patch": {
+   "size": 2186,
+   "sha256": "cdb5a3b1f939afe8abf6984892e9f08ca26ffe6d2570ead8ec4383220dfd61f8"
+  },
+  "reference/m82-touch/p3-clean-patches/0001-Input-melfas_mip4-do-not-loop-on-a-zero-event-size.patch": {
+   "size": 1359,
+   "sha256": "f1a6cfc215c5612c05ecae41b5bc20c4353e0021fe610db33543ac77f04a1795"
+  },
+  "reference/m82-touch/p3-clean-patches/0002-Input-melfas_mip4-take-the-event-format-from-the-dev.patch": {
+   "size": 3050,
+   "sha256": "c2a233dfedac9b065542a7a2337e1a727c2a6b35f9f155fcc0187fa1bee91a63"
+  },
+  "reference/m82-touch/p3-clean-patches/0003-arm64-dts-exynos9610-a50-describe-the-touchscreen-ev.patch": {
+   "size": 1115,
+   "sha256": "559a65dcb071b3b53c75571b6ec5641efe77d961cbff4363a804296c27b3e5aa"
+  },
+  "src/m83/boot-k1.img": {
+   "size": 30523392,
+   "sha256": "c3065218cea7c1ebc45c3b5fa7000720cfa6a422572fe1ace03187dd9b1b5e20"
+  },
+  "src/m83/dt-k1.img": {
+   "size": 8388608,
+   "sha256": "f76fb19420cfb55bf20c55b6c830304d27b0324f5bebd8cc63c9f0906d1f1578"
+  },
+  "src/m83/k1-as-built/.config": {
+   "size": 113103,
+   "sha256": "4fee0b1bf0e4adb1957d61fbca7e9a7dfe910e96ef5739f4f85fa0dd0e9ac08b"
+  },
+  "src/m83/k1-as-built/Image": {
+   "size": 30517256,
+   "sha256": "ccc9848d576c063e8bd77c4af69fd875dfff34a7fcb45e40e75409ac6780924e"
+  },
+  "src/m83/k1-as-built/exynos9610-a50-gpu.dtb": {
+   "size": 20788,
+   "sha256": "3f81e1b7db7e457f2e779e2289b898093ef68013ede1e8186d856c93dd34da0d"
+  },
+  "tools/m83/build_k1.sh": {
+   "size": 5933,
+   "sha256": "a2bc2fd128ec47967b01e14697069ebdc55a6ce0c19de4f52431edbc47979c23"
+  },
+  "reference/m83-keys/k1-clean-patches/0001-arm64-dts-exynos9610-a50-add-the-volume-and-power-ke.patch": {
+   "size": 2474,
+   "sha256": "9b7267a09ae42ee05cacaac1402f6e491ca9d96bab6e308251eb8a92c20d5bbd"
+  },
+  "reference/m83-keys/k1-clean-patches/0002-arm64-configs-a50_firstlight-enable-GPIO-keys.patch": {
+   "size": 885,
+   "sha256": "c97a676109829d15d3f5689943d83bf1be66ec9991afe285c68c59360cc840d9"
+  },
+  "tools/m83/run_k3.sh": {
+   "size": 4084,
+   "sha256": "c085a96f66fbf5ee67015d5143a1a21602437694b48f6ef97f74bbd0c91db298"
+  },
+  "tools/m83/collect_k3.sh": {
+   "size": 1387,
+   "sha256": "15da47396b4372b0d3f4ee42f6f692ed295f144d1149deeebed9a46f396a7a49"
+  },
+  "tools/m83/k3_phone_side.sh": {
+   "size": 1460,
+   "sha256": "1762b1272fecbc12a2c529394ec1e3dc0d2b71bff49105af521f4753c030302c"
+  }
+ },
+ "baseline_ip": "192.168.181.225",
+ "repeat_of": "K1/K2 (collector changed only)"
+}

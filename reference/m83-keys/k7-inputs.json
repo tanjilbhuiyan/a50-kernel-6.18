@@ -1,0 +1,114 @@
+{
+  "boot": "src/m82/boot-p3.img",
+  "dt": "src/m82/dt-p3.img",
+  "boot_sha256": "295da8967c1afce2e6aeaad9b1a181023d7210919925296508ec3629892027ad",
+  "dt_sha256": "dbb3ce70d2d8e796c93af97cd1cf1ddacf626cc234c6f2526b46ff573dc643b4",
+  "test": "M8.3 K7: unchanged P3 on K6 port/cable; private DWC3 device-event and UDC trace instance",
+  "kernel_branch": "a50-m82-p3-test (image source; checkout not switched)",
+  "kernel_commit": "edd18a66c",
+  "outer_commit": "99b81ebdbd80b68cd9044f84585e6eb354e81305",
+  "baseline_ip": "192.168.181.225",
+  "owner_confirmation": "Owner replied 'continue' to the prepared K7/presence request; latest explicit confirmation was present, same cable/port and Claude idle for K6, with no change reported.",
+  "physical_setup": "Same cable and alternate port USB 5-1 / PCI 0000:06:00.3 as K6; no physical or power-policy change planned",
+  "backup_rechecked": true,
+  "backup_sha256": "22cb95a536489c89a738cae3105859c041a15b298c4140c6a1a018883f7bd896",
+  "change": "Only logging: existing DWC3 device events and UDC control/state tracepoints in private a50_k7 instance; same kernel/config/DT/ramdisk/cable/port",
+  "files": {
+    "reference/m82-touch/p3-inputs.json": {
+      "size": 17713,
+      "sha256": "9b0718b4aca551e7a156a3db70ebf5b2714dfca7139cb376f6286622135a9e4a"
+    },
+    "src/m82/boot-p3.img": {
+      "size": 30455808,
+      "sha256": "295da8967c1afce2e6aeaad9b1a181023d7210919925296508ec3629892027ad"
+    },
+    "src/m82/dt-p3.img": {
+      "size": 8388608,
+      "sha256": "dbb3ce70d2d8e796c93af97cd1cf1ddacf626cc234c6f2526b46ff573dc643b4"
+    },
+    "src/m82/p3-as-built/.config": {
+      "size": 112128,
+      "sha256": "06faeb61e0c6b7a955c102b30a081520f1e36346b9e622af0eb2f02104b0f700"
+    },
+    "src/m82/p3-as-built/Image": {
+      "size": 30449672,
+      "sha256": "c93ece57afd6efcb0acc69ca56e70334e06f318a5dd53bdd47e560d27534cb98"
+    },
+    "src/m82/p3-as-built/exynos9610-a50-gpu.dtb": {
+      "size": 20273,
+      "sha256": "dea3e592918909a3abc4e3cb413a2b261b8f41c2690613506818508b5ad173f4"
+    },
+    "src/m82/p1-as-built/initramfs_data.cpio": {
+      "size": 25965568,
+      "sha256": "2970e1aa2366a1ede69fb22a83a66c3d59361e53a05fbebe095a6f9ab25484ae"
+    },
+    "reference/dt-6.18/images/dtbo.img": {
+      "size": 8388608,
+      "sha256": "6d81cce87faca914d75f024f36e183ae6592e61adc786bbb6c7c47cdd3a151fe"
+    },
+    "reference/stock-images/dt.img": {
+      "size": 8388608,
+      "sha256": "59209aa52dc3b35e2c7cc025c465ed1cdb48dadaa13cf5d1f50324b3bf503547"
+    },
+    "reference/stock-images/dtbo.img": {
+      "size": 8388608,
+      "sha256": "40e47ed1477a8ffb6cbb34e5cb59a1af786c2552544f3b556373f3c553d40d21"
+    },
+    "baseline/ut-26.04-2026-10-19-aa17rf2/boot.img": {
+      "size": 53624832,
+      "sha256": "7d5855efd34e01f09659c7d47ecb0773c30f2acc7443ee87181a0536804086c5"
+    },
+    "tools/m32_run_test.sh": {
+      "size": 4209,
+      "sha256": "0de47c72a2bada4b792214211b32d6bdad03bc24a4a0446fdc383418f20e8d87"
+    },
+    "tools/m32_read_618.sh": {
+      "size": 1238,
+      "sha256": "e750045b3417db5a9f9a6aad25e96cf85f1367aef897c45f039e8e440ac765c7"
+    },
+    "tools/m24_preflight.sh": {
+      "size": 4118,
+      "sha256": "6beca4aa8634c3e1b687e4242d700a311c89f2f18322398ef7a9d08a3fc13d8e"
+    },
+    "tools/m54/watch_ssh.py": {
+      "size": 4321,
+      "sha256": "f656a6f1092266c2214ba0f3afee37ac81b0b62620b7feb57cadf6a71db52bfd"
+    },
+    "src/m83/k5-prep/backup-hash.txt": {
+      "size": 113,
+      "sha256": "2b9e1952c14a7ac9f9e8a63d62bf2930ca43f1013f024939af4b8b7a9bd95e36"
+    },
+    "reference/m83-keys/k6-run.txt": {
+      "size": 788,
+      "sha256": "7fe195385661f5f1205c20859d7170d54bd07124ef9ce7a6f746005eb0752a20"
+    },
+    "tools/m83/run_k7.sh": {
+      "size": 5548,
+      "sha256": "a6fce8713025b4225fdb51d7f3ec73574c894fd17c697e41ad59e67cd8d50e43"
+    },
+    "tools/m83/collect_k7.sh": {
+      "size": 760,
+      "sha256": "7f4eb1f3eab0f8da1cf97462a45e562f95ad5e70320dd5de88640e6ea05f83c7"
+    },
+    "tools/m83/k7_phone_side.sh": {
+      "size": 4180,
+      "sha256": "440f68516da43ff8425046a8a8b1b3ef32cd5f20316ece417387e5fa75fbc911"
+    },
+    "tools/m83/watch_host_usb.py": {
+      "size": 2183,
+      "sha256": "a8b79f75e7ec0e7fded6e653b4333228ceb637973c5baeb04a2e25471b65b734"
+    },
+    "src/m83/k7-prep/preflight.txt": {
+      "size": 1240,
+      "sha256": "6c40bd337d42500777a4eb3ac2641c4b10de68ff6cafd9bc1852ce4353cf64fe"
+    },
+    "src/m83/k7-prep/host-power-once.jsonl": {
+      "size": 1037,
+      "sha256": "f37f33db0c78ce00a327a9bbfe4c97efe307910e5d2d81bb93b2ca6ad8fd0258"
+    },
+    "src/m83/k7-prep/backup-hash.txt": {
+      "size": 113,
+      "sha256": "2b9e1952c14a7ac9f9e8a63d62bf2930ca43f1013f024939af4b8b7a9bd95e36"
+    }
+  }
+}

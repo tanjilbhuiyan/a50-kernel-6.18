@@ -1,0 +1,73 @@
+{
+  "test": "M8.3 K6",
+  "result": "USB issue reproduced once on alternate physical port/controller with same cable and P3 image; root cause unresolved",
+  "physical_path": "USB 5-1, PCI 0000:06:00.3 (K5 was 7-1/06:00.4)",
+  "host_runtime_extra_disconnect_count": 1,
+  "host_runtime_extra_disconnects": [
+    "2026-11-18T18:19:48+06:00 BS-01808 kernel: usb 5-1: USB disconnect, device number 5"
+  ],
+  "normal_end_of_test_disconnect": "2026-11-18T18:21:27+06:00 BS-01808 kernel: usb 5-1: USB disconnect, device number 6",
+  "runtime_address_descriptor_errors": [],
+  "udc_samples": 339,
+  "udc_start": 41.71,
+  "udc_end": 389.22,
+  "udc_states": [
+    "configured"
+  ],
+  "udc_note": "1 Hz polling missed the subsecond host disconnect/re-enumeration; host power sampler also observes device number 5->6",
+  "host_power_samples_during_618": 397,
+  "host_power": {
+    "/sys/bus/usb/devices/5-1": {
+      "controls": [
+        "on"
+      ],
+      "states": [
+        "active"
+      ],
+      "suspended_ms_first": "0",
+      "suspended_ms_last": "0",
+      "device_numbers": [
+        "5",
+        "6"
+      ]
+    },
+    "/sys/devices/pci0000:00/0000:00:08.3/0000:06:00.3": {
+      "controls": [
+        "auto"
+      ],
+      "states": [
+        "active"
+      ],
+      "suspended_ms_first": "24491757",
+      "suspended_ms_last": "24491757",
+      "device_numbers": []
+    },
+    "/sys/devices/pci0000:00/0000:00:08.3/0000:06:00.3/usb5": {
+      "controls": [
+        "auto"
+      ],
+      "states": [
+        "active"
+      ],
+      "suspended_ms_first": "24500192",
+      "suspended_ms_last": "24500192",
+      "device_numbers": [
+        "1"
+      ]
+    }
+  },
+  "power_interpretation": "No runtime suspended-time increase on device/root hub/controller during captured event; ordinary host autosuspend is not supported as the trigger in this run. Other host, cable, PHY or gadget causes remain possible.",
+  "fault_signatures": [],
+  "runner_rc": 0,
+  "watch_rc": 0,
+  "collector_rc": 0,
+  "late_rc": 0,
+  "host_power_rc": 0,
+  "host_journal_rc": 0,
+  "kernel_stream_rc": 124,
+  "restored_at": "2026-11-18T18:21:53+06:00",
+  "baseline_booted_at": "2026-11-18T18:22:06+06:00",
+  "postflight": "passed",
+  "fsck": "e2fsck 1.43.4 (31-Jan-2017)\n/dev/sda32: clean, 7088/3440640 files, 1991394/13745152 blocks",
+  "next": "Same-image diagnostic boot with existing DWC3 and UDC tracepoints to distinguish controller reset/disconnect events from software-requested gadget disconnect; owner presence required."
+}

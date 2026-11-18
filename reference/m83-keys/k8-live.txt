@@ -1,0 +1,62 @@
+
+CMD: uname -r
+6.18.33-a50-diag+
+RC=0
+
+CMD: cat /proc/uptime
+38.92 212.19
+RC=0
+
+CMD: sh -c cat /proc/bus/input/devices | grep -E "^N:|^H:"
+N: Name="MELFAS MIP4 Touchscreen"
+H: Handlers=event0
+RC=0
+
+CMD: sh -c cat /sys/class/udc/*/state; ls /sys/kernel/config/usb_gadget/*/configs/*/; systemctl show usb-moded -p ActiveState -p SubState
+configured
+MaxPower
+bmAttributes
+rndis.usb0
+strings
+ActiveState=active
+SubState=running
+RC=0
+
+CMD: sh -c journalctl -b --no-pager -o short-monotonic -u usb-moded | tail -n 20
+[   30.811241] ubuntu-phablet usb_moded[1396]: usb_moded 0.86.0+mer69 starting
+[   30.827394] ubuntu-phablet usb_moded[1396]: /etc/usb-moded/usb-moded.ini: has reappeared after settings migration
+[   30.850552] ubuntu-phablet usb_moded[1396]: Failed to write mac address to /etc/modprobe.d/g_ether.conf
+[   30.880107] ubuntu-phablet usb_moded[1396]: CONFIGFS detected
+[   30.889816] ubuntu-phablet usb_moded[1396]: /sys/kernel/config/usb_gadget/g1//functions/mass_storage.usb0: mkdir failed: Function not implemented
+[   30.890062] ubuntu-phablet usb_moded[1396]: /sys/kernel/config/usb_gadget/g1//functions/mtp.mtp: mkdir failed: Function not implemented
+[   30.890266] ubuntu-phablet usb_moded[1396]: Failed to read mac address from /etc/modprobe.d/g_ether.conf
+[   30.890387] ubuntu-phablet usb_moded[1396]: /sys/kernel/config/usb_gadget/g1//functions/rndis.usb0/wceis: can't open for writing: No such file or directory
+[   30.910068] ubuntu-phablet usb_moded[1396]: Unable to find $charger device '/sys/class/power_supply/usb'
+[   30.941293] ubuntu-phablet usb_moded[1396]: Forcing USB state to connected always. ASK mode non functional!
+[   30.984886] ubuntu-phablet usb_moded[1396]: no network gateway
+[   32.392018] ubuntu-phablet usb_moded[1396]: init_done -> reached
+RC=0
+
+CMD: cat /run/a50-k8/window.txt
+T 50.10 udc=configured jobs=multi-user.target/start,systemd-update-utmp-runlevel.service/start,graphical.target/start,a50-audio-route.service/start, state=starting
+T 51.18 udc=configured jobs=multi-user.target/start,systemd-update-utmp-runlevel.service/start,graphical.target/start,a50-audio-route.service/start, state=starting
+T 52.27 udc=configured jobs=multi-user.target/start,snapd.service/start,systemd-update-utmp-runlevel.service/start,graphical.target/start,a50-audio-route.service/start, state=starting
+T 53.36 udc=configured jobs=multi-user.target/start,snapd.service/start,systemd-update-utmp-runlevel.service/start,graphical.target/start,a50-audio-route.service/start, state=starting
+T 54.44 udc=configured jobs=multi-user.target/start,systemd-update-utmp-runlevel.service/start,graphical.target/start,a50-audio-route.service/start, state=starting
+T 55.53 udc=configured jobs=multi-user.target/start,systemd-update-utmp-runlevel.service/start,graphical.target/start,a50-audio-route.service/start, state=starting
+T 56.64 udc=configured jobs=multi-user.target/start,systemd-update-utmp-runlevel.service/start,graphical.target/start,a50-audio-route.service/start, state=starting
+T 57.73 udc=configured jobs=bluebinder.service/start,multi-user.target/start,systemd-update-utmp-runlevel.service/start,graphical.target/start,a50-audio-route.service/start, state=starting
+T 58.85 udc=configured jobs=multi-user.target/start,bluebinder.service/start,systemd-update-utmp-runlevel.service/start,graphical.target/start,a50-audio-route.service/start, state=starting
+T 59.93 udc=configured jobs=multi-user.target/start,systemd-update-utmp-runlevel.service/start,graphical.target/start,a50-audio-route.service/start, state=starting
+T 61.00 udc=configured jobs=multi-user.target/start,systemd-update-utmp-runlevel.service/start,graphical.target/start,a50-audio-route.service/start, state=starting
+T 61.09 udc=configured jobs=multi-user.target/start,systemd-update-utmp-runlevel.service/start,graphical.target/start,a50-audio-route.service/start, state=starting
+T 62.18 udc=configured jobs=multi-user.target/start,systemd-update-utmp-runlevel.service/start,graphical.target/start,a50-audio-route.service/start, state=starting
+T 63.27 udc=configured jobs=multi-user.target/start,systemd-update-utmp-runlevel.service/start,graphical.target/start,a50-audio-route.service/start, state=starting
+T 64.34 udc=configured jobs=multi-user.target/start,systemd-update-utmp-runlevel.service/start,graphical.target/start,a50-audio-route.service/start, state=starting
+T 65.41 udc=configured jobs=multi-user.target/start,systemd-update-utmp-runlevel.service/start,graphical.target/start,a50-audio-route.service/start, state=starting
+T 66.52 udc=configured jobs=multi-user.target/start,systemd-update-utmp-runlevel.service/start,graphical.target/start,a50-audio-route.service/start, state=starting
+T 67.61 udc=configured jobs=multi-user.target/start,systemd-update-utmp-runlevel.service/start,graphical.target/start,a50-audio-route.service/start, state=starting
+T 68.68 udc=configured jobs=bluebinder.service/start,multi-user.target/start,systemd-update-utmp-runlevel.service/start,graphical.target/start,a50-audio-route.service/start, state=starting
+T 69.79 udc=configured jobs=multi-user.target/start,systemd-update-utmp-runlevel.service/start,graphical.target/start,a50-audio-route.service/start, state=starting
+T 70.91 udc=configured jobs=multi-user.target/start,systemd-update-utmp-runlevel.service/start,graphical.target/start,a50-audio-route.service/start, state=starting
+RC=0

@@ -1,0 +1,55 @@
+{
+  "test": "M8.3 K5",
+  "result": "USB re-enumeration reproduced on unchanged P3 without keys; keys are not necessary to trigger it; root cause unresolved",
+  "host_runtime_extra_disconnects": [
+    "2026-11-18T17:58:35+06:00 BS-01808 kernel: usb 7-1: USB disconnect, device number 99",
+    "2026-11-18T17:58:38+06:00 BS-01808 kernel: usb 7-1: USB disconnect, device number 100",
+    "2026-11-18T17:58:38+06:00 BS-01808 kernel: usb 7-1: USB disconnect, device number 101",
+    "2026-11-18T17:58:40+06:00 BS-01808 kernel: usb 7-1: USB disconnect, device number 103"
+  ],
+  "host_runtime_extra_disconnect_count": 4,
+  "host_runtime_setup_errors": [
+    "2026-11-18T17:58:38+06:00 BS-01808 kernel: usb 7-1: Device not responding to setup address.",
+    "2026-11-18T17:58:39+06:00 BS-01808 kernel: usb 7-1: Device not responding to setup address.",
+    "2026-11-18T17:58:39+06:00 BS-01808 kernel: usb 7-1: device not accepting address 102, error -71"
+  ],
+  "normal_end_of_test_disconnect": "2026-11-18T18:04:22+06:00 BS-01808 kernel: usb 7-1: USB disconnect, device number 104",
+  "udc_sample_count": 342,
+  "udc_sample_start": 38.59,
+  "udc_sample_end": 389.32,
+  "udc_transitions": [
+    {
+      "uptime": 38.59,
+      "state": "configured"
+    },
+    {
+      "uptime": 84.1,
+      "state": "default"
+    },
+    {
+      "uptime": 85.12,
+      "state": "configured"
+    },
+    {
+      "uptime": 87.19,
+      "state": "default"
+    },
+    {
+      "uptime": 88.22,
+      "state": "configured"
+    }
+  ],
+  "collector_rc": 0,
+  "late_collection_rc": 0,
+  "runner_rc": 0,
+  "watch_rc": 0,
+  "kernel_stream_rc": 124,
+  "kernel_stream_note": "expected host timeout; full stream remained connected",
+  "kernel_fault_signatures": [],
+  "restored_at": "2026-11-18T18:04:48+06:00",
+  "baseline_booted_at": "2026-11-18T18:05:02+06:00",
+  "postflight": "passed",
+  "fsck": "e2fsck 1.43.4 (31-Jan-2017)\n/dev/sda32: clean, 7094/3440640 files, 1991391/13745152 blocks",
+  "phone_ip": "192.168.181.225",
+  "next_action": "Investigate shared USB/cable/port/host power management and device gadget/PHY behavior; keep image fixed for any physical-setup comparison. No wakeup-source removal justified by K5."
+}

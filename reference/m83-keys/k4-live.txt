@@ -1,0 +1,105 @@
+phone_side started pid 2639
+
+CMD: uname -r
+6.18.33-a50-diag+
+RC=0
+
+CMD: cat /proc/uptime
+39.75 214.36
+RC=0
+
+CMD: sh -c cat /proc/bus/input/devices | grep -E "^N:|^H:"
+N: Name="MELFAS MIP4 Touchscreen"
+H: Handlers=event0
+N: Name="gpio-keys"
+H: Handlers=kbd event1
+RC=0
+
+CMD: sh -c grep -i -E "gpa1|Volume|Power" /proc/interrupts
+ 73:          0          0          0          0          0          0          0          0     gpa1   6 Edge      Volume Down
+ 74:          0          0          0          0          0          0          0          0     gpa1   5 Edge      Volume Up
+ 75:          0          0          0          0          0          0          0          0     gpa1   7 Edge      Power
+RC=0
+
+CMD: sh -c grep -h -E "^\s*#?\s*HandlePowerKey" /etc/systemd/logind.conf /etc/systemd/logind.conf.d/*.conf /usr/lib/systemd/logind.conf.d/*.conf 2>/dev/null; systemd-inhibit --list --no-pager 2>&1 | head -n 15
+#HandlePowerKey=poweroff
+#HandlePowerKeyLongPress=ignore
+WHO            UID USER PID  COMM           WHAT  WHY                                         MODE
+NetworkManager 0   root 1616 NetworkManager sleep NetworkManager needs to turn off networks   delay
+Realtime Kit   0   root 2028 rtkit-daemon   sleep Demote realtime scheduling and stop canary. delay
+UPower         0   root 1685 upowerd        sleep Pause device polling                        delay
+
+3 inhibitors listed.
+RC=0
+
+CMD: sh -c cat /sys/class/udc/*/state; ls /sys/kernel/config/usb_gadget/*/configs/*/ 2>/dev/null | head; systemctl show usb-moded -p ActiveState -p SubState
+configured
+MaxPower
+bmAttributes
+rndis.usb0
+strings
+ActiveState=active
+SubState=running
+RC=0
+
+CMD: sh -c journalctl -b --no-pager -o short-monotonic -u usb-moded | tail -n 20
+[   30.418907] ubuntu-phablet usb_moded[1534]: usb_moded 0.86.0+mer69 starting
+[   30.437684] ubuntu-phablet usb_moded[1534]: /etc/usb-moded/usb-moded.ini: has reappeared after settings migration
+[   30.445456] ubuntu-phablet usb_moded[1534]: Failed to write mac address to /etc/modprobe.d/g_ether.conf
+[   30.445650] ubuntu-phablet usb_moded[1534]: CONFIGFS detected
+[   30.454027] ubuntu-phablet usb_moded[1534]: /sys/kernel/config/usb_gadget/g1//functions/mass_storage.usb0: mkdir failed: Function not implemented
+[   30.454341] ubuntu-phablet usb_moded[1534]: /sys/kernel/config/usb_gadget/g1//functions/mtp.mtp: mkdir failed: Function not implemented
+[   30.454511] ubuntu-phablet usb_moded[1534]: Failed to read mac address from /etc/modprobe.d/g_ether.conf
+[   30.454670] ubuntu-phablet usb_moded[1534]: /sys/kernel/config/usb_gadget/g1//functions/rndis.usb0/wceis: can't open for writing: No such file or directory
+[   30.464099] ubuntu-phablet usb_moded[1534]: Unable to find $charger device '/sys/class/power_supply/usb'
+[   30.468953] ubuntu-phablet usb_moded[1534]: Forcing USB state to connected always. ASK mode non functional!
+[   30.497837] ubuntu-phablet usb_moded[1534]: no network gateway
+[   32.043543] ubuntu-phablet usb_moded[1534]: init_done -> reached
+RC=0
+
+CMD: cat /run/a50-k1/keys.txt /run/a50-k1/window.txt /run/a50-k1/logind.txt /run/a50-k1/usbmoded.txt /run/a50-k1/dmesg-usb.txt
+device /dev/input/event1 name "gpio-keys"
+capturing 300 s (no grab)
+T 50.92 udc=configured jobs=multi-user.target/start,graphical.target/start,a50-audio-route.service/start,systemd-update-utmp-runlevel.service/start,bluebinder.service/start, state=starting
+T 51.03 udc=configured jobs=multi-user.target/start,graphical.target/start,a50-audio-route.service/start,systemd-update-utmp-runlevel.service/start,bluebinder.service/start, state=starting
+T 52.14 udc=configured jobs=multi-user.target/start,graphical.target/start,a50-audio-route.service/start,bluebinder.service/start,systemd-update-utmp-runlevel.service/start, state=starting
+T 53.29 udc=configured jobs=multi-user.target/start,graphical.target/start,a50-audio-route.service/start,systemd-update-utmp-runlevel.service/start,snapd.service/start, state=starting
+T 54.40 udc=configured jobs=multi-user.target/start,graphical.target/start,a50-audio-route.service/start,systemd-update-utmp-runlevel.service/start, state=starting
+T 55.54 udc=configured jobs=multi-user.target/start,graphical.target/start,a50-audio-route.service/start,systemd-update-utmp-runlevel.service/start, state=starting
+T 56.68 udc=configured jobs=multi-user.target/start,graphical.target/start,a50-audio-route.service/start,systemd-update-utmp-runlevel.service/start, state=starting
+T 57.77 udc=configured jobs=multi-user.target/start,graphical.target/start,a50-audio-route.service/start,systemd-update-utmp-runlevel.service/start, state=starting
+T 58.86 udc=configured jobs=multi-user.target/start,graphical.target/start,a50-audio-route.service/start,systemd-update-utmp-runlevel.service/start, state=starting
+T 59.92 udc=configured jobs=multi-user.target/start,graphical.target/start,a50-audio-route.service/start,systemd-update-utmp-runlevel.service/start, state=starting
+T 60.00 udc=configured jobs=multi-user.target/start,graphical.target/start,a50-audio-route.service/start,systemd-update-utmp-runlevel.service/start,enable-cpu-hotplug.service/start, state=starting
+T 61.16 udc=configured jobs=multi-user.target/start,graphical.target/start,a50-audio-route.service/start,systemd-update-utmp-runlevel.service/start, state=starting
+T 62.26 udc=configured jobs=multi-user.target/start,graphical.target/start,a50-audio-route.service/start,systemd-update-utmp-runlevel.service/start,bluebinder.service/start, state=starting
+T 63.35 udc=configured jobs=multi-user.target/start,graphical.target/start,a50-audio-route.service/start,systemd-update-utmp-runlevel.service/start,bluebinder.service/start, state=starting
+T 64.45 udc=configured jobs=multi-user.target/start,graphical.target/start,bluebinder.service/start,a50-audio-route.service/start,systemd-update-utmp-runlevel.service/start, state=starting
+T 65.56 udc=configured jobs=multi-user.target/start,graphical.target/start,a50-audio-route.service/start,systemd-update-utmp-runlevel.service/start, state=starting
+T 66.69 udc=default jobs=multi-user.target/start,graphical.target/start,a50-audio-route.service/start,systemd-update-utmp-runlevel.service/start, state=starting
+T 67.79 udc=configured jobs=multi-user.target/start,graphical.target/start,a50-audio-route.service/start,systemd-update-utmp-runlevel.service/start, state=starting
+T 68.88 udc=configured jobs=multi-user.target/start,graphical.target/start,a50-audio-route.service/start,systemd-update-utmp-runlevel.service/start, state=starting
+T 69.97 udc=configured jobs=multi-user.target/start,graphical.target/start,a50-audio-route.service/start,systemd-update-utmp-runlevel.service/start, state=starting
+T 70.06 udc=configured jobs=multi-user.target/start,graphical.target/start,a50-audio-route.service/start,systemd-update-utmp-runlevel.service/start, state=starting
+[   35.927403] ubuntu-phablet systemd-logind[1409]: New session 2 of user root.
+[   38.604841] ubuntu-phablet systemd-logind[1409]: Session 2 logged out. Waiting for processes to exit.
+[   38.645419] ubuntu-phablet systemd-logind[1409]: Removed session 2.
+[   38.748296] ubuntu-phablet systemd-logind[1409]: New session 4 of user root.
+[   38.799463] ubuntu-phablet systemd-logind[1409]: New session 5 of user root.
+[   38.848753] ubuntu-phablet systemd-logind[1409]: New session 6 of user root.
+[   39.037674] ubuntu-phablet systemd-logind[1409]: Session 4 logged out. Waiting for processes to exit.
+[   39.072044] ubuntu-phablet systemd-logind[1409]: Removed session 4.
+[   39.213626] ubuntu-phablet systemd-logind[1409]: New session 7 of user root.
+[   39.413369] ubuntu-phablet systemd-logind[1409]: Session 7 logged out. Waiting for processes to exit.
+[   39.418600] ubuntu-phablet systemd-logind[1409]: Removed session 7.
+[   39.580652] ubuntu-phablet systemd-logind[1409]: New session 8 of user root.
+[   30.454027] ubuntu-phablet usb_moded[1534]: /sys/kernel/config/usb_gadget/g1//functions/mass_storage.usb0: mkdir failed: Function not implemented
+[   30.454341] ubuntu-phablet usb_moded[1534]: /sys/kernel/config/usb_gadget/g1//functions/mtp.mtp: mkdir failed: Function not implemented
+[   30.454511] ubuntu-phablet usb_moded[1534]: Failed to read mac address from /etc/modprobe.d/g_ether.conf
+[   30.454670] ubuntu-phablet usb_moded[1534]: /sys/kernel/config/usb_gadget/g1//functions/rndis.usb0/wceis: can't open for writing: No such file or directory
+[   30.464099] ubuntu-phablet usb_moded[1534]: Unable to find $charger device '/sys/class/power_supply/usb'
+[   30.468953] ubuntu-phablet usb_moded[1534]: Forcing USB state to connected always. ASK mode non functional!
+[   30.497837] ubuntu-phablet usb_moded[1534]: no network gateway
+[   32.043543] ubuntu-phablet usb_moded[1534]: init_done -> reached
+cat: /run/a50-k1/dmesg-usb.txt: No such file or directory
+RC=1

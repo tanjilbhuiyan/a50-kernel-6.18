@@ -1,0 +1,104 @@
+{
+  "test": "M8.3 K7",
+  "result": "Intermittent USB issue did not reproduce; no diagnosis or fix established",
+  "host_runtime_extra_disconnect_count": 0,
+  "normal_end_of_test_disconnect": "2026-11-18T18:59:15+06:00 BS-01808 kernel: usb 5-1: USB disconnect, device number 13",
+  "runtime_address_descriptor_errors": [],
+  "udc_samples": 343,
+  "udc_start": 37.38,
+  "udc_end": 389.08,
+  "udc_states": [
+    "configured"
+  ],
+  "trace_setup": "enabled in private a50_k7 instance, boot clock, event & 1 DWC3 device filter plus seven gadget state/control events",
+  "trace_start_uptime": 37.38,
+  "trace_end_uptime": 390.13,
+  "trace_entries_written": 0,
+  "trace_per_cpu_losses": {
+    "overrun": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "commit overrun": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "dropped events": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "trace_limit": "No USB reset/disconnect in capture window. Empty trace is consistent with no events, but no positive USB-event control was observed; tracing may also perturb timing. One clean run does not clear intermittent fault.",
+  "host_power_samples_during_618": 399,
+  "host_power": {
+    "/sys/bus/usb/devices/5-1": {
+      "controls": [
+        "on"
+      ],
+      "states": [
+        "active"
+      ],
+      "suspended_ms_first": "0",
+      "suspended_ms_last": "0",
+      "device_numbers": [
+        "13"
+      ]
+    },
+    "/sys/devices/pci0000:00/0000:00:08.3/0000:06:00.3": {
+      "controls": [
+        "auto"
+      ],
+      "states": [
+        "active"
+      ],
+      "suspended_ms_first": "24574032",
+      "suspended_ms_last": "24574032",
+      "device_numbers": []
+    },
+    "/sys/devices/pci0000:00/0000:00:08.3/0000:06:00.3/usb5": {
+      "controls": [
+        "auto"
+      ],
+      "states": [
+        "active"
+      ],
+      "suspended_ms_first": "24582621",
+      "suspended_ms_last": "24582621",
+      "device_numbers": [
+        "1"
+      ]
+    }
+  },
+  "fault_signatures": [],
+  "runner_rc": 0,
+  "watch_rc": 0,
+  "collector_rc": 0,
+  "late_rc": 0,
+  "host_power_rc": 0,
+  "host_journal_rc": 0,
+  "kernel_stream_rc": 124,
+  "restored_at": "2026-11-18T18:59:41+06:00",
+  "baseline_booted_at": "2026-11-18T18:59:56+06:00",
+  "postflight": "passed",
+  "fsck": "e2fsck 1.43.4 (31-Jan-2017)\n/dev/sda32: clean, 7095/3440640 files, 1991477/13745152 blocks",
+  "inputs_reverified": 24,
+  "next": "Repeat same-image USB tracing when owner available, adding private trace markers and read-back of enables for calibration; capture a spontaneous drop before proposing a fix. No key or power-policy change justified."
+}

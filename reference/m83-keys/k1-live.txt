@@ -1,0 +1,52 @@
+
+CMD: uname -r
+6.18.33-a50-diag+
+RC=0
+
+CMD: sh -c dmesg | grep -i -E "gpio-keys|gpio_keys|keys|input:" | head -n 30
+[   30.533422] init: starting service 'keystore'...
+[   30.540607] init: createProcessGroup(1017, 245) failed for service 'keystore': Read-only file system
+RC=0
+
+CMD: cat /proc/bus/input/devices
+I: Bus=0018 Vendor=13c5 Product=1004 Version=0000
+N: Name="MELFAS MIP4 Touchscreen"
+P: Phys=3-0048/input0
+S: Sysfs=/devices/platform/soc@0/13870000.i2c/i2c-3/3-0048/input/input0
+U: Uniq=
+H: Handlers=event0
+B: PROP=2
+B: EV=b
+B: KEY=400 0 0 0 0 0
+B: ABS=6e3800001000003
+
+I: Bus=0019 Vendor=0001 Product=0001 Version=0100
+N: Name="gpio-keys"
+P: Phys=gpio-keys/input0
+S: Sysfs=/devices/platform/gpio-keys/input/input1
+U: Uniq=
+H: Handlers=kbd event1
+B: PROP=0
+B: EV=3
+B: KEY=1c000000000000 0
+
+RC=0
+
+CMD: sh -c grep -i -E "gpa1|gpio-keys|Volume|Power|mip4" /proc/interrupts
+ 70:      56098          0          0          0          0          0          0          0     gpa0   0 Level     mip4_ts
+ 73:          0          0          0          0          0          0          0          0     gpa1   6 Edge      Volume Down
+ 74:          0          0          0          0          0          0          0          0     gpa1   5 Edge      Volume Up
+ 75:          0          0          0          0          0          0          0          0     gpa1   7 Edge      Power
+RC=0
+
+CMD: sh -c cat /sys/kernel/debug/gpio | grep -i -E -A1 "gpa1" | head -n 12
+gpiochip4: 8 GPIOs, parent: platform/11850000.pinctrl, gpa1:
+ gpio-5   (                    |Volume Up           ) in  hi IRQ ACTIVE LOW
+RC=0
+
+CMD: sh -c cat /sys/kernel/debug/pinctrl/11850000.pinctrl*/pinmux-pins 2>/dev/null | grep -E "gpa1-[567]"
+pin 19 (gpa1-5): gpio-keys (GPIO UNCLAIMED) function key-pins group gpa1-5
+pin 20 (gpa1-6): gpio-keys (GPIO UNCLAIMED) function key-pins group gpa1-6
+pin 21 (gpa1-7): gpio-keys (GPIO UNCLAIMED) function key-pins group gpa1-7
+RC=0
+Timeout, server 10.15.19.82 not responding.

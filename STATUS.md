@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-18 (M8.2 done; next M8.3)
+Updated: 2026-11-19 (M8 publication validated; home phone reachable)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -8,7 +8,65 @@ Read this file, then the active ticket and its log. Before trusting anything her
 branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and on the phone. At the end of a session, update
 **RESUME HERE** with commits, branch, image hashes, last test and rollback result, and the next action.
 
-## RESUME HERE (2026-11-18, M8.2 done; next M8.3)
+## RESUME HERE (2026-11-19, publish current M8 source/build)
+- **Owner task:** commit and push all findings with a build path usable from a new clone. No new phone boot authorized
+  or performed. Home **192.168.0.171** answers read-only phablet SSH, reports stock **4.14.194** at 01:13. Partition
+  post-flight/fsck last verified during K8 below; no new root/partition check today.
+- **Build gap fixed:** `tools/reproduce_m8.py` + `reproduce/m8/` reconstruct the 56-patch clean M8 tree and I4 runtime
+  from pinned public inputs. README/patch docs point at this entry point. The exact clean image has not been flashed.
+- **Validation:** two full builds passed: `src/m83/publish-m8-bootstrap/` and fresh staged-snapshot clone
+  `src/m83/publication-clone/` with its own generated source/payload/output. All 79 locked inputs match publication;
+  normalized configs/raw DTB/cpio match across paths. Optional caches supply only locked public Git objects/downloads.
+  Storage/sense tests, tracked-input drift and dirty-source refusal checks pass. Public asset URLs return HTTP 200.
+- **Publication state:** outer main still **99b81eb**, no new commit/push yet; M8.3 evidence/tools, 56-patch export and
+  M8 reproducer staged. `log/2026-11-19-publish-m8.md` and `reference/m83-publication/` record validation. Commit/push next.
+- **Kernel branches unchanged:** common a50-usb/4fbb731f5, clean a50-input/e0c2610f9, runtime a50-m83-k1-test/3a823204f.
+  M8.3 remains open on the intermittent shared USB issue; key acceptance checks/export are met. M8.4 not started.
+
+## Earlier handoff (2026-11-18, M8.3 K8 complete; superseded for publication state)
+- **K8 result:** same P3 image/cable/5-1 port, calibrated private trace repeat. Zero unexpected host USB
+  disconnects/errors; device number 18 throughout. Trace contains exactly START (38.932908 s) and END (390.951245 s)
+  markers; all eight event enables read back 1 at both ends, zero losses/overruns on all CPUs. No USB-controller events
+  occurred, so no positive USB-event control/fault diagnosis. 341 UDC samples (38.94-389.76 s), all configured; 399 host
+  power samples active with unchanged suspend counters. K7/K8 clean does not clear K5/K6's intermittent failure.
+- **Active ticket:** `tasks/M8.3-keys.md`. All three key acceptance checks met, including clean numbered export;
+  ticket remains in progress on shared USB investigation. M8.1/M8.2 done with recorded M12 deferrals. M8.4 not started.
+- **Earlier K7 result:** same P3 image/cable/5-1 port as K6 with private DWC3/UDC tracing. **Zero unexpected runtime USB
+  disconnects**, zero address errors; device number 13 throughout. 343 phone UDC samples (37.38-389.08 s), all configured.
+  Trace enabled at 37.388 s, frozen at 390.13 s, zero events and zero buffer overruns/drops on all 8 CPUs. Fault did not
+  recur, so no diagnosis or fix established. No positive USB-event control after trace setup; instrumentation may affect
+  timing. A clean run does not clear the intermittent failure in K5/K6.
+- **Earlier controls:** unchanged P3 without keys reproduces on both paths: K5 four extra disconnects on 7-1/PCI
+  06:00.4 (setup-address -71); K6 one on 5-1/PCI 06:00.3 at 18:19:48 (device 5->6). K6 host suspend counters remain
+  unchanged across the drop, so ordinary host autosuspend is unsupported as its trigger. Root cause remains unverified.
+  No spare cable available. Do not change keys/wakeup-source or claim another port fixes it.
+- **Phone last verified:** stock DTB/DTBO/baseline BOOT restored **2026-11-18 19:23:16**; baseline **4.14.194** booted
+  **19:23:31**, office **192.168.181.225**, **100% Charging**. Post-flight passed; fsck clean **7090/3440640 files,
+  1991478/13745152 blocks**. Complete timed dump recovered; no recorded kernel fault signatures. No test active.
+- **Next:** retain calibrated same-image USB tracing for an actual recurrence before choosing a code/power change.
+  No further boot prepared/run. No button presses or recovery action needed during K8; owner instructed to keep setup
+  still. Do not alter keys/wakeup-source or claim another port fixes the issue. Owner presence needed for future phone work.
+- **K8 evidence:** `log/2026-11-18-M8.3-keys.md`, `reference/m83-keys/k8-results.json`, host USB/power records,
+  `k8-late.txt`, `k8-trace-setup.txt`, `k8-trace-final.txt`, `k8-trace-stats.txt`, `k8-usb-trace.txt`, `k8-run.txt`,
+  `k8-baseline-fsck.txt`. Raw `src/m83/k8-raw/`, session `src/m83/k8-session.txt`, prep `src/m83/k8-prep/`.
+  Runner/watch/collectors/samplers/fsck rc 0; stream 124 expected. Live host follower terminated after restore as
+  designed; unrelated host logs not published. All 24 input hashes verified after run. No source/functional change.
+- **Inputs:** BOOT `src/m82/boot-p3.img`
+  **295da8967c1afce2e6aeaad9b1a181023d7210919925296508ec3629892027ad**; DT `src/m82/dt-p3.img`
+  **dbb3ce70d2d8e796c93af97cd1cf1ddacf626cc234c6f2526b46ff573dc643b4**. Same cable/current port 5-1/PCI 06:00.3.
+  `tools/m83/run_k8.sh`, `collect_k8.sh`, `k8_phone_side.sh`, `watch_host_usb.py`. Private a50_k8 trace instance,
+  64 KiB/CPU, boot clock, event & 1 DWC3 device-event filter plus seven UDC state/control events; no USB payloads.
+  Backup freshly rehashed before K8: **22cb95a536489c89a738cae3105859c041a15b298c4140c6a1a018883f7bd896**.
+- **Export complete:** patches **0001-0056** replay against ACK d9a614fed to **a50-input/e0c2610f9** tree
+  **a92a29f0bfc9e99b91ab8184c8b9a781e7b0d8ad**. New 0055/0056 keys; first 54 only change Subject totals /54 -> /56,
+  code payloads verified unchanged. `reference/m83-keys/clean-patch-replay.txt`, `clean-patch-inputs.json`. README and
+  patches README updated. Power-key screen blanking stays deferred while repowerd is masked until M12.
+- **Git:** outer HEAD **99b81eb**; all M8.3 K1-K8 tools/log/evidence, export and handoff edits uncommitted. No commit/push.
+  Kernel worktrees checked clean: common **a50-usb/4fbb731f5**, `src/m75/runtime-kernel`
+  **a50-m83-k1-test/3a823204f**, `src/m81/clean-kernel` **a50-input/e0c2610f9**. No build or branch switch.
+- **Open owner question (from 2026-11-17):** history rewrite for `ccc4e48`/`f68ca87` identifiers, undecided.
+
+## Earlier handoff (M8.2 done; next M8.3; superseded)
 - **Phone:** stock 4.14.194 (office **192.168.181.225**; home 192.168.0.171), post-flight passed, fsck clean
   7071/3440640 files. No test active.
 - **M8.2 done:** touch works on 6.18 (owner operated Lomiri by touch). Mainline `melfas_mip4` + format 8 + DT

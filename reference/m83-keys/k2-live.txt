@@ -1,0 +1,59 @@
+phone_side started pid 2492
+
+CMD: uname -r
+6.18.33-a50-diag+
+RC=0
+
+CMD: cat /proc/uptime
+37.54 217.47
+RC=0
+
+CMD: sh -c cat /proc/bus/input/devices | grep -E "^N:|^H:"
+N: Name="MELFAS MIP4 Touchscreen"
+H: Handlers=event0
+N: Name="gpio-keys"
+H: Handlers=kbd event1
+RC=0
+
+CMD: sh -c grep -i -E "gpa1|Volume|Power" /proc/interrupts
+ 73:          0          0          0          0          0          0          0          0     gpa1   6 Edge      Volume Down
+ 74:          0          0          0          0          0          0          0          0     gpa1   5 Edge      Volume Up
+ 75:          0          0          0          0          0          0          0          0     gpa1   7 Edge      Power
+RC=0
+
+CMD: sh -c grep -h -E "^\s*#?\s*HandlePowerKey" /etc/systemd/logind.conf /etc/systemd/logind.conf.d/*.conf /usr/lib/systemd/logind.conf.d/*.conf 2>/dev/null; systemd-inhibit --list --no-pager 2>&1 | head -n 15
+#HandlePowerKey=poweroff
+#HandlePowerKeyLongPress=ignore
+WHO            UID USER PID  COMM           WHAT  WHY                                         MODE
+NetworkManager 0   root 1603 NetworkManager sleep NetworkManager needs to turn off networks   delay
+Realtime Kit   0   root 2041 rtkit-daemon   sleep Demote realtime scheduling and stop canary. delay
+UPower         0   root 1605 upowerd        sleep Pause device polling                        delay
+
+3 inhibitors listed.
+RC=0
+
+CMD: sh -c cat /sys/class/udc/*/state; ls /sys/kernel/config/usb_gadget/*/configs/*/ 2>/dev/null | head; systemctl show usb-moded -p ActiveState -p SubState
+configured
+MaxPower
+bmAttributes
+rndis.usb0
+strings
+ActiveState=active
+SubState=running
+RC=0
+
+CMD: sh -c journalctl -b --no-pager -o short-monotonic -u usb-moded | tail -n 20
+[   30.801060] ubuntu-phablet usb_moded[1449]: usb_moded 0.86.0+mer69 starting
+[   30.808839] ubuntu-phablet usb_moded[1449]: /etc/usb-moded/usb-moded.ini: has reappeared after settings migration
+[   30.820212] ubuntu-phablet usb_moded[1449]: Failed to write mac address to /etc/modprobe.d/g_ether.conf
+[   30.831517] ubuntu-phablet usb_moded[1449]: CONFIGFS detected
+[   30.847373] ubuntu-phablet usb_moded[1449]: /sys/kernel/config/usb_gadget/g1//functions/mass_storage.usb0: mkdir failed: Function not implemented
+[   30.847876] ubuntu-phablet usb_moded[1449]: /sys/kernel/config/usb_gadget/g1//functions/mtp.mtp: mkdir failed: Function not implemented
+[   30.848529] ubuntu-phablet usb_moded[1449]: Failed to read mac address from /etc/modprobe.d/g_ether.conf
+[   30.849019] ubuntu-phablet usb_moded[1449]: /sys/kernel/config/usb_gadget/g1//functions/rndis.usb0/wceis: can't open for writing: No such file or directory
+[   30.868165] ubuntu-phablet usb_moded[1449]: Unable to find $charger device '/sys/class/power_supply/usb'
+[   30.892082] ubuntu-phablet usb_moded[1449]: Forcing USB state to connected always. ASK mode non functional!
+[   30.949504] ubuntu-phablet usb_moded[1449]: no network gateway
+[   32.829016] ubuntu-phablet usb_moded[1449]: init_done -> reached
+RC=0
+Timeout, server 10.15.19.82 not responding.
