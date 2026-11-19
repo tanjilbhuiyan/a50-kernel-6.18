@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-19 (M9.1 SCSC contract done; next M9.2)
+Updated: 2026-11-19 (M9.2 W1r2: WLBT chip boots on 6.18)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -8,7 +8,19 @@ Read this file, then the active ticket and its log. Before trusting anything her
 branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and on the phone. At the end of a session, update
 **RESUME HERE** with commits, branch, image hashes, last test and rollback result, and the next action.
 
-## RESUME HERE (2026-11-19, M9.1 done; next M9.2)
+## RESUME HERE (2026-11-19, M9.2 in progress: chip boots on 6.18)
+- **M9.2** (`log/2026-11-19-M9.2-scsc-core.md`): W1r2 booted the WLBT chip on 6.18 — CFG_REQ, EL3 SMC returns 0,
+  firmware `MM_START_IND` (S620_E9610_R3-1_Y21W46A), NULL service start/stop, no faults. W1 found a DT alignment-cell
+  bug, W1r a missing 9610 mif op (oops); both fixed.
+- **Branches:** clean `a50-wlbt` (worktree `src/m92/clean-kernel`): 83722e28e import, e63c489a1 6.18 build,
+  b6da265a1 DT, 39882bf6a recovery ops. Test `a50-m92-w1-test` (worktree `src/m92/test-kernel`) = H1 + same.
+  Build `python3 -I tools/m92/build_w1.py TAG`; run `tools/m92/run_w1.sh IP TAG`. W1r2 BOOT
+  `03650b8744c1af3145d04631b11bd08d4c92aa7a807f666a6212bc037c664467`, DT `2b674f36…6313442`.
+- **Phone:** stock 4.14.194 restored 15:45:19, post-flight passed, fsck clean 7056 files, office **192.168.181.225**.
+- **Next (M9.2):** find the WARN taint present at 39 s (source unknown, ring overwritten); defconfig commit
+  (SCSC + firmware path); export patches and refresh the public build. Then M9.3 Wi-Fi (station via upstream cfg80211).
+
+## Earlier handoff (2026-11-19, M9.1 done; superseded by M9.2 progress)
 - **M9.1 done** (`log/2026-11-19-M9.1-scsc-contract.md`, result `reference/m91-scsc/contract.md`). Stock SCSC
   hardware/firmware/consumer contract recorded; chip boot is source-derived (the stock touch log stream overwrites the
   1 MiB ring before SSH at 19 s, and an rfkill toggle restarts only the Wi-Fi service). Wi-Fi service start measured.
