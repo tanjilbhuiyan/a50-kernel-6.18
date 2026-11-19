@@ -1,6 +1,7 @@
 #!/bin/bash
 # M9.2: compile-only check of the SCSC core in a kernel tree (default: clean a50-wlbt worktree), using the S1 config
-# (no initramfs) plus the SCSC options. Never flashes. Usage: tools/m92/compile_scsc.sh OUT_DIR [KERNEL_TREE]
+# (no initramfs) plus the SCSC options (WLAN=1: also cfg80211 and the Wi-Fi driver). Never flashes.
+# Usage: [WLAN=1] tools/m92/compile_scsc.sh OUT_DIR [KERNEL_TREE]
 set -euo pipefail
 repo=$(cd "$(dirname "$0")/../.." && pwd)
 out=$(realpath -m "${1:?usage: compile_scsc.sh OUT_DIR [KERNEL_TREE]}")
@@ -12,10 +13,12 @@ export PATH=$repo/src/m75/shim:$ack/prebuilts/clang/host/linux-x86/clang-r584948
 unset KCFLAGS KCPPFLAGS LOCALVERSION KCONFIG_CONFIG KBUILD_OUTPUT
 if [ ! -f "$out/.config" ]; then
     sed 's|^CONFIG_INITRAMFS_SOURCE=.*|CONFIG_INITRAMFS_SOURCE=""|' "$repo/reference/m85-integration/s1.config" > "$out/.config"
-    printf 'CONFIG_SCSC_CORE=y\nCONFIG_SCSC_PLATFORM_EXYNOS9610=y\nCONFIG_SCSC_CM_MX_CLIENT_TEST=y\nCONFIG_SCSC_MX_ALWAYS_ON=y\n' >> "$out/.config"
+    printf 'CONFIG_SCSC_CORE=y\nCONFIG_SCSC_PLATFORM_EXYNOS9610=y\nCONFIG_SCSC_CM_MX_CLIENT_TEST=y\n' >> "$out/.config"
+    [ -z "${WLAN:-}" ] || printf 'CONFIG_CFG80211=y\nCONFIG_SCSC_WLAN=y\n' >> "$out/.config"
 fi
+dirs=drivers/misc/samsung/; [ -z "${WLAN:-}" ] || dirs="$dirs drivers/net/wireless/samsung/"
 args=(-C "$kernel" -j16 ARCH=arm64 LLVM=1 "O=$out")
 make "${args[@]}" olddefconfig >/dev/null
 grep -E '^CONFIG_SCSC' "$out/.config"
-make "${args[@]}" -k drivers/misc/samsung/ 2>&1 | tee "$out/scsc-build.log" | grep -E 'error|warning: (unused|implicit)|Error' | head -${SHOW:-60} || true
+make "${args[@]}" -k $dirs 2>&1 | tee "$out/scsc-build.log" | grep -E 'error|warning: (unused|implicit)|Error' | head -${SHOW:-60} || true
 echo "errors: $(grep -c ' error: ' "$out/scsc-build.log" || true)"
