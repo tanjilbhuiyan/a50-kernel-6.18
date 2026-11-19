@@ -1,0 +1,92 @@
+From 67480e78ff2ee1dd69e84105e718fcf7a02430be Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Thu, 19 Nov 2026 01:36:36 +0600
+Subject: [PATCH 1/2] arm64: dts: exynos9610-a50: add the hall sensors and the
+ vibrator
+
+The flip-cover and certified-cover hall sensors are active-low GPIOs on
+gpa0-3 and gpa0-2; report them as SW_LID and SW_MACHINE_COVER through
+gpio-keys with the stock 50 ms debounce. The vibration motor's supply is
+switched by gpa2-1; describe it as the "vibrator" LED with the transient
+trigger, the sysfs interface the vendor vibrator HAL and Ubuntu Touch's
+hfd-service use.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: Id439d9e2502eda8d916f5749b91fc0c40a27c8b2
+---
+ arch/arm64/boot/dts/exynos/exynos9610-a50.dts | 52 +++++++++++++++++++
+ 1 file changed, 52 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610-a50.dts b/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
+index f2af086b0..bb019f05b 100644
+--- a/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
++++ b/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
+@@ -59,6 +59,50 @@ key-power {
+ 		};
+ 	};
+ 
++	/*
++	 * O: hall (gpa0-3, flip cover) and certify_hall (gpa0-2), both low when the
++	 * cover is closed/attached; stock debounces with two reads 50 ms apart. The
++	 * stock SW_FLIP/SW_CERTIFYHALL codes are Samsung-only; use the standard ones.
++	 */
++	hall-sensors {
++		compatible = "gpio-keys";
++		label = "Hall sensors";
++		pinctrl-names = "default";
++		pinctrl-0 = <&hall_pins>;
++
++		switch-flip-cover {
++			label = "Flip cover";
++			linux,input-type = <EV_SW>;
++			linux,code = <SW_LID>;
++			gpios = <&gpa0 3 GPIO_ACTIVE_LOW>;
++			debounce-interval = <50>;
++		};
++
++		switch-certified-cover {
++			label = "Certified cover";
++			linux,input-type = <EV_SW>;
++			linux,code = <SW_MACHINE_COVER>;
++			gpios = <&gpa0 2 GPIO_ACTIVE_LOW>;
++			debounce-interval = <50>;
++		};
++	};
++
++	/*
++	 * O: sec_vib switches the motor supply with gpa2-1 (ldo_type 1, active high).
++	 * The vendor vibrator HAL and hfd-service use /sys/class/leds/vibrator with the
++	 * transient trigger (activate/duration/state).
++	 */
++	leds {
++		compatible = "gpio-leds";
++
++		led-vibrator {
++			label = "vibrator";
++			gpios = <&gpa2 1 GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "transient";
++			default-state = "off";
++		};
++	};
++
+ 	peri_bus_bootclk: clock-peri-bus-boot {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+@@ -239,6 +283,14 @@ touchscreen@48 {
+ };
+ 
+ &pinctrl_alive {
++	/* O: hall-irq (gpa0-3) and certify-hall-irq (gpa0-2): external interrupt, no pull. */
++	hall_pins: hall-pins {
++		samsung,pins = "gpa0-2", "gpa0-3";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
++		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
++	};
++
+ 	/* O: key-voldown/key-volup/key-power: external interrupt, no pull (pulled up on the board). */
+ 	key_pins: key-pins {
+ 		samsung,pins = "gpa1-5", "gpa1-6", "gpa1-7";
+-- 
+2.56.1
+

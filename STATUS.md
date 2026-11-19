@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-19 (M8 build/evidence committed; home phone reachable)
+Updated: 2026-11-19 (M8.4 done; next M8.5)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -8,7 +8,24 @@ Read this file, then the active ticket and its log. Before trusting anything her
 branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and on the phone. At the end of a session, update
 **RESUME HERE** with commits, branch, image hashes, last test and rollback result, and the next action.
 
-## RESUME HERE (2026-11-19, publish current M8 source/build)
+## RESUME HERE (2026-11-19, M8.4 done; next M8.5)
+- **Phone:** stock 4.14.194 (home **192.168.0.171**), post-flight passed, fsck clean 7096/3440640 files (H1 restore
+  01:57:37). No test active.
+- **M8.4 done** (`log/2026-11-19-M8.4-hall-vibrator.md`): vibrator works (`gpio-leds` "vibrator" on gpa2-1 + transient
+  trigger = the `/sys/class/leds/vibrator` interface of the vendor HAL and hfd-service; owner felt three 300 ms pulses).
+  Hall sensors (`gpio-keys` SW_LID gpa0-3 / SW_MACHINE_COVER gpa0-2) probe and are registered with logind; events not
+  exercised (no cover/magnet), moved to M8.5 (owner Option B). Clean commits `67480e78f`, `3bd96025f` on `a50-input`.
+- **Publication:** `patches/` intentionally stays at the 56-patch series locked by `reproduce/m8/sources.lock.json`
+  (re-exporting rewrites all headers and breaks the locked hashes). M8.4 patches are in
+  `reference/m84-hall-vib/h1-clean-patches/`. M8.5 does the 58+ patch export, lock refresh and validation build.
+- **M8.3:** key checks met; still open only for the intermittent USB re-enumeration, which also occurs without keys
+  (Codex K5/K6), cause unverified.
+- **Next ticket:** `tasks/M8.5-input-integration.md`: S3 checklist, interactive soak, hall events with a magnet, M8
+  publication refresh, M8 DoD.
+- **Test base:** `a50-m84-h1-test` (`3c651aa2d`) = K1 test kernel + `a50-input`; build `tools/m84/build_h1.sh`; BOOT
+  `src/m84/boot-h1.img`, DT `src/m84/dt-h1.img`.
+
+## Earlier handoff (M8 publication, Codex; superseded)
 - **Owner task:** commit and push all findings with a build path usable from a new clone. No new phone boot authorized
   or performed. Home **192.168.0.171** answers read-only phablet SSH, reports stock **4.14.194** at 01:13. Partition
   post-flight/fsck last verified during K8 below; no new root/partition check today.

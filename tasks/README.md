@@ -61,5 +61,5 @@ later milestones get tickets when we reach them (evidence first, Rule 1).
 | M8.1 | Real I2C without freezing 6.18 (unblocks M4.4) | yes | M4.4 | done (log/2026-11-18-M8.1-i2c.md; ADR-0007) |
 | M8.2 | Melfas MMS touchscreen | yes | M8.1 | done (log/2026-11-18-M8.2-touch.md; blank-state power → M12) |
 | M8.3 | Volume and power keys | yes | M8.1 | in-progress (keys/export verified; K5/K6 USB issue; K7/K8 did not reproduce) |
-| M8.4 | Hall sensor and vibrator | yes | M8.1 where I2C-attached (unverified) | todo |
+| M8.4 | Hall sensor and vibrator | yes | M8.1 | done (log/2026-11-19-M8.4-hall-vibrator.md; hall events → M8.5) |
 | M8.5 | Lomiri input integration, S3 checklist and M8 DoD | yes | M8.2, M8.3, M8.4 | todo |

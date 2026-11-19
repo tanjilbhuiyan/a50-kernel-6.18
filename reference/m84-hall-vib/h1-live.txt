@@ -1,0 +1,96 @@
+phone_side started pid 3817
+
+CMD: uname -r
+6.18.33-a50-diag+
+RC=0
+
+CMD: cat /proc/uptime
+59.48 295.42
+RC=0
+
+CMD: sh -c cat /proc/bus/input/devices | grep -E "^N:|^H:|^B: (EV|SW)"
+N: Name="MELFAS MIP4 Touchscreen"
+H: Handlers=event0
+B: EV=b
+N: Name="gpio-keys"
+H: Handlers=kbd event1
+B: EV=3
+N: Name="Hall sensors"
+H: Handlers=event2
+B: EV=21
+B: SW=10001
+RC=0
+
+CMD: sh -c grep -i -E "Flip|Certified|gpa0|gpa1" /proc/interrupts
+ 70:      63081          0          0          0          0          0          0          0     gpa0   0 Level     mip4_ts
+ 73:          0          0          0          0          0          0          0          0     gpa1   6 Edge      Volume Down
+ 74:          0          0          0          0          0          0          0          0     gpa1   5 Edge      Volume Up
+ 75:          0          0          0          0          0          0          0          0     gpa1   7 Edge      Power
+ 76:          0          0          0          0          0          0          0          0     gpa0   3 Edge      Flip cover
+ 77:          0          0          0          0          0          0          0          0     gpa0   2 Edge      Certified cover
+RC=0
+
+CMD: sh -c ls -l /sys/class/leds/; cat /sys/class/leds/vibrator/trigger; ls /sys/class/leds/vibrator/
+total 0
+lrwxrwxrwx 1 root root 0 Jan  1  1970 vibrator -> ../../devices/platform/leds/leds/vibrator
+none default kbd-scrolllock kbd-numlock kbd-capslock kbd-kanalock kbd-shiftlock kbd-altgrlock kbd-ctrllock kbd-altlock kbd-shiftllock kbd-shiftrlock kbd-ctrlllock kbd-ctrlrlock [transient]
+activate
+brightness
+device
+duration
+max_brightness
+power
+state
+subsystem
+trigger
+uevent
+RC=0
+
+CMD: sh -c grep -E -A0 "vibrator|Flip|Certified" /sys/kernel/debug/gpio
+ gpio-2   (                    |Certified cover     ) in  hi IRQ ACTIVE LOW
+ gpio-3   (                    |Flip cover          ) in  hi IRQ ACTIVE LOW
+--
+ gpio-1   (                    |vibrator            ) out lo
+RC=0
+
+CMD: sh -c cat /sys/kernel/debug/pinctrl/11850000.pinctrl*/pinmux-pins 2>/dev/null | grep -E "gpa0-[23]|gpa2-1"
+pin 8 (gpa0-2): hall-sensors (GPIO UNCLAIMED) function hall-pins group gpa0-2
+pin 9 (gpa0-3): hall-sensors (GPIO UNCLAIMED) function hall-pins group gpa0-3
+pin 23 (gpa2-1): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+RC=0
+
+CMD: sh -c grep -h -E "^\s*#?\s*HandleLidSwitch" /etc/systemd/logind.conf /etc/systemd/logind.conf.d/*.conf 2>/dev/null
+#HandleLidSwitch=suspend
+#HandleLidSwitchExternalPower=suspend
+#HandleLidSwitchDocked=ignore
+RC=2
+
+CMD: cat /run/a50-k1/vib.txt /run/a50-k1/hall.txt
+attrs activate brightness device duration max_brightness power state subsystem trigger uevent
+trigger none default kbd-scrolllock kbd-numlock kbd-capslock kbd-kanalock kbd-shiftlock kbd-altgrlock kbd-ctrllock kbd-altlock kbd-shiftllock kbd-shiftrlock kbd-ctrlllock kbd-ctrlrlock [transient]
+brightness 0 max 1
+gpio_idle  gpio-1 ( |vibrator ) out lo
+pulse 1 t=85.90 rc=0/0/0 during: 1  gpio-1 ( |vibrator ) out hi  | after: 0  gpio-1 ( |vibrator ) out lo
+pulse 2 t=87.61 rc=0/0/0 during: 1  gpio-1 ( |vibrator ) out hi  | after: 0  gpio-1 ( |vibrator ) out lo
+pulse 3 t=89.29 rc=0/0/0 during: 1  gpio-1 ( |vibrator ) out hi  | after: 0  gpio-1 ( |vibrator ) out lo
+device /dev/input/event2 name "Hall sensors"
+capturing 240 s (no grab)
+RC=0
+
+CMD: sh -c journalctl -b --no-pager -o short-monotonic -u systemd-logind | tail -n 15
+[   30.855915] ubuntu-phablet systemd-logind[1397]: Watching system buttons on /dev/input/event2 (Hall sensors)
+[   30.855915] ubuntu-phablet systemd-logind[1397]: New seat seat0.
+[   34.552218] ubuntu-phablet systemd-logind[1397]: New session c2 of user phablet.
+[   54.780070] ubuntu-phablet systemd-logind[1397]: New session 2 of user root.
+[   57.806112] ubuntu-phablet systemd-logind[1397]: Session 2 logged out. Waiting for processes to exit.
+[   57.816823] ubuntu-phablet systemd-logind[1397]: Removed session 2.
+[   58.075345] ubuntu-phablet systemd-logind[1397]: New session 4 of user root.
+[   58.119945] ubuntu-phablet systemd-logind[1397]: New session 6 of user root.
+[   58.167375] ubuntu-phablet systemd-logind[1397]: New session 5 of user root.
+[   58.642525] ubuntu-phablet systemd-logind[1397]: Session 5 logged out. Waiting for processes to exit.
+[   58.649001] ubuntu-phablet systemd-logind[1397]: Removed session 5.
+[   58.913574] ubuntu-phablet systemd-logind[1397]: New session 7 of user root.
+[   59.085829] ubuntu-phablet systemd-logind[1397]: Session 7 logged out. Waiting for processes to exit.
+[   59.092333] ubuntu-phablet systemd-logind[1397]: Removed session 7.
+[   59.276121] ubuntu-phablet systemd-logind[1397]: New session 8 of user root.
+RC=0
