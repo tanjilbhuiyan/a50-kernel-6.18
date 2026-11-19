@@ -22,7 +22,8 @@ capture sh -c 'ls -l /dev/mx_client_test_0 /sys/bus/platform/drivers/scsc_wlbt 2
 capture sh -c 'cat /proc/device-tree/soc@0/wlbt@119c0000/status; echo'
 state probe
 capture cat /proc/sys/kernel/tainted
-capture sh -c 'dmesg | grep -A12 "cut here" | head -n 60'
+capture sh -c 'dmesg | grep -B4 -A40 "cut here" | head -n 200'
+capture sh -c 'dmesg | head -n 3; dmesg | wc -l'
 capture sh -c 'ls -l /sys/bus/platform/drivers/scsc_wlbt/'
 printf '\nM92_W1_PROBE_LOG\n'; wlbt 120
 wait_up 90

@@ -14,6 +14,7 @@ from pathlib import Path
 import sys
 
 TAG = sys.argv[1] if len(sys.argv) > 1 else 'w1'  # w1, w1r, ...
+EXTRA = ' ' + sys.argv[2] if len(sys.argv) > 2 else ''  # extra built-in cmdline words (diagnostics)
 ROOT = Path(__file__).resolve().parents[2]
 KERNEL = ROOT / 'src/m92/test-kernel'
 OUT = ROOT / f'src/m92/{TAG}-out'
@@ -47,7 +48,7 @@ def main():
     h1 = (ROOT / 'src/m84/h1-as-built/.config').read_text()
     m = re.search(r'^CONFIG_CMDLINE="([^"]*)"$', h1, re.M)
     assert m and 'firmware_class' not in m.group(1)
-    seed = h1.replace(m.group(0), 'CONFIG_CMDLINE="%s%s"' % (m.group(1), FW_PATH))
+    seed = h1.replace(m.group(0), 'CONFIG_CMDLINE="%s%s%s"' % (m.group(1), FW_PATH, EXTRA))
     seed += ''.join('%s=%s\n' % kv for kv in SCSC.items())
     OUT.mkdir(parents=True)
     (OUT / '.config').write_text(seed)
@@ -77,7 +78,7 @@ def main():
     assert set(delta) == expected, sorted(set(delta) ^ expected)
     for k, v in SCSC.items():
         assert new[k] == v, (k, new[k])
-    assert new['CONFIG_CMDLINE'].endswith(FW_PATH + '"')
+    assert new['CONFIG_CMDLINE'].endswith(FW_PATH + EXTRA + '"')
     run('python3', '-I', ROOT / 'tools/m52/guard_unittest.py', KERNEL, '0x1c8700', '0xee42ff')
     run('python3', '-I', ROOT / 'tools/m53/sense_unittest.py', KERNEL)
     run(*make, 'Image', 'exynos/exynos9610-a50-gpu.dtb', env=env)

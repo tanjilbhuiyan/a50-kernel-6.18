@@ -14,11 +14,13 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
   bug, W1r a missing 9610 mif op (oops); both fixed.
 - **Branches:** clean `a50-wlbt` (worktree `src/m92/clean-kernel`): 83722e28e import, e63c489a1 6.18 build,
   b6da265a1 DT, 39882bf6a recovery ops. Test `a50-m92-w1-test` (worktree `src/m92/test-kernel`) = H1 + same.
-  Build `python3 -I tools/m92/build_w1.py TAG`; run `tools/m92/run_w1.sh IP TAG`. W1r2 BOOT
+  Build `python3 -I tools/m92/build_w1.py TAG [EXTRA_CMDLINE]`; run `tools/m92/run_w1.sh IP TAG`. W1r2 BOOT
   `03650b8744c1af3145d04631b11bd08d4c92aa7a807f666a6212bc037c664467`, DT `2b674f36…6313442`.
 - **Phone:** stock 4.14.194 restored 15:45:19, post-flight passed, fsck clean 7056 files, office **192.168.181.225**.
-- **Next (M9.2):** find the WARN taint present at 39 s (source unknown, ring overwritten); defconfig commit
-  (SCSC + firmware path); export patches and refresh the public build. Then M9.3 Wi-Fi (station via upstream cfg80211).
+- **W1d (16:02-16:11):** chip boot repeated cleanly; the 39 s WARN is the known M7.2 display IOMMU warning, not SCSC.
+  Phone restored 16:11:02, post-flight passed, fsck clean 7064 files.
+- **Clean `a50-wlbt` now:** 6e0728cdf, b236e859f, acea68972, 3b5a7881d, 5032bdd3b (defconfig).
+- **Next (M9.2):** export patches and refresh the public build lock/validation. Then M9.3 Wi-Fi (station, upstream cfg80211).
 
 ## Earlier handoff (2026-11-19, M9.1 done; superseded by M9.2 progress)
 - **M9.1 done** (`log/2026-11-19-M9.1-scsc-contract.md`, result `reference/m91-scsc/contract.md`). Stock SCSC
