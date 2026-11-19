@@ -39,7 +39,9 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
   `reproduce/m8` LED config/lock/DTB expectation refreshed together, **81** inputs checked. Full public build, config,
   DTB/cpio and guard/sense checks passed in `src/m85/publication/`. Exact clean Image has not been flashed.
   New clone: `python3 -I tools/reproduce_m8.py --jobs 16`. M9.1-M9.4 tickets are **todo**, no M9 work started.
-- Outer parent **8edaa5d**, M8.5 publication pending commit. Shared/kernel branches unchanged and clean:
+- **Publication source commit:** **a965dc9**, following parent 8edaa5d, records S1 evidence/tools and the validated
+  58-patch build refresh. This final handoff/formatting update follows it; destination **origin/main**.
+  Shared/kernel branches unchanged and clean:
   common **a50-usb/4fbb731f5**, input **a50-input/3bd96025f54968b930418c756141d958ad842495**,
   runtime **a50-m84-h1-test/3c651aa2d21cd9d7f1cde16e3251b4eb785bbd93**.
   See `log/2026-11-19-M8.5-input-integration.md` and `reference/m85-integration/s1-results.json`.
