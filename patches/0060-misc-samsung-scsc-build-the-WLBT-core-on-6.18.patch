@@ -1,0 +1,1001 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Thu, 19 Nov 2026 14:43:55 +0600
+Subject: [PATCH 60/63] misc: samsung: scsc: build the WLBT core on 6.18
+
+Add a reduced Kconfig/Makefile (Exynos 9610 platform interface, core
+manager and the NULL-service test client only) and adapt the imported
+4.14 sources to 6.18, using current kernel interfaces:
+
+- firmware and configuration files are requested by bare name through
+  the firmware loader (6.11+ refuses ".." names, so the 5.4-era
+  "../etc/wifi" trick is gone); CONFIG_SCSC_CORE_FW_LOCATION must be in
+  firmware_class.path. No set_fs/vfs_stat, no VFS-internal namespace.
+- shared memory comes from the "memory-region" phandle at probe instead
+  of a global RESERVEDMEM_OF_DECLARE hook.
+- interrupts by name with platform_get_irq_byname() (OF no longer
+  provides IRQ resources); trigger type from the DT.
+- the EL3 connectivity SiP call (SMC_CMD_CONN_IF, set TZPC non-secure)
+  uses arm_smccc_smc().
+- proc_ops/pde_data, timespec64, strscpy, devm_ioremap, class_create()
+  without owner, void platform remove.
+- CONFIG_SOC_EXYNOS9610 becomes CONFIG_SCSC_PLATFORM_EXYNOS9610.
+- the exynos_soc_info revision was only logged on 9610 (mxconf gets it
+  only for 7885); the log line is dropped.
+- the mif debug procfs (memory dump/write, register read) and the dead
+  bitmap debug print are not built.
+
+Not ported: PCIe, logring (messages go to printk), log collection, PM QoS,
+smapper, wlbtd, mxlogger, ANT, FM and the other debug devices. Wakelocks
+stay compiled out (no CONFIG_ANDROID); suspend is outside this step.
+
+Change-Id: I7c8899dd4abf324bda4c7db0d0328c0533defd30
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ drivers/misc/Kconfig                          |   1 +
+ drivers/misc/Makefile                         |   1 +
+ drivers/misc/samsung/Kconfig                  |   2 +
+ drivers/misc/samsung/Makefile                 |   2 +
+ drivers/misc/samsung/scsc/Kconfig             |  49 ++++++
+ drivers/misc/samsung/scsc/Makefile            |  16 ++
+ drivers/misc/samsung/scsc/client_test.c       |   2 +-
+ drivers/misc/samsung/scsc/mif_reg_S5E9610.h   |   2 +-
+ drivers/misc/samsung/scsc/mifintrbit.c        |  10 --
+ drivers/misc/samsung/scsc/mifmboxman.h        |   2 +-
+ drivers/misc/samsung/scsc/mifproc.h           |   9 +-
+ drivers/misc/samsung/scsc/mx140_file.c        | 101 ++----------
+ drivers/misc/samsung/scsc/mxman.c             |  15 +-
+ drivers/misc/samsung/scsc/mxproc.c            |  20 +--
+ drivers/misc/samsung/scsc/platform_mif.h      |   2 +-
+ drivers/misc/samsung/scsc/platform_mif_9610.c | 151 +++++++-----------
+ .../misc/samsung/scsc/platform_mif_module.c   |   4 +-
+ drivers/misc/samsung/scsc/scsc_lerna.c        |   2 +-
+ drivers/misc/samsung/scsc/scsc_service.c      |  24 +--
+ include/scsc/scsc_release.h                   |   2 +-
+ 20 files changed, 186 insertions(+), 231 deletions(-)
+ create mode 100644 drivers/misc/samsung/Kconfig
+ create mode 100644 drivers/misc/samsung/Makefile
+ create mode 100644 drivers/misc/samsung/scsc/Kconfig
+ create mode 100644 drivers/misc/samsung/scsc/Makefile
+
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index d6d960809..4018ae03a 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -671,6 +671,7 @@ config PKVM_IOMMU_TEMPLATE
+ 		Say N here unless you know what you are doing.
+ 
+ source "drivers/misc/c2port/Kconfig"
++source "drivers/misc/samsung/Kconfig"
+ source "drivers/misc/eeprom/Kconfig"
+ source "drivers/misc/cb710/Kconfig"
+ source "drivers/misc/lis3lv02d/Kconfig"
+diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+index b8b5710c3..0e63aff87 100644
+--- a/drivers/misc/Makefile
++++ b/drivers/misc/Makefile
+@@ -78,3 +78,4 @@ obj-y				+= amd-sbi/
+ obj-$(CONFIG_MISC_RP1)		+= rp1/
+ obj-$(CONFIG_PKVM_SMC_FILTER)	+= pkvm-smc/
+ obj-$(CONFIG_PKVM_IOMMU_TEMPLATE)  += pkvm-iommu-temp/
++obj-$(CONFIG_SCSC_CORE)		+= samsung/
+diff --git a/drivers/misc/samsung/Kconfig b/drivers/misc/samsung/Kconfig
+new file mode 100644
+index 000000000..8faa1eb16
+--- /dev/null
++++ b/drivers/misc/samsung/Kconfig
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0
++source "drivers/misc/samsung/scsc/Kconfig"
+diff --git a/drivers/misc/samsung/Makefile b/drivers/misc/samsung/Makefile
+new file mode 100644
+index 000000000..76beec2b1
+--- /dev/null
++++ b/drivers/misc/samsung/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0
++obj-$(CONFIG_SCSC_CORE) += scsc/
+diff --git a/drivers/misc/samsung/scsc/Kconfig b/drivers/misc/samsung/scsc/Kconfig
+new file mode 100644
+index 000000000..b34ca630d
+--- /dev/null
++++ b/drivers/misc/samsung/scsc/Kconfig
+@@ -0,0 +1,49 @@
++# SPDX-License-Identifier: GPL-2.0
++#
++# Samsung SCSC (Maxwell) Wi-Fi/Bluetooth core, reduced for the 6.18 A50 port.
++# Only the Exynos 9610 platform interface and the core manager are built;
++# PCIe, logring, log collection, PM QoS, smapper, wlbtd and debug devices of
++# the 4.14 driver are not ported.
++
++config SCSC_CORE
++	tristate "Samsung SCSC (Maxwell) Wi-Fi/Bluetooth core"
++	depends on ARCH_EXYNOS && OF_RESERVED_MEM && MFD_SYSCON && HAVE_ARM_SMCCC
++	help
++	  Core manager for the Samsung SCSC Wi-Fi/Bluetooth chip integrated in
++	  Exynos 9610: shared memory, mailboxes, firmware loading and the
++	  service manager used by the Wi-Fi and Bluetooth drivers.
++
++if SCSC_CORE
++
++config SCSC_PLATFORM_EXYNOS9610
++	bool "Exynos 9610 platform interface"
++	default y
++	help
++	  PMU power/reset sequence, bus access windows and interrupts of the
++	  WLBT block in Exynos 9610.
++
++config SCSC_WLBT_CONFIG_PLATFORM
++	string "WLBT platform name"
++	default "leman_s620_univ"
++
++config SCSC_CORE_FW_LOCATION
++	string "Firmware directory"
++	default "/vendor/etc/wifi"
++
++config SCSC_CORE_TOOL_LOCATION
++	string "Userspace tool directory"
++	default "/vendor/bin"
++
++config SCSC_CM_MX_CLIENT_TEST
++	tristate "Test client (NULL service)"
++	help
++	  Client that can boot the chip with the NULL service, without the
++	  Wi-Fi or Bluetooth drivers. Used for bring-up.
++
++config SCSC_MX_ALWAYS_ON
++	bool "Boot the chip from the test client after a delay"
++	depends on SCSC_CM_MX_CLIENT_TEST
++	help
++	  Start the NULL service about 30 s after the core probes.
++
++endif
+diff --git a/drivers/misc/samsung/scsc/Makefile b/drivers/misc/samsung/scsc/Makefile
+new file mode 100644
+index 000000000..3bc7fe09f
+--- /dev/null
++++ b/drivers/misc/samsung/scsc/Makefile
+@@ -0,0 +1,16 @@
++# SPDX-License-Identifier: GPL-2.0
++ccflags-y += -I$(srctree)/include/scsc
++
++obj-$(CONFIG_SCSC_CORE) += scsc_platform_mif.o
++scsc_platform_mif-y := platform_mif_module.o
++scsc_platform_mif-$(CONFIG_SCSC_PLATFORM_EXYNOS9610) += platform_mif_9610.o
++
++obj-$(CONFIG_SCSC_CORE) += scsc_mx.o
++scsc_mx-y := mxlog_transport.o fw_panic_record.o panicmon.o suspendmon.o mxlog.o \
++	mxproc.o scsc_service.o scsc_mx_module.o scsc_mx_impl.o mxman.o miframman.o \
++	mifmboxman.o mifintrbit.o fwhdr.o fwimage.o cpacket_buffer.o \
++	mifstream.o mxmgmt_transport.o gdb_transport.o scsc_lerna.o mxsyserr.o \
++	mxfwconfig.o mx140_file.o
++
++obj-$(CONFIG_SCSC_CM_MX_CLIENT_TEST) += mx_client_test.o
++mx_client_test-y := client_test.o
+diff --git a/drivers/misc/samsung/scsc/client_test.c b/drivers/misc/samsung/scsc/client_test.c
+index c545de305..ff0a81cf4 100644
+--- a/drivers/misc/samsung/scsc/client_test.c
++++ b/drivers/misc/samsung/scsc/client_test.c
+@@ -389,7 +389,7 @@ static int __init scsc_client_test_module_init(void)
+ 		goto fail_add_cdev;
+ 	}
+ 
+-	client_test_class = class_create(THIS_MODULE, "sample");
++	client_test_class = class_create("sample");
+ 	if (!client_test_class) {
+ 		r = -EEXIST;
+ 		SCSC_TAG_ERR(MXMAN_TEST, "failed to create class\n");
+diff --git a/drivers/misc/samsung/scsc/mif_reg_S5E9610.h b/drivers/misc/samsung/scsc/mif_reg_S5E9610.h
+index 49120eb08..cf22b2184 100644
+--- a/drivers/misc/samsung/scsc/mif_reg_S5E9610.h
++++ b/drivers/misc/samsung/scsc/mif_reg_S5E9610.h
+@@ -178,5 +178,5 @@
+ 
+ /* TZASC (TrustZone Address Space Controller) configuration for Katmai onwards */
+ #define EXYNOS_SET_CONN_TZPC    0
+-//#define SMC_CMD_CONN_IF         0x82000710
++#define SMC_CMD_CONN_IF         0x82000710 /* EL3 SiP: connectivity IF (4.14 include/linux/smc.h) */
+ #endif /* __MIF_REG_9610_H */
+diff --git a/drivers/misc/samsung/scsc/mifintrbit.c b/drivers/misc/samsung/scsc/mifintrbit.c
+index fb6a55447..021b8023f 100644
+--- a/drivers/misc/samsung/scsc/mifintrbit.c
++++ b/drivers/misc/samsung/scsc/mifintrbit.c
+@@ -25,15 +25,6 @@ static void mifintrbit_default_handler(int irq, void *data)
+ 	spin_unlock_irqrestore(&intr->spinlock, flags);
+ }
+ 
+-static void print_bitmaps(struct mifintrbit *intr)
+-{
+-	unsigned long dst1, dst2, dst3;
+-
+-	bitmap_copy_le(&dst1, intr->bitmap_tohost, MIFINTRBIT_NUM_INT);
+-	bitmap_copy_le(&dst2, intr->bitmap_fromhost_r4, MIFINTRBIT_NUM_INT);
+-	bitmap_copy_le(&dst3, intr->bitmap_fromhost_m4, MIFINTRBIT_NUM_INT);
+-}
+-
+ static void mifiintrman_isr(int irq, void *data)
+ {
+ 	struct mifintrbit *intr = (struct mifintrbit *)data;
+@@ -47,7 +38,6 @@ static void mifiintrman_isr(int irq, void *data)
+ 	spin_lock_irqsave(&intr->spinlock, flags);
+ 	irq_reg = intr->mif->irq_get(intr->mif);
+ 
+-	print_bitmaps(intr);
+ 	for_each_set_bit(bit, &irq_reg, MIFINTRBIT_NUM_INT) {
+ 		if (intr->mifintrbit_irq_handler[bit] != mifintrbit_default_handler)
+ 			intr->mifintrbit_irq_handler[bit](bit, intr->irq_data[bit]);
+diff --git a/drivers/misc/samsung/scsc/mifmboxman.h b/drivers/misc/samsung/scsc/mifmboxman.h
+index 07754491d..16c02bcb9 100644
+--- a/drivers/misc/samsung/scsc/mifmboxman.h
++++ b/drivers/misc/samsung/scsc/mifmboxman.h
+@@ -23,7 +23,7 @@ int mifmboxman_deinit(struct mifmboxman *mbox);
+ 
+ #ifdef CONFIG_SOC_EXYNOS7570
+ #define MIFMBOX_NUM	8
+-#elif defined(CONFIG_SOC_EXYNOS7872) || defined(CONFIG_SOC_EXYNOS7885) || defined(CONFIG_SOC_EXYNOS9610) || defined(CONFIG_SOC_EXYNOS9630)
++#elif defined(CONFIG_SOC_EXYNOS7872) || defined(CONFIG_SOC_EXYNOS7885) || defined(CONFIG_SCSC_PLATFORM_EXYNOS9610) || defined(CONFIG_SOC_EXYNOS9630)
+ #define MIFMBOX_NUM	4
+ #else /* emulation */
+ #define MIFMBOX_NUM	8
+diff --git a/drivers/misc/samsung/scsc/mifproc.h b/drivers/misc/samsung/scsc/mifproc.h
+index 64e25d14a..cc4bcf21f 100644
+--- a/drivers/misc/samsung/scsc/mifproc.h
++++ b/drivers/misc/samsung/scsc/mifproc.h
+@@ -80,10 +80,11 @@
+ struct scsc_mif_abs;
+ struct miframman;
+ 
+-int mifproc_create_proc_dir(struct scsc_mif_abs *mif);
+-void mifproc_remove_proc_dir(void);
+-int mifproc_create_ramman_proc_dir(struct miframman *miframman);
+-void mifproc_remove_ramman_proc_dir(struct miframman *miframman);
++/* 6.18 port: the mif debug procfs (memory dump/write, register read) is not built. */
++static inline int mifproc_create_proc_dir(struct scsc_mif_abs *mif) { return 0; }
++static inline void mifproc_remove_proc_dir(void) { }
++static inline int mifproc_create_ramman_proc_dir(struct miframman *miframman) { return 0; }
++static inline void mifproc_remove_ramman_proc_dir(struct miframman *miframman) { }
+ 
+ struct mifproc {
+ };
+diff --git a/drivers/misc/samsung/scsc/mx140_file.c b/drivers/misc/samsung/scsc/mx140_file.c
+index 371a217b2..454e44cfb 100644
+--- a/drivers/misc/samsung/scsc/mx140_file.c
++++ b/drivers/misc/samsung/scsc/mx140_file.c
+@@ -20,9 +20,6 @@
+ 
+ #include "scsc_mx_impl.h"
+ 
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0))
+-MODULE_IMPORT_NS(VFS_internal_I_am_really_a_filesystem_and_am_NOT_a_driver);
+-#endif
+ 
+ /* Firmware directory definitions */
+ 
+@@ -122,9 +119,10 @@ static char base_dir[] = CONFIG_SCSC_CORE_FW_LOCATION;  /* fixed in defconfig */
+ static char exe_dir[] = CONFIG_SCSC_CORE_TOOL_LOCATION;	/* fixed in defconfig */
+ #endif
+ 
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0))
+-static char base_dir_request_fw[] = "../etc/wifi";  /* fixed in defconfig */
+-#endif
++/*
++ * 6.18 port: files are requested by bare name through the firmware loader;
++ * CONFIG_SCSC_CORE_FW_LOCATION must be in firmware_class.path.
++ */
+ 
+ 
+ static bool enable_auto_sense;
+@@ -167,12 +165,7 @@ static int __mx140_file_request_conf(struct scsc_mx *mx,
+ 		/* e.g. /etc/wifi/mx140_wlan.hcf */
+ 
+ 		scnprintf(config_path, sizeof(config_path),
+-			"%s/%s%s_%s",
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0))
+-			base_dir_request_fw,
+-#else
+-			base_dir,
+-#endif
++			"%s%s_%s",
+ 			firmware_variant,
+ 			fw_suffixes[fw_suffix_found].suffix,
+ 			filename);
+@@ -180,12 +173,7 @@ static int __mx140_file_request_conf(struct scsc_mx *mx,
+ 		/* e.g. /etc/wifi/mx140/conf/$platform_dir/wlan/wlan.hcf */
+ 
+ 		scnprintf(config_path, sizeof(config_path),
+-			"%s/%s%s/%s/%s%s%s/%s",
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0))
+-			base_dir_request_fw,
+-#else
+-			base_dir,
+-#endif
++			"%s%s/%s/%s%s%s/%s",
+ 			firmware_variant,
+ 			fw_suffixes[fw_suffix_found].suffix,
+ 			MX140_FW_CONF_SUBDIR,
+@@ -268,12 +256,7 @@ int mx140_file_request_debug_conf(struct scsc_mx *mx, const struct firmware **co
+ 	/* e.g. /etc/wifi/mx140/debug/log_strings.bin */
+ 
+ 	scnprintf(config_path, sizeof(config_path),
+-		"%s/%s%s/%s/%s",
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0))
+-		base_dir_request_fw,
+-#else
+-		base_dir,
+-#endif
++		"%s%s/%s/%s",
+ 		firmware_variant,
+ 		fw_suffixes[fw_suffix_found].suffix,
+ 		MX140_FW_DEBUG_SUBDIR,
+@@ -294,12 +277,7 @@ int mx140_file_request_device_conf(struct scsc_mx *mx, const struct firmware **c
+ 	/* e.g. /etc/wifi/conf/wlan/mac.txt */
+ 
+ 	snprintf(config_path, sizeof(config_path),
+-		"%s/%s%s/%s",
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0))
+-		base_dir_request_fw,
+-#else
+-		base_dir,
+-#endif
++		"%s%s/%s",
+ 		fw_suffixes[fw_suffix_found].suffix,
+ 		MX140_FW_CONF_SUBDIR,
+ 		config_rel_path);
+@@ -330,12 +308,7 @@ static int __mx140_file_download_fw(struct scsc_mx *mx, void *dest, size_t dest_
+ 
+ 	/* e.g. /etc/wifi/mx140.bin */
+ 	scnprintf(img_path_name, sizeof(img_path_name),
+-		"%s/%s%s.bin",
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0))
+-		base_dir_request_fw,
+-#else
+-		base_dir,
+-#endif
++		"%s%s.bin",
+ 		firmware_variant,
+ 		fw_suffix);
+ 
+@@ -644,61 +617,11 @@ int mx140_exe_path(struct scsc_mx *mx, char *path, size_t len, const char *bin)
+ }
+ EXPORT_SYMBOL(mx140_exe_path);
+ 
+-/* Try to auto detect f/w directory */
++/* Base directories are fixed by Kconfig (CONFIG_SCSC_CORE_FW_LOCATION_AUTO is not supported). */
+ int mx140_basedir_file(struct scsc_mx *mx)
+ {
+-	struct kstat stat;
+-	mm_segment_t fs;
+-	int r = 0;
+-
+-	/* Already worked out base dir. This is
+-	 * static if auto-detect is off.
+-	 */
+-	if (base_dir[0] != '\0')
+-		return 0;
+-
+-	/* Current segment. */
+-	fs = get_fs();
+-	/* Set to kernel segment. */
+-	set_fs(KERNEL_DS);
+-
+-	/* If /system isn't present, assume platform isn't ready yet */
+-	r = vfs_stat("/system", &stat);
+-	if (r != 0) {
+-		SCSC_TAG_ERR(MX_FILE, "/system not mounted yet\n");
+-		r = -EAGAIN;
+-		goto done;
+-	}
+-
+-	/* If /vendor isn't present, assume platform isn't ready yet.
+-	 * Android M and N still have /vendor, though we don't use it.
+-	 */
+-	r = vfs_stat("/vendor", &stat);
+-	if (r != 0) {
+-		SCSC_TAG_ERR(MX_FILE, "/vendor not mounted yet\n");
+-		r = -EAGAIN;
+-		goto done;
+-	}
+-
+-	/* Now partitions are mounted, so let's see what's in them. */
+-
+-	/* Try /vendor partition  (post-Oreo) */
+-	strlcpy(base_dir, MX140_FW_BASE_DIR_VENDOR_ETC_WIFI, sizeof(base_dir));
+-	fw_base_dir = MX140_FW_BASE_DIR_VENDOR_ETC_WIFI;
+-	strlcpy(exe_dir, MX140_EXE_DIR_VENDOR, sizeof(exe_dir));
+-#if defined(SCSC_SEP_VERSION) && (SCSC_SEP_VERSION < 8)
+-	/* Try /system partition (pre-Oreo) */
+-	strlcpy(base_dir, MX140_FW_BASE_DIR_SYSTEM_ETC_WIFI, sizeof(base_dir));
+-	fw_base_dir = MX140_FW_BASE_DIR_SYSTEM_ETC_WIFI;
+-	strlcpy(exe_dir, MX140_EXE_DIR_SYSTEM, sizeof(exe_dir));
+-#endif
+-
+-done:
+-	/* Restore segment */
+-	set_fs(fs);
+-	SCSC_TAG_INFO(MX_FILE, "WLBT fw base dir is %s\n", base_dir[0] ? base_dir : "not found");
+-
+-	return r;
++	(void)mx;
++	return base_dir[0] != '\0' ? 0 : -ENOENT;
+ }
+ 
+ /* Select file for h/w version from filesystem */
+diff --git a/drivers/misc/samsung/scsc/mxman.c b/drivers/misc/samsung/scsc/mxman.c
+index 46f817d51..cf1c0210d 100644
+--- a/drivers/misc/samsung/scsc/mxman.c
++++ b/drivers/misc/samsung/scsc/mxman.c
+@@ -13,7 +13,6 @@
+ #include <linux/kmod.h>
+ #include <linux/notifier.h>
+ #ifdef CONFIG_ARCH_EXYNOS
+-#include <linux/soc/samsung/exynos-soc.h>
+ #endif
+ #include "scsc_mx_impl.h"
+ #include "miframman.h"
+@@ -799,7 +798,7 @@ static char *chip_version(u32 rf_hw_ver)
+ 	case 0x00b2:
+ 		return "S620";
+ 	case 0x0000:
+-#if !defined CONFIG_SOC_EXYNOS9610 && !defined CONFIG_SOC_EXYNOS9630
++#if !defined CONFIG_SCSC_PLATFORM_EXYNOS9610 && !defined CONFIG_SOC_EXYNOS9630
+ 		return "Error: check if RF chip is present";
+ #else
+ 		return "Unknown";
+@@ -1408,9 +1407,9 @@ static int mxman_start(struct mxman *mxman)
+ 
+ 	mif = scsc_mx_get_mif_abs(mxman->mx);
+ 	if (mxman_check_reset_failed(mif)) {
+-		struct timeval tval = ns_to_timeval(reset_failed_time);
++		struct timespec64 tval = ns_to_timespec64(reset_failed_time);
+ 
+-		SCSC_TAG_ERR(MXMAN, "previous reset failed at [%6lu.%06ld], ignoring\n", tval.tv_sec, tval.tv_usec);
++		SCSC_TAG_ERR(MXMAN, "previous reset failed at [%6lu.%06ld], ignoring\n", (unsigned long)tval.tv_sec, tval.tv_nsec / NSEC_PER_USEC);
+ 		return -EIO;
+ 	}
+ 
+@@ -2608,9 +2607,9 @@ static void mxman_stop(struct mxman *mxman)
+ 	mif = scsc_mx_get_mif_abs(mxman->mx);
+ 	/* If reset is failed, prevent new resets */
+ 	if (mxman_check_reset_failed(mif)) {
+-		struct timeval tval = ns_to_timeval(reset_failed_time);
++		struct timespec64 tval = ns_to_timespec64(reset_failed_time);
+ 
+-		SCSC_TAG_ERR(MXMAN, "previous reset failed at [%6lu.%06ld], ignoring\n", tval.tv_sec, tval.tv_usec);
++		SCSC_TAG_ERR(MXMAN, "previous reset failed at [%6lu.%06ld], ignoring\n", (unsigned long)tval.tv_sec, tval.tv_nsec / NSEC_PER_USEC);
+ 		return;
+ 	}
+ 
+@@ -2782,7 +2781,7 @@ void mxman_fail(struct mxman *mxman, u16 failure_source, const char *reason)
+ 	if (mxman->mxman_state == MXMAN_STATE_STARTED || mxman->mxman_state == MXMAN_STATE_STARTING) {
+ 		mxman->mxman_next_state = MXMAN_STATE_FAILED;
+ 		mxman->scsc_panic_code = failure_source;
+-		strlcpy(mxman->failure_reason, reason, sizeof(mxman->failure_reason));
++		strscpy(mxman->failure_reason, reason, sizeof(mxman->failure_reason));
+ 		/* If recovery is disabled, don't let it be
+ 		 * re-enabled from now on. Device must reboot
+ 		 */
+@@ -2809,7 +2808,7 @@ void mxman_fail_level8(struct mxman *mxman, u16 failure_source, const char *reas
+ 	if (mxman->mxman_state == MXMAN_STATE_STARTED || mxman->mxman_state == MXMAN_STATE_STARTING) {
+ 		mxman->mxman_next_state = MXMAN_STATE_FAILED;
+ 		mxman->scsc_panic_code = failure_source;
+-		strlcpy(mxman->failure_reason, reason, sizeof(mxman->failure_reason));
++		strscpy(mxman->failure_reason, reason, sizeof(mxman->failure_reason));
+ 		/* If recovery is disabled, don't let it be
+ 		 * re-enabled from now on. Device must reboot
+ 		 */
+diff --git a/drivers/misc/samsung/scsc/mxproc.c b/drivers/misc/samsung/scsc/mxproc.c
+index 2c9459f18..904b3bbd2 100644
+--- a/drivers/misc/samsung/scsc/mxproc.c
++++ b/drivers/misc/samsung/scsc/mxproc.c
+@@ -31,22 +31,22 @@
+ #define MX_PROCFS_RW_FILE_OPS(name)                                           \
+ 	static ssize_t mx_procfs_ ## name ## _write(struct file *file, const char __user *user_buf, size_t count, loff_t *ppos); \
+ 	static ssize_t                      mx_procfs_ ## name ## _read(struct file *file, char __user *user_buf, size_t count, loff_t *ppos); \
+-	static const struct file_operations mx_procfs_ ## name ## _fops = { \
+-		.read = mx_procfs_ ## name ## _read,                        \
+-		.write = mx_procfs_ ## name ## _write,                      \
+-		.open = mx_procfs_generic_open,                     \
+-		.llseek = generic_file_llseek                                 \
++	static const struct proc_ops mx_procfs_ ## name ## _fops = { \
++		.proc_read = mx_procfs_ ## name ## _read,                        \
++		.proc_write = mx_procfs_ ## name ## _write,                      \
++		.proc_open = mx_procfs_generic_open,                     \
++		.proc_lseek = generic_file_llseek                                 \
+ 	}
+ #define MX_PROCFS_RO_FILE_OPS(name)                                           \
+ 	static ssize_t                      mx_procfs_ ## name ## _read(struct file *file, char __user *user_buf, size_t count, loff_t *ppos); \
+-	static const struct file_operations mx_procfs_ ## name ## _fops = { \
+-		.read = mx_procfs_ ## name ## _read,                        \
+-		.open = mx_procfs_generic_open,                                  \
+-		.llseek = generic_file_llseek                               \
++	static const struct proc_ops mx_procfs_ ## name ## _fops = { \
++		.proc_read = mx_procfs_ ## name ## _read,                        \
++		.proc_open = mx_procfs_generic_open,                                  \
++		.proc_lseek = generic_file_llseek                               \
+ 	}
+ 
+ 
+-#define MX_PDE_DATA(inode) PDE_DATA(inode)
++#define MX_PDE_DATA(inode) pde_data(inode)
+ 
+ #define MX_PROCFS_SET_UID_GID(_entry) \
+ 	do { \
+diff --git a/drivers/misc/samsung/scsc/platform_mif.h b/drivers/misc/samsung/scsc/platform_mif.h
+index 2e1e2ba7e..b469b8d8a 100644
+--- a/drivers/misc/samsung/scsc/platform_mif.h
++++ b/drivers/misc/samsung/scsc/platform_mif.h
+@@ -12,7 +12,7 @@ enum wlbt_irqs {
+        PLATFORM_MIF_MBOX,
+        PLATFORM_MIF_ALIVE,
+        PLATFORM_MIF_WDOG,
+-#if defined(CONFIG_SOC_EXYNOS9610) || defined(CONFIG_SOC_EXYNOS9630) || defined(CONFIG_SOC_EXYNOS3830) || defined(CONFIG_SOC_S5E9815)
++#if defined(CONFIG_SCSC_PLATFORM_EXYNOS9610) || defined(CONFIG_SOC_EXYNOS9630) || defined(CONFIG_SOC_EXYNOS3830) || defined(CONFIG_SOC_S5E9815)
+        PLATFORM_MIF_CFG_REQ,
+ #endif
+        /* must be last */
+diff --git a/drivers/misc/samsung/scsc/platform_mif_9610.c b/drivers/misc/samsung/scsc/platform_mif_9610.c
+index 01e6ec554..815bd5bb5 100644
+--- a/drivers/misc/samsung/scsc/platform_mif_9610.c
++++ b/drivers/misc/samsung/scsc/platform_mif_9610.c
+@@ -19,7 +19,8 @@
+ #include <linux/iommu.h>
+ #include <linux/slab.h>
+ #include <linux/io.h>
+-#include <linux/smc.h>
++#include <linux/arm-smccc.h>
++#include <linux/vmalloc.h>
+ #ifdef CONFIG_OF
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+@@ -32,7 +33,6 @@
+ #include "mif_reg_S5E9610.h"
+ #include "platform_mif_module.h"
+ #if defined(CONFIG_ARCH_EXYNOS) || defined(CONFIG_ARCH_EXYNOS9)
+-#include <linux/soc/samsung/exynos-soc.h>
+ #endif
+ 
+ #ifdef CONFIG_SCSC_SMAPPER
+@@ -43,8 +43,8 @@
+ #include <linux/pm_qos.h>
+ #endif
+ 
+-#if !defined(CONFIG_SOC_EXYNOS9610)
+-#error Target processor CONFIG_SOC_EXYNOS9610 not selected
++#if !defined(CONFIG_SCSC_PLATFORM_EXYNOS9610)
++#error Target processor CONFIG_SCSC_PLATFORM_EXYNOS9610 not selected
+ #endif
+ 
+ #if IS_ENABLED(CONFIG_SCSC_LOG_COLLECTION)
+@@ -56,8 +56,6 @@
+ #ifdef CONFIG_OF_RESERVED_MEM
+ #include <linux/of_reserved_mem.h>
+ #endif
+-static unsigned long sharedmem_base;
+-static size_t sharedmem_size;
+ 
+ #ifdef CONFIG_SCSC_CHV_SUPPORT
+ static bool chv_disable_irq;
+@@ -108,7 +106,7 @@ struct platform_mif {
+ 
+ 	/* pmu syscon regmap */
+ 	struct regmap *pmureg;
+-#if defined(CONFIG_SOC_EXYNOS9610)
++#if defined(CONFIG_SCSC_PLATFORM_EXYNOS9610)
+ 	struct regmap *baaw_p_wlbt;
+ 	struct regmap *dbus_baaw;
+ 	struct regmap *pbus_baaw;
+@@ -380,7 +378,7 @@ static int platform_mif_parse_smapper(struct platform_mif *platform, struct devi
+ 	SCSC_TAG_INFO_DEV(PLAT_MIF, platform->dev,
+ 			  "smapper reg address 0x%x size 0x%x\n", val[0], val[1]);
+ 	platform->smapper_base =
+-		devm_ioremap_nocache(platform->dev, val[0], val[1]);
++		devm_ioremap(platform->dev, val[0], val[1]);
+ 
+ 	if (!platform->smapper_base) {
+ 		SCSC_TAG_ERR_DEV(PLAT_MIF, platform->dev,
+@@ -603,7 +601,7 @@ irqreturn_t platform_wdog_isr(int irq, void *data)
+ 		disable_irq_nosync(platform->wlbt_irq[PLATFORM_MIF_WDOG].irq_num);
+ 		atomic_inc(&platform->wlbt_irq[PLATFORM_MIF_WDOG].irq_disabled_cnt);
+ 	}
+-#ifdef CONFIG_SOC_EXYNOS9610
++#ifdef CONFIG_SCSC_PLATFORM_EXYNOS9610
+ 	ret = regmap_update_bits(platform->pmureg, WLBT_CTRL_NS,
+ 				 WLBT_RESET_REQ_CLR, WLBT_RESET_REQ_CLR);
+ 	SCSC_TAG_INFO_DEV(PLAT_MIF, platform->dev, "Clearing WLBT_RESET_REQ\n");
+@@ -614,7 +612,7 @@ irqreturn_t platform_wdog_isr(int irq, void *data)
+ 	return IRQ_HANDLED;
+ }
+ 
+-#ifdef CONFIG_SOC_EXYNOS9610
++#ifdef CONFIG_SCSC_PLATFORM_EXYNOS9610
+ /*
+  * Attached array contains the replacement PMU boot code which should
+  * be programmed using the CBUS during the config phase.
+@@ -687,6 +685,16 @@ uint32_t ka_patch[] = {
+ 	0x00000022,
+ };
+ 
++/* EL3 monitor SiP call; IDs in mif_reg_S5E9610.h */
++
++static u64 platform_mif_conn_if_smc(u64 arg)
++{
++	struct arm_smccc_res res;
++
++	arm_smccc_smc(SMC_CMD_CONN_IF, arg, 0, 0, 0, 0, 0, 0, &res);
++	return res.a0;
++}
++
+ irqreturn_t platform_cfg_req_isr(int irq, void *data)
+ {
+ 	struct platform_mif *platform = (struct platform_mif *)data;
+@@ -740,7 +748,7 @@ irqreturn_t platform_cfg_req_isr(int irq, void *data)
+ 	udelay(100);
+ 
+ 	/* Set TZPC to non-secure mode */
+-	ret64 = exynos_smc(SMC_CMD_CONN_IF, (EXYNOS_WLBT << 32) | EXYNOS_SET_CONN_TZPC, 0, 0);
++	ret64 = platform_mif_conn_if_smc((EXYNOS_WLBT << 32) | EXYNOS_SET_CONN_TZPC);
+ 	if (ret64)
+ 		SCSC_TAG_ERR_DEV(PLAT_MIF, platform->dev,
+ 		"Failed to set TZPC to non-secure mode: %llu\n", ret64);
+@@ -875,7 +883,7 @@ static void platform_mif_unregister_irq(struct platform_mif *platform)
+ 	/* if ALIVE irq is required  */
+ 	devm_free_irq(platform->dev, platform->wlbt_irq[PLATFORM_MIF_ALIVE].irq_num, platform);
+ #endif
+-#ifdef CONFIG_SOC_EXYNOS9610
++#ifdef CONFIG_SCSC_PLATFORM_EXYNOS9610
+ 	devm_free_irq(platform->dev, platform->wlbt_irq[PLATFORM_MIF_CFG_REQ].irq_num, platform);
+ #endif
+ }
+@@ -927,7 +935,7 @@ static int platform_mif_register_irq(struct platform_mif *platform)
+ 	}
+ #endif
+ 
+-#ifdef CONFIG_SOC_EXYNOS9610
++#ifdef CONFIG_SCSC_PLATFORM_EXYNOS9610
+ 	/* Mark as WLBT in reset before enabling IRQ to guard against spurious IRQ */
+ 	platform->boot_state = WLBT_BOOT_IN_RESET;
+ 	smp_wmb(); /* commit before irq */
+@@ -968,7 +976,7 @@ static int platform_mif_power(struct scsc_mif_abs *interface, bool power)
+ 	struct platform_mif *platform = platform_mif_from_mif_abs(interface);
+ 	u32                 val = 0;
+ 	s32                 ret = 0;
+-#ifdef CONFIG_SOC_EXYNOS9610
++#ifdef CONFIG_SCSC_PLATFORM_EXYNOS9610
+ 	SCSC_TAG_INFO_DEV(PLAT_MIF, platform->dev, "power %d\n", power);
+ 
+ 	if (power)
+@@ -992,7 +1000,7 @@ static int platform_mif_hold_reset(struct scsc_mif_abs *interface, bool reset)
+ 	struct platform_mif *platform = platform_mif_from_mif_abs(interface);
+ 	u32                 val = 0;
+ 	s32                 ret = 0;
+-#ifdef CONFIG_SOC_EXYNOS9610
++#ifdef CONFIG_SCSC_PLATFORM_EXYNOS9610
+ 	SCSC_TAG_INFO_DEV(PLAT_MIF, platform->dev, "reset %d\n", reset);
+ 	if (reset)
+ 		val = WLBT_RESET_SET;
+@@ -1015,7 +1023,7 @@ static int platform_mif_start(struct scsc_mif_abs *interface, bool start)
+ 	u32                 val = 0;
+ 	s32                 ret = 0;
+ 
+-#ifdef CONFIG_SOC_EXYNOS9610
++#ifdef CONFIG_SCSC_PLATFORM_EXYNOS9610
+ 	SCSC_TAG_INFO_DEV(PLAT_MIF, platform->dev, "start %d\n", start);
+ 	if (start)
+ 		val = WLBT_START;
+@@ -1055,7 +1063,7 @@ static int platform_mif_pmu_reset_release(struct scsc_mif_abs *interface)
+ 	int                 ret = 0;
+ 	struct platform_mif *platform = platform_mif_from_mif_abs(interface);
+ 
+-#ifdef CONFIG_SOC_EXYNOS9610
++#ifdef CONFIG_SCSC_PLATFORM_EXYNOS9610
+ 	/* We're now ready for the IRQ */
+ 	platform->boot_state = WLBT_BOOT_WAIT_CFG_REQ;
+ 	smp_wmb(); /* commit before irq */
+@@ -1198,11 +1206,6 @@ static int platform_mif_reset(struct scsc_mif_abs *interface, bool reset)
+ 
+ 	if (enable_platform_mif_arm_reset || !reset) {
+ 		if (!reset) { /* Release from reset */
+-#if defined(CONFIG_ARCH_EXYNOS) || defined(CONFIG_ARCH_EXYNOS9)
+-			SCSC_TAG_INFO_DEV(PLAT_MIF, platform->dev,
+-				"SOC_VERSION: product_id 0x%x, rev 0x%x\n",
+-				exynos_soc_info.product_id, exynos_soc_info.revision);
+-#endif
+ 			ret = platform_mif_pmu_reset_release(interface);
+ 		} else {
+ 			/* Put back into reset */
+@@ -1353,7 +1356,7 @@ static void platform_mif_irq_bit_set(struct scsc_mif_abs *interface, int bit_num
+ 		return;
+ 	}
+ 
+-#ifdef CONFIG_SOC_EXYNOS9610
++#ifdef CONFIG_SCSC_PLATFORM_EXYNOS9610
+ 	reg = INTGR1;
+ 	platform_mif_reg_write(platform, MAILBOX_WLBT_REG(reg), (1 << bit_num));
+ 	SCSC_TAG_DEBUG_DEV(PLAT_MIF, platform->dev, "Setting INTGR1: bit %d on target %d\n", bit_num, target);
+@@ -1654,19 +1657,6 @@ static void platform_mif_restart(struct scsc_mif_abs *interface)
+ {
+ }
+ 
+-#ifdef CONFIG_OF_RESERVED_MEM
+-static int __init platform_mif_wifibt_if_reserved_mem_setup(struct reserved_mem *remem)
+-{
+-	SCSC_TAG_DEBUG(PLAT_MIF, "memory reserved: mem_base=%#lx, mem_size=%zd\n",
+-		       (unsigned long)remem->base, (size_t)remem->size);
+-
+-	sharedmem_base = remem->base;
+-	sharedmem_size = remem->size;
+-	return 0;
+-}
+-RESERVEDMEM_OF_DECLARE(wifibt_if, "exynos,wifibt_if", platform_mif_wifibt_if_reserved_mem_setup);
+-#endif
+-
+ struct scsc_mif_abs *platform_mif_create(struct platform_device *pdev)
+ {
+ 	struct scsc_mif_abs *platform_if;
+@@ -1743,31 +1733,26 @@ struct scsc_mif_abs *platform_mif_create(struct platform_device *pdev)
+ 	platform->resume_handler = NULL;
+ 	platform->suspendresume_data = NULL;
+ 
+-#ifdef CONFIG_OF_RESERVED_MEM
+-	platform->mem_start = sharedmem_base;
+-	platform->mem_size = sharedmem_size;
+-#else
+-	/* If CONFIG_OF_RESERVED_MEM is not defined, sharedmem values should be
+-	 * parsed from the scsc_wifibt binding
+-	 */
+-	if (of_property_read_u32(pdev->dev.of_node, "sharedmem-base", &sharedmem_base)) {
+-		err = -EINVAL;
+-		goto error_exit;
+-	}
+-	platform->mem_start = sharedmem_base;
++	/* 6.18 port: shared memory is the reserved region named by "memory-region". */
++	{
++		struct device_node *rmem_np = of_parse_phandle(pdev->dev.of_node, "memory-region", 0);
++		struct reserved_mem *rmem = rmem_np ? of_reserved_mem_lookup(rmem_np) : NULL;
+ 
+-	if (of_property_read_u32(pdev->dev.of_node, "sharedmem-size", &sharedmem_size)) {
+-		err = -EINVAL;
+-		goto error_exit;
++		of_node_put(rmem_np);
++		if (!rmem) {
++			SCSC_TAG_ERR_DEV(PLAT_MIF, platform->dev, "no memory-region\n");
++			err = -EINVAL;
++			goto error_exit;
++		}
++		platform->mem_start = rmem->base;
++		platform->mem_size = rmem->size;
+ 	}
+-	platform->mem_size = sharedmem_size;
+-#endif
+ #ifdef CONFIG_SCSC_SMAPPER
+ 	platform->smapper = NULL;
+ #endif
+ 
+-	SCSC_TAG_INFO_DEV(PLAT_MIF, platform->dev, "platform->mem_start 0x%x platform->mem_size 0x%x\n",
+-			(u32)platform->mem_start, (u32)platform->mem_size);
++	SCSC_TAG_INFO_DEV(PLAT_MIF, platform->dev, "platform->mem_start %#lx platform->mem_size %#zx\n",
++			platform->mem_start, platform->mem_size);
+ 	if (platform->mem_start == 0)
+ 		SCSC_TAG_WARNING_DEV(PLAT_MIF, platform->dev, "platform->mem_start is 0");
+ 
+@@ -1793,7 +1778,7 @@ struct scsc_mif_abs *platform_mif_create(struct platform_device *pdev)
+ 	platform->reg_size = resource_size(reg_res);
+ 
+ 	platform->base =
+-		devm_ioremap_nocache(platform->dev, reg_res->start, resource_size(reg_res));
++		devm_ioremap(platform->dev, reg_res->start, resource_size(reg_res));
+ 
+ 	if (!platform->base) {
+ 		SCSC_TAG_ERR_DEV(PLAT_MIF, platform->dev,
+@@ -1805,38 +1790,26 @@ struct scsc_mif_abs *platform_mif_create(struct platform_device *pdev)
+ 			(uintptr_t)platform->reg_start, (u32)platform->reg_size, platform->base);
+ 
+ 	/* Get the 4 IRQ resources */
+-	for (i = 0; i < 4; i++) {
+-		struct resource *irq_res;
+-		int             irqtag;
+-
+-		irq_res = platform_get_resource(pdev, IORESOURCE_IRQ, i);
+-		if (!irq_res) {
+-			SCSC_TAG_ERR_DEV(PLAT_MIF, platform->dev, "No IRQ resource at index %d\n", i);
+-			err = -ENOENT;
+-			goto error_exit;
+-		}
+-
+-		if (!strcmp(irq_res->name, "MBOX")) {
+-			SCSC_TAG_INFO_DEV(PLAT_MIF, platform->dev, "MBOX irq %d flag 0x%x\n", (u32)irq_res->start, (u32)irq_res->flags);
+-			irqtag = PLATFORM_MIF_MBOX;
+-		} else if (!strcmp(irq_res->name, "ALIVE")) {
+-			SCSC_TAG_INFO_DEV(PLAT_MIF, platform->dev, "ALIVE irq %d flag 0x%x\n", (u32)irq_res->start, (u32)irq_res->flags);
+-			irqtag = PLATFORM_MIF_ALIVE;
+-		} else if (!strcmp(irq_res->name, "WDOG")) {
+-			SCSC_TAG_INFO_DEV(PLAT_MIF, platform->dev, "WDOG irq %d flag 0x%x\n", (u32)irq_res->start, (u32)irq_res->flags);
+-			irqtag = PLATFORM_MIF_WDOG;
+-		} else if (!strcmp(irq_res->name, "CFG_REQ")) {
+-			SCSC_TAG_INFO_DEV(PLAT_MIF, platform->dev, "CFG_REQ irq %d flag 0x%x\n", (u32)irq_res->start, (u32)irq_res->flags);
+-			irqtag = PLATFORM_MIF_CFG_REQ;
+-		} else {
+-			SCSC_TAG_ERR_DEV(PLAT_MIF, &pdev->dev, "Invalid irq res name: %s\n",
+-				irq_res->name);
+-			err = -EINVAL;
+-			goto error_exit;
++	/* 6.18 port: DT interrupts by name (OF no longer provides IRQ resources). */
++	{
++		static const char * const names[] = {
++			[PLATFORM_MIF_MBOX] = "MBOX", [PLATFORM_MIF_ALIVE] = "ALIVE",
++			[PLATFORM_MIF_WDOG] = "WDOG", [PLATFORM_MIF_CFG_REQ] = "CFG_REQ",
++		};
++		int irqtag, irq;
++
++		for (irqtag = 0; irqtag < ARRAY_SIZE(names); irqtag++) {
++			irq = platform_get_irq_byname(pdev, names[irqtag]);
++			if (irq < 0) {
++				err = irq;
++				goto error_exit;
++			}
++			platform->wlbt_irq[irqtag].irq_num = irq;
++			platform->wlbt_irq[irqtag].flags = irq_get_trigger_type(irq);
++			atomic_set(&platform->wlbt_irq[irqtag].irq_disabled_cnt, 0);
++			SCSC_TAG_INFO_DEV(PLAT_MIF, platform->dev, "%s irq %d flag 0x%x\n", names[irqtag], irq,
++					  platform->wlbt_irq[irqtag].flags);
+ 		}
+-		platform->wlbt_irq[irqtag].irq_num = irq_res->start;
+-		platform->wlbt_irq[irqtag].flags = (irq_res->flags & IRQF_TRIGGER_MASK);
+-		atomic_set(&platform->wlbt_irq[irqtag].irq_disabled_cnt, 0);
+ 	}
+ 
+ 	/* PMU reg map - syscon */
+@@ -1849,7 +1822,7 @@ struct scsc_mif_abs *platform_mif_create(struct platform_device *pdev)
+ 		goto error_exit;
+ 	}
+ 
+-#ifdef CONFIG_SOC_EXYNOS9610
++#ifdef CONFIG_SCSC_PLATFORM_EXYNOS9610
+ 	/* Completion event and state used to indicate CFG_REQ IRQ occurred */
+ 	init_completion(&platform->cfg_ack);
+ 	platform->boot_state = WLBT_BOOT_IN_RESET;
+@@ -1988,7 +1961,7 @@ void platform_mif_resume(struct scsc_mif_abs *interface)
+ 	 * This must be done first as the resume_handler may use the MIF.
+ 	 */
+ 	platform_mif_reg_restore(platform);
+-#ifdef CONFIG_SOC_EXYNOS9610
++#ifdef CONFIG_SCSC_PLATFORM_EXYNOS9610
+ 	SCSC_TAG_INFO_DEV(PLAT_MIF, platform->dev, "Clear WLBT_ACTIVE_CLR flag\n");
+ 	/* Clear WLBT_ACTIVE_CLR flag in WLBT_CTRL_NS */
+ 	ret = regmap_update_bits(platform->pmureg, WLBT_CTRL_NS, WLBT_ACTIVE_CLR, 1);
+diff --git a/drivers/misc/samsung/scsc/platform_mif_module.c b/drivers/misc/samsung/scsc/platform_mif_module.c
+index f66db18be..81c54f485 100644
+--- a/drivers/misc/samsung/scsc/platform_mif_module.c
++++ b/drivers/misc/samsung/scsc/platform_mif_module.c
+@@ -83,7 +83,7 @@ static int platform_mif_module_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int platform_mif_module_remove(struct platform_device *pdev)
++static void platform_mif_module_remove(struct platform_device *pdev)
+ {
+ 	struct mif_abs_node *mif_node, *next;
+ 	bool                match = false;
+@@ -99,8 +99,6 @@ static int platform_mif_module_remove(struct platform_device *pdev)
+ 	}
+ 	if (match == false)
+ 		SCSC_TAG_ERR(PLAT_MIF, "No match for given scsc_mif_abs\n");
+-
+-	return 0;
+ }
+ 
+ static int platform_mif_module_suspend(struct device *dev)
+diff --git a/drivers/misc/samsung/scsc/scsc_lerna.c b/drivers/misc/samsung/scsc/scsc_lerna.c
+index fcfc71e8e..f8e8590c2 100644
+--- a/drivers/misc/samsung/scsc/scsc_lerna.c
++++ b/drivers/misc/samsung/scsc/scsc_lerna.c
+@@ -189,7 +189,7 @@ int scsc_lerna_init(void)
+ 		return result;
+ 	}
+ 
+-	scsc_lerna_class_p = class_create(THIS_MODULE, DEVICE_CLASS);
++	scsc_lerna_class_p = class_create(DEVICE_CLASS);
+ 	if (IS_ERR(scsc_lerna_class_p)) {
+ 		/* Could not create class, failure, remember to unregister device id(s). */
+ 		unregister_chrdev_region(scsc_lerna_device_id, DEVICE_COUNT);
+diff --git a/drivers/misc/samsung/scsc/scsc_service.c b/drivers/misc/samsung/scsc/scsc_service.c
+index 5cfa4bea7..31d04718b 100644
+--- a/drivers/misc/samsung/scsc/scsc_service.c
++++ b/drivers/misc/samsung/scsc/scsc_service.c
+@@ -334,7 +334,7 @@ int scsc_mx_service_start(struct scsc_service *service, scsc_mifram_ref ref)
+ 	struct srvman *srvman = scsc_mx_get_srvman(mx);
+ 	struct mxman *mxman = scsc_mx_get_mxman(service->mx);
+ 	int                 r;
+-	struct timeval tval = {};
++	struct timespec64 tval = {};
+ 
+ 	SCSC_TAG_INFO(MXMAN, "%d\n", service->id);
+ #ifdef CONFIG_SCSC_CHV_SUPPORT
+@@ -346,9 +346,9 @@ int scsc_mx_service_start(struct scsc_service *service, scsc_mifram_ref ref)
+ 	wake_lock(&srvman->sm_wake_lock);
+ #endif
+ 	if (srvman_start_not_allowed(srvman)) {
+-		tval = ns_to_timeval(mxman->last_panic_time);
++		tval = ns_to_timespec64(mxman->last_panic_time);
+ 		SCSC_TAG_ERR(MXMAN, "error: refused due to previous f/w failure scsc_panic_code=0x%x happened at [%6lu.%06ld]\n",
+-				mxman->scsc_panic_code, tval.tv_sec, tval.tv_usec);
++				mxman->scsc_panic_code, (unsigned long)tval.tv_sec, tval.tv_nsec / NSEC_PER_USEC);
+ 
+ 		/* Print the last panic record to help track ancient failures */
+ 		mxman_show_last_panic(mxman);
+@@ -428,7 +428,7 @@ int scsc_mx_service_stop(struct scsc_service *service)
+ 	struct srvman *srvman = scsc_mx_get_srvman(mx);
+ 	struct mxman *mxman = scsc_mx_get_mxman(service->mx);
+ 	int r;
+-	struct timeval tval = {};
++	struct timespec64 tval = {};
+ 
+ 	SCSC_TAG_INFO(MXMAN, "%d\n", service->id);
+ #ifdef CONFIG_SCSC_CHV_SUPPORT
+@@ -440,9 +440,9 @@ int scsc_mx_service_stop(struct scsc_service *service)
+ 	wake_lock(&srvman->sm_wake_lock);
+ #endif
+ 	if (srvman_start_stop_not_allowed(srvman)) {
+-		tval = ns_to_timeval(mxman->last_panic_time);
++		tval = ns_to_timespec64(mxman->last_panic_time);
+ 		SCSC_TAG_ERR(MXMAN, "error: refused due to previous f/w failure scsc_panic_code=0x%x happened at [%6lu.%06ld]\n",
+-				mxman->scsc_panic_code, tval.tv_sec, tval.tv_usec);
++				mxman->scsc_panic_code, (unsigned long)tval.tv_sec, tval.tv_nsec / NSEC_PER_USEC);
+ 
+ 		/* Print the last panic record to help track ancient failures */
+ 		mxman_show_last_panic(mxman);
+@@ -711,7 +711,7 @@ int scsc_mx_service_close(struct scsc_service *service)
+ 	struct scsc_mx *mx = service->mx;
+ 	struct srvman  *srvman = scsc_mx_get_srvman(mx);
+ 	bool           empty;
+-	struct timeval tval = {};
++	struct timespec64 tval = {};
+ 
+ 	SCSC_TAG_INFO(MXMAN, "%d\n", service->id);
+ 
+@@ -721,9 +721,9 @@ int scsc_mx_service_close(struct scsc_service *service)
+ #endif
+ 
+ 	if (srvman_start_stop_not_allowed(srvman)) {
+-		tval = ns_to_timeval(mxman->last_panic_time);
++		tval = ns_to_timespec64(mxman->last_panic_time);
+ 		SCSC_TAG_ERR(MXMAN, "error: refused due to previous f/w failure scsc_panic_code=0x%x happened at [%6lu.%06ld]\n",
+-				mxman->scsc_panic_code, tval.tv_sec, tval.tv_usec);
++				mxman->scsc_panic_code, (unsigned long)tval.tv_sec, tval.tv_nsec / NSEC_PER_USEC);
+ 
+ 		/* Print the last panic record to help track ancient failures */
+ 		mxman_show_last_panic(mxman);
+@@ -794,7 +794,7 @@ struct scsc_service *scsc_mx_service_open(struct scsc_mx *mx, enum scsc_service_
+ 	struct srvman       *srvman = scsc_mx_get_srvman(mx);
+ 	struct mxman        *mxman = scsc_mx_get_mxman(mx);
+ 	bool                empty;
+-	struct timeval tval = {};
++	struct timespec64 tval = {};
+ 
+ 	SCSC_TAG_INFO(MXMAN, "%d\n", id);
+ 
+@@ -803,9 +803,9 @@ struct scsc_service *scsc_mx_service_open(struct scsc_mx *mx, enum scsc_service_
+ 	wake_lock(&srvman->sm_wake_lock);
+ #endif
+ 	if (srvman_start_not_allowed(srvman)) {
+-		tval = ns_to_timeval(mxman->last_panic_time);
++		tval = ns_to_timespec64(mxman->last_panic_time);
+ 		SCSC_TAG_ERR(MXMAN, "error: refused due to previous f/w failure scsc_panic_code=0x%x happened at [%6lu.%06ld]\n",
+-				mxman->scsc_panic_code, tval.tv_sec, tval.tv_usec);
++				mxman->scsc_panic_code, (unsigned long)tval.tv_sec, tval.tv_nsec / NSEC_PER_USEC);
+ 		/* Print the last panic record to help track ancient failures */
+ 		mxman_show_last_panic(mxman);
+ #ifdef CONFIG_ANDROID
+diff --git a/include/scsc/scsc_release.h b/include/scsc/scsc_release.h
+index eda965c84..79dfba3b7 100644
+--- a/include/scsc/scsc_release.h
++++ b/include/scsc/scsc_release.h
+@@ -11,7 +11,7 @@
+ #define SCSC_RELEASE_SOLUTION "mx152"
+ #elif defined(CONFIG_SOC_EXYNOS9630)
+ #define SCSC_RELEASE_SOLUTION "mx450"
+-#elif defined(CONFIG_SOC_EXYNOS9610)
++#elif defined(CONFIG_SCSC_PLATFORM_EXYNOS9610)
+ #define SCSC_RELEASE_SOLUTION "mx250"
+ #elif defined(CONFIG_SOC_EXYNOS7885)
+ #define SCSC_RELEASE_SOLUTION "mx150"

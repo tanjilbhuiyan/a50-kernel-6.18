@@ -1,0 +1,116 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Thu, 19 Nov 2026 14:44:03 +0600
+Subject: [PATCH 61/63] arm64: dts: exynos9610: add the WLBT Wi-Fi/Bluetooth
+ block; a50: enable it
+
+Describe the WLBT (SCSC Maxwell) subsystem from the stock 4.14 DT: the
+mailbox at 0x119c0000, its four interrupts (MBOX, ALIVE, WDOG, CFG_REQ;
+SPI 42/28/72/73, level high), the PMU and the five WLBT syscons (BAAW_P,
+DBUS/PBUS BAAW, REMAP, BOOT_CFG). The node is disabled in the SoC dtsi.
+
+A50 adds the 16 MiB shared memory (stock wifibt_if is a dynamic region
+of this size; alignment 4 KiB for the BAAW windows) and enables the node
+with memory-region pointing at it.
+
+Change-Id: Iaeaead52c86186fd4ac25c21ee9b773a081f58dc
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ arch/arm64/boot/dts/exynos/exynos9610-a50.dts | 14 +++++-
+ arch/arm64/boot/dts/exynos/exynos9610.dtsi    | 47 +++++++++++++++++++
+ 2 files changed, 60 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610-a50.dts b/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
+index bb019f05b..822cc3fa2 100644
+--- a/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
++++ b/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
+@@ -148,7 +148,7 @@ memory@80000000 {
+ 
+ 	/*
+ 	 * Fixed regions from D /reserved-memory (stock bootloader/firmware
+-	 * carve-outs). Dynamic pools (ion_*, wifibt_if) are omitted.
++	 * carve-outs). Dynamic ion_* pools are omitted; wifibt_if is wlbt-mem below.
+ 	 */
+ 	reserved-memory {
+ 		#address-cells = <2>;
+@@ -182,6 +182,13 @@ modem_if@ed000000 {
+ 			reg = <0x0 0xed000000 0x8a00000>;
+ 			no-map;
+ 		};
++		/* WLBT shared memory: stock wifibt_if is dynamic, 16 MiB; the BAAW
++		 * windows map it in 4 KiB units.
++		 */
++		wlbt_mem: wlbt-mem {
++			size = <0x1000000>;
++			alignment = <0x0 0x1000>;
++		};
+ 		cp_ram_logging@f5a00000 {
+ 			reg = <0x0 0xf5a00000 0x1e00000>;
+ 			no-map;
+@@ -313,3 +320,8 @@ &i2c_6 {
+ 	clock-names = "i2c";
+ 	status = "okay";
+ };
++
++&wlbt {
++	memory-region = <&wlbt_mem>;
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610.dtsi b/arch/arm64/boot/dts/exynos/exynos9610.dtsi
+index 20b405a29..3866096e0 100644
+--- a/arch/arm64/boot/dts/exynos/exynos9610.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos9610.dtsi
+@@ -679,6 +679,53 @@ pinctrl_dispaud: pinctrl@14a60000 {
+ 			compatible = "samsung,exynos9610-pinctrl";
+ 			reg = <0x14a60000 0x1000>;
+ 		};
++
++		/*
++		 * WLBT (SCSC Maxwell) Wi-Fi/Bluetooth subsystem. Register windows and
++		 * interrupts from the stock 4.14 DT (reference/stock-dt/dt.dtb.0.dts,
++		 * scsc_wifibt@119c0000 and the five WLBT syscons).
++		 */
++		wlbt_baaw_p: syscon@12050000 {
++			compatible = "samsung,exynos9610-wlbt-baaw-p", "syscon";
++			reg = <0x12050000 0x100>;
++		};
++
++		wlbt_dbus_baaw: syscon@14c20000 {
++			compatible = "samsung,exynos9610-wlbt-dbus-baaw", "syscon";
++			reg = <0x14c20000 0x300>;
++		};
++
++		wlbt_pbus_baaw: syscon@14c30000 {
++			compatible = "samsung,exynos9610-wlbt-pbus-baaw", "syscon";
++			reg = <0x14c30000 0x300>;
++		};
++
++		wlbt_remap: syscon@14c50000 {
++			compatible = "samsung,exynos9610-wlbt-remap", "syscon";
++			reg = <0x14c50000 0x300>;
++		};
++
++		wlbt_boot_cfg: syscon@14c60000 {
++			compatible = "samsung,exynos9610-wlbt-boot-cfg", "syscon";
++			reg = <0x14c60000 0x1200>;
++		};
++
++		wlbt: wlbt@119c0000 {
++			compatible = "samsung,scsc_wifibt";
++			reg = <0x119c0000 0x180>;
++			interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "MBOX", "ALIVE", "WDOG", "CFG_REQ";
++			samsung,syscon-phandle = <&pmu_system_controller>;
++			samsung,baaw_p_wlbt-syscon-phandle = <&wlbt_baaw_p>;
++			samsung,dbus_baaw-syscon-phandle = <&wlbt_dbus_baaw>;
++			samsung,pbus_baaw-syscon-phandle = <&wlbt_pbus_baaw>;
++			samsung,wlbt_remap-syscon-phandle = <&wlbt_remap>;
++			samsung,boot_cfg-syscon-phandle = <&wlbt_boot_cfg>;
++			status = "disabled";
++		};
+ 	};
+ };
+ 

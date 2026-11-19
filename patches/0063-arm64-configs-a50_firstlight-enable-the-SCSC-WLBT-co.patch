@@ -1,0 +1,36 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Thu, 19 Nov 2026 16:03:16 +0600
+Subject: [PATCH 63/63] arm64: configs: a50_firstlight: enable the SCSC WLBT
+ core
+
+Build the Samsung SCSC (Maxwell) core for the Exynos 9610 Wi-Fi/Bluetooth
+chip and add /vendor/etc/wifi to the firmware search path on the built-in
+command line (the stock bootloader passes firmware_class.path=/vendor/firmware;
+ACK accepts a comma-separated list). The NULL-service test client is not
+enabled; Wi-Fi and Bluetooth clients follow separately.
+
+Change-Id: I921bba0fafcba3924f1b211a463a75d28e70c365
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ arch/arm64/configs/a50_firstlight_defconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/configs/a50_firstlight_defconfig b/arch/arm64/configs/a50_firstlight_defconfig
+index 703f4f250..f590b0e58 100644
+--- a/arch/arm64/configs/a50_firstlight_defconfig
++++ b/arch/arm64/configs/a50_firstlight_defconfig
+@@ -57,7 +57,7 @@ CONFIG_ARCH_EXYNOS=y
+ # CONFIG_ARM64_POE is not set
+ # CONFIG_ARM64_GCS is not set
+ # CONFIG_ARM64_SVE is not set
+-CONFIG_CMDLINE="console=tty0 loglevel=7 ignore_loglevel"
++CONFIG_CMDLINE="console=tty0 loglevel=7 ignore_loglevel firmware_class.path=/vendor/firmware,/vendor/etc/wifi"
+ CONFIG_CMDLINE_EXTEND=y
+ # CONFIG_EFI is not set
+ # CONFIG_SUSPEND is not set
+@@ -140,3 +140,4 @@ CONFIG_INPUT_KEYBOARD=y
+ CONFIG_KEYBOARD_GPIO=y
+ CONFIG_LEDS_GPIO=y
+ CONFIG_LEDS_TRIGGER_TRANSIENT=y
++CONFIG_SCSC_CORE=y

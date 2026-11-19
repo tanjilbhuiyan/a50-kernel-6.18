@@ -1,0 +1,62 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Thu, 19 Nov 2026 15:13:07 +0600
+Subject: [PATCH 62/63] misc: samsung: scsc: platform 9610: provide the
+ recovery_disabled ops
+
+The core calls mif->recovery_disabled_reg()/unreg() on 5.4+ kernels, but
+the 4.14 Exynos 9610 interface never set these ops (on 4.14 the calls were
+compiled out). The first chip start on 6.18 (M9.2 W1r) jumped to NULL
+right after transports_init(). Store the handler as the newer 9815
+interface does; the core's other unset ops (memlog) stay behind
+CONFIG_SCSC_MEMLOG, which is not built.
+
+Change-Id: Ic4f897c4bb5568132a7be7dcca6be2f0a8938619
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ drivers/misc/samsung/scsc/platform_mif_9610.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/drivers/misc/samsung/scsc/platform_mif_9610.c b/drivers/misc/samsung/scsc/platform_mif_9610.c
+index 815bd5bb5..88719a582 100644
+--- a/drivers/misc/samsung/scsc/platform_mif_9610.c
++++ b/drivers/misc/samsung/scsc/platform_mif_9610.c
+@@ -77,6 +77,7 @@ struct qos_table {
+ #endif
+ 
+ struct platform_mif {
++	bool (*recovery_disabled)(void); /* 5.4+ core API, as platform_mif_9815 */
+ 	struct scsc_mif_abs    interface;
+ 	struct scsc_mbox_s     *mbox;
+ 	struct platform_device *pdev;
+@@ -1657,6 +1658,21 @@ static void platform_mif_restart(struct scsc_mif_abs *interface)
+ {
+ }
+ 
++/* The 5.4+ core registers its "recovery disabled" query; the 4.14 9610 interface lacked these ops. */
++static void platform_recovery_disabled_reg(struct scsc_mif_abs *interface, bool (*handler)(void))
++{
++	struct platform_mif *platform = platform_mif_from_mif_abs(interface);
++
++	platform->recovery_disabled = handler;
++}
++
++static void platform_recovery_disabled_unreg(struct scsc_mif_abs *interface)
++{
++	struct platform_mif *platform = platform_mif_from_mif_abs(interface);
++
++	platform->recovery_disabled = NULL;
++}
++
+ struct scsc_mif_abs *platform_mif_create(struct platform_device *pdev)
+ {
+ 	struct scsc_mif_abs *platform_if;
+@@ -1706,6 +1722,8 @@ struct scsc_mif_abs *platform_mif_create(struct platform_device *pdev)
+ 	platform_if->mif_read_register = platform_mif_read_register;
+ 	platform_if->mif_cleanup = platform_mif_cleanup;
+ 	platform_if->mif_restart = platform_mif_restart;
++	platform_if->recovery_disabled_reg = platform_recovery_disabled_reg;
++	platform_if->recovery_disabled_unreg = platform_recovery_disabled_unreg;
+ #ifdef CONFIG_SCSC_SMAPPER
+ 	platform_if->mif_smapper_get_mapping = platform_mif_smapper_get_mapping;
+ 	platform_if->mif_smapper_get_bank_info = platform_mif_smapper_get_bank_info;

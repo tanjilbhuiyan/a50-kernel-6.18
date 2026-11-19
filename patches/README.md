@@ -4,7 +4,7 @@ The Galaxy A50 changes as one ordered series on top of the Android Common Kernel
 
 For a **new-clone build of this current M8 stack**, use
 [reproduce/m8/](../reproduce/m8/README.md):
-`python3 -I tools/reproduce_m8.py --jobs 16`. It verifies the 58-patch tree,
+`python3 -I tools/reproduce_m8.py --jobs 16`. It verifies the 63-patch tree,
 uses a locked full config and reconstructs the current runtime from public
 inputs. No existing local kernel checkout or private image is needed.
 
@@ -15,7 +15,7 @@ continues to hold the separate clean driver series.
 
 - **Base:** https://android.googlesource.com/kernel/common, branch `android17-6.18`,
   commit `d9a614feddce2e8e68767df1d3421305d26a965b` (2026-10-31, Linux 6.18.33).
-- **Series:** `0001` to `0058`. It is the project's clean driver stack:
+- **Series:** `0001` to `0063`. It is the project's clean driver stack:
   - `0001`-`0035` (M2-M5): device tree and defconfig, Exynos 9610 clocks, pinctrl, UFS with the `A50_UFS_SAFE` write
     guard, USB PHY, ACPM, S2MPU09 regulators (read-only), thermal (read-only), and the userdata write allow-list;
   - `0036`-`0040` (M6): tracepoint and Rust build fixes, and the Exynos ION system-heap ABI on native DMA-BUF heaps;
@@ -29,6 +29,11 @@ continues to hold the separate clean driver series.
     K3 verified all three key events; repowerd remains masked until M12, so power-key screen blanking is deferred;
   - `0057`-`0058` (M8): hall switches (`SW_LID` / `SW_MACHINE_COVER`) and vibrator on mainline gpio-keys/gpio-leds,
     with GPIO LEDs/transient trigger config. Vibrator pulses were felt in H1; hall probe is verified, events remain open.
+  - `0059`-`0063` (M9): the Samsung SCSC (Maxwell) Wi-Fi/Bluetooth core for Exynos 9610: `0059` imports the 4.14
+    sources verbatim, `0060` adapts them to 6.18 (firmware loader, `memory-region`, IRQs by name, `arm_smccc_smc`),
+    `0061` adds the WLBT DT nodes and 16 MiB shared memory, `0062` adds a platform op missing from the 4.14 9610 file,
+    `0063` enables the core and adds `/vendor/etc/wifi` to `firmware_class.path`. M9.2 W1r2/W1d booted the chip and
+    its stock firmware on 6.18 (NULL test service); no Wi-Fi or Bluetooth driver is included yet.
 - **Not included:** diagnostic patches and one-off test patches. They stay with their test evidence under `reference/`.
   The Halium/Ubuntu Touch config flags are in `tools/m51/halium.flags`.
 
@@ -46,7 +51,8 @@ make ARCH=arm64 LLVM=1 O=out -j"$(nproc)" Image
 The small defconfig is for driver bring-up, not the full Ubuntu Touch
 configuration. The current full M8 config is
 [reproduce/m8/config](../reproduce/m8/config), with a relocatable initramfs
-path populated by the public build command above. GPIO LEDs and the transient trigger are enabled for the vibrator.
+path populated by the public build command above. GPIO LEDs and the transient trigger are enabled for the vibrator;
+the SCSC core is built and the firmware search path includes `/vendor/etc/wifi`.
 
 The historical full config of the M7 stack is
 [reference/m75-integration/clean.config](../reference/m75-integration/clean.config) (it covers `0001`-`0045`; for

@@ -8,7 +8,7 @@ Read this file, then the active ticket and its log. Before trusting anything her
 branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and on the phone. At the end of a session, update
 **RESUME HERE** with commits, branch, image hashes, last test and rollback result, and the next action.
 
-## RESUME HERE (2026-11-19, M9.2 in progress: chip boots on 6.18)
+## RESUME HERE (2026-11-19, M9.2 done: chip boots on 6.18; next M9.3)
 - **M9.2** (`log/2026-11-19-M9.2-scsc-core.md`): W1r2 booted the WLBT chip on 6.18 — CFG_REQ, EL3 SMC returns 0,
   firmware `MM_START_IND` (S620_E9610_R3-1_Y21W46A), NULL service start/stop, no faults. W1 found a DT alignment-cell
   bug, W1r a missing 9610 mif op (oops); both fixed.
@@ -20,7 +20,10 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
 - **W1d (16:02-16:11):** chip boot repeated cleanly; the 39 s WARN is the known M7.2 display IOMMU warning, not SCSC.
   Phone restored 16:11:02, post-flight passed, fsck clean 7064 files.
 - **Clean `a50-wlbt` now:** 6e0728cdf, b236e859f, acea68972, 3b5a7881d, 5032bdd3b (defconfig).
-- **Next (M9.2):** export patches and refresh the public build lock/validation. Then M9.3 Wi-Fi (station, upstream cfg80211).
+- **Publication:** 63 patches (tree 15fa201b), `reproduce/m8` config/lock refreshed, full public build passed
+  (`reference/m92-scsc-core/publication-build-results.json`).
+- **M9.2 done** (owner "yes"); device-node/ABI criterion moved to M9.3/M9.4.
+- **Next:** `tasks/M9.3-wifi.md` — Wi-Fi station mode on upstream cfg80211 (boundary C of the M9.1 contract).
 
 ## Earlier handoff (2026-11-19, M9.1 done; superseded by M9.2 progress)
 - **M9.1 done** (`log/2026-11-19-M9.1-scsc-contract.md`, result `reference/m91-scsc/contract.md`). Stock SCSC

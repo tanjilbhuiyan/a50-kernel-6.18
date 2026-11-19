@@ -1,8 +1,8 @@
 # Build the current M8 kernel
 
-This profile builds the clean driver stack through **M8.4**: display/GPU,
-real I2C, the Melfas touchscreen, volume/power GPIO keys, hall switches and
-vibrator. It applies all 58 numbered patches and verifies the resulting Git tree. The embedded
+This profile builds the clean driver stack through **M9.2**: display/GPU,
+real I2C, the Melfas touchscreen, volume/power GPIO keys, hall switches,
+vibrator and the SCSC Wi-Fi/Bluetooth core (no Wi-Fi/BT driver yet). It applies all 63 numbered patches and verifies the resulting Git tree. The embedded
 Halium runtime includes the accepted TEEGRIS, audio-HAL and GStreamer codec
 deferrals (ADR-0004/0005/0006).
 
@@ -25,7 +25,7 @@ boot donor and arm64 BusyBox are pinned by revision and SHA-256 in
 `sources.lock.json`. Downloads retain their upstream licenses.
 
 The build checks tracked inputs, replays the patches to tree
-`d83ea52a1943c916a3e2634acc2df8f9a381114e`, reconstructs the runtime, verifies
+`15fa201b1ff8beffbc0f4bc7bb1bfda1757b6c2d`, reconstructs the runtime, verifies
 the resolved config, runs the storage-guard/sense tests, then compiles and
 links the kernel. The raw DTB and embedded cpio must match locked hashes.
 It never flashes or contacts the phone.
