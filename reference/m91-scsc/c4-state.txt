@@ -1,0 +1,53 @@
+## before 231.76
+0: phy0: Wireless LAN
+	Soft blocked: no
+	Hard blocked: no
+1: hci0: Bluetooth
+	Soft blocked: yes
+	Hard blocked: no
+167: 1450 0 0 0 0 0 0 0 GIC-0 74 Level scsc_wlbt
+169: 0 0 0 0 0 0 0 0 GIC-0 104 Level scsc_wlbt
+170: 1 0 0 0 0 0 0 0 GIC-0 105 Level scsc_wlbt
+wlan0 down
+swlan0 up
+p2p0 down
+119c0000.scsc_wifibt
+bind
+uevent
+unbind
+block_rc=0
+## blocked 246.91
+0: phy0: Wireless LAN
+	Soft blocked: yes
+	Hard blocked: no
+1: hci0: Bluetooth
+	Soft blocked: yes
+	Hard blocked: no
+167: 1458 0 0 0 0 0 0 0 GIC-0 74 Level scsc_wlbt
+169: 0 0 0 0 0 0 0 0 GIC-0 104 Level scsc_wlbt
+170: 1 0 0 0 0 0 0 0 GIC-0 105 Level scsc_wlbt
+wlan0 down
+swlan0 down
+p2p0 down
+119c0000.scsc_wifibt
+bind
+uevent
+unbind
+unblock_rc=0
+## after 292.05
+0: phy0: Wireless LAN
+	Soft blocked: no
+	Hard blocked: no
+1: hci0: Bluetooth
+	Soft blocked: yes
+	Hard blocked: no
+167: 2128 0 0 0 0 0 0 0 GIC-0 74 Level scsc_wlbt
+169: 0 0 0 0 0 0 0 0 GIC-0 104 Level scsc_wlbt
+170: 1 0 0 0 0 0 0 0 GIC-0 105 Level scsc_wlbt
+wlan0 down
+swlan0 up
+p2p0 down
+119c0000.scsc_wifibt
+bind
+uevent
+unbind
