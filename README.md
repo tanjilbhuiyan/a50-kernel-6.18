@@ -23,8 +23,8 @@ memory paths and greeter presentation through direct DMA. [M7.4](reference/m74-g
 single-layer path. [M7.5](log/2026-11-18-M7.5-i3-handler-startup.md) completes M7: the Lomiri session becomes ready
 at about 50 s, composites on the Mali-G72 GPU and ran a ten-minute soak without faults (idle greeter; touch is M8).
 M8.5's [interactive soak](log/2026-11-19-M8.5-input-integration.md) verified unlocking, Settings and navigation for
-ten minutes without recorded graphics faults or a session restart. Hall events, USB resets and memory retention
-remain open; M8 is not complete.
+ten minutes without recorded graphics faults or a session restart, completing M8 (S3: touch and keys). Hall events,
+USB resets and a memory-retention review moved to M12.
 Current state and next action: [STATUS.md](STATUS.md).
 
 | Milestone | What | State |
@@ -36,7 +36,7 @@ Current state and next action: [STATUS.md](STATUS.md).
 | M5 | Ubuntu Touch userspace: systemd multi-user, SSH over USB | done, with limits below |
 | M6 | Android container: binder, ashmem, ION and real allocator startup | done, with runtime limits below |
 | M7 | Display/GPU: Lomiri UI on the Mali GPU | done with limits (G2D omitted, fixed GPU clock, light-load soak) |
-| M8 | Input: I2C, touch, keys, hall sensor and vibrator | in progress; interaction/vibrator verified, hall events and USB/memory follow-up open |
+| M8 | Input: I2C, touch, keys, hall sensor and vibrator | done with limits (hall events, USB resets, memory review → M12) |
 | M9-M12 | Wi-Fi/Bluetooth, audio, modem, power/charging | planned |
 
 Current bring-up limits (details in [the M6.4 log](log/2026-11-14-M6.4-runtime.md)):
@@ -46,8 +46,8 @@ Current bring-up limits (details in [the M6.4 log](log/2026-11-14-M6.4-runtime.m
   bootloader ([ADR-0007](docs/decisions/ADR-0007-cmu-peri-bootloader-clocks.md)). Open: the touch controller is not
   powered down when the screen blanks, and it storms with empty interrupts from boot until the first touch (as on
   stock). Volume/power key events work; screen blanking remains deferred while repowerd is masked. The vibrator works;
-  hall sensors register but actual cover events remain unverified (no magnet available). Intermittent USB
-  re-enumeration reproduced without keys; its cause remains unresolved.
+  hall sensors register but actual cover events remain unverified (no magnet available; M12). Intermittent USB
+  re-enumeration reproduced without keys; its cause remains unresolved (M12).
 - A per-boot read-only RC bind defers unported TEEGRIS startup, with vendor unchanged and no fake readiness. Secure heaps
   and security-dependent HALs are unsupported; only the measured normal system heap is implemented.
 - Audio is unported (M10). Per [ADR-0005](docs/decisions/ADR-0005-defer-android-audio-hal.md), 6.18 boots overlay

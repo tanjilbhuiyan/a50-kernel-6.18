@@ -169,6 +169,14 @@ early storm). Touch itself works (M8.2 P3r).
 M8.5 S1 (2026-11-19): S3 touch/key delivery and an interactive ten-minute soak recorded, 58-patch public build
 validated; M8 remains open for physical hall events and USB/memory follow-up. Power screen blanking remains
 deferred to M12. See `log/2026-11-19-M8.5-input-integration.md`; no new acceptance exception.
+DoD evaluation (2026-11-19, owner: "Close M8 now"): **met** (S3 = touch + power/volume keys, `docs/00-goal.md`).
+M8.5 S1: owner-responsive touch UI, clean Volume Up/Down and Power key events, ten-minute interactive soak without
+GPU/SysMMU/fence faults. Limits: power-key screen blanking waits for repowerd (M12); hall SW_LID/SW_MACHINE_COVER
+devices probe and are registered with logind but no transition was exercised (no magnet/cover); vibrator works (M8.4).
+Plan change (2026-11-19, owner approved "Close M8 now"): three open M8.5 items move to M12, because none is part of
+S3: (1) hall transitions with a magnet or cover (repowerd's lid handling is unmasked there), (2) the intermittent USB
+re-enumeration, which also occurs without keys (M8.3 K5/K6) and is a USB-mode issue under S5, (3) a controlled app
+open/close memory-retention review (M8.5 S1 saw DMA-BUF 40 -> 92 -> 86 objects with variable apps).
 
 ## M9 — Wi-Fi + Bluetooth (SCSC)
 DoD: S4 + S8. The M5 runtime mask of `bluebinder` is removed and multi-user is still reached.
@@ -187,6 +195,9 @@ DoD: S5, S9; 10 suspend/resume cycles; charge state correct. The runtime masks o
 no `systemd.mask=` remains in the built-in command line. CMU_PERI is registered (validated mode) and the ADR-0007 fixed
 PERI clocks are replaced by real clocks. The touch controller is powered down while the panel is blanked and resumes on
 unblank, and its start-up empty-interrupt storm is handled (or measured to match stock).
+Moved from M8 (2026-11-19): hall SW_LID/SW_MACHINE_COVER transitions verified with a magnet or cover; the intermittent
+USB re-enumeration (M8.3, M8.5 S1 trace) diagnosed and fixed or dispositioned under S5; a controlled app open/close
+cycle with a long idle tail shows DMA-BUF objects and Lomiri RSS returning to a stable level.
 
 ## M13 — Stretch: camera, MFC, sensors, GNSS, Waydroid
 MFC: the ADR-0006 `libgsthybris.so` placeholder is removed once `vendor.media.omx` stays running.

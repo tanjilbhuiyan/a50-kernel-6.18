@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-19 (M8.5 S1 restored; interactive soak and 58-patch build recorded)
+Updated: 2026-11-19 (M8 closed on S3, owner "Close M8 now"; next M9.1)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -8,7 +8,17 @@ Read this file, then the active ticket and its log. Before trusting anything her
 branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and on the phone. At the end of a session, update
 **RESUME HERE** with commits, branch, image hashes, last test and rollback result, and the next action.
 
-## RESUME HERE (2026-11-19, M8.5 S1 complete; M8 still open)
+## RESUME HERE (2026-11-19, M8 done; next M9.1)
+- **M8 done** (owner: "Close M8 now"). DoD S3 (touch + power/volume keys) met by M8.5 S1; see the M8 DoD evaluation and
+  plan change in `docs/05-plan.md`. M8.3 and M8.5 tickets done. Moved to M12: hall SW_LID/SW_MACHINE_COVER transitions
+  (needs any magnet or cover), the intermittent USB re-enumeration (key-independent; S1 DWC3/UDC trace and
+  `tools/m85/phone_usb.sh` are the starting point), and a controlled app open/close memory-retention review.
+- **No phone boot for this decision.** Phone state unchanged from the S1 restore below (stock 4.14.194, fsck clean).
+- **Next ticket:** `tasks/M9.1-scsc-contract.md` (todo; Wi-Fi/Bluetooth SCSC contract). Do not start without the owner.
+- Kernel branches unchanged: common a50-usb/4fbb731f5, input a50-input/3bd96025f, runtime a50-m84-h1-test/3c651aa2d.
+  Public build: `python3 -I tools/reproduce_m8.py --jobs 16` (58 patches).
+
+## Earlier handoff (2026-11-19, M8.5 S1 complete; superseded by M8 closure)
 - **Active ticket:** `tasks/M8.5-input-integration.md`, in progress. S3 touch/key delivery, interactive ten-minute soak,
   public build refresh and M9 ticket drafts recorded. **M8 is not closed:** hall transitions remain untested (owner has
   no magnet/cover), shared USB resets remain unresolved, and retained buffers need a controlled app-cycle review.
