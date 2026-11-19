@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-19 (M8.4 done; next M8.5)
+Updated: 2026-11-19 (M8.5 S1 restored; interactive soak and 58-patch build recorded)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -8,7 +8,43 @@ Read this file, then the active ticket and its log. Before trusting anything her
 branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and on the phone. At the end of a session, update
 **RESUME HERE** with commits, branch, image hashes, last test and rollback result, and the next action.
 
-## RESUME HERE (2026-11-19, M8.4 done; next M8.5)
+## RESUME HERE (2026-11-19, M8.5 S1 complete; M8 still open)
+- **Active ticket:** `tasks/M8.5-input-integration.md`, in progress. S3 touch/key delivery, interactive ten-minute soak,
+  public build refresh and M9 ticket drafts recorded. **M8 is not closed:** hall transitions remain untested (owner has
+  no magnet/cover), shared USB resets remain unresolved, and retained buffers need a controlled app-cycle review.
+  Next: fixed-workload open/close cycles with a longer idle tail; hall events when a magnet/cover is available; retain
+  calibrated USB tracing on the next authorized boot. Do not change keys or infer a new hall/power acceptance exception.
+- **Phone last verified:** stock DTB/DTBO/baseline BOOT restored **2026-11-19 13:15:38**; stock **4.14.194** booted
+  **13:15:52**, office **192.168.181.225**, **98% Charging**. Post-flight all partition hashes passed; fsck clean
+  **7056/3440640 files, 1991960/13745152 blocks**. Complete 900 s dump recovered. No test active, no button action needed.
+  Presence/USB/Claude idle were confirmed for S1; confirm owner presence again before a future flash.
+- **S1:** flashed **12:59:47**, USB SSH **13:00:46**. Owner unlocked/used Settings and reports **"Responsive throughout;
+  apps closed; back at Home."** Conservative interaction >=600 s; 25 samples span **720.63 s**. UI PID 3391 stayed stable,
+  restart counts/faults zero, systemd running, four native/compat kbase/ION checks rc 0. Direct DMA **1996 -> 7025**,
+  copy/fallback/skip/acquire-timeout counters zero. Volume Up/Down each three clean pairs, Power five pairs, no repeats.
+  Power screen action remains deferred while repowerd is masked until M12. No raw touch coordinates or PIN saved.
+- **Memory limit:** DMA-BUF 40 -> peak 92 -> 86 objects (181657600 -> peak 438743040 -> 409055232 bytes);
+  UI RSS 407392 -> peak 495960 -> 487188 KiB. Some reclamation, but variable apps/short post-close interval cannot
+  establish leak freedom or a leak. Follow-up stays open; no speculative allocator change made.
+- **USB positive trace:** one extra re-enumeration **13:03:46**, port 7-1/PCI 06:00.4, device 5 -> 6. SSH/UI survived.
+  DWC3 Suspend[U3] **219.553362 s**, Reset **219.702285**, ConnectionDone **219.752320**, Reset **219.818289**,
+  ConnectionDone **219.864836**; calibrated trace has no loss or explicit gadget-disconnect call. Host power counters
+  unchanged. This records a bus-reset sequence, not its cause; no USB fix established. Timed reset at 13:15:13 excluded.
+- **Frozen S1 inputs:** `tools/m85/build_s1.py`, H1 source/config, only dump timer **420 -> 900**. BOOT `src/m85/boot-s1.img`
+  **000cb21ecc255eb6afd12eb3cb0c437feafc97459226d58e00dc7126dd313507**; DT `src/m84/dt-h1.img`
+  **44ef8b0a81dea33ef83683b9466c3b06234689e0fb0af511b9fc8abccde25151**. Config `src/m85/s1-out/.config`, portable copy
+  `reference/m85-integration/s1.config`. All **34** hashes in `s1-inputs.json` reverified. Raw `src/m85/s1-raw/`, session
+  `src/m85/s1-session.txt`, prep `src/m85/prep/`; public evidence/checklist/results under `reference/m85-integration/`.
+- **Publication refresh passed:** **58** clean patches replay to tree **d83ea52a1943c916a3e2634acc2df8f9a381114e**;
+  `reproduce/m8` LED config/lock/DTB expectation refreshed together, **81** inputs checked. Full public build, config,
+  DTB/cpio and guard/sense checks passed in `src/m85/publication/`. Exact clean Image has not been flashed.
+  New clone: `python3 -I tools/reproduce_m8.py --jobs 16`. M9.1-M9.4 tickets are **todo**, no M9 work started.
+- Outer parent **8edaa5d**, M8.5 publication pending commit. Shared/kernel branches unchanged and clean:
+  common **a50-usb/4fbb731f5**, input **a50-input/3bd96025f54968b930418c756141d958ad842495**,
+  runtime **a50-m84-h1-test/3c651aa2d21cd9d7f1cde16e3251b4eb785bbd93**.
+  See `log/2026-11-19-M8.5-input-integration.md` and `reference/m85-integration/s1-results.json`.
+
+## Earlier handoff (M8.4 done; superseded)
 - **Phone:** stock 4.14.194 (home **192.168.0.171**), post-flight passed, fsck clean 7096/3440640 files (H1 restore
   01:57:37). No test active.
 - **M8.4 done** (`log/2026-11-19-M8.4-hall-vibrator.md`): vibrator works (`gpio-leds` "vibrator" on gpa2-1 + transient

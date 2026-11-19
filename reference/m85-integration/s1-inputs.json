@@ -1,0 +1,158 @@
+{
+  "test": "M8.5 S1 interactive input integration",
+  "outer_parent": "8edaa5ddc0bfcd087e34d7843aa4e7bf8a27c8ba",
+  "kernel_commit": "3c651aa2d21cd9d7f1cde16e3251b4eb785bbd93",
+  "kernel_branch": "a50-m84-h1-test (unchanged H1 source)",
+  "boot": "src/m85/boot-s1.img",
+  "dt": "src/m84/dt-h1.img",
+  "config_delta_from_H1": {
+    "CONFIG_A50_DIAG_DUMP_AFTER": [
+      420,
+      900
+    ]
+  },
+  "boot_header_matches_H1": true,
+  "owner_confirmation": "Present, USB connected, Claude idle\u2014proceed.",
+  "hall_stimulus": "No magnet or magnetic cover available; events remain unverified",
+  "baseline_ip": "192.168.181.225",
+  "planned_observation": "unlock, touch navigation, short volume/power presses, ten-minute interactive soak; no raw touch coordinates or character-keyboard events saved",
+  "backup_sha256": "22cb95a536489c89a738cae3105859c041a15b298c4140c6a1a018883f7bd896",
+  "files": {
+    "src/m85/boot-s1.img": {
+      "size": 30523392,
+      "sha256": "000cb21ecc255eb6afd12eb3cb0c437feafc97459226d58e00dc7126dd313507"
+    },
+    "src/m84/dt-h1.img": {
+      "size": 8388608,
+      "sha256": "44ef8b0a81dea33ef83683b9466c3b06234689e0fb0af511b9fc8abccde25151"
+    },
+    "src/m85/s1-out/.config": {
+      "size": 113081,
+      "sha256": "8bd6ac29f396b14f48e0558a11bb3ac9c9cb230da9780dab441748c8b6dd6299"
+    },
+    "src/m85/s1-out/arch/arm64/boot/Image": {
+      "size": 30517256,
+      "sha256": "99ace5eed11e126d7c49f18518ed1aad21fe29eb98133984c51dc097c3ee75e6"
+    },
+    "src/m85/s1-out/arch/arm64/boot/dts/exynos/exynos9610-a50-gpu.dtb": {
+      "size": 21507,
+      "sha256": "7644d892162c2bee47e73ae4ecff3d2d08d6ff5ff3e1aa3ac6efd677d1d5eb7c"
+    },
+    "src/m85/s1-out/usr/initramfs_data.cpio": {
+      "size": 25965568,
+      "sha256": "2970e1aa2366a1ede69fb22a83a66c3d59361e53a05fbebe095a6f9ab25484ae"
+    },
+    "src/m84/h1-as-built/.config": {
+      "size": 113081,
+      "sha256": "bbed891384470fdf4e7ea4fc4b64a0f63e2d9d60ce515d3fa1b54516829bb231"
+    },
+    "reference/m85-integration/s1-build-results.json": {
+      "size": 1029,
+      "sha256": "b0c454cf9844820788ef94d533ab0e780c5dc776c5c19b2d4032085a73b9fd48"
+    },
+    "reference/m84-hall-vib/h1-inputs.json": {
+      "size": 18130,
+      "sha256": "4a515c982f5a7e0a560395f9d7c4a551b3be4853ef4bade184956d6c2ab07bc6"
+    },
+    "src/m85/prep/preflight.txt": {
+      "size": 1243,
+      "sha256": "3de7a1d1c8a45799ebf49ed786b7d305847dc8193043fe12dccce66ba7f9c706"
+    },
+    "src/m85/prep/backup-hash.txt": {
+      "size": 113,
+      "sha256": "2b9e1952c14a7ac9f9e8a63d62bf2930ca43f1013f024939af4b8b7a9bd95e36"
+    },
+    "src/m85/prep/host-path.jsonl": {
+      "size": 1029,
+      "sha256": "191d9b7dc0d08541c757459b59d895fb6cd93dc8b4c0cd359aa7085d418eb759"
+    },
+    "tools/m85/build_s1.py": {
+      "size": 3726,
+      "sha256": "9875471c7b820e35d23ad8fbf6b9c3e47376fe5224868b66c432207ec71dc374"
+    },
+    "tools/m85/run_s1.sh": {
+      "size": 7928,
+      "sha256": "286408713dd32332dd2b518b7a63fd6278f5b09fc2adfc57c19ffbb5d90c949e"
+    },
+    "tools/m85/phone_soak.sh": {
+      "size": 6102,
+      "sha256": "f5c3b68525dde935189f31f1c26730acb2cf9289a0c3ae8e7ca0c8354c6c9200"
+    },
+    "tools/m85/phone_input.sh": {
+      "size": 1014,
+      "sha256": "64c938a88a63c207cd745f15cf42ede05a601d175e11f2beb4f658c72b5a19f5"
+    },
+    "tools/m85/phone_usb.sh": {
+      "size": 5206,
+      "sha256": "d542aea3feb1fd14a4d6179cd92a12d23c327a60cacc5bd3739555a2523116da"
+    },
+    "tools/m83/watch_host_usb.py": {
+      "size": 2183,
+      "sha256": "a8b79f75e7ec0e7fded6e653b4333228ceb637973c5baeb04a2e25471b65b734"
+    },
+    "tools/m54/watch_ssh.py": {
+      "size": 4321,
+      "sha256": "f656a6f1092266c2214ba0f3afee37ac81b0b62620b7feb57cadf6a71db52bfd"
+    },
+    "tools/m32_run_test.sh": {
+      "size": 4209,
+      "sha256": "0de47c72a2bada4b792214211b32d6bdad03bc24a4a0446fdc383418f20e8d87"
+    },
+    "tools/m32_read_618.sh": {
+      "size": 1238,
+      "sha256": "e750045b3417db5a9f9a6aad25e96cf85f1367aef897c45f039e8e440ac765c7"
+    },
+    "tools/m24_preflight.sh": {
+      "size": 4118,
+      "sha256": "6beca4aa8634c3e1b687e4242d700a311c89f2f18322398ef7a9d08a3fc13d8e"
+    },
+    "tools/m22_pack.sh": {
+      "size": 1098,
+      "sha256": "08212aa1743ed07df3447dc8414d634e775a4bc224e945b570a86be1c3757097"
+    },
+    "src/a50-halium/build/pack-boot-image.py": {
+      "size": 2058,
+      "sha256": "b685295db12c167bd804a3801c595f4d3b26812c62906f187e869e3b39f0cb74"
+    },
+    "reference/dt-6.18/images/dtbo.img": {
+      "size": 8388608,
+      "sha256": "6d81cce87faca914d75f024f36e183ae6592e61adc786bbb6c7c47cdd3a151fe"
+    },
+    "reference/stock-images/dt.img": {
+      "size": 8388608,
+      "sha256": "59209aa52dc3b35e2c7cc025c465ed1cdb48dadaa13cf5d1f50324b3bf503547"
+    },
+    "reference/stock-images/dtbo.img": {
+      "size": 8388608,
+      "sha256": "40e47ed1477a8ffb6cbb34e5cb59a1af786c2552544f3b556373f3c553d40d21"
+    },
+    "baseline/ut-26.04-2026-10-19-aa17rf2/boot.img": {
+      "size": 53624832,
+      "sha256": "7d5855efd34e01f09659c7d47ecb0773c30f2acc7443ee87181a0536804086c5"
+    },
+    "src/m75/i0-session/kbase-memory64": {
+      "size": 2252296,
+      "sha256": "c38ce94273932f81bbdb0f93ffea8bad59cc4ea334641829137872347b184c46"
+    },
+    "src/m75/i0-session/kbase-memory32": {
+      "size": 1756608,
+      "sha256": "16b3c33f2685dd90da68a1efaa9168ff41141411a01b4a460806f23150a71c1e"
+    },
+    "src/m63/ion-smoke64": {
+      "size": 2246256,
+      "sha256": "650df95c2b5bf96a6595a8184fb9104ecf0e122807dc63a9643008f226f41053"
+    },
+    "src/m63/ion-smoke32": {
+      "size": 1749880,
+      "sha256": "5eea7732c7035a4e6504ba6a5d51d034075f74f215ef36c64fbc5786cca6ed7e"
+    },
+    "src/m82/evcap": {
+      "size": 2220696,
+      "sha256": "f4b8e1e6e1c37a0c7279405e007e9bec1daa2ad71798e50c44f027c4fe4b307a"
+    },
+    "tools/m82/evcap.c": {
+      "size": 2952,
+      "sha256": "9063082dabcfae1417fc63d0e4f2340b281b29ff4d04681e970c50019e8a721f"
+    }
+  }
+}

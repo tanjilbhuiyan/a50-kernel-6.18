@@ -101,7 +101,7 @@ def build(work, listing, jobs):
     image = out / 'arch/arm64/boot/Image'
     bootstrap.pack_boot(work / 'assets/boot-public.img', image, work / 'boot.img', work)
     outputs = [image, dtb, out / '.config', out / 'usr/initramfs_data.cpio', work / 'boot.img']
-    result = {'profile': 'M8.3 clean source with I4 runtime', 'kernel_tree': LOCK['kernel_tree'],
+    result = {'profile': LOCK['profile'], 'kernel_tree': LOCK['kernel_tree'],
               'diagnostic_reset_code': False, 'phone_tested_as_this_clean_image': False,
               'note': 'Image/config/BOOT hashes depend on absolute initramfs-list path; DTB and cpio are locked.',
               'files': {str(p.relative_to(work)): {'size': p.stat().st_size, 'sha256': sha(p)} for p in outputs}}

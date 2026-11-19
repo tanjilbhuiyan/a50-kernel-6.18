@@ -1,8 +1,8 @@
 # Build the current M8 kernel
 
-This profile builds the clean driver stack through **M8.3**: display/GPU,
-real I2C, the Melfas touchscreen, and volume/power GPIO keys. It applies all
-56 numbered patches and verifies the resulting Git tree. The embedded
+This profile builds the clean driver stack through **M8.4**: display/GPU,
+real I2C, the Melfas touchscreen, volume/power GPIO keys, hall switches and
+vibrator. It applies all 58 numbered patches and verifies the resulting Git tree. The embedded
 Halium runtime includes the accepted TEEGRIS, audio-HAL and GStreamer codec
 deferrals (ADR-0004/0005/0006).
 
@@ -25,7 +25,7 @@ boot donor and arm64 BusyBox are pinned by revision and SHA-256 in
 `sources.lock.json`. Downloads retain their upstream licenses.
 
 The build checks tracked inputs, replays the patches to tree
-`a92a29f0bfc9e99b91ab8184c8b9a781e7b0d8ad`, reconstructs the runtime, verifies
+`d83ea52a1943c916a3e2634acc2df8f9a381114e`, reconstructs the runtime, verifies
 the resolved config, runs the storage-guard/sense tests, then compiles and
 links the kernel. The raw DTB and embedded cpio must match locked hashes.
 It never flashes or contacts the phone.
@@ -37,7 +37,7 @@ All generated files are under ignored `src/reproduce-m8/` by default:
 | Path | Contents |
 |---|---|
 | `out/arch/arm64/boot/Image` | arm64 kernel with the embedded Halium runtime |
-| `out/arch/arm64/boot/dts/exynos/exynos9610-a50-gpu.dtb` | Raw A50 device tree including I2C, touch and keys |
+| `out/arch/arm64/boot/dts/exynos/exynos9610-a50-gpu.dtb` | Raw A50 device tree including I2C, touch, keys, hall and vibrator |
 | `out/.config` | Resolved M8 configuration |
 | `out/usr/initramfs_data.cpio` | Embedded runtime, including ADR-0005/0006 hooks |
 | `boot.img` | Android v1 BOOT image packed using the verified public donor header |
@@ -56,10 +56,12 @@ Image/config/BOOT hashes include the absolute initramfs-list path through
 the embedded kernel config, so those hashes can differ between directories.
 The source tree, normalized config, raw DTB and cpio are checked separately.
 
-The [publication log](../../log/2026-11-19-publish-m8.md) records two full
+The original 56-patch [publication log](../../log/2026-11-19-publish-m8.md) records two full
 builds, including an isolated clone with no pre-existing `src/`. Their raw
 DTB/cpio and normalized configs match; build results and refusal checks are
-under [reference/m83-publication/](../../reference/m83-publication/).
+under [reference/m83-publication/](../../reference/m83-publication/). The full
+58-patch validation build passed; see [the M8.5 log](../../log/2026-11-19-M8.5-input-integration.md)
+and [reference/m85-integration/](../../reference/m85-integration/).
 
 ## What this build establishes
 
@@ -70,9 +72,11 @@ this exact clean image has not been flashed. The older exact M6 diagnostic
 snapshot remains available under [../m6/](../m6/README.md).
 
 The phone's intermittent USB re-enumeration is unresolved: it reproduced
-without keys on two host paths, while later trace runs did not reproduce it.
+without keys on two host paths; M8.5 captured a suspend/bus-reset sequence
+without establishing its cause.
 Power-key events work, but screen blanking is deferred while repowerd is
-masked until M12. GPU frequency, touch power behavior, audio, hardware video
+masked until M12. Hall switch events still need physical magnet/cover
+verification. GPU frequency, touch power behavior, audio, hardware video
 codecs, Wi-Fi/modem and other unported hardware retain their recorded limits.
 
 A raw DTB is not a flashable DTB/DTBO partition image. Partition packing

@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Thu, 19 Nov 2026 01:36:36 +0600
+Subject: [PATCH 58/58] arm64: configs: a50_firstlight: enable GPIO LEDs and
+ the transient trigger
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I35c7833518a283597c4a8af005dd3d07c4b3d522
+---
+ arch/arm64/configs/a50_firstlight_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm64/configs/a50_firstlight_defconfig b/arch/arm64/configs/a50_firstlight_defconfig
+index 743271fda..703f4f250 100644
+--- a/arch/arm64/configs/a50_firstlight_defconfig
++++ b/arch/arm64/configs/a50_firstlight_defconfig
+@@ -138,3 +138,5 @@ CONFIG_TOUCHSCREEN_MELFAS_MIP4=y
+ CONFIG_INPUT_KEYBOARD=y
+ # CONFIG_KEYBOARD_ATKBD is not set
+ CONFIG_KEYBOARD_GPIO=y
++CONFIG_LEDS_GPIO=y
++CONFIG_LEDS_TRIGGER_TRANSIENT=y

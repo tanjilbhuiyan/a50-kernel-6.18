@@ -166,6 +166,9 @@ freeze (M8.1 T3). ADR-0007; CMU_PERI control moves to M12.
 Plan change (2026-11-18, owner approved Option A): M8.2's "touch power follows the panel blank state" moves to M12,
 together with the start-up empty-interrupt storm (the MSS100 holds INT low until the first touch; stock shows the same
 early storm). Touch itself works (M8.2 P3r).
+M8.5 S1 (2026-11-19): S3 touch/key delivery and an interactive ten-minute soak recorded, 58-patch public build
+validated; M8 remains open for physical hall events and USB/memory follow-up. Power screen blanking remains
+deferred to M12. See `log/2026-11-19-M8.5-input-integration.md`; no new acceptance exception.
 
 ## M9 — Wi-Fi + Bluetooth (SCSC)
 DoD: S4 + S8. The M5 runtime mask of `bluebinder` is removed and multi-user is still reached.

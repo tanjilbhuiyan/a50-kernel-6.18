@@ -1,0 +1,24 @@
+# tracer: nop
+#
+# entries-in-buffer/entries-written: 12/12   #P:8
+#
+#                                _-----=> irqs-off/BH-disabled
+#                               / _----=> need-resched
+#                              | / _---=> hardirq/softirq
+#                              || / _--=> preempt-depth
+#                              ||| / _-=> migrate-disable
+#                              |||| /     delay
+#           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
+#              | |         |   |||||     |         |
+              sh-3047    [007] .....    45.041808: tracing_mark_write: A50M85USB_START uptime=45.03
+     irq/72-dwc3-1578    [000] D....   219.553362: dwc3_event: event (00030601): Suspend [U3]
+     irq/72-dwc3-1578    [000] D....   219.702285: dwc3_event: event (00000101): Reset [U0]
+     irq/72-dwc3-1578    [000] D....   219.705381: usb_gadget_set_state: speed 3/3 state 5 0mA [sg:bus-powered:activated:connected] --> 0
+     irq/72-dwc3-1578    [000] D....   219.752320: dwc3_event: event (00000201): Connection Done [U0]
+     irq/72-dwc3-1578    [000] D....   219.818289: dwc3_event: event (00000101): Reset [U0]
+     irq/72-dwc3-1578    [000] D....   219.818306: usb_gadget_set_state: speed 3/3 state 5 0mA [sg:bus-powered:activated:connected] --> 0
+     irq/72-dwc3-1578    [000] D....   219.864836: dwc3_event: event (00000201): Connection Done [U0]
+     irq/72-dwc3-1578    [000] D....   219.928208: usb_gadget_set_state: speed 3/3 state 6 0mA [sg:bus-powered:activated:connected] --> 0
+     irq/72-dwc3-1578    [000] D....   219.980392: usb_gadget_set_state: speed 3/3 state 7 0mA [sg:bus-powered:activated:connected] --> 0
+     irq/72-dwc3-1578    [000] D....   219.980496: usb_gadget_set_state: speed 3/3 state 7 0mA [sg:bus-powered:activated:connected] --> 0
+              sh-3047    [006] .....   860.671303: tracing_mark_write: A50M85USB_END uptime=860.67

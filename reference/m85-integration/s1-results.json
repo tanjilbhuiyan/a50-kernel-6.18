@@ -1,0 +1,177 @@
+{
+  "test": "M8.5 S1",
+  "s3": "touch and key delivery pass; power screen action remains deferred to M12",
+  "interactive_window_min_seconds": 600,
+  "owner_responsive_throughout": true,
+  "sample_count": 25,
+  "sample_duration_seconds": 720.63,
+  "regressions": {
+    "KBASE_MEMORY_64": 0,
+    "KBASE_MEMORY_32": 0,
+    "ION_64": 0,
+    "ION_32": 0
+  },
+  "key_press_release_counts": {
+    "114": {
+      "0": 3,
+      "1": 3,
+      "2": 0
+    },
+    "115": {
+      "0": 3,
+      "1": 3,
+      "2": 0
+    },
+    "116": {
+      "0": 5,
+      "1": 5,
+      "2": 0
+    }
+  },
+  "touch_contacts_by_window": [
+    118,
+    69,
+    136
+  ],
+  "raw_touch_coordinates_saved": false,
+  "ui_pids": [
+    3391
+  ],
+  "kernel_fault_signatures": [],
+  "system_state_final": "running",
+  "failed_units_max": 0,
+  "dma_scanout_first_last": [
+    1996,
+    7025
+  ],
+  "display_copy_fallback_skip_acquire_timeouts": 0,
+  "memory": {
+    "first": {
+      "target": 120,
+      "uptime": 120.3,
+      "display": {
+        "fence_ctx": "1",
+        "fence_seq": "1996",
+        "pending": "0",
+        "win_configs": "1996",
+        "scanned": "1996",
+        "copied": "0",
+        "dma_fallbacks": "0",
+        "skipped": "0",
+        "acq_timeouts": "0",
+        "completed": "1996",
+        "stage": "idle",
+        "worker_seq": "1996",
+        "worker_layers": "1",
+        "padded_scanned": "1996",
+        "scan_full_w": "1088",
+        "scan_full_h": "2352"
+      },
+      "mem_available_kib": 2258208,
+      "dma_objects": 40,
+      "dma_bytes": 181657600,
+      "ui_unit": "lomiri-full-greeter.service",
+      "ui_pid": 3391,
+      "ui_fds": 142,
+      "ui_rss_kib": 407392,
+      "faults": 0,
+      "failed_units": 0,
+      "system_state": "starting"
+    },
+    "last": {
+      "target": 840,
+      "uptime": 840.93,
+      "display": {
+        "fence_ctx": "1",
+        "fence_seq": "7025",
+        "pending": "0",
+        "win_configs": "7025",
+        "scanned": "7025",
+        "copied": "0",
+        "dma_fallbacks": "0",
+        "skipped": "0",
+        "acq_timeouts": "0",
+        "completed": "7025",
+        "stage": "idle",
+        "worker_seq": "7025",
+        "worker_layers": "1",
+        "padded_scanned": "7025",
+        "scan_full_w": "1088",
+        "scan_full_h": "2352"
+      },
+      "mem_available_kib": 2058364,
+      "dma_objects": 86,
+      "dma_bytes": 409055232,
+      "ui_unit": "lomiri-full-greeter.service",
+      "ui_pid": 3391,
+      "ui_fds": 168,
+      "ui_rss_kib": 487188,
+      "faults": 0,
+      "failed_units": 0,
+      "system_state": "running"
+    },
+    "dma_objects_max": 92,
+    "dma_bytes_max": 438743040,
+    "ui_fds_max": 194,
+    "ui_rss_kib_max": 495960,
+    "mem_available_kib_min": 1309240
+  },
+  "memory_limit": "Some reclamation observed, but DMA-BUF and UI memory remain above startup. App set varied; short post-close window does not prove leak freedom. Fixed-workload retention follow-up remains warranted.",
+  "hall_events": "not exercised: no magnet/magnetic cover available",
+  "usb_extra_disconnects": [
+    "2026-11-19T13:03:46+06:00 BS-01808 kernel: usb 7-1: USB disconnect, device number 5"
+  ],
+  "normal_timed_reset_disconnect": "2026-11-19T13:15:13+06:00 BS-01808 kernel: usb 7-1: USB disconnect, device number 6",
+  "usb_device_events": [
+    "irq/72-dwc3-1578    [000] D....   219.553362: dwc3_event: event (00030601): Suspend [U3]",
+    "irq/72-dwc3-1578    [000] D....   219.702285: dwc3_event: event (00000101): Reset [U0]",
+    "irq/72-dwc3-1578    [000] D....   219.752320: dwc3_event: event (00000201): Connection Done [U0]",
+    "irq/72-dwc3-1578    [000] D....   219.818289: dwc3_event: event (00000101): Reset [U0]",
+    "irq/72-dwc3-1578    [000] D....   219.864836: dwc3_event: event (00000201): Connection Done [U0]"
+  ],
+  "usb_requested_disconnect_events": [],
+  "trace_losses": {
+    "overrun": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "commit overrun": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "dropped events": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "usb_cause": "unresolved; captured suspend/bus-reset sequence, no observed explicit gadget disconnect call",
+  "restored_at": "13:15:38",
+  "baseline_booted_at": "2026-11-19 13:15:52",
+  "postflight": "passed",
+  "fsck": "e2fsck 1.43.4 (31-Jan-2017)\n/dev/sda32: clean, 7056/3440640 files, 1991960/13745152 blocks",
+  "inputs_reverified": 34,
+  "M8_complete": false,
+  "remaining": [
+    "physical hall event check",
+    "shared USB issue disposition",
+    "recorded memory retention follow-up"
+  ]
+}

@@ -8,7 +8,7 @@ Why: Samsung's 4.14.194 kernel is out of support, and every newer userspace need
 needs `openat2`, for example). Goal, success criteria and non-goals: [docs/00-goal.md](docs/00-goal.md).
 
 > [!WARNING]
-> **Experimental. Not for daily use.** The 6.18 display/GPU and touch work, but interactive login, Wi-Fi,
+> **Experimental. Not for daily use.** The 6.18 display/GPU and touch work, but screen blanking, Wi-Fi,
 > audio, modem and charging remain incomplete or unverified. Testing flashes the BOOT and DTB/DTBO partitions, which can leave
 > it unbootable until you restore it. The project never writes EFS, SEC_EFS, CPEFS, PARAM, the bootloader or the vendor
 > partition, and its UFS write guard (below) enforces that in the kernel, but you use this at your own risk.
@@ -22,6 +22,9 @@ ION replay passes as Android's system user. [M7.3](log/2026-11-17-M7.3-g2h-memor
 memory paths and greeter presentation through direct DMA. [M7.4](reference/m74-g2d/decision.md) drops G2D for that
 single-layer path. [M7.5](log/2026-11-18-M7.5-i3-handler-startup.md) completes M7: the Lomiri session becomes ready
 at about 50 s, composites on the Mali-G72 GPU and ran a ten-minute soak without faults (idle greeter; touch is M8).
+M8.5's [interactive soak](log/2026-11-19-M8.5-input-integration.md) verified unlocking, Settings and navigation for
+ten minutes without recorded graphics faults or a session restart. Hall events, USB resets and memory retention
+remain open; M8 is not complete.
 Current state and next action: [STATUS.md](STATUS.md).
 
 | Milestone | What | State |
@@ -33,7 +36,7 @@ Current state and next action: [STATUS.md](STATUS.md).
 | M5 | Ubuntu Touch userspace: systemd multi-user, SSH over USB | done, with limits below |
 | M6 | Android container: binder, ashmem, ION and real allocator startup | done, with runtime limits below |
 | M7 | Display/GPU: Lomiri UI on the Mali GPU | done with limits (G2D omitted, fixed GPU clock, light-load soak) |
-| M8 | Input: I2C, touch, keys, hall sensor and vibrator | in progress; I2C/touch/keys verified, shared USB issue unresolved |
+| M8 | Input: I2C, touch, keys, hall sensor and vibrator | in progress; interaction/vibrator verified, hall events and USB/memory follow-up open |
 | M9-M12 | Wi-Fi/Bluetooth, audio, modem, power/charging | planned |
 
 Current bring-up limits (details in [the M6.4 log](log/2026-11-14-M6.4-runtime.md)):
@@ -42,8 +45,9 @@ Current bring-up limits (details in [the M6.4 log](log/2026-11-14-M6.4-runtime.m
 - Touch works since M8.2 (mainline `melfas_mip4`; Lomiri usable by touch). I2C runs with CMU_PERI left to the
   bootloader ([ADR-0007](docs/decisions/ADR-0007-cmu-peri-bootloader-clocks.md)). Open: the touch controller is not
   powered down when the screen blanks, and it storms with empty interrupts from boot until the first touch (as on
-  stock). Volume/power key events work; screen blanking remains deferred while repowerd is masked. Hall sensor and
-  vibrator are M8.4. Intermittent USB re-enumeration reproduced without keys; its cause remains unresolved.
+  stock). Volume/power key events work; screen blanking remains deferred while repowerd is masked. The vibrator works;
+  hall sensors register but actual cover events remain unverified (no magnet available). Intermittent USB
+  re-enumeration reproduced without keys; its cause remains unresolved.
 - A per-boot read-only RC bind defers unported TEEGRIS startup, with vendor unchanged and no fake readiness. Secure heaps
   and security-dependent HALs are unsupported; only the measured normal system heap is implemented.
 - Audio is unported (M10). Per [ADR-0005](docs/decisions/ADR-0005-defer-android-audio-hal.md), 6.18 boots overlay
@@ -73,7 +77,7 @@ Full plan with each milestone's Definition of Done: [docs/05-plan.md](docs/05-pl
 
 - **Build the current M8 driver stack:** [reproduce/m8/](reproduce/m8/README.md).
   After cloning, run `python3 -I tools/reproduce_m8.py --jobs 16`. This fetches pinned public inputs, applies all
-  56 patches, reconstructs the current Halium runtime and builds Image, raw DTB and BOOT without private backups.
+  58 patches, reconstructs the current Halium runtime and builds Image, raw DTB and BOOT without private backups.
   This clean image excludes timed-test code and has not itself been flashed; the individual drivers have phone evidence.
 - **Build the historical phone-tested M6 snapshot:** [reproduce/m6/](reproduce/m6/README.md).
   After cloning, run `python3 -I tools/reproduce_m6.py --jobs 16`. This fetches pinned public
@@ -82,9 +86,9 @@ Full plan with each milestone's Definition of Done: [docs/05-plan.md](docs/05-pl
   remaining runtime limits are documented there.
 - **Base:** [ACK](https://android.googlesource.com/kernel/common) branch `android17-6.18`, commit `d9a614fed`
   (2026-10-31), Linux 6.18.33. Built with ACK's clang prebuilt (`clang-r584948c`) via `tools/m22_build.sh`.
-- **A50 changes:** [patches/](patches/README.md), 56 patches that apply to that base with `git am`: device tree and
+- **A50 changes:** [patches/](patches/README.md), 58 patches that apply to that base with `git am`: device tree and
   defconfig, Exynos 9610 clocks, pinctrl, UFS, USB PHY, ACPM, S2MPU09 regulators, thermal, the UFS guard, the ION ABI,
-  the `a50-decon` display driver, the Mali kbase, I2C, touchscreen and GPIO keys. Where possible they extend the mainline Samsung drivers. Build steps are in [patches/README.md](patches/README.md).
+  the `a50-decon` display driver, the Mali kbase, I2C, touchscreen, GPIO keys, hall switches and vibrator. Where possible they extend the mainline Samsung drivers. Build steps are in [patches/README.md](patches/README.md).
 - **Config:** the `a50_firstlight_defconfig` from the series, plus the Halium/Ubuntu Touch flags in
   [tools/m51/halium.flags](tools/m51/halium.flags).
 - The working kernel tree is a local checkout (`src/`, not in this repository). `tools/export_patches.sh` regenerates
