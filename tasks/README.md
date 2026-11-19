@@ -65,5 +65,5 @@ later milestones get tickets when we reach them (evidence first, Rule 1).
 | M8.5 | Lomiri input integration, S3 checklist and M8 DoD | yes | M8.2, M8.3, M8.4 | done (log/2026-11-19-M8.5-input-integration.md; M8 DoD met; hall events, memory review → M12) |
 | M9.1 | SCSC source, firmware and consumer contract | yes | M8.5 disposition | done (log/2026-11-19-M9.1-scsc-contract.md) |
 | M9.2 | SCSC core and transport bring-up | build no / test yes | M9.1 | done (log/2026-11-19-M9.2-scsc-core.md; device-node criterion → M9.3/M9.4) |
-| M9.3 | Wi-Fi association and SSH (S4) | yes | M9.2 | todo |
+| M9.3 | Wi-Fi association and SSH (S4) | yes | M9.2 | done (log/2026-11-19-M9.3-wifi.md; S4 reached, swlan0 profile handling open) |
 | M9.4 | Bluetooth, bluebinder and M9 integration (S8) | yes | M9.2, M9.3 | todo |

@@ -33,7 +33,7 @@ if [ "$watch_rc" -eq 0 ]; then
     timeout 390 ssh "${options[@]}" root@10.15.19.82 \
         'case "$(uname -r)" in 6.18*) ;; *) exit 1;; esac; dmesg --color=never --follow' > "$raw/kernel-follow.txt" 2>&1 &
     kernel_pid=$!
-    timeout 330 ssh "${options[@]}" root@10.15.19.82 sh -s < tools/m93/collect_w2.sh > "$raw/live.txt" 2>&1 &
+    timeout 345 ssh "${options[@]}" root@10.15.19.82 sh -s < tools/m93/collect_w2.sh > "$raw/live.txt" 2>&1 &
     collect_pid=$!
     # Host side: wait for the phone's Wi-Fi address, then SSH / ping / transfer over Wi-Fi (before the 250 s reconnect).
     wip=

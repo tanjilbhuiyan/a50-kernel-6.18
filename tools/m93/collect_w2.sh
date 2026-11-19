@@ -62,6 +62,41 @@ if [ -n "$dev" ] && [ -n "$ip4" ]; then
     printf 'reconnect_from=%s address_after_s=%s\n' "$t0" "$j"
     nmstate
 fi
+# --- M9.3 W3 checks (regression, device nodes, private-ioctl rejection, rfkill off/on) ---
+printf '\nM93_W3_REGRESSION uptime=%s\n' "$(cut -d' ' -f1 /proc/uptime)"
+capture sh -c 'grep -E "^N:" /proc/bus/input/devices'
+capture sh -c 'findmnt -no TARGET,OPTIONS /userdata | cut -c1-80'
+capture sh -c 'head -n 1 /sys/devices/platform/148b0000.decon_f/g2b_stats; pgrep -c -x lomiri; systemctl show -p SystemState -p NFailedUnits'
+printf '\nM93_W3_NODES\n'
+capture sh -c 'ls -d /sys/class/net/wlan0 /sys/class/net/p2p0 /sys/class/ieee80211/phy0; ls -l /dev | grep -E "mx_|scsc|udi|s5n" ; cat /sys/class/rfkill/rfkill*/name /sys/class/rfkill/rfkill*/type 2>/dev/null | paste -sd" "'
+capture sh -c 'iw phy phy0 info | grep -E "^\s+Band [0-9]|Supported interface modes" -A7 | grep -E "Band|\* (managed|AP|P2P|monitor|IBSS)" | sort -u | head -12'
+printf '\nM93_W3_PRIVATE_IOCTL\n'
+cat > /run/a50-w2/privcmd.py <<'PY'
+import ctypes, fcntl, socket, struct, errno
+SIOCDEVPRIVATE = 0x89F0
+buf = ctypes.create_string_buffer(b"COUNTRY XX", 128)
+cmd = struct.pack("QII", ctypes.addressof(buf), 10, 128)   # android_wifi_priv_cmd {buf, used_len, total_len}
+cmdbuf = ctypes.create_string_buffer(cmd, len(cmd))
+ifr = struct.pack("16sQ", b"wlan0", ctypes.addressof(cmdbuf)) + b"\0" * 16
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+try:
+    fcntl.ioctl(s, SIOCDEVPRIVATE + 1, ifr)
+    print("private ioctl: ACCEPTED (unexpected)")
+except OSError as e:
+    print("private ioctl: rejected errno=%d (%s)" % (e.errno, errno.errorcode.get(e.errno, "?")))
+PY
+capture python3 /run/a50-w2/privcmd.py
+wait_up 285
+if [ -n "$dev" ]; then
+    printf '\nM93_W3_RFKILL_BEGIN uptime=%s\n' "$(cut -d' ' -f1 /proc/uptime)"
+    capture rfkill block wlan
+    sleep 5; nmstate; capture rfkill list wlan
+    t0=$(cut -d' ' -f1 /proc/uptime)
+    capture rfkill unblock wlan
+    k=0; while [ $k -lt 45 ]; do nmcli -t -f DEVICE,STATE dev | grep -q "^$dev:connected" && break; sleep 1; k=$((k + 1)); done
+    printf 'rfkill_unblock_at=%s connected_after_s=%s\n' "$t0" "$k"
+    nmstate
+fi
 printf '\nM93_W2_FINAL uptime=%s\n' "$(cut -d' ' -f1 /proc/uptime)"
 capture sh -c 'grep -E "wlbt|scsc" /proc/interrupts | tr -s " "; cat /proc/sys/kernel/tainted'
 capture sh -c 'cat /proc/net/dev | grep -E "wlan|p2p|swlan"'

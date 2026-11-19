@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-19 (M9.3 W2s2: Wi-Fi S4 reached on 6.18)
+Updated: 2026-11-20 (M9.3 done: Wi-Fi S4 on 6.18; next M9.4 Bluetooth)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -8,7 +8,19 @@ Read this file, then the active ticket and its log. Before trusting anything her
 branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and on the phone. At the end of a session, update
 **RESUME HERE** with commits, branch, image hashes, last test and rollback result, and the next action.
 
-## RESUME HERE (2026-11-19, M9.3 in progress: Wi-Fi S4 reached)
+## RESUME HERE (2026-11-20, M9.3 done; next M9.4)
+- **M9.3 done** (`log/2026-11-19-M9.3-wifi.md`): S4 on 6.18 (WPA2, DHCP, SSH over Wi-Fi, reconnect, rfkill off/on
+  power-cycles the chip and reconnects in 3 s, private ioctls rejected, regression snapshot clean). Publication 66
+  patches (tree 7574d5e9), public build passed. Open: `swlan0`-bound stock profiles (owner decision; recommend
+  one-time reconnect), random MAC, power-save tuning.
+- **Phone:** stock 4.14.194 restored 2026-11-20 00:53:14, post-flight passed, fsck clean 7072 files, home
+  **192.168.0.171**.
+- **Next:** `tasks/M9.4-bluetooth.md` — needs the owner's plan decision first (native BlueZ via stock `scsc_bluez.c`
+  hci_dev vs the plan's bluebinder path; see M9.1 contract §6 B).
+- Untouched uncommitted files from another session: `CLAUDE.md`, `docs/05-plan.md`, `docs/09-ut-blockers.md`,
+  `docs/10-after-kernel-plan.md`.
+
+## Earlier handoff (superseded)
 - **M9.3** (`log/2026-11-19-M9.3-wifi.md`): W2s2 joined the owner's home network on 6.18 (WPA2, DHCP), SSH over
   Wi-Fi, ping 19/20, 20 MB in 17.5 s, NM disconnect/reconnect, faults 0. Found/fixed an RTNL self-deadlock
   (W2/W2d: custom regd applied from ndo_open). Stock-saved profiles are bound to `swlan0`; the test unbound them in
