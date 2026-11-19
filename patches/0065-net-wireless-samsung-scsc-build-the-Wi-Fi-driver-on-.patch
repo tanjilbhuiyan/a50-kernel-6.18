@@ -1,0 +1,1019 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Thu, 19 Nov 2026 16:35:58 +0600
+Subject: [PATCH 65/66] net: wireless: samsung: scsc: build the Wi-Fi driver on
+ 6.18
+
+Add Kconfig/Makefile for the station-mode subset and adapt the imported
+4.14 sources to 6.18:
+
+- cfg80211: small adapters for the ops whose prototypes changed
+  (wireless_dev, MLO link_id, radio_idx, cfg80211_ap_update, rx_addr);
+  the empty mgmt_frame_register op is dropped; roam info uses links[0];
+  ch_switch_notify gets link 0; new_sta/del_sta take the wireless_dev.
+- read-only dev_addr: eth_hw_addr_set(); add_vif/mlme_start take const
+  addresses.
+- timers (timer_delete*, timer_container_of), netif_rx, timespec64,
+  proc_ops/pde_data, class_create without owner, <linux/if_arp.h>.
+- files by bare name through the firmware loader (6.11+ refuses ".."):
+  the regulatory database; the EFS MAC-file fallback (a ".." request,
+  and a kernel read of EFS) is removed. With no module/sysfs/mac.txt
+  address, a random locally administered MAC replaces the 4.14 SoC-UID
+  derivation (no exynos_soc_info on 6.18).
+- the driver's own RPS map rewrite (netdev internals) becomes a no-op;
+  RPS is configured from userspace on current kernels.
+- no VFS-internal namespace import.
+- SLSI_IS_VIF_INDEX_MHS_DUALSTA is false without Wi-Fi sharing.
+
+Samsung's private-command code only builds with WES/NCHO, so that option
+is a hidden always-on symbol; the commands are unreachable on 6.18
+(SIOCDEVPRIVATE goes to ndo_siocdevprivate, not implemented), all NCHO
+modes stay 0 and behave as a non-NCHO build.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I530fa0689e2041ed9ea47054ec9662ca8a4c61bd
+---
+ drivers/net/wireless/Kconfig                  |   1 +
+ drivers/net/wireless/Makefile                 |   1 +
+ drivers/net/wireless/samsung/Kconfig          |  10 ++
+ drivers/net/wireless/samsung/Makefile         |   2 +
+ drivers/net/wireless/samsung/scsc/Kconfig     |  35 ++++++
+ drivers/net/wireless/samsung/scsc/Makefile    |   8 ++
+ drivers/net/wireless/samsung/scsc/ba.c        |   8 +-
+ .../net/wireless/samsung/scsc/cfg80211_ops.c  | 118 +++++++++++++++---
+ drivers/net/wireless/samsung/scsc/cm_if.c     |   3 -
+ drivers/net/wireless/samsung/scsc/hip4.c      |  12 +-
+ drivers/net/wireless/samsung/scsc/mgt.c       |  26 ++--
+ drivers/net/wireless/samsung/scsc/mgt.h       |   2 +
+ drivers/net/wireless/samsung/scsc/mlme.c      |   6 +-
+ drivers/net/wireless/samsung/scsc/mlme.h      |   6 +-
+ drivers/net/wireless/samsung/scsc/netif.c     |  93 +++-----------
+ drivers/net/wireless/samsung/scsc/procfs.h    |  38 +++---
+ drivers/net/wireless/samsung/scsc/reg_info.c  |  10 +-
+ drivers/net/wireless/samsung/scsc/rx.c        |  22 ++--
+ drivers/net/wireless/samsung/scsc/sap_ma.c    |   6 +-
+ .../wireless/samsung/scsc/traffic_monitor.c   |   6 +-
+ drivers/net/wireless/samsung/scsc/udi.c       |   2 +-
+ 21 files changed, 241 insertions(+), 174 deletions(-)
+ create mode 100644 drivers/net/wireless/samsung/Kconfig
+ create mode 100644 drivers/net/wireless/samsung/Makefile
+ create mode 100644 drivers/net/wireless/samsung/scsc/Kconfig
+ create mode 100644 drivers/net/wireless/samsung/scsc/Makefile
+
+diff --git a/drivers/net/wireless/Kconfig b/drivers/net/wireless/Kconfig
+index c6599594d..b15a2f0f1 100644
+--- a/drivers/net/wireless/Kconfig
++++ b/drivers/net/wireless/Kconfig
+@@ -30,6 +30,7 @@ source "drivers/net/wireless/microchip/Kconfig"
+ source "drivers/net/wireless/purelifi/Kconfig"
+ source "drivers/net/wireless/ralink/Kconfig"
+ source "drivers/net/wireless/realtek/Kconfig"
++source "drivers/net/wireless/samsung/Kconfig"
+ source "drivers/net/wireless/rsi/Kconfig"
+ source "drivers/net/wireless/silabs/Kconfig"
+ source "drivers/net/wireless/st/Kconfig"
+diff --git a/drivers/net/wireless/Makefile b/drivers/net/wireless/Makefile
+index e1c4141c6..0a141ade9 100644
+--- a/drivers/net/wireless/Makefile
++++ b/drivers/net/wireless/Makefile
+@@ -16,6 +16,7 @@ obj-$(CONFIG_WLAN_VENDOR_PURELIFI) += purelifi/
+ obj-$(CONFIG_WLAN_VENDOR_QUANTENNA) += quantenna/
+ obj-$(CONFIG_WLAN_VENDOR_RALINK) += ralink/
+ obj-$(CONFIG_WLAN_VENDOR_REALTEK) += realtek/
++obj-$(CONFIG_WLAN_VENDOR_SAMSUNG) += samsung/
+ obj-$(CONFIG_WLAN_VENDOR_RSI) += rsi/
+ obj-$(CONFIG_WLAN_VENDOR_SILABS) += silabs/
+ obj-$(CONFIG_WLAN_VENDOR_ST) += st/
+diff --git a/drivers/net/wireless/samsung/Kconfig b/drivers/net/wireless/samsung/Kconfig
+new file mode 100644
+index 000000000..5e187b423
+--- /dev/null
++++ b/drivers/net/wireless/samsung/Kconfig
+@@ -0,0 +1,10 @@
++# SPDX-License-Identifier: GPL-2.0
++config WLAN_VENDOR_SAMSUNG
++	bool "Samsung devices"
++	default y
++	help
++	  Samsung wireless devices (SCSC Maxwell on Exynos SoCs).
++
++if WLAN_VENDOR_SAMSUNG
++source "drivers/net/wireless/samsung/scsc/Kconfig"
++endif
+diff --git a/drivers/net/wireless/samsung/Makefile b/drivers/net/wireless/samsung/Makefile
+new file mode 100644
+index 000000000..613778a89
+--- /dev/null
++++ b/drivers/net/wireless/samsung/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0
++obj-$(CONFIG_SCSC_WLAN) += scsc/
+diff --git a/drivers/net/wireless/samsung/scsc/Kconfig b/drivers/net/wireless/samsung/scsc/Kconfig
+new file mode 100644
+index 000000000..d72b6f311
+--- /dev/null
++++ b/drivers/net/wireless/samsung/scsc/Kconfig
+@@ -0,0 +1,35 @@
++# SPDX-License-Identifier: GPL-2.0
++#
++# Samsung SCSC Wi-Fi, reduced for the 6.18 A50 port: station mode on cfg80211/nl80211.
++# Android vendor commands (GSCAN, NAN, RTT, WES/NCHO), the wifilogger and debug/test
++# options of the 4.14 driver are not ported.
++
++config SCSC_WLAN
++	tristate "Samsung SCSC Wi-Fi"
++	depends on SCSC_CORE && CFG80211
++	help
++	  Wi-Fi driver for the Samsung SCSC (Maxwell) chip of Exynos 9610,
++	  using the stock firmware through the SCSC core.
++
++if SCSC_WLAN
++
++config SCSC_WLAN_MAX_INTERFACES
++	int "Number of network interfaces"
++	range 1 3
++	default 3
++	help
++	  wlan0, p2p0 and the AP interface, as on the stock kernel.
++
++config SCSC_WLAN_WES_NCHO
++	def_bool y
++	help
++	  Samsung's private-command code (ioctl.c) only builds with WES/NCHO.
++	  On 6.18 those commands are unreachable (SIOCDEVPRIVATE goes to
++	  ndo_siocdevprivate, which this driver does not implement), so all
++	  NCHO modes stay at their default 0 and behave like a non-NCHO build.
++
++config SCSC_AP_INTERFACE_NAME
++	string "AP interface name"
++	default "swlan0"
++
++endif
+diff --git a/drivers/net/wireless/samsung/scsc/Makefile b/drivers/net/wireless/samsung/scsc/Makefile
+new file mode 100644
+index 000000000..e921def90
+--- /dev/null
++++ b/drivers/net/wireless/samsung/scsc/Makefile
+@@ -0,0 +1,8 @@
++# SPDX-License-Identifier: GPL-2.0
++ccflags-y += -I$(srctree)/include/scsc -I$(srctree)/drivers/misc/samsung/scsc
++
++obj-$(CONFIG_SCSC_WLAN) += scsc_wlan.o
++scsc_wlan-y := hip4.o mbulk.o dev.o cfg80211_ops.o netif.o rx.o tx.o ba.o sap_mlme.o sap_ma.o \
++	sap_dbg.o sap_test.o mib.o mib_text_convert.o debug.o debug_frame.o procfs.o mgt.o mlme.o \
++	udi.o log_clients.o src_sink.o fw_test.o cac.o scsc_wifi_fcq.o ioctl.o traffic_monitor.o \
++	reg_info.o hip.o cm_if.o
+diff --git a/drivers/net/wireless/samsung/scsc/ba.c b/drivers/net/wireless/samsung/scsc/ba.c
+index cd0ce0ff3..cba54f1d4 100644
+--- a/drivers/net/wireless/samsung/scsc/ba.c
++++ b/drivers/net/wireless/samsung/scsc/ba.c
+@@ -319,7 +319,7 @@ static void slsi_ba_aging_timeout_handler(unsigned long data)
+ #endif
+ {
+ #if KERNEL_VERSION(4, 15, 0) <= LINUX_VERSION_CODE
+-	struct slsi_ba_session_rx *ba_session_rx = from_timer(ba_session_rx, t, ba_age_timer);
++	struct slsi_ba_session_rx *ba_session_rx = timer_container_of(ba_session_rx, t, ba_age_timer);
+ #else
+ 	struct slsi_ba_session_rx *ba_session_rx = (struct slsi_ba_session_rx *)data;
+ #endif
+@@ -454,7 +454,7 @@ int slsi_ba_process_frame(struct net_device *dev, struct slsi_peer *peer,
+ 		ba_session_rx->timer_on = false;
+ 		slsi_spinlock_unlock(&ndev_vif->ba_lock);
+ 		SLSI_NET_DBG3(dev, SLSI_RX_BA, "Timer stop\n");
+-		del_timer_sync(&ba_session_rx->ba_age_timer);
++		timer_delete_sync(&ba_session_rx->ba_age_timer);
+ 	} else {
+ 		slsi_spinlock_unlock(&ndev_vif->ba_lock);
+ 	}
+@@ -509,7 +509,7 @@ static void slsi_rx_ba_stop_lock_held(struct net_device *dev, struct slsi_ba_ses
+ 	__slsi_rx_ba_stop(dev, ba_session_rx);
+ 	ba_session_rx->timer_on = false;
+ 	slsi_spinlock_unlock(&ndev_vif->ba_lock);
+-	del_timer_sync(&ba_session_rx->ba_age_timer);
++	timer_delete_sync(&ba_session_rx->ba_age_timer);
+ 	slsi_spinlock_lock(&ndev_vif->ba_lock);
+ }
+ 
+@@ -521,7 +521,7 @@ static void slsi_rx_ba_stop_lock_unheld(struct net_device *dev, struct slsi_ba_s
+ 	__slsi_rx_ba_stop(dev, ba_session_rx);
+ 	ba_session_rx->timer_on = false;
+ 	slsi_spinlock_unlock(&ndev_vif->ba_lock);
+-	del_timer_sync(&ba_session_rx->ba_age_timer);
++	timer_delete_sync(&ba_session_rx->ba_age_timer);
+ }
+ 
+ void slsi_rx_ba_stop_all(struct net_device *dev, struct slsi_peer *peer)
+diff --git a/drivers/net/wireless/samsung/scsc/cfg80211_ops.c b/drivers/net/wireless/samsung/scsc/cfg80211_ops.c
+index d65d9c82f..a55746ea8 100644
+--- a/drivers/net/wireless/samsung/scsc/cfg80211_ops.c
++++ b/drivers/net/wireless/samsung/scsc/cfg80211_ops.c
+@@ -2864,7 +2864,7 @@ int slsi_start_ap(struct wiphy *wiphy, struct net_device *dev,
+ 
+ 	r = slsi_mlme_start(sdev, dev, dev->dev_addr, settings, wpa_ie_pos, wmm_ie_pos, append_vht_ies);
+ 
+-	cfg80211_ch_switch_notify(dev, &settings->chandef);
++	cfg80211_ch_switch_notify(dev, &settings->chandef, 0);
+ 
+ #ifdef CONFIG_SCSC_WLAN_WIFI_SHARING
+ 	if (r == 0)
+@@ -3667,6 +3667,93 @@ int slsi_set_mac_acl(struct wiphy *wiphy, struct net_device *dev,
+ 	return r;
+ }
+ 
++/*
++ * 6.18 port: cfg80211 adapters. Newer kernels pass wireless_dev, MLO link_id and radio_idx
++ * arguments; this single-link station/AP driver ignores them and calls the 4.14 handlers.
++ */
++static int slsi_618_add_key(struct wiphy *wiphy, struct wireless_dev *wdev, int link_id, u8 key_index,
++			    bool pairwise, const u8 *mac_addr, struct key_params *params)
++{
++	return slsi_add_key(wiphy, wdev->netdev, key_index, pairwise, mac_addr, params);
++}
++
++static int slsi_618_del_key(struct wiphy *wiphy, struct wireless_dev *wdev, int link_id, u8 key_index,
++			    bool pairwise, const u8 *mac_addr)
++{
++	return slsi_del_key(wiphy, wdev->netdev, key_index, pairwise, mac_addr);
++}
++
++static int slsi_618_get_key(struct wiphy *wiphy, struct wireless_dev *wdev, int link_id, u8 key_index,
++			    bool pairwise, const u8 *mac_addr, void *cookie,
++			    void (*callback)(void *cookie, struct key_params *))
++{
++	return slsi_get_key(wiphy, wdev->netdev, key_index, pairwise, mac_addr, cookie, callback);
++}
++
++static int slsi_618_set_default_key(struct wiphy *wiphy, struct net_device *dev, int link_id, u8 key_index,
++				    bool unicast, bool multicast)
++{
++	return slsi_set_default_key(wiphy, dev, key_index, unicast, multicast);
++}
++
++static int slsi_618_set_default_mgmt_key(struct wiphy *wiphy, struct wireless_dev *wdev, int link_id,
++					 u8 key_index)
++{
++	return slsi_config_default_mgmt_key(wiphy, wdev->netdev, key_index);
++}
++
++static int slsi_618_set_wiphy_params(struct wiphy *wiphy, int radio_idx, u32 changed)
++{
++	return slsi_set_wiphy_params(wiphy, changed);
++}
++
++static int slsi_618_del_station(struct wiphy *wiphy, struct wireless_dev *wdev,
++				struct station_del_parameters *params)
++{
++	return slsi_del_station(wiphy, wdev->netdev, params);
++}
++
++static int slsi_618_get_station(struct wiphy *wiphy, struct wireless_dev *wdev, const u8 *mac,
++				struct station_info *sinfo)
++{
++	return slsi_get_station(wiphy, wdev->netdev, mac, sinfo);
++}
++
++static int slsi_618_set_tx_power(struct wiphy *wiphy, struct wireless_dev *wdev, int radio_idx,
++				 enum nl80211_tx_power_setting type, int mbm)
++{
++	return slsi_set_tx_power(wiphy, wdev, type, mbm);
++}
++
++static int slsi_618_get_tx_power(struct wiphy *wiphy, struct wireless_dev *wdev, int radio_idx,
++				 unsigned int link_id, int *dbm)
++{
++	return slsi_get_tx_power(wiphy, wdev, dbm);
++}
++
++static int slsi_618_remain_on_channel(struct wiphy *wiphy, struct wireless_dev *wdev,
++				      struct ieee80211_channel *chan, unsigned int duration, u64 *cookie,
++				      const u8 *rx_addr)
++{
++	return slsi_remain_on_channel(wiphy, wdev, chan, duration, cookie);
++}
++
++static int slsi_618_change_beacon(struct wiphy *wiphy, struct net_device *dev, struct cfg80211_ap_update *info)
++{
++	return slsi_change_beacon(wiphy, dev, &info->beacon);
++}
++
++static int slsi_618_stop_ap(struct wiphy *wiphy, struct net_device *dev, unsigned int link_id)
++{
++	return slsi_stop_ap(wiphy, dev);
++}
++
++static int slsi_618_set_monitor_channel(struct wiphy *wiphy, struct net_device *dev,
++					struct cfg80211_chan_def *chandef)
++{
++	return slsi_set_monitor_channel(wiphy, chandef);
++}
++
+ static struct cfg80211_ops slsi_ops = {
+ 	.add_virtual_intf = slsi_add_virtual_intf,
+ 	.del_virtual_intf = slsi_del_virtual_intf,
+@@ -3676,18 +3763,18 @@ static struct cfg80211_ops slsi_ops = {
+ 	.connect = slsi_connect,
+ 	.disconnect = slsi_disconnect,
+ 
+-	.add_key = slsi_add_key,
+-	.del_key = slsi_del_key,
+-	.get_key = slsi_get_key,
+-	.set_default_key = slsi_set_default_key,
+-	.set_default_mgmt_key = slsi_config_default_mgmt_key,
++	.add_key = slsi_618_add_key,
++	.del_key = slsi_618_del_key,
++	.get_key = slsi_618_get_key,
++	.set_default_key = slsi_618_set_default_key,
++	.set_default_mgmt_key = slsi_618_set_default_mgmt_key,
+ 
+-	.set_wiphy_params = slsi_set_wiphy_params,
++	.set_wiphy_params = slsi_618_set_wiphy_params,
+ 
+-	.del_station = slsi_del_station,
+-	.get_station = slsi_get_station,
+-	.set_tx_power = slsi_set_tx_power,
+-	.get_tx_power = slsi_get_tx_power,
++	.del_station = slsi_618_del_station,
++	.get_station = slsi_618_get_station,
++	.set_tx_power = slsi_618_set_tx_power,
++	.get_tx_power = slsi_618_get_tx_power,
+ 	.set_power_mgmt = slsi_set_power_mgmt,
+ 
+ 	.suspend = slsi_suspend,
+@@ -3697,19 +3784,18 @@ static struct cfg80211_ops slsi_ops = {
+ 	.del_pmksa = slsi_del_pmksa,
+ 	.flush_pmksa = slsi_flush_pmksa,
+ 
+-	.remain_on_channel = slsi_remain_on_channel,
++	.remain_on_channel = slsi_618_remain_on_channel,
+ 	.cancel_remain_on_channel = slsi_cancel_remain_on_channel,
+ 
+ 	.change_bss = slsi_change_bss,
+ 
+ 	.start_ap = slsi_start_ap,
+-	.change_beacon = slsi_change_beacon,
+-	.stop_ap = slsi_stop_ap,
++	.change_beacon = slsi_618_change_beacon,
++	.stop_ap = slsi_618_stop_ap,
+ 
+ 	.sched_scan_start = slsi_sched_scan_start,
+ 	.sched_scan_stop = slsi_sched_scan_stop,
+ 
+-	.mgmt_frame_register = slsi_mgmt_frame_register,
+ 	.mgmt_tx = slsi_mgmt_tx,
+ 	.mgmt_tx_cancel_wait = slsi_mgmt_tx_cancel_wait,
+ 	.set_txq_params = slsi_set_txq_params,
+@@ -3723,7 +3809,7 @@ static struct cfg80211_ops slsi_ops = {
+ #endif
+ 	.update_ft_ies = slsi_update_ft_ies,
+ 	.tdls_oper = slsi_tdls_oper,
+-	.set_monitor_channel = slsi_set_monitor_channel,
++	.set_monitor_channel = slsi_618_set_monitor_channel,
+ 	.set_qos_map = slsi_set_qos_map,
+ 	.channel_switch = slsi_channel_switch
+ };
+diff --git a/drivers/net/wireless/samsung/scsc/cm_if.c b/drivers/net/wireless/samsung/scsc/cm_if.c
+index 8262916a5..3f4018ccd 100644
+--- a/drivers/net/wireless/samsung/scsc/cm_if.c
++++ b/drivers/net/wireless/samsung/scsc/cm_if.c
+@@ -20,9 +20,6 @@
+ #include <scsc/scsc_log_collector.h>
+ #endif
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0)
+-MODULE_IMPORT_NS(VFS_internal_I_am_really_a_filesystem_and_am_NOT_a_driver);
+-#endif
+ 
+ static bool EnableTestMode;
+ module_param(EnableTestMode, bool, S_IRUGO | S_IWUSR);
+diff --git a/drivers/net/wireless/samsung/scsc/hip4.c b/drivers/net/wireless/samsung/scsc/hip4.c
+index 0bd025e8d..124dfc74f 100644
+--- a/drivers/net/wireless/samsung/scsc/hip4.c
++++ b/drivers/net/wireless/samsung/scsc/hip4.c
+@@ -294,7 +294,7 @@ static int hip4_proc_show_history(struct seq_file *m, void *v)
+ 
+ static int hip4_proc_history_open(struct inode *inode, struct file *file)
+ {
+-	return single_open(file, hip4_proc_show_history, PDE_DATA(inode));
++	return single_open(file, hip4_proc_show_history, pde_data(inode));
+ }
+ 
+ static const struct file_operations hip4_procfs_history_fops = {
+@@ -436,7 +436,7 @@ static int hip4_proc_show(struct seq_file *m, void *v)
+ 
+ static int hip4_proc_open(struct inode *inode, struct file *file)
+ {
+-	return single_open(file, hip4_proc_show, PDE_DATA(inode));
++	return single_open(file, hip4_proc_show, pde_data(inode));
+ }
+ 
+ static const struct file_operations hip4_procfs_stats_fops = {
+@@ -471,7 +471,7 @@ static int hip4_proc_jitter_show(struct seq_file *m, void *v)
+ 
+ static int hip4_proc_jitter_open(struct inode *inode, struct file *file)
+ {
+-	return single_open(file, hip4_proc_jitter_show, PDE_DATA(inode));
++	return single_open(file, hip4_proc_jitter_show, pde_data(inode));
+ }
+ 
+ static ssize_t hip4_proc_jitter_clear(struct file *file, const char __user *user_buf, size_t count, loff_t *ppos)
+@@ -899,7 +899,7 @@ static void hip4_watchdog(unsigned long data)
+ #endif
+ {
+ #if KERNEL_VERSION(4, 15, 0) <= LINUX_VERSION_CODE
+-	struct hip4_priv        *priv = from_timer(priv, t, watchdog);
++	struct hip4_priv        *priv = timer_container_of(priv, t, watchdog);
+ 	struct slsi_hip4        *hip = priv->hip;
+ #else
+ 	struct slsi_hip4        *hip = (struct slsi_hip4 *)data;
+@@ -2911,7 +2911,7 @@ void hip4_freeze(struct slsi_hip4 *hip)
+ 	atomic_set(&hip->hip_priv->watchdog_timer_active, 0);
+ 
+ 	/* Deactive the wd timer prior its expiration */
+-	del_timer_sync(&hip->hip_priv->watchdog);
++	timer_delete_sync(&hip->hip_priv->watchdog);
+ }
+ 
+ void hip4_deinit(struct slsi_hip4 *hip)
+@@ -2994,7 +2994,7 @@ void hip4_deinit(struct slsi_hip4 *hip)
+ 
+ 	atomic_set(&hip->hip_priv->watchdog_timer_active, 0);
+ 	/* Deactive the wd timer prior its expiration */
+-	del_timer_sync(&hip->hip_priv->watchdog);
++	timer_delete_sync(&hip->hip_priv->watchdog);
+ 
+ #ifdef CONFIG_SCSC_WLAN_DEBUG
+ 	if (hip->hip_priv->stats.procfs_dir) {
+diff --git a/drivers/net/wireless/samsung/scsc/mgt.c b/drivers/net/wireless/samsung/scsc/mgt.c
+index 6daff9dca..376f6cc22 100644
+--- a/drivers/net/wireless/samsung/scsc/mgt.c
++++ b/drivers/net/wireless/samsung/scsc/mgt.c
+@@ -9,7 +9,7 @@
+ #include <scsc/kic/slsi_kic_lib.h>
+ #include <linux/fs.h>
+ #if defined(CONFIG_ARCH_EXYNOS) || defined(CONFIG_ARCH_EXYNOS9)
+-#include <linux/soc/samsung/exynos-soc.h>
++#include <linux/etherdevice.h>
+ #endif
+ 
+ #ifdef CONFIG_SCSC_WLAN_ENHANCED_PKT_FILTER
+@@ -45,7 +45,7 @@
+ #include "nl80211_vendor.h"
+ 
+ #ifdef CONFIG_SCSC_WLBTD
+-#include "../../../misc/samsung/scsc/scsc_wlbtd.h"
++#include "scsc_wlbtd.h"
+ #endif
+ #if defined(CONFIG_SCSC_WLAN_ENHANCED_BIGDATA) && (defined(SCSC_SEP_VERSION) && SCSC_SEP_VERSION >= 10)
+ 
+@@ -71,9 +71,7 @@
+ #define FAPI_SCANMODE_LOW_LATENCY_2   0x0002
+ #define FAPI_SCANMODE_LOW_LATENCY_3   0x0003
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0)
+-MODULE_IMPORT_NS(VFS_internal_I_am_really_a_filesystem_and_am_NOT_a_driver);
+-#endif
++#include <linux/if_arp.h>
+ 
+ static char *mib_file_t = "wlan_t.hcf";
+ module_param(mib_file_t, charp, S_IRUGO | S_IWUSR);
+@@ -368,15 +366,9 @@ void slsi_get_hw_mac_address(struct slsi_dev *sdev, u8 *addr)
+ 	/* This is safe to call, even if the struct firmware handle is NULL */
+ 	mx140_file_release_conf(sdev->maxwell_core, e);
+ 
+-	SLSI_ETHER_COPY(addr, SLSI_DEFAULT_HW_MAC_ADDR);
+-#if defined(CONFIG_ARCH_EXYNOS) || defined(CONFIG_ARCH_EXYNOS9)
+-	/* Randomise MAC address from the soc uid */
+-	addr[3] = (exynos_soc_info.unique_id & 0xFF0000000000) >> 40;
+-	addr[4] = (exynos_soc_info.unique_id & 0x00FF00000000) >> 32;
+-	addr[5] = (exynos_soc_info.unique_id & 0x0000FF000000) >> 24;
+-#endif
+-	SLSI_DBG1(sdev, SLSI_INIT_DEINIT,
+-		  "MAC addr file NOT found, using default MAC ADDR: %pM\n", addr);
++	/* 6.18 port: no SoC unique ID and no EFS read; use a random locally administered address. */
++	eth_random_addr(addr);
++	SLSI_INFO(sdev, "No MAC address provided (modparam/sysfs/mac.txt), using random local address\n");
+ #else
+ 	/* We use FIXED Mac addresses with the unittest driver */
+ 	struct slsi_test_dev *uftestdev = (struct slsi_test_dev *)sdev->maxwell_core;
+@@ -443,8 +435,6 @@ static void write_wifi_version_info_file(struct slsi_dev *sdev)
+ #endif
+ 
+ 	SLSI_INFO(sdev, "Succeed to write firmware/host information to .wifiver.info\n");
+-#else
+-	SLSI_UNUSED_PARAMETER(filepath);
+ #endif
+ }
+ 
+@@ -2899,7 +2889,7 @@ void slsi_vif_deactivated(struct slsi_dev *sdev, struct net_device *dev)
+ 
+ 		if (peer && peer->valid) {
+ 			if (ndev_vif->vif_type == FAPI_VIFTYPE_AP && peer->assoc_ie)
+-				cfg80211_del_sta(dev, peer->address, GFP_KERNEL);
++				cfg80211_del_sta(dev->ieee80211_ptr, peer->address, GFP_KERNEL);
+ 
+ 			slsi_spinlock_lock(&ndev_vif->peer_lock);
+ 			slsi_peer_remove(sdev, dev, peer);
+@@ -3519,7 +3509,7 @@ int slsi_handle_disconnect(struct slsi_dev *sdev, struct net_device *dev, u8 *pe
+ 		if (((peer->connected_state == SLSI_STA_CONN_STATE_CONNECTED) ||
+ 				(peer->connected_state == SLSI_STA_CONN_STATE_DOING_KEY_CONFIG)) &&
+ 				!(peer->is_wps))
+-			cfg80211_del_sta(dev, peer->address, GFP_KERNEL);
++			cfg80211_del_sta(dev->ieee80211_ptr, peer->address, GFP_KERNEL);
+ 
+ 		slsi_spinlock_lock(&ndev_vif->peer_lock);
+ 		slsi_peer_remove(sdev, dev, peer);
+diff --git a/drivers/net/wireless/samsung/scsc/mgt.h b/drivers/net/wireless/samsung/scsc/mgt.h
+index b9bcda3cb..e01ebf782 100644
+--- a/drivers/net/wireless/samsung/scsc/mgt.h
++++ b/drivers/net/wireless/samsung/scsc/mgt.h
+@@ -85,6 +85,8 @@
+ 							(sdev->netdev_ap == sdev->netdev[SLSI_NET_INDEX_P2PX_SWLAN]))
+ #else
+ #define SLSI_IS_VIF_INDEX_P2P_GROUP(sdev, ndev_vif) (ndev_vif->ifnum == SLSI_NET_INDEX_P2PX_SWLAN)
++/* 6.18 port: without Wi-Fi sharing/dual station there is no MHS interface. */
++#define SLSI_IS_VIF_INDEX_MHS_DUALSTA(sdev, ndev_vif) (false)
+ #endif
+ #if defined(CONFIG_SCSC_WLAN_WIFI_SHARING)
+ #define SLSI_IS_VIF_INDEX_MHS(sdev, ndev_vif) ((ndev_vif->ifnum == SLSI_NET_INDEX_P2PX_SWLAN) &&\
+diff --git a/drivers/net/wireless/samsung/scsc/mlme.c b/drivers/net/wireless/samsung/scsc/mlme.c
+index 68fe702ff..782af2f17 100644
+--- a/drivers/net/wireless/samsung/scsc/mlme.c
++++ b/drivers/net/wireless/samsung/scsc/mlme.c
+@@ -760,7 +760,7 @@ int slsi_mlme_get(struct slsi_dev *sdev, struct net_device *dev, u8 *mib, int mi
+ 	return r;
+ }
+ 
+-int slsi_mlme_add_vif(struct slsi_dev *sdev, struct net_device *dev, u8 *interface_address, u8 *device_address)
++int slsi_mlme_add_vif(struct slsi_dev *sdev, struct net_device *dev, const u8 *interface_address, const u8 *device_address)
+ {
+ 	struct netdev_vif *ndev_vif = netdev_priv(dev);
+ 	struct sk_buff    *req;
+@@ -819,7 +819,7 @@ int slsi_mlme_add_vif(struct slsi_dev *sdev, struct net_device *dev, u8 *interfa
+ 	return r;
+ }
+ 
+-int slsi_mlme_add_detect_vif(struct slsi_dev *sdev, struct net_device *dev, u8 *interface_address, u8 *device_address)
++int slsi_mlme_add_detect_vif(struct slsi_dev *sdev, struct net_device *dev, const u8 *interface_address, const u8 *device_address)
+ {
+ 	struct netdev_vif *ndev_vif = netdev_priv(dev);
+ 	struct sk_buff    *req;
+@@ -2015,7 +2015,7 @@ static int slsi_prepare_vht_ies(struct net_device *dev, u8 **vht_ie_capab, u8 **
+ 	return 0;
+ }
+ 
+-int slsi_mlme_start(struct slsi_dev *sdev, struct net_device *dev, u8 *bssid, struct cfg80211_ap_settings *settings, const u8 *wpa_ie_pos, const u8 *wmm_ie_pos, bool append_vht_ies)
++int slsi_mlme_start(struct slsi_dev *sdev, struct net_device *dev, const u8 *bssid, struct cfg80211_ap_settings *settings, const u8 *wpa_ie_pos, const u8 *wmm_ie_pos, bool append_vht_ies)
+ {
+ 	struct netdev_vif      *ndev_vif = netdev_priv(dev);
+ 	struct sk_buff         *req;
+diff --git a/drivers/net/wireless/samsung/scsc/mlme.h b/drivers/net/wireless/samsung/scsc/mlme.h
+index 68e836ff1..d473f2e42 100644
+--- a/drivers/net/wireless/samsung/scsc/mlme.h
++++ b/drivers/net/wireless/samsung/scsc/mlme.h
+@@ -148,9 +148,9 @@ int slsi_mlme_set(struct slsi_dev *sdev, struct net_device *dev, u8 *req, int re
+ int slsi_mlme_get(struct slsi_dev *sdev, struct net_device *dev, u8 *req, int req_len,
+ 		  u8 *resp, int resp_buf_len, int *resp_len);
+ 
+-int slsi_mlme_add_vif(struct slsi_dev *sdev, struct net_device *dev, u8 *interface_address, u8 *device_address);
++int slsi_mlme_add_vif(struct slsi_dev *sdev, struct net_device *dev, const u8 *interface_address, const u8 *device_address);
+ int slsi_mlme_del_vif(struct slsi_dev *sdev, struct net_device *dev);
+-int slsi_mlme_add_detect_vif(struct slsi_dev *sdev, struct net_device *dev, u8 *interface_address, u8 *device_address);
++int slsi_mlme_add_detect_vif(struct slsi_dev *sdev, struct net_device *dev, const u8 *interface_address, const u8 *device_address);
+ int slsi_mlme_del_detect_vif(struct slsi_dev *sdev, struct net_device *dev);
+ #if defined(CONFIG_SLSI_WLAN_STA_FWD_BEACON) && (defined(SCSC_SEP_VERSION) && SCSC_SEP_VERSION >= 10)
+ int slsi_mlme_set_forward_beacon(struct slsi_dev *sdev, struct net_device *dev, int action);
+@@ -187,7 +187,7 @@ int slsi_mlme_add_sched_scan(struct slsi_dev                    *sdev,
+ 			     u16                                ies_len);
+ 
+ int slsi_mlme_del_scan(struct slsi_dev *sdev, struct net_device *dev, u16 scan_id, bool scan_timed_out);
+-int slsi_mlme_start(struct slsi_dev *sdev, struct net_device *dev, u8 *bssid, struct cfg80211_ap_settings *settings, const u8 *wpa_ie_pos, const u8 *wmm_ie_pos, bool append_vht_ies);
++int slsi_mlme_start(struct slsi_dev *sdev, struct net_device *dev, const u8 *bssid, struct cfg80211_ap_settings *settings, const u8 *wpa_ie_pos, const u8 *wmm_ie_pos, bool append_vht_ies);
+ int slsi_mlme_connect(struct slsi_dev *sdev, struct net_device *dev, struct cfg80211_connect_params *sme, struct ieee80211_channel *channel, const u8 *bssid);
+ int slsi_mlme_set_key(struct slsi_dev *sdev, struct net_device *dev, u16 key_id, u16 key_type, const u8 *address, struct key_params *key);
+ int slsi_mlme_get_key(struct slsi_dev *sdev, struct net_device *dev, u16 key_id, u16 key_type, u8 *seq, int *seq_len);
+diff --git a/drivers/net/wireless/samsung/scsc/netif.c b/drivers/net/wireless/samsung/scsc/netif.c
+index 293def26c..b4810de60 100644
+--- a/drivers/net/wireless/samsung/scsc/netif.c
++++ b/drivers/net/wireless/samsung/scsc/netif.c
+@@ -372,12 +372,12 @@ static int slsi_net_open(struct net_device *dev)
+ 		if (SLSI_IS_VIF_INDEX_MHS_DUALSTA(sdev, ndev_vif)) {
+ 			SLSI_ETHER_COPY(mhs_or_dual_sta_mac, sdev->netdev_addresses[SLSI_NET_INDEX_P2PX_SWLAN]);
+ 			mhs_or_dual_sta_mac[2] ^= 0x80;
+-			SLSI_ETHER_COPY(dev->dev_addr, mhs_or_dual_sta_mac);
++			eth_hw_addr_set(dev, mhs_or_dual_sta_mac);
+ 		} else {
+-			SLSI_ETHER_COPY(dev->dev_addr, sdev->netdev_addresses[ndev_vif->ifnum]);
++			eth_hw_addr_set(dev, sdev->netdev_addresses[ndev_vif->ifnum]);
+ 		}
+ #else
+-		SLSI_ETHER_COPY(dev->dev_addr, sdev->netdev_addresses[ndev_vif->ifnum]);
++		eth_hw_addr_set(dev, sdev->netdev_addresses[ndev_vif->ifnum]);
+ #endif
+ 	}
+ #if defined(CONFIG_SCSC_WLAN_WIFI_SHARING) || defined(CONFIG_SCSC_WLAN_DUAL_STATION)
+@@ -1309,7 +1309,7 @@ static int  slsi_set_mac_address(struct net_device *dev, void *addr)
+ 	struct sockaddr *sa = (struct sockaddr *)addr;
+ 
+ 	SLSI_NET_DBG1(dev, SLSI_NETDEV, "%pM\n", sa->sa_data);
+-	SLSI_ETHER_COPY(dev->dev_addr, sa->sa_data);
++	eth_hw_addr_set(dev, sa->sa_data);
+ 	sdev->mac_changed = true;
+ 	ndev_vif->ipaddress = 0;
+ 
+@@ -1379,76 +1379,17 @@ static void slsi_if_setup(struct net_device *dev)
+ #endif
+ #endif
+ 
++/*
++ * 6.18 port: the 4.14 driver rewrote dev->_rx->rps_map itself. RPS is configured from userspace
++ * (/sys/class/net/<dev>/queues/rx-0/rps_cpus) on current kernels; these helpers do nothing.
++ */
+ static void slsi_netif_rps_map_clear(struct net_device *dev)
+ {
+-	struct rps_map *map;
+-
+-	map = rcu_dereference_protected(dev->_rx->rps_map, 1);
+-	if (map) {
+-		RCU_INIT_POINTER(dev->_rx->rps_map, NULL);
+-		kfree_rcu(map, rcu);
+-		SLSI_NET_INFO(dev, "clear rps_cpus map\n");
+-	}
+ }
+ 
+ static int slsi_netif_rps_map_set(struct net_device *dev, char *buf, size_t len)
+ {
+-	struct rps_map *old_map, *map;
+-	cpumask_var_t mask;
+-	int err, cpu, i;
+-	static DEFINE_SPINLOCK(rps_map_lock);
+-
+-	if (!alloc_cpumask_var(&mask, GFP_KERNEL))
+-		return -ENOMEM;
+-
+-	err = bitmap_parse(buf, len, cpumask_bits(mask), nr_cpumask_bits);
+-	if (err) {
+-		free_cpumask_var(mask);
+-		SLSI_NET_WARN(dev, "CPU bitmap parse failed\n");
+-		return err;
+-	}
+-
+-	map = kzalloc(max_t(unsigned int, RPS_MAP_SIZE(cpumask_weight(mask)), L1_CACHE_BYTES), GFP_KERNEL);
+-	if (!map) {
+-		free_cpumask_var(mask);
+-		SLSI_NET_WARN(dev, "CPU mask alloc failed\n");
+-		return -ENOMEM;
+-	}
+-
+-	i = 0;
+-	for_each_cpu_and(cpu, mask, cpu_online_mask)
+-		map->cpus[i++] = cpu;
+-
+-	if (i) {
+-		map->len = i;
+-	} else {
+-		kfree(map);
+-		map = NULL;
+-	}
+-
+-	spin_lock(&rps_map_lock);
+-	old_map = rcu_dereference_protected(dev->_rx->rps_map, lockdep_is_held(&rps_map_lock));
+-	rcu_assign_pointer(dev->_rx->rps_map, map);
+-	spin_unlock(&rps_map_lock);
+-
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0))
+-	if (map)
+-		static_branch_inc(&rps_needed);
+-	if (old_map)
+-		static_branch_dec(&rps_needed);
+-#else
+-	if (map)
+-		static_key_slow_inc(&rps_needed);
+-	if (old_map)
+-		static_key_slow_dec(&rps_needed);
+-#endif
+-
+-	if (old_map)
+-		kfree_rcu(old_map, rcu);
+-
+-	free_cpumask_var(mask);
+-	SLSI_NET_INFO(dev, "rps_cpus map set(%s)\n", buf);
+-	return len;
++	return 0;
+ }
+ 
+ static void slsi_set_multicast_filter_work(struct work_struct *data)
+@@ -1787,11 +1728,11 @@ int slsi_netif_add_locked(struct slsi_dev *sdev, const char *name, int ifnum)
+ 
+ #if defined(CONFIG_SCSC_WLAN_WIFI_SHARING) || defined(CONFIG_SCSC_WLAN_DUAL_STATION)
+ 	if (strcmp(name, CONFIG_SCSC_AP_INTERFACE_NAME) == 0)
+-		SLSI_ETHER_COPY(dev->dev_addr, sdev->netdev_addresses[SLSI_NET_INDEX_P2PX_SWLAN]);
++		eth_hw_addr_set(dev, sdev->netdev_addresses[SLSI_NET_INDEX_P2PX_SWLAN]);
+ 	else
+-		SLSI_ETHER_COPY(dev->dev_addr, sdev->netdev_addresses[ifnum]);
++		eth_hw_addr_set(dev, sdev->netdev_addresses[ifnum]);
+ #else
+-	SLSI_ETHER_COPY(dev->dev_addr, sdev->netdev_addresses[ifnum]);
++	eth_hw_addr_set(dev, sdev->netdev_addresses[ifnum]);
+ #endif
+ 	SLSI_DBG1(sdev, SLSI_NETDEV, "Add:%pM\n", dev->dev_addr);
+ 	rcu_assign_pointer(sdev->netdev[ifnum], dev);
+@@ -2141,7 +2082,7 @@ static int slsi_netif_tcp_ack_suppression_stop(struct net_device *dev)
+ 	for (index = 0; index < TCP_ACK_SUPPRESSION_RECORDS_MAX; index++) {
+ 		tcp_ack = &ndev_vif->ack_suppression[index];
+ 		slsi_spinlock_unlock(&ndev_vif->tcp_ack_lock);
+-		del_timer_sync(&tcp_ack->timer);
++		timer_delete_sync(&tcp_ack->timer);
+ 		slsi_spinlock_lock(&ndev_vif->tcp_ack_lock);
+ 		tcp_ack->state = 0;
+ 		skb_queue_purge(&tcp_ack->list);
+@@ -2159,7 +2100,7 @@ static void slsi_netif_tcp_ack_suppression_timeout(unsigned long data)
+ #endif
+ {
+ #if KERNEL_VERSION(4, 15, 0) <= LINUX_VERSION_CODE
+-	struct slsi_tcp_ack_s *tcp_ack = from_timer(tcp_ack, t, timer);
++	struct slsi_tcp_ack_s *tcp_ack = timer_container_of(tcp_ack, t, timer);
+ #else
+ 	struct slsi_tcp_ack_s *tcp_ack = (struct slsi_tcp_ack_s *)data;
+ #endif
+@@ -2285,7 +2226,7 @@ static void slsi_netif_tcp_ack_suppression_syn(struct net_device *dev, struct sk
+ 				tcp_ack->saddr = 0;
+ 				tcp_ack->count = 0;
+ 				tcp_ack->ack_seq = 0;
+-				del_timer(&tcp_ack->timer);
++				timer_delete(&tcp_ack->timer);
+ 			}
+ 		}
+ 
+@@ -2362,7 +2303,7 @@ static void slsi_netif_tcp_ack_suppression_fin(struct net_device *dev, struct sk
+ 				tcp_ack->hysteresis = 0;
+ 			}
+ 
+-			del_timer(&tcp_ack->timer);
++			timer_delete(&tcp_ack->timer);
+ #ifdef CONFIG_SCSC_WLAN_HIP4_PROFILING
+ 			tcp_ack->stream_id = 0;
+ #endif
+@@ -2681,7 +2622,7 @@ static struct sk_buff *slsi_netif_tcp_ack_suppression_pkt(struct net_device *dev
+ 	tcp_ack->count = 0;
+ 
+ 	if (tcp_ack->age)
+-		del_timer(&tcp_ack->timer);
++		timer_delete(&tcp_ack->timer);
+ 
+ 	tcp_ack->last_sent = ktime_get();
+ 	ndev_vif->tcp_ack_stats.tack_sent++;
+diff --git a/drivers/net/wireless/samsung/scsc/procfs.h b/drivers/net/wireless/samsung/scsc/procfs.h
+index 6e55eee0c..8a030d34d 100644
+--- a/drivers/net/wireless/samsung/scsc/procfs.h
++++ b/drivers/net/wireless/samsung/scsc/procfs.h
+@@ -30,7 +30,7 @@ struct slsi_vif;
+ #define SLSI_PROCFS_SET_UID_GID(entry)
+ #endif
+ 
+-#define SLSI_PDE_DATA(inode) PDE_DATA(inode)
++#define SLSI_PDE_DATA(inode) pde_data(inode)
+ 
+ /* procfs operations */
+ int slsi_create_proc_dir(struct slsi_dev *sdev);
+@@ -44,11 +44,11 @@ int slsi_procfs_open_file_generic(struct inode *inode, struct file *file);
+ 	{                                                                                   \
+ 		return single_open(file, slsi_procfs_  ## name ## _show, SLSI_PDE_DATA(inode)); \
+ 	}                                                                                   \
+-	static const struct file_operations slsi_procfs_ ## name ## _fops = {               \
+-		.open = slsi_procfs_ ## name ## _open,                                      \
+-		.read = seq_read,                                                           \
+-		.llseek = seq_lseek,                                                        \
+-		.release = single_release,                                                  \
++	static const struct proc_ops slsi_procfs_ ## name ## _fops = {               \
++		.proc_open = slsi_procfs_ ## name ## _open,                                      \
++		.proc_read = seq_read,                                                           \
++		.proc_lseek = seq_lseek,                                                        \
++		.proc_release = single_release,                                                  \
+ 	}
+ 
+ #define SLSI_PROCFS_SEQ_ADD_FILE(_sdev, name, parent, mode) \
+@@ -63,28 +63,28 @@ int slsi_procfs_open_file_generic(struct inode *inode, struct file *file);
+ 
+ #define SLSI_PROCFS_READ_FILE_OPS(name)                                       \
+ 	static ssize_t slsi_procfs_ ## name ## _read(struct file *file, char __user *user_buf, size_t count, loff_t *ppos); \
+-	static const struct file_operations slsi_procfs_ ## name ## _fops = { \
+-		.read = slsi_procfs_ ## name ## _read,                        \
+-		.open = slsi_procfs_open_file_generic,                        \
+-		.llseek = generic_file_llseek                                 \
++	static const struct proc_ops slsi_procfs_ ## name ## _fops = { \
++		.proc_read = slsi_procfs_ ## name ## _read,                        \
++		.proc_open = slsi_procfs_open_file_generic,                        \
++		.proc_lseek = generic_file_llseek                                 \
+ 	}
+ 
+ #define SLSI_PROCFS_WRITE_FILE_OPS(name)                                       \
+ 	static ssize_t slsi_procfs_ ## name ## _write(struct file *file, const char __user *user_buf, size_t count, loff_t *ppos); \
+-	static const struct file_operations slsi_procfs_ ## name ## _fops = { \
+-		.write = slsi_procfs_ ## name ## _write,                        \
+-		.open = slsi_procfs_open_file_generic,                        \
+-		.llseek = generic_file_llseek                                 \
++	static const struct proc_ops slsi_procfs_ ## name ## _fops = { \
++		.proc_write = slsi_procfs_ ## name ## _write,                        \
++		.proc_open = slsi_procfs_open_file_generic,                        \
++		.proc_lseek = generic_file_llseek                                 \
+ 	}
+ 
+ #define SLSI_PROCFS_RW_FILE_OPS(name)                                               \
+ 	static ssize_t slsi_procfs_ ## name ## _write(struct file *file, const char __user *user_buf, size_t count, loff_t *ppos); \
+ 	static ssize_t                      slsi_procfs_ ## name ## _read(struct file *file, char __user *user_buf, size_t count, loff_t *ppos); \
+-	static const struct file_operations slsi_procfs_ ## name ## _fops = { \
+-		.read = slsi_procfs_ ## name ## _read,                        \
+-		.write = slsi_procfs_ ## name ## _write,                      \
+-		.open = slsi_procfs_open_file_generic,                        \
+-		.llseek = generic_file_llseek                                 \
++	static const struct proc_ops slsi_procfs_ ## name ## _fops = { \
++		.proc_read = slsi_procfs_ ## name ## _read,                        \
++		.proc_write = slsi_procfs_ ## name ## _write,                      \
++		.proc_open = slsi_procfs_open_file_generic,                        \
++		.proc_lseek = generic_file_llseek                                 \
+ 	}
+ 
+ #define SLSI_PROCFS_ADD_FILE(_sdev, name, parent, mode)                    \
+diff --git a/drivers/net/wireless/samsung/scsc/reg_info.c b/drivers/net/wireless/samsung/scsc/reg_info.c
+index c6b2626d3..e48b1d5bc 100644
+--- a/drivers/net/wireless/samsung/scsc/reg_info.c
++++ b/drivers/net/wireless/samsung/scsc/reg_info.c
+@@ -9,9 +9,6 @@
+ #include <linux/fs.h>
+ #include <linux/firmware.h>
+ 
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0))
+-MODULE_IMPORT_NS(VFS_internal_I_am_really_a_filesystem_and_am_NOT_a_driver);
+-#endif
+ 
+ void slsi_regd_init(struct slsi_dev *sdev)
+ {
+@@ -75,11 +72,8 @@ int firmware_read(const struct firmware *firm, void *dest, size_t size, int *off
+ 
+ int slsi_read_regulatory(struct slsi_dev *sdev)
+ {
+-#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 4, 0))
+-	char *reg_file_t = "/vendor/etc/wifi/slsi_reg_database.bin";
+-#else
+-	char *reg_file_t = "../etc/wifi/slsi_reg_database.bin";
+-#endif
++	/* 6.18 port: bare name via the firmware loader (/vendor/etc/wifi is in firmware_class.path) */
++	char *reg_file_t = "slsi_reg_database.bin";
+ 
+ 	int i = 0, j = 0, index = 0;
+ 	uint32_t num_freqbands = 0, num_rules = 0, num_collections = 0;
+diff --git a/drivers/net/wireless/samsung/scsc/rx.c b/drivers/net/wireless/samsung/scsc/rx.c
+index f96444842..ee297c339 100644
+--- a/drivers/net/wireless/samsung/scsc/rx.c
++++ b/drivers/net/wireless/samsung/scsc/rx.c
+@@ -120,10 +120,10 @@ struct ieee80211_channel *slsi_rx_scan_pass_to_cfg80211(struct slsi_dev *sdev, s
+ 	s32                      signal = fapi_get_s16(skb, u.mlme_scan_ind.rssi) * 100;
+ 	u16                      freq = SLSI_FREQ_FW_TO_HOST(fapi_get_u16(skb, u.mlme_scan_ind.channel_frequency));
+ 	struct ieee80211_channel *channel = slsi_find_scan_channel(sdev, mgmt, mgmt_len, freq);
+-	struct timespec uptime;
++	struct timespec64 uptime;
+ 
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0))
+-	uptime = ktime_to_timespec(ktime_get_boottime());
++	uptime = ktime_to_timespec64(ktime_get_boottime());
+ #else
+ 	get_monotonic_boottime(&uptime);
+ #endif
+@@ -797,13 +797,13 @@ void slsi_handle_wips_beacon(struct slsi_dev *sdev, struct net_device *dev, stru
+ 	u16 beacon_int = 0;
+ 	u64 timestamp = 0;
+ 	int ssid_len = 0;
+-	struct timespec sys_time;
++	struct timespec64 sys_time;
+ 	int ret = 0;
+ 
+ 	u8 channel = (u8)(ndev_vif->chan->hw_value);
+ 
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0))
+-	sys_time = ktime_to_timespec(ktime_get_boottime());
++	sys_time = ktime_to_timespec64(ktime_get_boottime());
+ #else
+ 	get_monotonic_boottime(&sys_time);
+ #endif
+@@ -1670,7 +1670,7 @@ void slsi_rx_channel_switched_ind(struct slsi_dev *sdev, struct net_device *dev,
+ 	ndev_vif->ap.channel_freq = freq; /* updated for GETSTAINFO */
+ 	ndev_vif->chan = chandef.chan;
+ 	ndev_vif->chandef_saved = chandef;
+-	cfg80211_ch_switch_notify(dev, &chandef);
++	cfg80211_ch_switch_notify(dev, &chandef, 0);
+ 	SLSI_MUTEX_UNLOCK(ndev_vif->vif_mutex);
+ 	kfree_skb(skb);
+ }
+@@ -2052,8 +2052,8 @@ void slsi_rx_roamed_ind(struct slsi_dev *sdev, struct net_device *dev, struct sk
+ 		 * If bss pointer is given in roam_info, cfg80211 bss
+ 		 * data base goes bad and results in random panic.
+ 		 */
+-		roam_info.channel = ndev_vif->sta.sta_bss->channel;
+-		roam_info.bssid = peer->address;
++		roam_info.links[0].channel = ndev_vif->sta.sta_bss->channel;
++		roam_info.links[0].bssid = peer->address;
+ 		roam_info.req_ie = assoc_ie;
+ 		roam_info.req_ie_len = assoc_ie_len;
+ 		roam_info.resp_ie = assoc_rsp_ie;
+@@ -2551,7 +2551,7 @@ void slsi_rx_connected_ind(struct slsi_dev *sdev, struct net_device *dev, struct
+ 			goto exit_with_lock;
+ 		}
+ 
+-		cfg80211_new_sta(dev, peer->address, &peer->sinfo, GFP_KERNEL);
++		cfg80211_new_sta(dev->ieee80211_ptr, peer->address, &peer->sinfo, GFP_KERNEL);
+ 
+ 		if (ndev_vif->ap.privacy) {
+ 			peer->connected_state = SLSI_STA_CONN_STATE_DOING_KEY_CONFIG;
+@@ -2984,8 +2984,8 @@ void slsi_rx_connect_ind(struct slsi_dev *sdev, struct net_device *dev, struct s
+ 			 * If bss pointer is given in roam_info, cfg80211 bss
+ 			 * data base goes bad and results in random panic.
+ 			 */
+-			roam_info.channel = ndev_vif->sta.sta_bss->channel;
+-			roam_info.bssid = ndev_vif->sta.sta_bss->bssid;
++			roam_info.links[0].channel = ndev_vif->sta.sta_bss->channel;
++			roam_info.links[0].bssid = ndev_vif->sta.sta_bss->bssid;
+ 			roam_info.req_ie = assoc_ie;
+ 			roam_info.req_ie_len = assoc_ie_len;
+ 			roam_info.resp_ie = assoc_rsp_ie;
+@@ -3912,7 +3912,7 @@ void slsi_rx_received_frame_ind(struct slsi_dev *sdev, struct net_device *dev, s
+ 			return;
+ 		}
+ #endif
+-		is_dropped = (NET_RX_DROP == netif_rx_ni(skb));
++		is_dropped = (NET_RX_DROP == netif_rx(skb));
+ 		if (log_str_buffer[0])
+ 			SLSI_INFO(sdev, "%s %s\n", (is_dropped ? "Dropped" : "Received"), log_str_buffer);
+ 		if (log_skb) {
+diff --git a/drivers/net/wireless/samsung/scsc/sap_ma.c b/drivers/net/wireless/samsung/scsc/sap_ma.c
+index a94edc080..9ed792106 100644
+--- a/drivers/net/wireless/samsung/scsc/sap_ma.c
++++ b/drivers/net/wireless/samsung/scsc/sap_ma.c
+@@ -551,7 +551,7 @@ void slsi_rx_data_deliver_skb(struct slsi_dev *sdev, struct net_device *dev, str
+ #ifdef CONFIG_SCSC_WLAN_RX_NAPI
+ 							netif_receive_skb(duplicate_skb);
+ #else
+-							netif_rx_ni(duplicate_skb);
++							netif_rx(duplicate_skb);
+ #endif
+ 						}
+ 					}
+@@ -635,7 +635,7 @@ void slsi_rx_data_deliver_skb(struct slsi_dev *sdev, struct net_device *dev, str
+ 		netif_receive_skb(rx_skb);
+ #endif
+ #else /* #ifdef CONFIG_SCSC_WLAN_RX_NAPI */
+-		netif_rx_ni(rx_skb);
++		netif_rx(rx_skb);
+ #endif
+ 		slsi_wake_lock_timeout(&sdev->wlan_wl_ma, msecs_to_jiffies(SLSI_RX_WAKELOCK_TIME));
+ 	}
+@@ -684,7 +684,7 @@ static void slsi_rx_data_ind(struct slsi_dev *sdev, struct net_device *dev, stru
+ 		skb->dev = dev;
+ 		skb->ip_summed = CHECKSUM_UNNECESSARY;
+ 		skb->pkt_type = PACKET_OTHERHOST;
+-		netif_rx_ni(skb);
++		netif_rx(skb);
+ 		return;
+ 	}
+ 
+diff --git a/drivers/net/wireless/samsung/scsc/traffic_monitor.c b/drivers/net/wireless/samsung/scsc/traffic_monitor.c
+index 16040ac8e..900db2b37 100644
+--- a/drivers/net/wireless/samsung/scsc/traffic_monitor.c
++++ b/drivers/net/wireless/samsung/scsc/traffic_monitor.c
+@@ -78,7 +78,7 @@ static void traffic_mon_timer(unsigned long data)
+ #endif
+ {
+ #if KERNEL_VERSION(4, 15, 0) <= LINUX_VERSION_CODE
+-	struct slsi_traffic_mon_clients *clients = from_timer(clients, t, timer);
++	struct slsi_traffic_mon_clients *clients = timer_container_of(clients, t, timer);
+ 	struct slsi_dev *sdev = container_of(clients, typeof(*sdev), traffic_mon_clients);
+ #else
+ 	struct slsi_dev *sdev = (struct slsi_dev *)data;
+@@ -305,7 +305,7 @@ void slsi_traffic_mon_client_unregister(struct slsi_dev *sdev, void *client_ctx)
+ 			}
+ 		}
+ 		spin_unlock_bh(&sdev->traffic_mon_clients.lock);
+-		del_timer_sync(&sdev->traffic_mon_clients.timer);
++		timer_delete_sync(&sdev->traffic_mon_clients.timer);
+ 		spin_lock_bh(&sdev->traffic_mon_clients.lock);
+ 	}
+ 	spin_unlock_bh(&sdev->traffic_mon_clients.lock);
+@@ -344,5 +344,5 @@ void slsi_traffic_mon_clients_deinit(struct slsi_dev *sdev)
+ 		kfree(traffic_mon_client);
+ 	}
+ 	spin_unlock_bh(&sdev->traffic_mon_clients.lock);
+-	del_timer_sync(&sdev->traffic_mon_clients.timer);
++	timer_delete_sync(&sdev->traffic_mon_clients.timer);
+ }
+diff --git a/drivers/net/wireless/samsung/scsc/udi.c b/drivers/net/wireless/samsung/scsc/udi.c
+index 3871e8823..f2ebdc33a 100644
+--- a/drivers/net/wireless/samsung/scsc/udi.c
++++ b/drivers/net/wireless/samsung/scsc/udi.c
+@@ -1191,7 +1191,7 @@ int slsi_udi_init(void)
+ 	}
+ 
+ 	/* Create a driver class */
+-	class = class_create(THIS_MODULE, UDI_CLASS_NAME);
++	class = class_create(UDI_CLASS_NAME);
+ 	if (IS_ERR(class)) {
+ 		SLSI_ERR_NODEV("Failed to create driver udi class\n");
+ 		unregister_chrdev_region(major_number, SLSI_UDI_MINOR_NODES);

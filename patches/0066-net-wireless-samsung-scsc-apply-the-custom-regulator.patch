@@ -1,0 +1,171 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Thu, 19 Nov 2026 19:41:35 +0600
+Subject: [PATCH 66/66] net: wireless: samsung: scsc: apply the custom
+ regulatory domain outside RTNL
+
+wiphy_apply_custom_regulatory() takes RTNL and the wiphy lock on current
+kernels (it took no lock in 4.14). The driver applied its world/country
+domain from slsi_start(), which runs from ndo_open with RTNL held, so the
+first "up" of wlan0 deadlocked on RTNL and stalled all networking
+userspace (M9.3 W2/W2d: last driver line slsi_start at 32.7 s, then
+NetworkManager, usb-moded and sshd blocked).
+
+Apply the current domain from a work item: reset the channel flags, apply
+device_config.domain_info.regdomain, then disable the channels the chip
+does not support once the firmware has reported them. Every former call
+site (init, start, band and country updates) queues the work; the end of
+slsi_start re-syncs after the firmware reported its channels. The work is
+initialised at attach and cancelled at detach.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I08b85508d891db2f32accff86084f425f83af253
+---
+ drivers/net/wireless/samsung/scsc/dev.c      |  2 ++
+ drivers/net/wireless/samsung/scsc/dev.h      |  1 +
+ drivers/net/wireless/samsung/scsc/mgt.c      | 12 ++++----
+ drivers/net/wireless/samsung/scsc/reg_info.c | 30 +++++++++++++++++++-
+ drivers/net/wireless/samsung/scsc/reg_info.h |  2 ++
+ 5 files changed, 39 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/net/wireless/samsung/scsc/dev.c b/drivers/net/wireless/samsung/scsc/dev.c
+index 90097f56e..7f6482f52 100644
+--- a/drivers/net/wireless/samsung/scsc/dev.c
++++ b/drivers/net/wireless/samsung/scsc/dev.c
+@@ -413,6 +413,7 @@ struct slsi_dev *slsi_dev_attach(struct device *dev, struct scsc_mx *core, struc
+ 	slsi_create_proc_dir(sdev);
+ 
+ 	/* update regulatory domain */
++	slsi_regd_apply_work_init(sdev);
+ 	slsi_regd_init(sdev);
+ 
+ #ifdef CONFIG_SCSC_WLAN_GSCAN_ENABLE
+@@ -581,6 +582,7 @@ void slsi_dev_detach(struct slsi_dev *sdev)
+ 	slsi_system_sleep_unregister(sdev);
+ 
+ 	slsi_stop(sdev);
++	cancel_work_sync(&sdev->regd_apply_work);
+ 
+ #ifdef CONFIG_SCSC_WLAN_KIC_OPS
+ 	wifi_kic_unregister();
+diff --git a/drivers/net/wireless/samsung/scsc/dev.h b/drivers/net/wireless/samsung/scsc/dev.h
+index ba20adb1d..fc2362413 100644
+--- a/drivers/net/wireless/samsung/scsc/dev.h
++++ b/drivers/net/wireless/samsung/scsc/dev.h
+@@ -1341,6 +1341,7 @@ struct slsi_dev {
+ 	struct mutex               device_config_mutex;
+ #endif
+ 	struct slsi_dev_config     device_config;
++	struct work_struct         regd_apply_work; /* 6.18: apply custom regd outside RTNL */
+ 
+ 	struct notifier_block      inetaddr_notifier;
+ #if IS_ENABLED(CONFIG_IPV6)
+diff --git a/drivers/net/wireless/samsung/scsc/mgt.c b/drivers/net/wireless/samsung/scsc/mgt.c
+index 376f6cc22..59cea72c6 100644
+--- a/drivers/net/wireless/samsung/scsc/mgt.c
++++ b/drivers/net/wireless/samsung/scsc/mgt.c
+@@ -748,8 +748,7 @@ int slsi_start(struct slsi_dev *sdev, struct net_device *dev)
+ 	if (!(alpha2[0] == '0' && alpha2[1] == '0'))
+ 		/* Read the regulatory params for the country*/
+ 		if (slsi_read_regulatory_rules(sdev, &sdev->device_config.domain_info, alpha2) == 0) {
+-			slsi_reset_channel_flags(sdev);
+-			wiphy_apply_custom_regulatory(sdev->wiphy, sdev->device_config.domain_info.regdomain);
++			slsi_regd_apply(sdev);
+ 		}
+ 	/* Do nothing for unifiDefaultCountry == world_domain */
+ 	if (!sdev->mac_changed) {
+@@ -808,7 +807,8 @@ int slsi_start(struct slsi_dev *sdev, struct net_device *dev)
+ 	scsc_log_collector_register_client(&slsi_hcf_client);
+ 	sdev->collect_mib.enabled = true;
+ #endif
+-	slsi_update_supported_channels_regd_flags(sdev);
++	/* Re-sync the regulatory flags now that the firmware reported its channels (applied outside RTNL). */
++	slsi_regd_apply(sdev);
+ 	SLSI_DBG2(sdev, SLSI_INIT_DEINIT, "---Driver started successfully---\n");
+ 	sdev->device_state = SLSI_DEVICE_STATE_STARTED;
+ 	for (i = 0; i < SLSI_MAX_RTT_ID; i++)
+@@ -3675,8 +3675,7 @@ void slsi_band_cfg_update(struct slsi_dev *sdev, int band)
+ 	default:
+ 		break;
+ 	}
+-	wiphy_apply_custom_regulatory(sdev->wiphy, sdev->device_config.domain_info.regdomain);
+-	slsi_update_supported_channels_regd_flags(sdev);
++	slsi_regd_apply(sdev);
+ }
+ 
+ int slsi_band_update(struct slsi_dev *sdev, int band)
+@@ -6475,8 +6474,7 @@ int slsi_set_country_update_regd(struct slsi_dev *sdev, const char *alpha2_code,
+ 	/* Read the regulatory params for the country */
+ 	if (slsi_read_regulatory_rules(sdev, &sdev->device_config.domain_info, alpha2) == 0) {
+ 		slsi_reset_channel_flags(sdev);
+-		wiphy_apply_custom_regulatory(sdev->wiphy, sdev->device_config.domain_info.regdomain);
+-		slsi_update_supported_channels_regd_flags(sdev);
++		slsi_regd_apply(sdev);
+ 	}
+ 
+ 	SLSI_MUTEX_UNLOCK(sdev->device_config_mutex);
+diff --git a/drivers/net/wireless/samsung/scsc/reg_info.c b/drivers/net/wireless/samsung/scsc/reg_info.c
+index e48b1d5bc..b96704a3d 100644
+--- a/drivers/net/wireless/samsung/scsc/reg_info.c
++++ b/drivers/net/wireless/samsung/scsc/reg_info.c
+@@ -6,10 +6,38 @@
+ #include "dev.h"
+ #include "reg_info.h"
+ #include "debug.h"
++#include "mgt.h"
+ #include <linux/fs.h>
+ #include <linux/firmware.h>
+ 
+ 
++/*
++ * 6.18 port: wiphy_apply_custom_regulatory() takes RTNL and the wiphy lock itself (4.14 took none), but the
++ * driver applied its domain from slsi_start(), which runs under RTNL from ndo_open: a self-deadlock that stalled
++ * all networking (M9.3 W2/W2d). Apply the current domain from a work item instead; it always syncs to the latest
++ * device_config.domain_info.regdomain, so a world domain replaced by a country domain ends in the right state.
++ */
++static void slsi_regd_apply_work(struct work_struct *work)
++{
++	struct slsi_dev *sdev = container_of(work, struct slsi_dev, regd_apply_work);
++
++	slsi_reset_channel_flags(sdev);
++	wiphy_apply_custom_regulatory(sdev->wiphy, sdev->device_config.domain_info.regdomain);
++	/* Then disable channels the chip does not support (known once the firmware reported them). */
++	if (sdev->enabled_channel_count)
++		slsi_update_supported_channels_regd_flags(sdev);
++}
++
++void slsi_regd_apply_work_init(struct slsi_dev *sdev)
++{
++	INIT_WORK(&sdev->regd_apply_work, slsi_regd_apply_work);
++}
++
++void slsi_regd_apply(struct slsi_dev *sdev)
++{
++	schedule_work(&sdev->regd_apply_work);
++}
++
+ void slsi_regd_init(struct slsi_dev *sdev)
+ {
+ 	struct ieee80211_regdomain *slsi_world_regdom_custom = sdev->device_config.domain_info.regdomain;
+@@ -40,7 +68,7 @@ void slsi_regd_init(struct slsi_dev *sdev)
+ 	slsi_world_regdom_custom->alpha2[0] = '0';
+ 	slsi_world_regdom_custom->alpha2[1] = '0';
+ 
+-	wiphy_apply_custom_regulatory(sdev->wiphy, slsi_world_regdom_custom);
++	slsi_regd_apply(sdev);
+ }
+ 
+ void  slsi_regd_deinit(struct slsi_dev *sdev)
+diff --git a/drivers/net/wireless/samsung/scsc/reg_info.h b/drivers/net/wireless/samsung/scsc/reg_info.h
+index cdea379cb..bd0947dc5 100644
+--- a/drivers/net/wireless/samsung/scsc/reg_info.h
++++ b/drivers/net/wireless/samsung/scsc/reg_info.h
+@@ -9,6 +9,8 @@
+ int slsi_read_regulatory(struct slsi_dev *sdev);
+ void slsi_regd_deinit(struct slsi_dev *sdev);
+ void slsi_regd_init(struct slsi_dev *sdev);
++void slsi_regd_apply_work_init(struct slsi_dev *sdev);
++void slsi_regd_apply(struct slsi_dev *sdev);
+ 
+ enum slsi_regdb_state {
+ 	SLSI_REG_DB_NOT_SET,
