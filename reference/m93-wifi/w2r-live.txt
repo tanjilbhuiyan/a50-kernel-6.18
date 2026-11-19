@@ -1,0 +1,426 @@
+
+CMD: uname -r
+6.18.33-a50-diag+
+RC=0
+
+CMD: cat /proc/uptime
+39.53 230.32
+RC=0
+
+CMD: sh -c ip -br link | redact
+sh: 1: redact: not found
+RC=127
+
+CMD: sh -c ls -l /sys/class/net/ | grep -E "wlan|p2p|swlan"; for n in /sys/class/net/*; do t=$(readlink $n/device/driver 2>/dev/null); [ -n "$t" ] && case "$t" in *wlbt*) echo "$n -> $t";; esac; done
+lrwxrwxrwx 1 root root 0 Jan  1  1970 p2p0 -> ../../devices/platform/soc@0/119c0000.wlbt/net/p2p0
+lrwxrwxrwx 1 root root 0 Jan  1  1970 wlan0 -> ../../devices/platform/soc@0/119c0000.wlbt/net/wlan0
+/sys/class/net/p2p0 -> ../../../../bus/platform/drivers/scsc_wlbt
+/sys/class/net/wlan0 -> ../../../../bus/platform/drivers/scsc_wlbt
+RC=0
+
+CMD: sh -c iw dev 2>&1 | grep -E "phy|Interface|type"
+phy#0
+	Interface p2p0
+		type managed
+	Interface wlan0
+		type managed
+RC=0
+
+CMD: rfkill list
+0: phy0: Wireless LAN
+	Soft blocked: no
+	Hard blocked: no
+RC=0
+
+CMD: sh -c cat /proc/sys/kernel/tainted; grep -E "wlbt|scsc" /proc/interrupts | tr -s " "
+512
+ 70: 58 0 0 0 0 0 0 0 GIC-0 74 Level scsc_wlbt
+ 72: 0 0 0 0 0 0 0 0 GIC-0 104 Level scsc_wlbt
+ 73: 1 0 0 0 0 0 0 0 GIC-0 105 Level scsc_wlbt
+RC=0
+nm: wlan0:wifi:disconnected p2p-dev-wlan0:wifi-p2p:disconnected
+
+M93_W2_PROBE_LOG
+[    0.107710] ieee80211 phy0: wlbt: wlan0: I: slsi_netif_add_locked: Initializing Hs2 Del Vif Work
+[    0.110174] ieee80211 phy.: wlbt: I: sap_mlme_init: Registering SAP
+[    0.110184] ieee80211 phy.: wlbt: I: sap_ma_init: Registering SAP
+[    0.110190] ieee80211 phy.: wlbt: I: sap_dbg_init: Registering SAP
+[    0.110196] ieee80211 phy.: wlbt: I: sap_test_init: Registering SAP
+[    0.110201] ieee80211 phy.: wlbt: I: slsi_dev_load: --- Maxwell Wi-Fi driver loaded successfully ---
+[    0.407402] wlbt: [MXMAN_TEST]: client_module_probe: mx140:
+[    0.407434] wlbt: [MXMAN_TEST]: client_module_probe: OK
+[    0.409744] cfg80211: Loading compiled-in X.509 certificates for regulatory database
+[    1.412479] faux_driver regulatory: Direct firmware load for regulatory.db failed with error -2
+[    1.412515] cfg80211: failed to load regulatory.db
+[   21.987114] systemd[1]: Mounting var-lib-urfkill.mount - /var/lib/urfkill...
+[   22.190189] systemd[1]: Mounted var-lib-urfkill.mount - /var/lib/urfkill.
+[   24.261467] init: Using Android DT directory /proc/device-tree/firmware/android/
+[   24.375750] init: Parsing file /vendor/etc/init/vendor.samsung_slsi.hardware.ExynosHWCServiceTW@1.0-service.rc...
+[   24.376238] init: Parsing file /vendor/etc/init/vendor.samsung_slsi.hardware.configstore@1.0-service.rc...
+[   24.376687] init: Parsing file /vendor/etc/init/vendor.samsung_slsi.hardware.ofi@1.0-service.rc...
+[   24.378202] init: Parsing file /vendor/etc/init/wifi_slsi.rc...
+[   25.404397] systemd[1]: Listening on systemd-rfkill.socket - Load/Save RF Kill Switch Status /dev/rfkill Watch.
+[   25.426701] systemd[1]: Starting systemd-rfkill.service - Load/Save RF Kill Switch Status...
+[   30.454047] systemd[1]: systemd-rfkill.service: Deactivated successfully.
+[   30.953060] init: processing action (post-fs-data) from (/vendor/etc/init/wifi_slsi.rc:1)
+[   31.010917] init: processing action (firmware_mounts_complete) from (/system/etc/init/hw/init.rc:421)
+[   31.264512] init: starting service 'slsi-ofi-1-0'...
+[   31.267734] init: createProcessGroup(1047, 158) failed for service 'slsi-ofi-1-0': Read-only file system
+[   31.774023] systemd[1]: Started urfkill.service - killswitch manager.
+[   31.866933] URfkill[1427]: No configured profile found
+[   31.867267] URfkill[1427]: <warning> No dmi devices found.
+[   31.868330] URfkill[1427]: <warning> Failed to get DMI information
+[   31.874238] URfkill[1427]: Starting urfkilld version 0.6.0
+[   33.362121] rfkill: input handler disabled
+[   33.362967] URfkill[1427]: adding killswitch type 1 idx 0 soft 0 hard 0
+[   33.365940] URfkill[1427]: Setting device 0 (WLAN) to unblocked
+[   33.366138] URfkill[1427]: set_soft: Setting WLAN to unblocked
+[   33.369769] URfkill[1427]: <warning> Reading of RFKILL events failed
+[   33.370010] URfkill[1427]: Setting WLAN devices to unblocked
+[   33.370192] URfkill[1427]: set_soft: Setting WLAN to unblocked
+[   33.371432] URfkill[1427]: Setting BLUETOOTH devices to blocked
+[   33.371712] URfkill[1427]: Setting UWB devices to unblocked
+[   33.371907] URfkill[1427]: Setting WIMAX devices to unblocked
+[   33.372018] URfkill[1427]: Setting WWAN devices to unblocked
+[   33.372169] URfkill[1427]: Setting GPS devices to unblocked
+[   33.372261] URfkill[1427]: Setting FM devices to unblocked
+[   33.372352] URfkill[1427]: Setting NFC devices to unblocked
+[   33.372468] URfkill[1427]: urf_killswitch_soft_block_cb: all done
+[   33.603774] ieee80211 phy0: wlbt: I: slsi_start: recovery_status:0, device_state:1, require_service_close:0, netdev_up_count:0 mac_changed:0
+[   33.603821] ieee80211 phy0: wlbt: I: slsi_sm_wlan_service_open: Open WLAN service
+[   33.603834] wlbt: [MXMAN]: scsc_mx_service_open: 1
+[   33.603842] wlbt: [MXMAN]: __mxman_open: Auto-recovery: off
+[   33.604131] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_map: Map: virt 000000006a13938e phys 8fd600000
+[   33.604162] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_register_irq: Registering IRQs
+[   33.604171] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_register_irq: Registering MBOX irq: 70 flag 0x4
+[   33.604218] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_register_irq: Registering WDOG irq: 72 flag 0x4
+[   33.604238] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_register_irq: Registering CFG_REQ irq: 73 flag 0x4
+[   33.604258] wlbt: [MXMAN]: mxman_start: Allocated 16777216 bytes
+[   33.604266] wlbt: [MX_FILE]: mx140_file_download_fw: try 0
+[   33.604273] wlbt: [MX_FILE]: __mx140_file_download_fw: firmware_variant=mx140 ()
+[   33.604282] wlbt: [MX_FILE]: __mx140_file_download_fw: Load WLBT fw mx140.bin in shared address 000000006a13938e
+[   33.615049] wlbt: [FW_LOAD]: fwhdr_parse_v02: hdr_length=420
+[   33.615074] wlbt: [MXMAN]: fwhdr_init: FW HEADER version: hdr_major: 1 hdr_minor: 0
+[   33.615083] wlbt: [MXMAN]: fwhdr_init: FWAPI version: fwapi_major: 0 fwapi_minor: 2
+[   33.620829] wlbt: [MXMAN]: fw_init: Firmware BUILD_ID: O|7358|2021-11-15 11:50:16 UTC|leman_s620|S620_E9610_R3-1_Y21W46A
+[   33.620853] wlbt: [MXMAN]: fw_init: Firmware ttid: 0016369771614143d0da5284b5a0bfc
+[   33.620861] wlbt: [MIF]: miframman_init: MIFRAMMAN_BLOCK_SIZE = 64
+[   33.620891] wlbt: [MIF]: miframman_init: MIFRAMMAN_BLOCK_SIZE = 64
+[   33.620925] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_irq_reg_handler: Registering mif int handler mifiintrman_isr+0x0/0xe0 in 000000005775c675 00000000dda713a6
+[   33.623224] wlbt: [GDB_TRANS]: gdb_transport_probe_registered_clients: No clients registered
+[   33.624205] wlbt: [GDB_TRANS]: gdb_transport_probe_registered_clients: No clients registered
+[   33.625479] wlbt: [MXLOG_TRANS]: mxlog_thread_start: Started thread mxlog_thread
+[   33.625706] wlbt: [MXMAN]: transports_init: mxconf flags 0x00000000
+[   33.629955] wlbt: [MX_FW]: mxlog_init: Loaded 881149 bytes of log-strings from common/log-strings.bin
+[   33.629982] wlbt: [MX_FW]: mxlog_init: Log-strings is versioned...checking against fw_build_id.
+[   33.630024] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_irq_reg_reset_request_handler: Registering mif reset_request int handler panicmon_isr+0x0/0x28 in 000000005775c675 00000000dda713a6
+[   33.630050] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_power: power 1
+[   33.630065] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_hold_reset: reset 0
+[   33.630075] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_start: start 1
+[   33.630085] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_start: update WIFI_CTRL_S[WIFI_START]: 0
+[   33.631596] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_cfg_req_isr: INT received
+[   33.631765] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_cfg_req_isr: SMC_CMD_CONN_IF run successfully : 0
+[   33.631799] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_cfg_req_isr: CHIP_VERSION_ID 0xa4942824 end
+[   33.631877] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_cfg_req_isr: BOOT_CFG_ACK done
+[   33.647131] wlbt: [MXMAN]: mxman_message_handler: Received MM_START_IND message from the firmware, arg=0x0000
+[   33.647160] wlbt: [MXMAN]: mxman_print_versions: RF_CHIP_VERSION: 0x0000: Unknown (0x00), EVT0.0
+[   33.647168] wlbt: [MXMAN]: mxman_print_versions: WLBT FW: O|7358|2021-11-15 11:50:16 UTC|leman_s620|S620_E9610_R3-1_Y21W46A
+[   33.647177] wlbt: [MXMAN]: mxman_print_versions: WLBT Driver: 11.19.0.18.0
+[   33.647221] ieee80211 phy0: wlbt: I: slsi_mib_open_file: Path to the MIB file : wlan/wlan.hcf
+[   33.647238] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/wlan/wlan.hcf
+[   33.647330] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/wlan/wlan.hcf failed with error -2
+[   33.647349] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/leman_s620_univ/wlan/wlan.hcf
+[   33.647382] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/leman_s620_univ/wlan/wlan.hcf failed with error -2
+[   33.647395] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140_wlan.hcf
+[   33.647682] wlbt: [MX_FILE]: __mx140_file_request_conf: loaded mx140_wlan.hcf
+[   33.647695] ieee80211 phy0: wlbt: I: slsi_mib_open_file: MIB hash: 0xbad4
+[   33.647704] ieee80211 phy.: wlbt: I: slsi_mib_get_platform: MIB platform: {"platform_version":"LEMAN_S620_A50"}
+[   33.647714] ieee80211 phy0: wlbt: I: slsi_mib_open_file: Path to the MIB file : wlan/wlan_sw.hcf
+[   33.647725] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/wlan/wlan_sw.hcf
+[   33.647761] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/wlan/wlan_sw.hcf failed with error -2
+[   33.647774] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/leman_s620_univ/wlan/wlan_sw.hcf
+[   33.647801] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/leman_s620_univ/wlan/wlan_sw.hcf failed with error -2
+[   33.647813] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140_wlan_sw.hcf
+[   33.648029] wlbt: [MX_FILE]: __mx140_file_request_conf: loaded mx140_wlan_sw.hcf
+[   33.648043] ieee80211 phy0: wlbt: I: slsi_mib_open_file: MIB hash: 0x8c94
+[   33.648051] ieee80211 phy.: wlbt: I: slsi_mib_get_platform: MIB platform: {"platform_version":"Platform version information missing"}
+[   33.648062] ieee80211 phy0: wlbt: I: slsi_sm_wlan_service_start: Recovery -- Status:0  In_Progress:0  -- cm_if_state:2
+[   33.648078] ieee80211 phy0: wlbt: I: slsi_sm_wlan_service_start: Allocate mifram
+[   33.648293] ieee80211 phy0: wlbt: I: slsi_sm_wlan_service_start: Start HIP
+[   33.648303] ieee80211 phy.: wlbt: I: hip4_init: HIP4_WLAN_CONFIG_SIZE (8192)
+[   33.648310] ieee80211 phy.: wlbt: I: hip4_init: HIP4_WLAN_MIB_SIZE (32768)
+[   33.648316] ieee80211 phy.: wlbt: I: hip4_init: HIP4_WLAN_TX_DAT_SIZE (1048576)
+[   33.648323] ieee80211 phy.: wlbt: I: hip4_init: HIP4_WLAN_TX_CTL_SIZE (65536)
+[   33.648329] ieee80211 phy.: wlbt: I: hip4_init: HIP4_WLAN_RX_SIZE (1048576)
+[   33.648335] ieee80211 phy.: wlbt: I: hip4_init: HIP4_WLAN_TOTAL_MEM (2203648)
+[   33.648341] ieee80211 phy.: wlbt: I: hip4_init: HIP4_DAT_SLOTS (512)
+[   33.648347] ieee80211 phy.: wlbt: I: hip4_init: HIP4_CTL_SLOTS (32)
+[   33.648392] ieee80211 phy.: wlbt: I: hip4_init: Loading MIB into shared memory, size (4082)
+[   33.648401] ieee80211 phy.: wlbt: I: hip4_init: Loading MIB 0 into shared memory, offset (0), size (3890), total (4082)
+[   33.648413] ieee80211 phy.: wlbt: I: hip4_init: Loading MIB 1 into shared memory, offset (3890), size (192), total (4082)
+[   33.649429] ieee80211 phy0: wlbt: I: slsi_sm_wlan_service_start: Starting WLAN service
+[   33.649446] wlbt: [MXMAN]: scsc_mx_service_start: 1
+[   33.780400] wlbt: [MXMAN]: srv_message_handler: Received SM_MSG_START_CFM message service=00000000124d704d with service_id=1 from the firmware
+[   33.780471] ieee80211 phy.: wlbt: I: sap_mlme_version_supported: Reported version: 14.7
+[   33.780481] ieee80211 phy.: wlbt: I: sap_ma_version_supported: Reported version: 14.1
+[   33.780489] ieee80211 phy.: wlbt: I: sap_dbg_version_supported: Reported version: 13.3
+[   33.780498] ieee80211 phy.: wlbt: I: sap_test_version_supported: Reported version: 14.0
+[   33.780528] ieee80211 phy0: wlbt: I: slsi_mib_open_file: Path to the MIB file : wlan/localmib.hcf
+[   33.780541] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/wlan/localmib.hcf
+[   33.780607] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/wlan/localmib.hcf failed with error -2
+[   33.780621] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/leman_s620_univ/wlan/localmib.hcf
+[   33.780650] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/leman_s620_univ/wlan/localmib.hcf failed with error -2
+[   33.780661] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140_localmib.hcf
+[   33.780720] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140_localmib.hcf failed with error -2
+[   33.820064] ieee80211 phy0: wlbt: I: slsi_get_mib_entry_value: IGMP offloading is enabled:1
+[   33.820094] ieee80211 phy0: wlbt: I: slsi_start: === Version info from the [MIB] ===
+[   33.820103] ieee80211 phy0: wlbt: I: slsi_start: HW Version : 0xA480 (42112)
+[   33.820111] ieee80211 phy0: wlbt: I: slsi_start: Platform : 0x002B (43)
+[   33.820120] ieee80211 phy0: wlbt: I: slsi_cfg80211_update_wiphy: BANDS SUPPORTED -> 2.4:'Y' 5:'Y'
+[   33.820129] ieee80211 phy0: wlbt: I: slsi_cfg80211_update_wiphy: HT/VHT SUPPORTED -> HT:'Y' VHT:'Y'
+[   33.820138] ieee80211 phy0: wlbt: I: slsi_cfg80211_update_wiphy: HT  -> cap:0x016f ampdu_density:5 ampdu_factor:3
+[   33.820148] ieee80211 phy0: wlbt: I: slsi_cfg80211_update_wiphy: VHT -> cap:0x03007131
+[   33.820545] ieee80211 phy0: wlbt: I: slsi_read_regulatory: Regulatory Version: 1.6 , Script Version: 1 , Number of Countries: 252
+[   33.823849] ieee80211 phy0: wlbt: I: slsi_clear_sys_error_buffer: Clear system error buffer, bytes written = 147
+[   33.823964] scsc_wlbt 119c0000.wlbt: Direct firmware load for conf/wlan/mac.txt failed with error -2
+[   33.823981] wlbt: [MX_FILE]: __mx140_release_firmware: firmp=0000000000000000
+[   33.823992] ieee80211 phy0: wlbt: I: slsi_get_hw_mac_address: No MAC address provided (modparam/sysfs/mac.txt), using random local address
+[   33.824005] ieee80211 phy0: wlbt: wlan0: I: slsi_net_open: ifnum:1 r:0 MAC:42:**:**:**:37:39
+[   34.031877] NetworkManager[1669]: <warn>  [1795095921.0359] device (p2p-dev-wlan0): error setting IPv4 forwarding to '0': Success
+[   34.040901] ieee80211 phy0: wlbt: I: slsi_mlme_add_scan: scan started for id:0x100, n_channels:38, n_ssids:1, scan_type:1
+[   36.647522] ieee80211 phy0: wlbt: I: slsi_scan_complete: Scan count:10 APs
+[   37.338389] binder_debug: 9 callbacks suppressed
+[   38.003879] ieee80211 phy0: wlbt: I: slsi_mlme_add_scan: scan started for id:0x100, n_channels:38, n_ssids:1, scan_type:2
+
+M93_W2_JOIN uptime=212.77 dev=wlan0 state=disconnected ip_present=no
+nm: wlan0:wifi:disconnected p2p-dev-wlan0:wifi-p2p:disconnected
+
+CMD: sh -c iw dev wlan0 scan 2>&1 | grep -c '^BSS'
+17
+RC=0
+
+CMD: sh -c iw dev 2>&1 | grep -E "Interface|type|channel"
+	Interface p2p0
+		type managed
+	Interface wlan0
+		type managed
+RC=0
+
+M93_W2_JOIN_LOG
+[   33.604238] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_register_irq: Registering CFG_REQ irq: 73 flag 0x4
+[   33.604258] wlbt: [MXMAN]: mxman_start: Allocated 16777216 bytes
+[   33.604266] wlbt: [MX_FILE]: mx140_file_download_fw: try 0
+[   33.604273] wlbt: [MX_FILE]: __mx140_file_download_fw: firmware_variant=mx140 ()
+[   33.604282] wlbt: [MX_FILE]: __mx140_file_download_fw: Load WLBT fw mx140.bin in shared address 000000006a13938e
+[   33.615049] wlbt: [FW_LOAD]: fwhdr_parse_v02: hdr_length=420
+[   33.615074] wlbt: [MXMAN]: fwhdr_init: FW HEADER version: hdr_major: 1 hdr_minor: 0
+[   33.615083] wlbt: [MXMAN]: fwhdr_init: FWAPI version: fwapi_major: 0 fwapi_minor: 2
+[   33.620829] wlbt: [MXMAN]: fw_init: Firmware BUILD_ID: O|7358|2021-11-15 11:50:16 UTC|leman_s620|S620_E9610_R3-1_Y21W46A
+[   33.620853] wlbt: [MXMAN]: fw_init: Firmware ttid: 0016369771614143d0da5284b5a0bfc
+[   33.620861] wlbt: [MIF]: miframman_init: MIFRAMMAN_BLOCK_SIZE = 64
+[   33.620891] wlbt: [MIF]: miframman_init: MIFRAMMAN_BLOCK_SIZE = 64
+[   33.620925] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_irq_reg_handler: Registering mif int handler mifiintrman_isr+0x0/0xe0 in 000000005775c675 00000000dda713a6
+[   33.623224] wlbt: [GDB_TRANS]: gdb_transport_probe_registered_clients: No clients registered
+[   33.624205] wlbt: [GDB_TRANS]: gdb_transport_probe_registered_clients: No clients registered
+[   33.625479] wlbt: [MXLOG_TRANS]: mxlog_thread_start: Started thread mxlog_thread
+[   33.625706] wlbt: [MXMAN]: transports_init: mxconf flags 0x00000000
+[   33.629955] wlbt: [MX_FW]: mxlog_init: Loaded 881149 bytes of log-strings from common/log-strings.bin
+[   33.629982] wlbt: [MX_FW]: mxlog_init: Log-strings is versioned...checking against fw_build_id.
+[   33.630024] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_irq_reg_reset_request_handler: Registering mif reset_request int handler panicmon_isr+0x0/0x28 in 000000005775c675 00000000dda713a6
+[   33.630050] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_power: power 1
+[   33.630065] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_hold_reset: reset 0
+[   33.630075] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_start: start 1
+[   33.630085] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_start: update WIFI_CTRL_S[WIFI_START]: 0
+[   33.631596] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_cfg_req_isr: INT received
+[   33.631765] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_cfg_req_isr: SMC_CMD_CONN_IF run successfully : 0
+[   33.631799] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_cfg_req_isr: CHIP_VERSION_ID 0xa4942824 end
+[   33.631877] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_cfg_req_isr: BOOT_CFG_ACK done
+[   33.647131] wlbt: [MXMAN]: mxman_message_handler: Received MM_START_IND message from the firmware, arg=0x0000
+[   33.647160] wlbt: [MXMAN]: mxman_print_versions: RF_CHIP_VERSION: 0x0000: Unknown (0x00), EVT0.0
+[   33.647168] wlbt: [MXMAN]: mxman_print_versions: WLBT FW: O|7358|2021-11-15 11:50:16 UTC|leman_s620|S620_E9610_R3-1_Y21W46A
+[   33.647177] wlbt: [MXMAN]: mxman_print_versions: WLBT Driver: 11.19.0.18.0
+[   33.647221] ieee80211 phy0: wlbt: I: slsi_mib_open_file: Path to the MIB file : wlan/wlan.hcf
+[   33.647238] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/wlan/wlan.hcf
+[   33.647330] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/wlan/wlan.hcf failed with error -2
+[   33.647349] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/leman_s620_univ/wlan/wlan.hcf
+[   33.647382] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/leman_s620_univ/wlan/wlan.hcf failed with error -2
+[   33.647395] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140_wlan.hcf
+[   33.647682] wlbt: [MX_FILE]: __mx140_file_request_conf: loaded mx140_wlan.hcf
+[   33.647695] ieee80211 phy0: wlbt: I: slsi_mib_open_file: MIB hash: 0xbad4
+[   33.647704] ieee80211 phy.: wlbt: I: slsi_mib_get_platform: MIB platform: {"platform_version":"LEMAN_S620_A50"}
+[   33.647714] ieee80211 phy0: wlbt: I: slsi_mib_open_file: Path to the MIB file : wlan/wlan_sw.hcf
+[   33.647725] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/wlan/wlan_sw.hcf
+[   33.647761] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/wlan/wlan_sw.hcf failed with error -2
+[   33.647774] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/leman_s620_univ/wlan/wlan_sw.hcf
+[   33.647801] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/leman_s620_univ/wlan/wlan_sw.hcf failed with error -2
+[   33.647813] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140_wlan_sw.hcf
+[   33.648029] wlbt: [MX_FILE]: __mx140_file_request_conf: loaded mx140_wlan_sw.hcf
+[   33.648043] ieee80211 phy0: wlbt: I: slsi_mib_open_file: MIB hash: 0x8c94
+[   33.648051] ieee80211 phy.: wlbt: I: slsi_mib_get_platform: MIB platform: {"platform_version":"Platform version information missing"}
+[   33.648062] ieee80211 phy0: wlbt: I: slsi_sm_wlan_service_start: Recovery -- Status:0  In_Progress:0  -- cm_if_state:2
+[   33.648078] ieee80211 phy0: wlbt: I: slsi_sm_wlan_service_start: Allocate mifram
+[   33.648293] ieee80211 phy0: wlbt: I: slsi_sm_wlan_service_start: Start HIP
+[   33.648303] ieee80211 phy.: wlbt: I: hip4_init: HIP4_WLAN_CONFIG_SIZE (8192)
+[   33.648310] ieee80211 phy.: wlbt: I: hip4_init: HIP4_WLAN_MIB_SIZE (32768)
+[   33.648316] ieee80211 phy.: wlbt: I: hip4_init: HIP4_WLAN_TX_DAT_SIZE (1048576)
+[   33.648323] ieee80211 phy.: wlbt: I: hip4_init: HIP4_WLAN_TX_CTL_SIZE (65536)
+[   33.648329] ieee80211 phy.: wlbt: I: hip4_init: HIP4_WLAN_RX_SIZE (1048576)
+[   33.648335] ieee80211 phy.: wlbt: I: hip4_init: HIP4_WLAN_TOTAL_MEM (2203648)
+[   33.648341] ieee80211 phy.: wlbt: I: hip4_init: HIP4_DAT_SLOTS (512)
+[   33.648347] ieee80211 phy.: wlbt: I: hip4_init: HIP4_CTL_SLOTS (32)
+[   33.648392] ieee80211 phy.: wlbt: I: hip4_init: Loading MIB into shared memory, size (4082)
+[   33.648401] ieee80211 phy.: wlbt: I: hip4_init: Loading MIB 0 into shared memory, offset (0), size (3890), total (4082)
+[   33.648413] ieee80211 phy.: wlbt: I: hip4_init: Loading MIB 1 into shared memory, offset (3890), size (192), total (4082)
+[   33.649429] ieee80211 phy0: wlbt: I: slsi_sm_wlan_service_start: Starting WLAN service
+[   33.649446] wlbt: [MXMAN]: scsc_mx_service_start: 1
+[   33.780400] wlbt: [MXMAN]: srv_message_handler: Received SM_MSG_START_CFM message service=00000000124d704d with service_id=1 from the firmware
+[   33.780471] ieee80211 phy.: wlbt: I: sap_mlme_version_supported: Reported version: 14.7
+[   33.780481] ieee80211 phy.: wlbt: I: sap_ma_version_supported: Reported version: 14.1
+[   33.780489] ieee80211 phy.: wlbt: I: sap_dbg_version_supported: Reported version: 13.3
+[   33.780498] ieee80211 phy.: wlbt: I: sap_test_version_supported: Reported version: 14.0
+[   33.780528] ieee80211 phy0: wlbt: I: slsi_mib_open_file: Path to the MIB file : wlan/localmib.hcf
+[   33.780541] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/wlan/localmib.hcf
+[   33.780607] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/wlan/localmib.hcf failed with error -2
+[   33.780621] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/leman_s620_univ/wlan/localmib.hcf
+[   33.780650] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/leman_s620_univ/wlan/localmib.hcf failed with error -2
+[   33.780661] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140_localmib.hcf
+[   33.780720] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140_localmib.hcf failed with error -2
+[   33.820064] ieee80211 phy0: wlbt: I: slsi_get_mib_entry_value: IGMP offloading is enabled:1
+[   33.820094] ieee80211 phy0: wlbt: I: slsi_start: === Version info from the [MIB] ===
+[   33.820103] ieee80211 phy0: wlbt: I: slsi_start: HW Version : 0xA480 (42112)
+[   33.820111] ieee80211 phy0: wlbt: I: slsi_start: Platform : 0x002B (43)
+[   33.820120] ieee80211 phy0: wlbt: I: slsi_cfg80211_update_wiphy: BANDS SUPPORTED -> 2.4:'Y' 5:'Y'
+[   33.820129] ieee80211 phy0: wlbt: I: slsi_cfg80211_update_wiphy: HT/VHT SUPPORTED -> HT:'Y' VHT:'Y'
+[   33.820138] ieee80211 phy0: wlbt: I: slsi_cfg80211_update_wiphy: HT  -> cap:0x016f ampdu_density:5 ampdu_factor:3
+[   33.820148] ieee80211 phy0: wlbt: I: slsi_cfg80211_update_wiphy: VHT -> cap:0x03007131
+[   33.820545] ieee80211 phy0: wlbt: I: slsi_read_regulatory: Regulatory Version: 1.6 , Script Version: 1 , Number of Countries: 252
+[   33.823849] ieee80211 phy0: wlbt: I: slsi_clear_sys_error_buffer: Clear system error buffer, bytes written = 147
+[   33.823964] scsc_wlbt 119c0000.wlbt: Direct firmware load for conf/wlan/mac.txt failed with error -2
+[   33.823981] wlbt: [MX_FILE]: __mx140_release_firmware: firmp=0000000000000000
+[   33.823992] ieee80211 phy0: wlbt: I: slsi_get_hw_mac_address: No MAC address provided (modparam/sysfs/mac.txt), using random local address
+[   33.824005] ieee80211 phy0: wlbt: wlan0: I: slsi_net_open: ifnum:1 r:0 MAC:42:**:**:**:37:39
+[   34.031877] NetworkManager[1669]: <warn>  [1795095921.0359] device (p2p-dev-wlan0): error setting IPv4 forwarding to '0': Success
+[   34.040901] ieee80211 phy0: wlbt: I: slsi_mlme_add_scan: scan started for id:0x100, n_channels:38, n_ssids:1, scan_type:1
+[   36.647522] ieee80211 phy0: wlbt: I: slsi_scan_complete: Scan count:10 APs
+[   37.338389] binder_debug: 9 callbacks suppressed
+[   38.003879] ieee80211 phy0: wlbt: I: slsi_mlme_add_scan: scan started for id:0x100, n_channels:38, n_ssids:1, scan_type:2
+[   41.811859] ieee80211 phy0: wlbt: I: slsi_scan_complete: Scan count:12 APs
+[   42.082909] ieee80211 phy0: wlbt: I: slsi_mlme_add_scan: scan started for id:0x100, n_channels:38, n_ssids:1, scan_type:2
+[   45.932614] ieee80211 phy0: wlbt: I: slsi_scan_complete: Scan count:16 APs
+[   49.008849] ieee80211 phy0: wlbt: I: slsi_mlme_add_scan: scan started for id:0x100, n_channels:38, n_ssids:1, scan_type:2
+[   52.965348] ieee80211 phy0: wlbt: I: slsi_scan_complete: Scan count:12 APs
+[   59.006736] ieee80211 phy0: wlbt: I: slsi_mlme_add_scan: scan started for id:0x100, n_channels:38, n_ssids:1, scan_type:2
+[   62.142199] A50STATUS: wlan0            DOWN
+[   62.142360] A50STATUS: p2p0             DOWN
+[   63.031525] ieee80211 phy0: wlbt: I: slsi_scan_complete: Scan count:11 APs
+[   72.007472] ieee80211 phy0: wlbt: I: slsi_mlme_add_scan: scan started for id:0x100, n_channels:38, n_ssids:1, scan_type:2
+[   76.187334] ieee80211 phy0: wlbt: I: slsi_scan_complete: Scan count:20 APs
+[   92.003531] ieee80211 phy0: wlbt: I: slsi_mlme_add_scan: scan started for id:0x100, n_channels:38, n_ssids:1, scan_type:2
+[   95.923622] ieee80211 phy0: wlbt: I: slsi_scan_complete: Scan count:17 APs
+[  120.003284] ieee80211 phy0: wlbt: I: slsi_mlme_add_scan: scan started for id:0x100, n_channels:38, n_ssids:1, scan_type:2
+[  120.903057] A50STATUS: wlan0            DOWN
+[  120.903105] A50STATUS: p2p0             DOWN
+[  124.062999] ieee80211 phy0: wlbt: I: slsi_scan_complete: Scan count:18 APs
+[  163.003658] ieee80211 phy0: wlbt: I: slsi_mlme_add_scan: scan started for id:0x100, n_channels:38, n_ssids:1, scan_type:2
+[  166.858122] ieee80211 phy0: wlbt: I: slsi_scan_complete: Scan count:18 APs
+[  201.751500] A50STATUS: wlan0            DOWN
+[  201.751548] A50STATUS: p2p0             DOWN
+[  212.879237] ieee80211 phy0: wlbt: I: slsi_mlme_add_scan: scan started for id:0x100, n_channels:38, n_ssids:1, scan_type:2
+[  216.876780] ieee80211 phy0: wlbt: I: slsi_scan_complete: Scan count:20 APs
+
+M93_W2_FINAL uptime=250.52
+
+CMD: sh -c grep -E "wlbt|scsc" /proc/interrupts | tr -s " "; cat /proc/sys/kernel/tainted
+ 70: 253 0 0 0 0 0 0 0 GIC-0 74 Level scsc_wlbt
+ 72: 0 0 0 0 0 0 0 0 GIC-0 104 Level scsc_wlbt
+ 73: 1 0 0 0 0 0 0 0 GIC-0 105 Level scsc_wlbt
+512
+RC=0
+
+CMD: sh -c cat /proc/net/dev | grep -E "wlan|p2p|swlan"
+ wlan0:       0       0    0    0    0     0          0         0        0       0    0    0    0     0       0          0
+  p2p0:       0       0    0    0    0     0          0         0        0       0    0    0    0     0       0          0
+RC=0
+faults=0
+
+M93_W2_FINAL_LOG
+[   33.647725] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/wlan/wlan_sw.hcf
+[   33.647761] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/wlan/wlan_sw.hcf failed with error -2
+[   33.647774] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/leman_s620_univ/wlan/wlan_sw.hcf
+[   33.647801] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/leman_s620_univ/wlan/wlan_sw.hcf failed with error -2
+[   33.647813] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140_wlan_sw.hcf
+[   33.648029] wlbt: [MX_FILE]: __mx140_file_request_conf: loaded mx140_wlan_sw.hcf
+[   33.648043] ieee80211 phy0: wlbt: I: slsi_mib_open_file: MIB hash: 0x8c94
+[   33.648051] ieee80211 phy.: wlbt: I: slsi_mib_get_platform: MIB platform: {"platform_version":"Platform version information missing"}
+[   33.648062] ieee80211 phy0: wlbt: I: slsi_sm_wlan_service_start: Recovery -- Status:0  In_Progress:0  -- cm_if_state:2
+[   33.648078] ieee80211 phy0: wlbt: I: slsi_sm_wlan_service_start: Allocate mifram
+[   33.648293] ieee80211 phy0: wlbt: I: slsi_sm_wlan_service_start: Start HIP
+[   33.648303] ieee80211 phy.: wlbt: I: hip4_init: HIP4_WLAN_CONFIG_SIZE (8192)
+[   33.648310] ieee80211 phy.: wlbt: I: hip4_init: HIP4_WLAN_MIB_SIZE (32768)
+[   33.648316] ieee80211 phy.: wlbt: I: hip4_init: HIP4_WLAN_TX_DAT_SIZE (1048576)
+[   33.648323] ieee80211 phy.: wlbt: I: hip4_init: HIP4_WLAN_TX_CTL_SIZE (65536)
+[   33.648329] ieee80211 phy.: wlbt: I: hip4_init: HIP4_WLAN_RX_SIZE (1048576)
+[   33.648335] ieee80211 phy.: wlbt: I: hip4_init: HIP4_WLAN_TOTAL_MEM (2203648)
+[   33.648341] ieee80211 phy.: wlbt: I: hip4_init: HIP4_DAT_SLOTS (512)
+[   33.648347] ieee80211 phy.: wlbt: I: hip4_init: HIP4_CTL_SLOTS (32)
+[   33.648392] ieee80211 phy.: wlbt: I: hip4_init: Loading MIB into shared memory, size (4082)
+[   33.648401] ieee80211 phy.: wlbt: I: hip4_init: Loading MIB 0 into shared memory, offset (0), size (3890), total (4082)
+[   33.648413] ieee80211 phy.: wlbt: I: hip4_init: Loading MIB 1 into shared memory, offset (3890), size (192), total (4082)
+[   33.649429] ieee80211 phy0: wlbt: I: slsi_sm_wlan_service_start: Starting WLAN service
+[   33.649446] wlbt: [MXMAN]: scsc_mx_service_start: 1
+[   33.780400] wlbt: [MXMAN]: srv_message_handler: Received SM_MSG_START_CFM message service=00000000124d704d with service_id=1 from the firmware
+[   33.780471] ieee80211 phy.: wlbt: I: sap_mlme_version_supported: Reported version: 14.7
+[   33.780481] ieee80211 phy.: wlbt: I: sap_ma_version_supported: Reported version: 14.1
+[   33.780489] ieee80211 phy.: wlbt: I: sap_dbg_version_supported: Reported version: 13.3
+[   33.780498] ieee80211 phy.: wlbt: I: sap_test_version_supported: Reported version: 14.0
+[   33.780528] ieee80211 phy0: wlbt: I: slsi_mib_open_file: Path to the MIB file : wlan/localmib.hcf
+[   33.780541] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/wlan/localmib.hcf
+[   33.780607] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/wlan/localmib.hcf failed with error -2
+[   33.780621] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/leman_s620_univ/wlan/localmib.hcf
+[   33.780650] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/leman_s620_univ/wlan/localmib.hcf failed with error -2
+[   33.780661] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140_localmib.hcf
+[   33.780720] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140_localmib.hcf failed with error -2
+[   33.820064] ieee80211 phy0: wlbt: I: slsi_get_mib_entry_value: IGMP offloading is enabled:1
+[   33.820094] ieee80211 phy0: wlbt: I: slsi_start: === Version info from the [MIB] ===
+[   33.820103] ieee80211 phy0: wlbt: I: slsi_start: HW Version : 0xA480 (42112)
+[   33.820111] ieee80211 phy0: wlbt: I: slsi_start: Platform : 0x002B (43)
+[   33.820120] ieee80211 phy0: wlbt: I: slsi_cfg80211_update_wiphy: BANDS SUPPORTED -> 2.4:'Y' 5:'Y'
+[   33.820129] ieee80211 phy0: wlbt: I: slsi_cfg80211_update_wiphy: HT/VHT SUPPORTED -> HT:'Y' VHT:'Y'
+[   33.820138] ieee80211 phy0: wlbt: I: slsi_cfg80211_update_wiphy: HT  -> cap:0x016f ampdu_density:5 ampdu_factor:3
+[   33.820148] ieee80211 phy0: wlbt: I: slsi_cfg80211_update_wiphy: VHT -> cap:0x03007131
+[   33.820545] ieee80211 phy0: wlbt: I: slsi_read_regulatory: Regulatory Version: 1.6 , Script Version: 1 , Number of Countries: 252
+[   33.823849] ieee80211 phy0: wlbt: I: slsi_clear_sys_error_buffer: Clear system error buffer, bytes written = 147
+[   33.823964] scsc_wlbt 119c0000.wlbt: Direct firmware load for conf/wlan/mac.txt failed with error -2
+[   33.823981] wlbt: [MX_FILE]: __mx140_release_firmware: firmp=0000000000000000
+[   33.823992] ieee80211 phy0: wlbt: I: slsi_get_hw_mac_address: No MAC address provided (modparam/sysfs/mac.txt), using random local address
+[   33.824005] ieee80211 phy0: wlbt: wlan0: I: slsi_net_open: ifnum:1 r:0 MAC:42:**:**:**:37:39
+[   34.031877] NetworkManager[1669]: <warn>  [1795095921.0359] device (p2p-dev-wlan0): error setting IPv4 forwarding to '0': Success
+[   34.040901] ieee80211 phy0: wlbt: I: slsi_mlme_add_scan: scan started for id:0x100, n_channels:38, n_ssids:1, scan_type:1
+[   36.647522] ieee80211 phy0: wlbt: I: slsi_scan_complete: Scan count:10 APs
+[   37.338389] binder_debug: 9 callbacks suppressed
+[   38.003879] ieee80211 phy0: wlbt: I: slsi_mlme_add_scan: scan started for id:0x100, n_channels:38, n_ssids:1, scan_type:2
+[   41.811859] ieee80211 phy0: wlbt: I: slsi_scan_complete: Scan count:12 APs
+[   42.082909] ieee80211 phy0: wlbt: I: slsi_mlme_add_scan: scan started for id:0x100, n_channels:38, n_ssids:1, scan_type:2
+[   45.932614] ieee80211 phy0: wlbt: I: slsi_scan_complete: Scan count:16 APs
+[   49.008849] ieee80211 phy0: wlbt: I: slsi_mlme_add_scan: scan started for id:0x100, n_channels:38, n_ssids:1, scan_type:2
+[   52.965348] ieee80211 phy0: wlbt: I: slsi_scan_complete: Scan count:12 APs
+[   59.006736] ieee80211 phy0: wlbt: I: slsi_mlme_add_scan: scan started for id:0x100, n_channels:38, n_ssids:1, scan_type:2
+[   62.142199] A50STATUS: wlan0            DOWN
+[   62.142360] A50STATUS: p2p0             DOWN
+[   63.031525] ieee80211 phy0: wlbt: I: slsi_scan_complete: Scan count:11 APs
+[   72.007472] ieee80211 phy0: wlbt: I: slsi_mlme_add_scan: scan started for id:0x100, n_channels:38, n_ssids:1, scan_type:2
+[   76.187334] ieee80211 phy0: wlbt: I: slsi_scan_complete: Scan count:20 APs
+[   92.003531] ieee80211 phy0: wlbt: I: slsi_mlme_add_scan: scan started for id:0x100, n_channels:38, n_ssids:1, scan_type:2
+[   95.923622] ieee80211 phy0: wlbt: I: slsi_scan_complete: Scan count:17 APs
+[  120.003284] ieee80211 phy0: wlbt: I: slsi_mlme_add_scan: scan started for id:0x100, n_channels:38, n_ssids:1, scan_type:2
+[  120.903057] A50STATUS: wlan0            DOWN
+[  120.903105] A50STATUS: p2p0             DOWN
+[  124.062999] ieee80211 phy0: wlbt: I: slsi_scan_complete: Scan count:18 APs
+[  163.003658] ieee80211 phy0: wlbt: I: slsi_mlme_add_scan: scan started for id:0x100, n_channels:38, n_ssids:1, scan_type:2
+[  166.858122] ieee80211 phy0: wlbt: I: slsi_scan_complete: Scan count:18 APs
+[  201.751500] A50STATUS: wlan0            DOWN
+[  201.751548] A50STATUS: p2p0             DOWN
+[  212.879237] ieee80211 phy0: wlbt: I: slsi_mlme_add_scan: scan started for id:0x100, n_channels:38, n_ssids:1, scan_type:2
+[  216.876780] ieee80211 phy0: wlbt: I: slsi_scan_complete: Scan count:20 APs
+[  226.007698] ieee80211 phy0: wlbt: I: slsi_mlme_add_scan: scan started for id:0x100, n_channels:38, n_ssids:1, scan_type:2
+[  230.030405] ieee80211 phy0: wlbt: I: slsi_scan_complete: Scan count:18 APs

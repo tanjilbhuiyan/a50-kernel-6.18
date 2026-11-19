@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-19 (M9.2 W1r2: WLBT chip boots on 6.18)
+Updated: 2026-11-19 (M9.3 W2s2: Wi-Fi S4 reached on 6.18)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -8,7 +8,20 @@ Read this file, then the active ticket and its log. Before trusting anything her
 branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and on the phone. At the end of a session, update
 **RESUME HERE** with commits, branch, image hashes, last test and rollback result, and the next action.
 
-## RESUME HERE (2026-11-19, M9.2 done: chip boots on 6.18; next M9.3)
+## RESUME HERE (2026-11-19, M9.3 in progress: Wi-Fi S4 reached)
+- **M9.3** (`log/2026-11-19-M9.3-wifi.md`): W2s2 joined the owner's home network on 6.18 (WPA2, DHCP), SSH over
+  Wi-Fi, ping 19/20, 20 MB in 17.5 s, NM disconnect/reconnect, faults 0. Found/fixed an RTNL self-deadlock
+  (W2/W2d: custom regd applied from ndo_open). Stock-saved profiles are bound to `swlan0`; the test unbound them in
+  NetworkManager memory only.
+- **Branches:** clean `a50-wlbt` (worktree `src/m92/clean-kernel`) adds ec79c85aa import, d2ef6dd88 6.18 build,
+  77a2a5e89 regd-outside-RTNL. Test `a50-m92-w1-test` (worktree `src/m92/test-kernel`). Build
+  `python3 -I tools/m93/build_w2.py TAG [EXTRA]`; run `tools/m93/run_w2.sh IP TAG`. W2s2 BOOT = W2r
+  `fb5cc4d18b6f8b903215b0ff2c6bea94066d3fb459f6443d26021ed5d4ff54cb`.
+- **Phone:** stock 4.14.194 restored 20:17:00, post-flight passed, fsck clean 7067 files, home **192.168.0.171**.
+- **Next (M9.3):** latency/throughput limits (vs stock), decide the `swlan0` profile handling, explicit regression
+  and device-node checks, clean defconfig + publication refresh for Wi-Fi.
+
+## Earlier handoff (superseded by M9.3 progress)
 - **M9.2** (`log/2026-11-19-M9.2-scsc-core.md`): W1r2 booted the WLBT chip on 6.18 — CFG_REQ, EL3 SMC returns 0,
   firmware `MM_START_IND` (S620_E9610_R3-1_Y21W46A), NULL service start/stop, no faults. W1 found a DT alignment-cell
   bug, W1r a missing 9610 mif op (oops); both fixed.
