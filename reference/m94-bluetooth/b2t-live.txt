@@ -1,0 +1,789 @@
+
+CMD: uname -r
+6.18.33-a50-diag+
+RC=0
+
+CMD: systemctl show bluetooth.service bluebinder.service -p Id -p LoadState -p ActiveState -p SubState -p NRestarts
+NRestarts=0
+Id=bluetooth.service
+LoadState=loaded
+ActiveState=active
+SubState=running
+
+NRestarts=0
+Id=bluebinder.service
+LoadState=masked
+ActiveState=inactive
+SubState=dead
+RC=0
+
+CMD: rfkill list bluetooth
+0: scsc-bluez-rfkill: Bluetooth
+	Soft blocked: no
+	Hard blocked: no
+2: hci0: Bluetooth
+	Soft blocked: no
+	Hard blocked: no
+RC=0
+
+M94_B2_ON uptime=85.91
+
+CMD: rfkill unblock bluetooth
+RC=0
+hci0_after_s=0
+Changing power on succeeded
+
+M94_B2_SCAN uptime=95.17 (owner: speaker in pairing mode)
+devices_seen=4 audio_sink_found=yes rssi=-100 after_s=12
+
+M94_B2_PAIR uptime=105.54
+Attempting to pair with <mac>
+[[0;93mCHG[0m] Device <mac>
+[[0;93mCHG[0m] Device <mac>
+[[0;93mCHG[0m] Device <mac>
+Pairing successful
+[[0;93mCHG[0m] Device <mac>
+Changing <mac> trust succeeded
+
+M94_B2_CONNECT uptime=107.30
+Attempting to connect to <mac>
+Connection successful
+	Paired: yes
+	Bonded: yes
+	Trusted: yes
+	Connected: yes
+	LegacyPairing: no
+	CablePairing: no
+bluez_sink_present=yes
+card: bluez_card.<mac> module-bluez5-device.c
+
+M94_B2_TONE1 uptime=113.57
+sine_module=20
+tone1_done
+	Sample Specification: s16le 2ch 44100Hz
+
+M94_B2_RECONNECT uptime=116.82
+Attempting to disconnect from <mac>
+[[0;93mCHG[0m] Device <mac>
+Disconnection successful
+Attempting to connect to <mac>
+[[0;93mCHG[0m] Device <mac>
+Connection successful
+bluez_sink_after_reconnect=yes
+
+M94_B2_TONE2 uptime=129.83
+sine_module=22
+tone2_done
+
+M94_B2_CLEANUP uptime=133.05
+btsnoop_bytes=797122
+
+M94_B2_HCI_SUMMARY
+= Note: Linux version 6.18.33-a50-diag+ (aarch64)                      0.238400
+= Note: Bluetooth subsystem version 2.22                               0.238405
+@ MGMT Open: bluetoothd (privileged) version 1.23             {0x0001} 0.238407
+= New Index: <mac> (Primary,Virtual,hci0)           [hci0] 1.260164
+= Open Index: <mac>                                 [hci0] 1.264831
+< HCI Command: Reset (0x03|0x0003) plen 0                    #1 [hci0] 1.264874
+> HCI Event: Command Complete (0x0e) plen 4                  #2 [hci0] 1.399315
+        Status: Success (0x00)
+< HCI Command: Read Local Supported... (0x04|0x0003) plen 0  #3 [hci0] 1.399391
+> HCI Event: Command Complete (0x0e) plen 12                 #4 [hci0] 1.399680
+        Status: Success (0x00)
+< HCI Command: Read Local Version In.. (0x04|0x0001) plen 0  #5 [hci0] 1.399718
+> HCI Event: Command Complete (0x0e) plen 12                 #6 [hci0] 1.399767
+        Status: Success (0x00)
+< HCI Command: Read BD ADDR (0x04|0x0009) plen 0             #7 [hci0] 1.399821
+> HCI Event: Command Complete (0x0e) plen 10                 #8 [hci0] 1.400290
+        Status: Success (0x00)
+< HCI Command: Read Local Supported... (0x04|0x0002) plen 0  #9 [hci0] 1.400349
+> HCI Event: Command Complete (0x0e) plen 68                #10 [hci0] 1.400418
+        Status: Success (0x00)
+          Disconnect (Octet 0 - Bit 5)
+          Host Number of Completed Packets (Octet 10 - Bit 7)
+< HCI Command: Write Extended Inq.. (0x03|0x0052) plen 241  #11 [hci0] 1.400455
+> HCI Event: Command Complete (0x0e) plen 4                 #12 [hci0] 1.400540
+        Status: Success (0x00)
+< HCI Command: Write Inquiry Mode (0x03|0x0045) plen 1      #13 [hci0] 1.400575
+> HCI Event: Command Complete (0x0e) plen 4                 #14 [hci0] 1.400747
+        Status: Success (0x00)
+< HCI Command: Read Inquiry Respons.. (0x03|0x0058) plen 0  #15 [hci0] 1.400778
+> HCI Event: Command Complete (0x0e) plen 5                 #16 [hci0] 1.400824
+        Status: Success (0x00)
+< HCI Command: Read Local Extended... (0x04|0x0004) plen 1  #17 [hci0] 1.400857
+> HCI Event: Command Complete (0x0e) plen 14                #18 [hci0] 1.400898
+        Status: Success (0x00)
+< HCI Command: Read Buffer Size (0x04|0x0005) plen 0        #19 [hci0] 1.400930
+> HCI Event: Command Complete (0x0e) plen 11                #20 [hci0] 1.400968
+        Status: Success (0x00)
+        ACL MTU: 1021 ACL max packet: 20
+        SCO MTU: 0    SCO max packet: 0
+< HCI Command: Read Class of Device (0x03|0x0023) plen 0    #21 [hci0] 1.400999
+> HCI Event: Command Complete (0x0e) plen 7                 #22 [hci0] 1.401037
+        Status: Success (0x00)
+> HCI Event: Command Complete (0x0e) plen 252               #24 [hci0] 1.401125
+        Status: Success (0x00)
+< HCI Command: Read Voice Setting (0x03|0x0025) plen 0      #25 [hci0] 1.401156
+> HCI Event: Command Complete (0x0e) plen 6                 #26 [hci0] 1.401195
+        Status: Success (0x00)
+< HCI Command: Read Number of Suppo.. (0x03|0x0038) plen 0  #27 [hci0] 1.401228
+> HCI Event: Command Complete (0x0e) plen 5                 #28 [hci0] 1.401266
+        Status: Success (0x00)
+< HCI Command: Read Current IAC LAP (0x03|0x0039) plen 0    #29 [hci0] 1.401297
+> HCI Event: Command Complete (0x0e) plen 8                 #30 [hci0] 1.401336
+        Status: Success (0x00)
+< HCI Command: Write Connection Acc.. (0x03|0x0016) plen 2  #31 [hci0] 1.401368
+> HCI Event: Command Complete (0x0e) plen 4                 #32 [hci0] 1.401407
+        Status: Success (0x00)
+< HCI Command: LE Read Local Suppor.. (0x08|0x0003) plen 0  #33 [hci0] 1.401440
+> HCI Event: Command Complete (0x0e) plen 12                #34 [hci0] 1.401477
+        Status: Success (0x00)
+< HCI Command: LE Read Buffer Size (0x08|0x0002) plen 0     #35 [hci0] 1.401508
+> HCI Event: Command Complete (0x0e) plen 7                 #36 [hci0] 1.401545
+        Status: Success (0x00)
+< HCI Command: LE Read Supported St.. (0x08|0x001c) plen 0  #37 [hci0] 1.401576
+> HCI Event: Command Complete (0x0e) plen 12                #38 [hci0] 1.401612
+        Status: Success (0x00)
+< HCI Command: Set Event Mask (0x03|0x0001) plen 8          #39 [hci0] 1.401643
+          Disconnection Complete
+          Command Complete
+          Command Status
+> HCI Event: Command Complete (0x0e) plen 4                 #40 [hci0] 1.401681
+        Status: Success (0x00)
+< HCI Command: Read Stored Link Key (0x03|0x000d) plen 7    #41 [hci0] 1.401714
+> HCI Event: Command Complete (0x0e) plen 8                 #42 [hci0] 1.401765
+        Status: Success (0x00)
+< HCI Command: Write Default Link P.. (0x02|0x000f) plen 2  #43 [hci0] 1.401797
+> HCI Event: Command Complete (0x0e) plen 4                 #44 [hci0] 1.401835
+        Status: Success (0x00)
+< HCI Command: Read Page Scan Activ.. (0x03|0x001b) plen 0  #45 [hci0] 1.401872
+> HCI Event: Command Complete (0x0e) plen 8                 #46 [hci0] 1.401909
+        Status: Success (0x00)
+< HCI Command: Read Page Scan Type (0x03|0x0046) plen 0     #47 [hci0] 1.401941
+> HCI Event: Command Complete (0x0e) plen 5                 #48 [hci0] 1.401980
+        Status: Success (0x00)
+< HCI Command: Read Local Extended... (0x04|0x0004) plen 1  #49 [hci0] 1.402011
+> HCI Event: Command Complete (0x0e) plen 14                #50 [hci0] 1.402048
+        Status: Success (0x00)
+< HCI Command: LE Set Event Mask (0x08|0x0001) plen 8       #51 [hci0] 1.402080
+> HCI Event: Command Complete (0x0e) plen 4                 #52 [hci0] 1.402118
+        Status: Success (0x00)
+< HCI Command: LE Read Advertising... (0x08|0x0007) plen 0  #53 [hci0] 1.402150
+> HCI Event: Command Complete (0x0e) plen 5                 #54 [hci0] 1.402198
+        Status: Success (0x00)
+< HCI Command: LE Read Accept List... (0x08|0x000f) plen 0  #55 [hci0] 1.402233
+> HCI Event: Command Complete (0x0e) plen 5                 #56 [hci0] 1.402272
+        Status: Success (0x00)
+< HCI Command: LE Clear Accept List (0x08|0x0010) plen 0    #57 [hci0] 1.402303
+> HCI Event: Command Complete (0x0e) plen 4                 #58 [hci0] 1.402340
+        Status: Success (0x00)
+< HCI Command: LE Read Resolving Li.. (0x08|0x002a) plen 0  #59 [hci0] 1.402372
+> HCI Event: Command Complete (0x0e) plen 5                 #60 [hci0] 1.402409
+        Status: Success (0x00)
+< HCI Command: LE Clear Resolving L.. (0x08|0x0029) plen 0  #61 [hci0] 1.402441
+> HCI Event: Command Complete (0x0e) plen 4                 #62 [hci0] 1.402477
+        Status: Success (0x00)
+< HCI Command: LE Set Resolvable Pr.. (0x08|0x002e) plen 2  #63 [hci0] 1.402509
+> HCI Event: Command Complete (0x0e) plen 4                 #64 [hci0] 1.402548
+        Status: Success (0x00)
+< HCI Command: LE Read Maximum Data.. (0x08|0x002f) plen 0  #65 [hci0] 1.402579
+> HCI Event: Command Complete (0x0e) plen 12                #66 [hci0] 1.402617
+        Status: Success (0x00)
+< HCI Command: LE Read Suggested De.. (0x08|0x0023) plen 0  #67 [hci0] 1.402648
+> HCI Event: Command Complete (0x0e) plen 8                 #68 [hci0] 1.402685
+        Status: Success (0x00)
+< HCI Command: Delete Stored Link Key (0x03|0x0012) plen 7  #69 [hci0] 1.402717
+> HCI Event: Command Complete (0x0e) plen 6                 #70 [hci0] 1.402761
+        Status: Success (0x00)
+< HCI Command: Set Event Mask Page 2 (0x03|0x0063) plen 8   #71 [hci0] 1.402793
+> HCI Event: Command Complete (0x0e) plen 4                 #72 [hci0] 1.402830
+        Status: Success (0x00)
+< HCI Command: Read Local Supported.. (0x04|0x000b) plen 0  #73 [hci0] 1.402862
+> HCI Event: Command Complete (0x0e) plen 10                #74 [hci0] 1.402906
+        Status: Success (0x00)
+< HCI Command: Read Local Simple Pa.. (0x04|0x000c) plen 0  #75 [hci0] 1.402941
+> HCI Event: Command Complete (0x0e) plen 6                 #76 [hci0] 1.402981
+        Status: Success (0x00)
+< HCI Command: LE Write Suggested D.. (0x08|0x0024) plen 4  #77 [hci0] 1.403013
+> HCI Event: Command Complete (0x0e) plen 4                 #78 [hci0] 1.403053
+        Status: Success (0x00)
+< HCI Command: LE Set Default PHY (0x08|0x0031) plen 3      #79 [hci0] 1.403084
+> HCI Event: Command Complete (0x0e) plen 4                 #80 [hci0] 1.403123
+        Status: Success (0x00)
+= Index Info: <mac> (Samsung Electronics Co. Ltd.)  [hci0] 1.403344
+@ MGMT Event: Index Added (0x0004) plen 0              {0x0001} [hci0] 1.403361
+@ MGMT Command: Remove Advertisemen.. (0x0053) plen 2  {0x0001} [hci0] 1.403667
+        Handle: 0
+@ MGMT Event: Command Complete (0x0001) plen 5         {0x0001} [hci0] 1.403720
+        Status: Success (0x00)
+        Handle: 0
+@ MGMT Command: Read Experimental F.. (0x0049) plen 0  {0x0001} [hci0] 1.403775
+@ MGMT Event: Command Complete (0x0001) plen 65        {0x0001} [hci0] 1.403781
+        Status: Success (0x00)
+@ MGMT Command: Read Controller Inf.. (0x0004) plen 0  {0x0001} [hci0] 1.403844
+@ MGMT Event: Command Complete (0x0001) plen 283       {0x0001} [hci0] 1.403847
+        Status: Success (0x00)
+= bluetoothd: Battery Provider Manager created                         1.404374
+@ MGMT Command: Remove UUID (0x0011) plen 16           {0x0001} [hci0] 1.405552
+@ MGMT Event: Command Complete (0x0001) plen 6         {0x0001} [hci0] 1.405584
+        Status: Success (0x00)
+@ MGMT Command: Remove Device (0x0034) plen 7          {0x0001} [hci0] 1.405705
+@ MGMT Event: Command Complete (0x0001) plen 10        {0x0001} [hci0] 1.405714
+        Status: Success (0x00)
+@ MGMT Command: Set Low Energy (0x000d) plen 1         {0x0001} [hci0] 1.405836
+@ MGMT Event: Command Complete (0x0001) plen 7         {0x0001} [hci0] 1.405840
+        Status: Success (0x00)
+@ MGMT Command: Set Secure Simple P.. (0x000b) plen 1  {0x0001} [hci0] 1.405963
+@ MGMT Event: Command Complete (0x0001) plen 7         {0x0001} [hci0] 1.405968
+        Status: Success (0x00)
+@ MGMT Command: Set Secure Connecti.. (0x002d) plen 1  {0x0001} [hci0] 1.406087
+@ MGMT Event: Command Complete (0x0001) plen 7         {0x0001} [hci0] 1.406092
+        Status: Success (0x00)
+@ MGMT Command: Set Privacy (0x002f) plen 17           {0x0001} [hci0] 1.406211
+@ MGMT Event: Command Complete (0x0001) plen 7         {0x0001} [hci0] 1.406215
+        Status: Success (0x00)
+@ MGMT Command: Set Bondable (0x0009) plen 1           {0x0001} [hci0] 1.406335
+@ MGMT Event: Command Complete (0x0001) plen 7         {0x0001} [hci0] 1.406338
+        Status: Success (0x00)
+@ MGMT Command: Set IO Capability (0x0018) plen 1      {0x0001} [hci0] 1.406461
+@ MGMT Event: Command Complete (0x0001) plen 3         {0x0001} [hci0] 1.406465
+        Status: Success (0x00)
+@ MGMT Command: Add UUID (0x0010) plen 17              {0x0001} [hci0] 1.406584
+@ MGMT Event: Command Complete (0x0001) plen 6         {0x0001} [hci0] 1.406602
+        Status: Success (0x00)
+@ MGMT Command: Add UUID (0x0010) plen 17              {0x0001} [hci0] 1.406717
+@ MGMT Event: Command Complete (0x0001) plen 6         {0x0001} [hci0] 1.406733
+        Status: Success (0x00)
+@ MGMT Command: Add UUID (0x0010) plen 17              {0x0001} [hci0] 1.406846
+@ MGMT Event: Command Complete (0x0001) plen 6         {0x0001} [hci0] 1.406864
+        Status: Success (0x00)
+@ MGMT Command: Read Advertising Fe.. (0x003d) plen 0  {0x0001} [hci0] 1.406978
+@ MGMT Event: Command Complete (0x0001) plen 11        {0x0001} [hci0] 1.406982
+        Status: Success (0x00)
+@ MGMT Command: Read Controller Cap.. (0x0048) plen 0  {0x0001} [hci0] 1.407116
+@ MGMT Event: Command Complete (0x0001) plen 16        {0x0001} [hci0] 1.407120
+        Status: Success (0x00)
+@ MGMT Command: Set Powered (0x0005) plen 1            {0x0001} [hci0] 1.407239
+< HCI Command: Write Simple Pairing.. (0x03|0x0056) plen 1  #81 [hci0] 1.407306
+> HCI Event: Command Complete (0x0e) plen 4                 #82 [hci0] 1.407353
+        Status: Success (0x00)
+< HCI Command: Write Secure Connect.. (0x03|0x007a) plen 1  #83 [hci0] 1.407396
+> HCI Event: Command Complete (0x0e) plen 4                 #84 [hci0] 1.407436
+        Status: Success (0x00)
+< HCI Command: Write LE Host Suppor.. (0x03|0x006d) plen 2  #85 [hci0] 1.407469
+> HCI Event: Command Complete (0x0e) plen 4                 #86 [hci0] 1.407507
+        Status: Success (0x00)
+< HCI Command: LE Set Address Resol.. (0x08|0x002d) plen 1  #87 [hci0] 1.407540
+> HCI Event: Command Complete (0x0e) plen 4                 #88 [hci0] 1.407578
+        Status: Success (0x00)
+> HCI Event: Command Complete (0x0e) plen 4                 #90 [hci0] 1.407659
+        Status: Success (0x00)
+< HCI Command: Write Extended Inq.. (0x03|0x0052) plen 241  #91 [hci0] 1.407696
+> HCI Event: Command Complete (0x0e) plen 4                 #92 [hci0] 1.407765
+        Status: Success (0x00)
+@ MGMT Event: Command Complete (0x0001) plen 7         {0x0001} [hci0] 1.407793
+        Status: Success (0x00)
+> HCI Event: Command Complete (0x0e) plen 4                 #94 [hci0] 1.408013
+        Status: Success (0x00)
+< HCI Command: Write Extended Inq.. (0x03|0x0052) plen 241  #95 [hci0] 1.408051
+> HCI Event: Command Complete (0x0e) plen 4                 #96 [hci0] 1.408116
+        Status: Success (0x00)
+@ MGMT Event: Command Complete (0x0001) plen 263       {0x0001} [hci0] 1.408141
+        Status: Success (0x00)
+@ MGMT Command: Set Device Class (0x000e) plen 2       {0x0001} [hci0] 1.408260
+< HCI Command: Write Class of Device (0x03|0x0024) plen 3   #97 [hci0] 1.408288
+> HCI Event: Command Complete (0x0e) plen 4                 #98 [hci0] 1.408328
+        Status: Success (0x00)
+@ MGMT Event: Class Of Device Changed (0x0007) plen 3  {0x0001} [hci0] 1.408341
+@ MGMT Event: Command Complete (0x0001) plen 6         {0x0001} [hci0] 1.408356
+        Status: Success (0x00)
+@ MGMT Command: Add UUID (0x0010) plen 17              {0x0001} [hci0] 1.408591
+< HCI Command: Write Extended Inq.. (0x03|0x0052) plen 241  #99 [hci0] 1.408884
+> HCI Event: Command Complete (0x0e) plen 4                #100 [hci0] 1.408956
+        Status: Success (0x00)
+@ MGMT Event: Command Complete (0x0001) plen 6         {0x0001} [hci0] 1.409800
+        Status: Success (0x00)
+@ MGMT Command: Add UUID (0x0010) plen 17              {0x0001} [hci0] 1.409972
+< HCI Command: Write Extended In.. (0x03|0x0052) plen 241  #101 [hci0] 1.410022
+> HCI Event: Command Complete (0x0e) plen 4                #102 [hci0] 1.410094
+        Status: Success (0x00)
+@ MGMT Event: Command Complete (0x0001) plen 6         {0x0001} [hci0] 1.410125
+        Status: Success (0x00)
+@ MGMT Command: Add UUID (0x0010) plen 17              {0x0001} [hci0] 1.410397
+< HCI Command: Write Extended In.. (0x03|0x0052) plen 241  #103 [hci0] 1.410431
+> HCI Event: Command Complete (0x0e) plen 4                #104 [hci0] 1.410497
+        Status: Success (0x00)
+@ MGMT Event: Command Complete (0x0001) plen 6         {0x0001} [hci0] 1.410522
+        Status: Success (0x00)
+@ MGMT Command: Add UUID (0x0010) plen 17              {0x0001} [hci0] 1.410686
+< HCI Command: Write Extended In.. (0x03|0x0052) plen 241  #105 [hci0] 1.410713
+> HCI Event: Command Complete (0x0e) plen 4                #106 [hci0] 1.410778
+        Status: Success (0x00)
+@ MGMT Event: Command Complete (0x0001) plen 6         {0x0001} [hci0] 1.410802
+        Status: Success (0x00)
+@ MGMT Command: Add UUID (0x0010) plen 17              {0x0001} [hci0] 1.410959
+< HCI Command: Write Class of Device (0x03|0x0024) plen 3  #107 [hci0] 1.410984
+> HCI Event: Command Complete (0x0e) plen 4                #108 [hci0] 1.411023
+        Status: Success (0x00)
+@ MGMT Event: Class Of Device Changed (0x0007) plen 3  {0x0001} [hci0] 1.411036
+< HCI Command: Write Extended In.. (0x03|0x0052) plen 241  #109 [hci0] 1.411064
+> HCI Event: Command Complete (0x0e) plen 4                #110 [hci0] 1.411128
+        Status: Success (0x00)
+@ MGMT Event: Command Complete (0x0001) plen 6         {0x0001} [hci0] 1.411154
+        Status: Success (0x00)
+@ MGMT Command: Add UUID (0x0010) plen 17              {0x0001} [hci0] 1.411299
+< HCI Command: Write Extended In.. (0x03|0x0052) plen 241  #111 [hci0] 1.411329
+> HCI Event: Command Complete (0x0e) plen 4                #112 [hci0] 1.411398
+        Status: Success (0x00)
+@ MGMT Event: Command Complete (0x0001) plen 6         {0x0001} [hci0] 1.411424
+        Status: Success (0x00)
+@ MGMT Command: Add UUID (0x0010) plen 17              {0x0001} [hci0] 1.411575
+< HCI Command: Write Extended In.. (0x03|0x0052) plen 241  #113 [hci0] 1.411602
+> HCI Event: Command Complete (0x0e) plen 4                #114 [hci0] 1.411669
+        Status: Success (0x00)
+@ MGMT Event: Command Complete (0x0001) plen 6         {0x0001} [hci0] 1.411694
+        Status: Success (0x00)
+@ MGMT Command: Unblock Device (0x0027) plen 7         {0x0001} [hci0] 1.411845
+@ MGMT Event: Command Complete (0x0001) plen 10        {0x0001} [hci0] 1.411850
+        Status: Success (0x00)
+@ MGMT Command: Set Default System... (0x004c) plen 0  {0x0001} [hci0] 1.412096
+@ MGMT Event: Command Status (0x0002) plen 3           {0x0001} [hci0] 1.412099
+        Status: Invalid Parameters (0x0d)
+@ MGMT Command: Load Link Keys (0x0012) plen 3         {0x0001} [hci0] 1.412219
+@ MGMT Event: Command Complete (0x0001) plen 3         {0x0001} [hci0] 1.412223
+        Status: Success (0x00)
+@ MGMT Command: Load Long Term Keys (0x0013) plen 2    {0x0001} [hci0] 1.412344
+@ MGMT Event: Command Complete (0x0001) plen 3         {0x0001} [hci0] 1.412346
+        Status: Success (0x00)
+@ MGMT Command: Load Identity Resol.. (0x0030) plen 2  {0x0001} [hci0] 1.412477
+@ MGMT Event: Command Complete (0x0001) plen 3         {0x0001} [hci0] 1.412479
+        Status: Success (0x00)
+@ MGMT Command: Load Connection Par.. (0x0035) plen 2  {0x0001} [hci0] 1.412598
+@ MGMT Event: Command Complete (0x0001) plen 3         {0x0001} [hci0] 1.412600
+        Status: Success (0x00)
+@ MGMT Command: Add UUID (0x0010) plen 17              {0x0001} [hci0] 1.412718
+@ MGMT Event: Command Complete (0x0001) plen 6         {0x0001} [hci0] 1.412744
+        Status: Success (0x00)
+@ MGMT Command: Set Device ID (0x0028) plen 8          {0x0001} [hci0] 1.412848
+@ MGMT Event: Command Complete (0x0001) plen 3         {0x0001} [hci0] 1.412851
+        Status: Success (0x00)
+< HCI Command: Write Extended In.. (0x03|0x0052) plen 241  #115 [hci0] 1.412881
+> HCI Event: Command Complete (0x0e) plen 4                #116 [hci0] 1.412953
+        Status: Success (0x00)
+@ MGMT Command: Set Device Class (0x000e) plen 2       {0x0001} [hci0] 1.412973
+@ MGMT Event: Command Complete (0x0001) plen 6         {0x0001} [hci0] 1.412984
+        Status: Success (0x00)
+@ MGMT Event: Command Complete (0x0001) plen 263       {0x0001} [hci0] 1.413100
+        Status: Success (0x00)
+@ MGMT Command: Set Blocked Keys (0x0046) plen 36      {0x0001} [hci0] 1.413220
+@ MGMT Event: Command Complete (0x0001) plen 3         {0x0001} [hci0] 1.413223
+        Status: Success (0x00)
+= bluetoothd: Player registered: sender=:1.44 path=/_1_50              1.428276
+= bluetoothd: Endpoint registered: sender=:1.51 path=/MediaEndpoin..   1.429248
+= bluetoothd: Endpoint registered: sender=:1.51 path=/MediaEndpoin..   1.429784
+= bluetoothd: Endpoint registered: sender=:1.51 path=/MediaEndpoin..   1.430158
+= bluetoothd: Endpoint registered: sender=:1.51 path=/MediaEndpoin..   1.430869
+= bluetoothd: Endpoint registered: sender=:1.51 path=/MediaEndpoin..   1.431252
+= bluetoothd: Endpoint registered: sender=:1.51 path=/MediaEndpoin..   1.431593
+= bluetoothd: Endpoint registered: sender=:1.51 path=/MediaEndpoin..   1.431930
+= bluetoothd: Endpoint registered: sender=:1.51 path=/MediaEndpoin..   1.432276
+= bluetoothd: Endpoint registered: sender=:1.51 path=/MediaEndpoin..   1.432592
+= bluetoothd: Endpoint registered: sender=:1.51 path=/MediaEndpoin..   1.432901
+= bluetoothd: Endpoint registered: sender=:1.51 path=/MediaEndpoin..   1.433221
+= bluetoothd: Endpoint registered: sender=:1.51 path=/MediaEndpoin..   1.433580
+= bluetoothd: Endpoint registered: sender=:1.51 path=/MediaEndpoin..   1.435198
+= bluetoothd: Endpoint registered: sender=:1.51 path=/MediaEndpoin..   1.435680
+= bluetoothd: Endpoint registered: sender=:1.51 path=/MediaEndpoin..   1.436490
+= bluetoothd: Endpoint registered: sender=:1.51 path=/MediaEndpoin..   1.437297
+= bluetoothd: Endpoint registered: sender=:1.51 path=/MediaEndpoin..   1.437875
+@ MGMT Command: Add UUID (0x0010) plen 17              {0x0001} [hci0] 1.438015
+< HCI Command: Write Class of Device (0x03|0x0024) plen 3  #117 [hci0] 1.438083
+> HCI Event: Command Complete (0x0e) plen 4                #118 [hci0] 1.438140
+        Status: Success (0x00)
+@ MGMT Event: Class Of Device Changed (0x0007) plen 3  {0x0001} [hci0] 1.438160
+< HCI Command: Write Extended In.. (0x03|0x0052) plen 241  #119 [hci0] 1.438198
+> HCI Event: Command Complete (0x0e) plen 4                #120 [hci0] 1.438265
+        Status: Success (0x00)
+@ MGMT Event: Command Complete (0x0001) plen 6         {0x0001} [hci0] 1.438291
+        Status: Success (0x00)
+@ MGMT Command: Add UUID (0x0010) plen 17              {0x0001} [hci0] 1.438525
+< HCI Command: Write Class of Device (0x03|0x0024) plen 3  #121 [hci0] 1.438554
+> HCI Event: Command Complete (0x0e) plen 4                #122 [hci0] 1.438593
+        Status: Success (0x00)
+@ MGMT Event: Class Of Device Changed (0x0007) plen 3  {0x0001} [hci0] 1.438605
+< HCI Command: Write Extended In.. (0x03|0x0052) plen 241  #123 [hci0] 1.438631
+> HCI Event: Command Complete (0x0e) plen 4                #124 [hci0] 1.438695
+        Status: Success (0x00)
+@ MGMT Event: Command Complete (0x0001) plen 6         {0x0001} [hci0] 1.438726
+        Status: Success (0x00)
+@ MGMT Command: Start Discovery (0x0023) plen 1        {0x0001} [hci0] 4.346583
+< HCI Command: LE Set Address Reso.. (0x08|0x002d) plen 1  #125 [hci0] 4.346878
+> HCI Event: Command Complete (0x0e) plen 4                #126 [hci0] 4.349502
+        Status: Success (0x00)
+< HCI Command: LE Set Random Address (0x08|0x0005) plen 6  #127 [hci0] 4.349595
+> HCI Event: Command Complete (0x0e) plen 4                #128 [hci0] 4.349651
+        Status: Success (0x00)
+< HCI Command: LE Set Scan Paramet.. (0x08|0x000b) plen 7  #129 [hci0] 4.349696
+> HCI Event: Command Complete (0x0e) plen 4                #130 [hci0] 4.349772
+        Status: Success (0x00)
+< HCI Command: LE Set Scan Enable (0x08|0x000c) plen 2     #131 [hci0] 4.349817
+> HCI Event: Command Complete (0x0e) plen 4                #132 [hci0] 4.350039
+        Status: Success (0x00)
+@ MGMT Event: Discovering (0x0013) plen 2              {0x0001} [hci0] 4.350060
+@ MGMT Event: Command Complete (0x0001) plen 4         {0x0001} [hci0] 4.350084
+        Status: Success (0x00)
+> HCI Event: LE Meta Event (0x3e) plen 38                  #133 [hci0] 4.414474
+> HCI Event: LE Meta Event (0x3e) plen 12                  #134 [hci0] 4.415066
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 4.415097
+> HCI Event: LE Meta Event (0x3e) plen 38                  #135 [hci0] 4.554347
+> HCI Event: LE Meta Event (0x3e) plen 12                  #136 [hci0] 4.554950
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 4.554976
+> HCI Event: LE Meta Event (0x3e) plen 43                  #137 [hci0] 4.597706
+> HCI Event: LE Meta Event (0x3e) plen 34                  #138 [hci0] 4.598605
+@ MGMT Event: Device Found (0x0012) plen 67            {0x0001} [hci0] 4.598630
+> HCI Event: LE Meta Event (0x3e) plen 43                  #139 [hci0] 4.619750
+@ MGMT Event: Device Found (0x0012) plen 45            {0x0001} [hci0] 4.619808
+> HCI Event: LE Meta Event (0x3e) plen 38                  #140 [hci0] 4.691859
+> HCI Event: LE Meta Event (0x3e) plen 12                  #141 [hci0] 4.692483
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 4.692509
+> HCI Event: LE Meta Event (0x3e) plen 38                  #142 [hci0] 4.829410
+> HCI Event: LE Meta Event (0x3e) plen 12                  #143 [hci0] 4.830023
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 4.830047
+> HCI Event: LE Meta Event (0x3e) plen 43                  #144 [hci0] 4.905534
+@ MGMT Event: Device Found (0x0012) plen 45            {0x0001} [hci0] 4.905581
+> HCI Event: LE Meta Event (0x3e) plen 38                  #145 [hci0] 4.963075
+> HCI Event: LE Meta Event (0x3e) plen 12                  #146 [hci0] 4.963691
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 4.963745
+> HCI Event: LE Meta Event (0x3e) plen 38                  #147 [hci0] 5.103127
+> HCI Event: LE Meta Event (0x3e) plen 12                  #148 [hci0] 5.103738
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 5.103802
+> HCI Event: LE Meta Event (0x3e) plen 43                  #149 [hci0] 5.189821
+@ MGMT Event: Device Found (0x0012) plen 45            {0x0001} [hci0] 5.189892
+> HCI Event: LE Meta Event (0x3e) plen 38                  #150 [hci0] 5.234401
+> HCI Event: LE Meta Event (0x3e) plen 12                  #151 [hci0] 5.235026
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 5.235112
+> HCI Event: LE Meta Event (0x3e) plen 38                  #152 [hci0] 5.369470
+> HCI Event: LE Meta Event (0x3e) plen 12                  #153 [hci0] 5.370094
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 5.370147
+> HCI Event: LE Meta Event (0x3e) plen 43                  #154 [hci0] 5.480601
+@ MGMT Event: Device Found (0x0012) plen 45            {0x0001} [hci0] 5.480647
+> HCI Event: LE Meta Event (0x3e) plen 38                  #155 [hci0] 5.500736
+> HCI Event: LE Meta Event (0x3e) plen 12                  #156 [hci0] 5.501357
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 5.501380
+> HCI Event: LE Meta Event (0x3e) plen 43                  #157 [hci0] 5.614082
+> HCI Event: LE Meta Event (0x3e) plen 34                  #158 [hci0] 5.614874
+@ MGMT Event: Device Found (0x0012) plen 67            {0x0001} [hci0] 5.614900
+> HCI Event: LE Meta Event (0x3e) plen 38                  #159 [hci0] 5.637034
+> HCI Event: LE Meta Event (0x3e) plen 12                  #160 [hci0] 5.637656
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 5.637677
+> HCI Event: LE Meta Event (0x3e) plen 43                  #161 [hci0] 5.768890
+@ MGMT Event: Device Found (0x0012) plen 45            {0x0001} [hci0] 5.768935
+> HCI Event: LE Meta Event (0x3e) plen 38                  #162 [hci0] 5.770821
+> HCI Event: LE Meta Event (0x3e) plen 12                  #163 [hci0] 5.771444
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 5.771464
+> HCI Event: LE Meta Event (0x3e) plen 38                  #164 [hci0] 6.040947
+> HCI Event: LE Meta Event (0x3e) plen 12                  #165 [hci0] 6.041556
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 6.041614
+> HCI Event: LE Meta Event (0x3e) plen 43                  #166 [hci0] 6.053159
+@ MGMT Event: Device Found (0x0012) plen 45            {0x0001} [hci0] 6.053214
+> HCI Event: LE Meta Event (0x3e) plen 43                  #167 [hci0] 6.114258
+> HCI Event: LE Meta Event (0x3e) plen 34                  #168 [hci0] 6.115047
+@ MGMT Event: Device Found (0x0012) plen 67            {0x0001} [hci0] 6.115967
+> HCI Event: LE Meta Event (0x3e) plen 38                  #169 [hci0] 6.178489
+> HCI Event: LE Meta Event (0x3e) plen 12                  #170 [hci0] 6.179109
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 6.179139
+> HCI Event: LE Meta Event (0x3e) plen 38                  #171 [hci0] 6.315917
+> HCI Event: LE Meta Event (0x3e) plen 12                  #172 [hci0] 6.316520
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 6.316546
+> HCI Event: LE Meta Event (0x3e) plen 43                  #173 [hci0] 6.346146
+@ MGMT Event: Device Found (0x0012) plen 45            {0x0001} [hci0] 6.346185
+> HCI Event: LE Meta Event (0x3e) plen 38                  #174 [hci0] 6.456651
+> HCI Event: LE Meta Event (0x3e) plen 12                  #175 [hci0] 6.457274
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 6.457306
+> HCI Event: LE Meta Event (0x3e) plen 38                  #176 [hci0] 6.592956
+> HCI Event: LE Meta Event (0x3e) plen 12                  #177 [hci0] 6.593559
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 6.593592
+> HCI Event: LE Meta Event (0x3e) plen 43                  #178 [hci0] 6.620162
+> HCI Event: LE Meta Event (0x3e) plen 34                  #179 [hci0] 6.620962
+@ MGMT Event: Device Found (0x0012) plen 67            {0x0001} [hci0] 6.620995
+> HCI Event: LE Meta Event (0x3e) plen 43                  #180 [hci0] 6.627951
+@ MGMT Event: Device Found (0x0012) plen 45            {0x0001} [hci0] 6.627994
+> HCI Event: LE Meta Event (0x3e) plen 38                  #181 [hci0] 6.731742
+> HCI Event: LE Meta Event (0x3e) plen 12                  #182 [hci0] 6.732380
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 6.732417
+> HCI Event: LE Meta Event (0x3e) plen 38                  #183 [hci0] 6.863042
+> HCI Event: LE Meta Event (0x3e) plen 12                  #184 [hci0] 6.863662
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 6.863696
+> HCI Event: LE Meta Event (0x3e) plen 38                  #185 [hci0] 7.001848
+> HCI Event: LE Meta Event (0x3e) plen 12                  #186 [hci0] 7.002455
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 7.002480
+> HCI Event: LE Meta Event (0x3e) plen 43                  #187 [hci0] 7.126088
+> HCI Event: LE Meta Event (0x3e) plen 34                  #188 [hci0] 7.126887
+@ MGMT Event: Device Found (0x0012) plen 67            {0x0001} [hci0] 7.126912
+> HCI Event: LE Meta Event (0x3e) plen 38                  #189 [hci0] 7.143837
+> HCI Event: LE Meta Event (0x3e) plen 12                  #190 [hci0] 7.144458
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 7.144480
+> HCI Event: LE Meta Event (0x3e) plen 43                  #191 [hci0] 7.201668
+@ MGMT Event: Device Found (0x0012) plen 45            {0x0001} [hci0] 7.201696
+> HCI Event: LE Meta Event (0x3e) plen 38                  #192 [hci0] 7.277641
+> HCI Event: LE Meta Event (0x3e) plen 12                  #193 [hci0] 7.278252
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 7.278277
+> HCI Event: LE Meta Event (0x3e) plen 38                  #194 [hci0] 7.413946
+> HCI Event: LE Meta Event (0x3e) plen 12                  #195 [hci0] 7.414549
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 7.414575
+> HCI Event: LE Meta Event (0x3e) plen 43                  #196 [hci0] 7.488489
+@ MGMT Event: Device Found (0x0012) plen 45            {0x0001} [hci0] 7.488532
+> HCI Event: LE Meta Event (0x3e) plen 38                  #197 [hci0] 7.544527
+> HCI Event: LE Meta Event (0x3e) plen 12                  #198 [hci0] 7.545145
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 7.545169
+> HCI Event: LE Meta Event (0x3e) plen 43                  #199 [hci0] 7.634506
+> HCI Event: LE Meta Event (0x3e) plen 34                  #200 [hci0] 7.635365
+@ MGMT Event: Device Found (0x0012) plen 67            {0x0001} [hci0] 7.635391
+> HCI Event: LE Meta Event (0x3e) plen 38                  #201 [hci0] 7.685269
+> HCI Event: LE Meta Event (0x3e) plen 12                  #202 [hci0] 7.685884
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 7.685907
+> HCI Event: LE Meta Event (0x3e) plen 43                  #203 [hci0] 7.769863
+@ MGMT Event: Device Found (0x0012) plen 45            {0x0001} [hci0] 7.769905
+> HCI Event: LE Meta Event (0x3e) plen 38                  #204 [hci0] 7.823918
+> HCI Event: LE Meta Event (0x3e) plen 12                  #205 [hci0] 7.824533
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 7.824556
+> HCI Event: LE Meta Event (0x3e) plen 38                  #206 [hci0] 7.960219
+> HCI Event: LE Meta Event (0x3e) plen 12                  #207 [hci0] 7.960831
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 7.960855
+> HCI Event: LE Meta Event (0x3e) plen 43                  #208 [hci0] 8.059666
+@ MGMT Event: Device Found (0x0012) plen 45            {0x0001} [hci0] 8.059700
+> HCI Event: LE Meta Event (0x3e) plen 38                  #209 [hci0] 8.092750
+> HCI Event: LE Meta Event (0x3e) plen 12                  #210 [hci0] 8.093371
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 8.093391
+> HCI Event: LE Meta Event (0x3e) plen 43                  #211 [hci0] 8.142445
+> HCI Event: LE Meta Event (0x3e) plen 34                  #212 [hci0] 8.143240
+@ MGMT Event: Device Found (0x0012) plen 67            {0x0001} [hci0] 8.143265
+> HCI Event: LE Meta Event (0x3e) plen 38                  #213 [hci0] 8.229048
+> HCI Event: LE Meta Event (0x3e) plen 12                  #214 [hci0] 8.229671
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 8.229694
+> HCI Event: LE Meta Event (0x3e) plen 43                  #215 [hci0] 8.345459
+@ MGMT Event: Device Found (0x0012) plen 45            {0x0001} [hci0] 8.345518
+> HCI Event: LE Meta Event (0x3e) plen 38                  #216 [hci0] 8.503974
+> HCI Event: LE Meta Event (0x3e) plen 12                  #217 [hci0] 8.504594
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 8.504620
+> HCI Event: LE Meta Event (0x3e) plen 43                  #218 [hci0] 8.627237
+@ MGMT Event: Device Found (0x0012) plen 45            {0x0001} [hci0] 8.627286
+> HCI Event: LE Meta Event (0x3e) plen 43                  #219 [hci0] 8.643871
+> HCI Event: LE Meta Event (0x3e) plen 34                  #220 [hci0] 8.644671
+@ MGMT Event: Device Found (0x0012) plen 67            {0x0001} [hci0] 8.644696
+> HCI Event: LE Meta Event (0x3e) plen 38                  #221 [hci0] 8.775308
+> HCI Event: LE Meta Event (0x3e) plen 12                  #222 [hci0] 8.775934
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 8.775963
+> HCI Event: LE Meta Event (0x3e) plen 43                  #223 [hci0] 8.916257
+@ MGMT Event: Device Found (0x0012) plen 45            {0x0001} [hci0] 8.916288
+> HCI Event: LE Meta Event (0x3e) plen 38                  #224 [hci0] 8.918669
+> HCI Event: LE Meta Event (0x3e) plen 12                  #225 [hci0] 8.919290
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 8.919310
+> HCI Event: LE Meta Event (0x3e) plen 38                  #226 [hci0] 9.054987
+> HCI Event: LE Meta Event (0x3e) plen 12                  #227 [hci0] 9.055592
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 9.055617
+> HCI Event: LE Meta Event (0x3e) plen 43                  #228 [hci0] 9.149806
+> HCI Event: LE Meta Event (0x3e) plen 34                  #229 [hci0] 9.150589
+@ MGMT Event: Device Found (0x0012) plen 67            {0x0001} [hci0] 9.150616
+> HCI Event: LE Meta Event (0x3e) plen 38                  #230 [hci0] 9.188063
+> HCI Event: LE Meta Event (0x3e) plen 12                  #231 [hci0] 9.188805
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 9.188826
+> HCI Event: LE Meta Event (0x3e) plen 43                  #232 [hci0] 9.203424
+@ MGMT Event: Device Found (0x0012) plen 45            {0x0001} [hci0] 9.203454
+> HCI Event: LE Meta Event (0x3e) plen 38                  #233 [hci0] 9.323681
+> HCI Event: LE Meta Event (0x3e) plen 12                  #234 [hci0] 9.324288
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 9.324330
+> HCI Event: LE Meta Event (0x3e) plen 38                  #235 [hci0] 9.462477
+> HCI Event: LE Meta Event (0x3e) plen 12                  #236 [hci0] 9.463081
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 9.463116
+> HCI Event: LE Meta Event (0x3e) plen 43                  #237 [hci0] 9.489958
+@ MGMT Event: Device Found (0x0012) plen 45            {0x0001} [hci0] 9.490020
+> HCI Event: LE Meta Event (0x3e) plen 38                  #238 [hci0] 9.596257
+> HCI Event: LE Meta Event (0x3e) plen 12                  #239 [hci0] 9.596891
+@ MGMT Event: Device Found (0x0012) plen 40            {0x0001} [hci0] 9.596926
+> HCI Event: LE Meta Event (0x3e) plen 43                  #240 [hci0] 9.653240
+> HCI Event: LE Meta Event (0x3e) plen 34                  #241 [hci0] 9.654031
+@ MGMT Event: Device Found (0x0012) plen 67            {0x0001} [hci0] 9.654061
+> HCI Event: LE Meta Event (0x3e) plen 20                  #242 [hci0] 9.708397
+@ MGMT Event: Device Found (0x0012) plen 22            {0x0001} [hci0] 9.708429
+< HCI Command: LE Set Scan Enable (0x08|0x000c) plen 2     #243 [hci0] 9.719968
+> HCI Event: Command Complete (0x0e) plen 4                #244 [hci0] 9.729193
+        Status: Success (0x00)
+< HCI Command: Inquiry (0x01|0x0001) plen 5                #245 [hci0] 9.729377
+> HCI Event: Command Status (0x0f) plen 4                  #246 [hci0] 9.732921
+        Status: Success (0x00)
+> HCI Event: Extended Inquiry Result (0x2f) plen 255       #247 [hci0] 9.764101
+@ MGMT Event: Device Found (0x0012) plen 19            {0x0001} [hci0] 9.764136
+@ MGMT Event: Command Complete (0x0001) plen 10        {0x0001} [hci0] 9.764491
+        Status: Success (0x00)
+> HCI Event: Extended Inquiry Result (0x2f) plen 255      #248 [hci0] 10.245404
+@ MGMT Event: Device Found (0x0012) plen 19           {0x0001} [hci0] 10.245477
+> HCI Event: Extended Inquiry Result (0x2f) plen 255      #249 [hci0] 10.407534
+@ MGMT Event: Device Found (0x0012) plen 44           {0x0001} [hci0] 10.407600
+> HCI Event: Extended Inquiry Result (0x2f) plen 255      #250 [hci0] 13.376730
+@ MGMT Event: Device Found (0x0012) plen 59           {0x0001} [hci0] 13.376791
+@ MGMT Command: Stop Discovery (0x0024) plen 1        {0x0001} [hci0] 14.379118
+< HCI Command: Inquiry Cancel (0x01|0x0002) plen 0        #251 [hci0] 14.379193
+> HCI Event: Command Complete (0x0e) plen 4               #252 [hci0] 14.381711
+        Status: Success (0x00)
+@ MGMT Event: Discovering (0x0013) plen 2             {0x0001} [hci0] 14.381754
+@ MGMT Event: Command Complete (0x0001) plen 4        {0x0001} [hci0] 14.381960
+        Status: Success (0x00)
+@ MGMT Command: Add Device (0x0033) plen 8            {0x0001} [hci0] 14.730521
+@ MGMT Event: Device Flags Changed (0x002a) plen 15   {0x0001} [hci0] 14.730544
+@ MGMT Event: Command Complete (0x0001) plen 10       {0x0001} [hci0] 14.730548
+        Status: Success (0x00)
+< HCI Command: Write Scan Enable (0x03|0x001a) plen 1     #253 [hci0] 14.730585
+@ MGMT Command: Pair Device (0x0019) plen 8           {0x0001} [hci0] 14.730754
+> HCI Event: Command Complete (0x0e) plen 4               #254 [hci0] 14.733365
+        Status: Success (0x00)
+< HCI Command: Create Connection (0x01|0x0005) plen 13    #255 [hci0] 14.733451
+> HCI Event: Command Status (0x0f) plen 4                 #256 [hci0] 14.734021
+        Status: Success (0x00)
+> HCI Event: Connect Complete (0x03) plen 11              #257 [hci0] 14.912594
+        Status: Success (0x00)
+        Handle: 2
+< HCI Command: Read Remote Suppor.. (0x01|0x001b) plen 2  #258 [hci0] 14.912774
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+> HCI Event: Command Status (0x0f) plen 4                 #259 [hci0] 14.913142
+        Status: Success (0x00)
+@ RAW Open: btmon (privileged) version 2.22                  {0x0002} 14.913445
+@ RAW Close: btmon                                           {0x0002} 14.913461
+> HCI Event: Max Slots Change (0x1b) plen 3               #260 [hci0] 14.923643
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+> HCI Event: Read Remote Supported Feat.. (0x0b) plen 11  #261 [hci0] 14.923665
+        Status: Success (0x00)
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+> HCI Event: Command Status (0x0f) plen 4                 #262 [hci0] 14.923666
+        Status: Success (0x00)
+< HCI Command: Write Scan Enable (0x03|0x001a) plen 1     #263 [hci0] 14.923706
+> HCI Event: Command Complete (0x0e) plen 4               #264 [hci0] 14.924911
+        Status: Success (0x00)
+< HCI Command: Read Remote Extend.. (0x01|0x001c) plen 3  #265 [hci0] 14.924967
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+> HCI Event: Command Status (0x0f) plen 4                 #266 [hci0] 14.925281
+        Status: Success (0x00)
+> HCI Event: Read Remote Extended Featu.. (0x23) plen 13  #267 [hci0] 14.925293
+        Status: Success (0x00)
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+> HCI Event: Command Status (0x0f) plen 4                 #269 [hci0] 14.925388
+        Status: Success (0x00)
+        Status: Success (0x00)
+@ MGMT Event: Device Connected (0x000b) plen 28       {0x0001} [hci0] 14.941403
+< HCI Command: Authentication Req.. (0x01|0x0011) plen 2  #271 [hci0] 14.941423
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+> HCI Event: Command Status (0x0f) plen 4                 #272 [hci0] 14.942733
+        Status: Success (0x00)
+> HCI Event: Link Key Request (0x17) plen 6               #273 [hci0] 14.942749
+< HCI Command: Link Key Request N.. (0x01|0x000c) plen 6  #274 [hci0] 14.942800
+> HCI Event: Command Complete (0x0e) plen 10              #275 [hci0] 14.942882
+        Status: Success (0x00)
+> HCI Event: IO Capability Request (0x31) plen 6          #276 [hci0] 14.943236
+Attempting to disconnect from <mac>
+[[0;93mCHG[0m] Device <mac>
+Disconnection successful
+
+M94_B2_FINAL uptime=136.16
+
+CMD: systemctl show bluetooth.service bluebinder.service -p Id -p LoadState -p ActiveState -p SubState -p NRestarts
+NRestarts=0
+Id=bluetooth.service
+LoadState=loaded
+ActiveState=active
+SubState=running
+
+NRestarts=0
+Id=bluebinder.service
+LoadState=masked
+ActiveState=inactive
+SubState=dead
+RC=0
+
+CMD: sh -c grep -E "wlbt|scsc" /proc/interrupts | tr -s " "
+ 70: 3462 0 0 0 0 0 0 0 GIC-0 74 Level scsc_wlbt
+ 72: 0 0 0 0 0 0 0 0 GIC-0 104 Level scsc_wlbt
+ 73: 2 0 0 0 0 0 0 0 GIC-0 105 Level scsc_wlbt
+RC=0
+faults=0
+
+M94_B2_LOG
+[    0.117416] wlbt: [BT_COMMON]: scsc_bt_module_init: SCSC MX BT Driver -devel (C) Samsung Electronics Co., Ltd
+[    0.117536] wlbt: [BT_COMMON]: slsi_bt_notify_probe: SLSI BT BlueZ probe
+[    0.328444] Bluetooth: HCI UART driver ver 2.3
+[    0.328452] Bluetooth: HCI UART protocol H4 registered
+[    0.382072] Bluetooth: RFCOMM TTY layer initialized
+[    0.382087] Bluetooth: RFCOMM socket layer initialized
+[    0.382103] Bluetooth: RFCOMM ver 1.11
+[    0.382112] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
+[    0.382118] Bluetooth: BNEP filters: protocol multicast
+[    0.382125] Bluetooth: BNEP socket layer initialized
+[    0.382131] Bluetooth: HIDP (Human Interface Emulation) ver 1.2
+[    0.382137] Bluetooth: HIDP socket layer initialized
+[   21.508245] systemd[1]: Mounting var-lib-bluetooth.mount - /var/lib/bluetooth...
+[   21.778967] systemd[1]: Mounted var-lib-bluetooth.mount - /var/lib/bluetooth.
+[   23.306190] init: Parsing file /vendor/etc/init/android.hardware.bluetooth@1.0-service.rc...
+[   24.263252] wlbt: [BT_COMMON]: scsc_bt_h4_open: (h4_users=0)
+[   24.303657] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/bluetooth/bt.hcf
+[   24.303738] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/bluetooth/bt.hcf failed with error -2
+[   24.303755] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/leman_s620_univ/bluetooth/bt.hcf
+[   24.303783] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/leman_s620_univ/bluetooth/bt.hcf failed with error -2
+[   24.395611] Bluetooth: hci0: unexpected event for opcode 0x0000
+[   26.531146] wlbt: [BT_H4]: scsc_bt_shm_h4_read_kernel: BT_READ_OP_HCI_EVT_ERROR
+[   26.531180] wlbt: [BT_COMMON]: slsi_bt_fs_read_func: BT BlueZ: Exiting slsi_bt_fs_read_func
+[   26.531222] wlbt: [BT_COMMON]: scsc_bt_h4_release:
+[   30.034039] init: starting service 'vendor.bluetooth-1-0'...
+[   30.035841] init: createProcessGroup(1002, 124) failed for service 'vendor.bluetooth-1-0': Read-only file system
+[   30.323926] systemd[1]: Starting bluetooth-touch.service - Bluetooth init for Touch devices...
+[   31.220132] systemd[1]: bluetooth-touch.service: Deactivated successfully.
+[   31.220945] systemd[1]: Started bluetooth-touch.service - Bluetooth init for Touch devices.
+[   31.431738] systemd[1]: Starting bluetooth.service - Bluetooth service...
+[   31.478582] (uetoothd)[1621]: bluetooth.service: ConfigurationDirectory 'bluetooth' already exists but the mode is different. (File system: 755 ConfigurationDirectoryMode: 555)
+[   32.084654] systemd[1]: Started bluetooth.service - Bluetooth service.
+[   32.093199] Bluetooth: MGMT ver 1.23
+[   32.098827] systemd[1]: Reached target bluetooth.target - Bluetooth Support.
+[   32.101575] wlbt: [BT_COMMON]: scsc_bt_h4_open: (h4_users=0)
+[   32.102369] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/bluetooth/bt.hcf
+[   32.102424] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/bluetooth/bt.hcf failed with error -2
+[   32.102434] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/leman_s620_univ/bluetooth/bt.hcf
+[   32.102455] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/leman_s620_univ/bluetooth/bt.hcf failed with error -2
+[   32.112173] Bluetooth: hci0: unexpected event for opcode 0x0000
+[   32.801922] URfkill[1463]: Setting device 0 (BLUETOOTH) to unblocked
+[   32.802383] URfkill[1463]: set_soft: Setting BLUETOOTH to unblocked
+[   32.814597] URfkill[1463]: Setting device 2 (BLUETOOTH) to unblocked
+[   32.815043] URfkill[1463]: set_soft: Setting BLUETOOTH to unblocked
+[   32.816768] URfkill[1463]: Setting BLUETOOTH devices to unblocked
+[   32.817174] URfkill[1463]: set_soft: Setting BLUETOOTH to unblocked
+[   32.826284] URfkill[1463]: set_soft: Setting BLUETOOTH to unblocked
+[   36.308438] systemd[2056]: mpris-proxy.service - Bluetooth mpris proxy was skipped because of an unmet condition check (ConditionUser=!@system).
+[   85.925074] URfkill[1463]: device_changed_cb: scsc-bluez-rfkill
+[   87.939101] Bluetooth: hci0: command 0x0c1a tx timeout
+[   87.939184] Bluetooth: hci0: Opcode 0x0c1a failed: -110
+[   87.939206] Bluetooth: hci0: Error when powering off device on rfkill (-110)
+[   87.939302] wlbt: [BT_H4]: scsc_bt_shm_h4_read_kernel: BT_READ_OP_HCI_EVT_ERROR
+[   87.939315] wlbt: [BT_COMMON]: slsi_bt_fs_read_func: BT BlueZ: Exiting slsi_bt_fs_read_func
+[   87.939344] wlbt: [BT_COMMON]: scsc_bt_h4_release:
+[   88.058155] rfkill[4072]: block set for type bluetooth
+[   88.062895] URfkill[1463]: device_changed_cb: hci0
+[   88.068438] systemd[1]: Stopped target bluetooth.target - Bluetooth Support.
+[   88.073190] URfkill[1463]: removing killswitch idx 2 hci0
+[   88.076326] pulseaudio[2132]: org.bluez.BatteryProviderManager1.UnregisterBatteryProvider() Failed: org.freedesktop.DBus.Error.UnknownObject:Method "UnregisterBatteryProvider" with signature "o" on interface "org.bluez.BatteryProviderManager1" doesn't exist
+[   92.117499] URfkill[1463]: device_changed_cb: scsc-bluez-rfkill
+[   92.119388] wlbt: [BT_COMMON]: scsc_bt_h4_open: (h4_users=0)
+[   92.120001] rfkill[4209]: unblock set for type bluetooth
+[   92.121037] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/bluetooth/bt.hcf
+[   92.121133] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/bluetooth/bt.hcf failed with error -2
+[   92.121155] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/leman_s620_univ/bluetooth/bt.hcf
+[   92.121209] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/leman_s620_univ/bluetooth/bt.hcf failed with error -2
+[   92.132226] systemd[2056]: Reached target bluetooth.target - Bluetooth.
+[   92.134362] URfkill[1463]: Setting device 3 (BLUETOOTH) to unblocked
+[   92.134519] URfkill[1463]: set_soft: Setting BLUETOOTH to unblocked
+[   92.141350] systemd[1]: Reached target bluetooth.target - Bluetooth Support.
+[   92.262843] Bluetooth: MGMT ver 1.23
+[  107.352248] bluetoothd[1621]: src/profile.c:record_cb() No SDP records found for Headset Voice gateway
+[  110.032629] bluetoothd[1621]: src/profile.c:record_cb() No SDP records found for Headset Voice gateway
+[  119.104509] bluetoothd[1621]: Disconnecting failed: already disconnected
+[  119.105012] bluetoothd[1621]: No matching connection for device
+[  123.660777] bluetoothd[1621]: src/profile.c:record_cb() No SDP records found for Headset Voice gateway
+[  123.937741] bluetoothd[1621]: profiles/audio/avctp.c:avctp_control_confirm() Control: Refusing unexpected connect
+[  125.011918] bluetoothd[1621]: profiles/audio/avctp.c:avctp_connect_cb() connect to <mac>: Connection refused (111)
+[  126.031619] bluetoothd[1621]: src/profile.c:record_cb() No SDP records found for Headset Voice gateway

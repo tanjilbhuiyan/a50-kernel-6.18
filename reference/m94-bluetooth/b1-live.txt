@@ -1,0 +1,423 @@
+
+CMD: uname -r
+6.18.33-a50-diag+
+RC=0
+
+CMD: cat /proc/uptime
+37.86 220.44
+RC=0
+
+CMD: rfkill list
+0: scsc-bluez-rfkill: Bluetooth
+	Soft blocked: yes
+	Hard blocked: no
+1: phy0: Wireless LAN
+	Soft blocked: no
+	Hard blocked: no
+RC=0
+
+CMD: sh -c ls -l /dev | grep -E "scsc|vhci|uhid"; ls /sys/bus/platform/devices | grep -i -E "bluez|scsc"
+crw-------   1 root   root          247,   0 Apr 30  2026 scsc_h4_0
+scsc-bluez
+RC=0
+hci:
+
+CMD: systemctl show bluetooth.service bluebinder.service -p Id -p ActiveState -p SubState -p NRestarts
+NRestarts=0
+Id=bluetooth.service
+ActiveState=active
+SubState=running
+
+NRestarts=5
+Id=bluebinder.service
+ActiveState=activating
+SubState=auto-restart
+RC=0
+
+M94_B1_PROBE_LOG
+[    0.312033] Bluetooth: HCI UART protocol H4 registered
+[    0.363388] Bluetooth: RFCOMM TTY layer initialized
+[    0.363399] Bluetooth: RFCOMM socket layer initialized
+[    0.363414] Bluetooth: RFCOMM ver 1.11
+[    0.363422] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
+[    0.363428] Bluetooth: BNEP filters: protocol multicast
+[    0.363434] Bluetooth: BNEP socket layer initialized
+[    0.363439] Bluetooth: HIDP (Human Interface Emulation) ver 1.2
+[    0.363447] Bluetooth: HIDP socket layer initialized
+[    0.393835] wlbt: [MXMAN_TEST]: client_module_probe: mx140:
+[    0.393845] wlbt: [MXMAN_TEST]: client_module_probe: OK
+[   21.293448] systemd[1]: Mounting var-lib-bluetooth.mount - /var/lib/bluetooth...
+[   21.567314] systemd[1]: Mounted var-lib-bluetooth.mount - /var/lib/bluetooth.
+[   23.298470] init: Parsing file /vendor/etc/init/android.hardware.bluetooth@1.0-service.rc...
+[   29.895147] init: starting service 'vendor.bluetooth-1-0'...
+[   29.896979] init: createProcessGroup(1002, 126) failed for service 'vendor.bluetooth-1-0': Read-only file system
+[   30.182630] systemd[1]: Starting bluetooth-touch.service - Bluetooth init for Touch devices...
+[   30.978333] systemd[1]: bluetooth-touch.service: Deactivated successfully.
+[   30.978889] systemd[1]: Started bluetooth-touch.service - Bluetooth init for Touch devices.
+[   31.965997] wlbt: [MXMAN]: scsc_mx_service_open: 1
+[   31.966006] wlbt: [MXMAN]: __mxman_open: Auto-recovery: off
+[   31.966137] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_map: Map: virt 000000007614b969 phys 8fd600000
+[   31.966154] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_register_irq: Registering IRQs
+[   31.966164] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_register_irq: Registering MBOX irq: 70 flag 0x4
+[   31.966209] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_register_irq: Registering WDOG irq: 72 flag 0x4
+[   31.966229] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_register_irq: Registering CFG_REQ irq: 73 flag 0x4
+[   31.966248] wlbt: [MXMAN]: mxman_start: Allocated 16777216 bytes
+[   31.966256] wlbt: [MX_FILE]: mx140_file_download_fw: try 0
+[   31.966263] wlbt: [MX_FILE]: __mx140_file_download_fw: firmware_variant=mx140 ()
+[   31.966271] wlbt: [MX_FILE]: __mx140_file_download_fw: Load WLBT fw mx140.bin in shared address 000000007614b969
+[   31.975899] wlbt: [FW_LOAD]: fwhdr_parse_v02: hdr_length=420
+[   31.975926] wlbt: [MXMAN]: fwhdr_init: FW HEADER version: hdr_major: 1 hdr_minor: 0
+[   31.975936] wlbt: [MXMAN]: fwhdr_init: FWAPI version: fwapi_major: 0 fwapi_minor: 2
+[   31.982284] wlbt: [MXMAN]: fw_init: Firmware BUILD_ID: O|7358|2021-11-15 11:50:16 UTC|leman_s620|S620_E9610_R3-1_Y21W46A
+[   31.982315] wlbt: [MXMAN]: fw_init: Firmware ttid: 0016369771614143d0da5284b5a0bfc
+[   31.982326] wlbt: [MIF]: miframman_init: MIFRAMMAN_BLOCK_SIZE = 64
+[   31.982359] wlbt: [MIF]: miframman_init: MIFRAMMAN_BLOCK_SIZE = 64
+[   31.982395] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_irq_reg_handler: Registering mif int handler mifiintrman_isr+0x0/0xe0 in 0000000002a903ca 000000002377fa0d
+[   31.991187] wlbt: [GDB_TRANS]: gdb_transport_probe_registered_clients: No clients registered
+[   31.992171] wlbt: [GDB_TRANS]: gdb_transport_probe_registered_clients: No clients registered
+[   31.997010] wlbt: [MXLOG_TRANS]: mxlog_thread_start: Started thread mxlog_thread
+[   31.997199] wlbt: [MXMAN]: transports_init: mxconf flags 0x00000000
+[   32.000526] wlbt: [MX_FW]: mxlog_init: Loaded 881149 bytes of log-strings from common/log-strings.bin
+[   32.000555] wlbt: [MX_FW]: mxlog_init: Log-strings is versioned...checking against fw_build_id.
+[   32.000589] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_irq_reg_reset_request_handler: Registering mif reset_request int handler panicmon_isr+0x0/0x28 in 0000000002a903ca 000000002377fa0d
+[   32.000617] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_power: power 1
+[   32.000633] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_hold_reset: reset 0
+[   32.000644] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_start: start 1
+[   32.000655] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_start: update WIFI_CTRL_S[WIFI_START]: 0
+[   32.002185] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_cfg_req_isr: INT received
+[   32.002347] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_cfg_req_isr: SMC_CMD_CONN_IF run successfully : 0
+[   32.002374] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_cfg_req_isr: CHIP_VERSION_ID 0xa4942824 end
+[   32.002447] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_cfg_req_isr: BOOT_CFG_ACK done
+[   32.017732] wlbt: [MXMAN]: mxman_message_handler: Received MM_START_IND message from the firmware, arg=0x0000
+[   32.017786] wlbt: [MXMAN]: mxman_print_versions: RF_CHIP_VERSION: 0x0000: Unknown (0x00), EVT0.0
+[   32.017804] wlbt: [MXMAN]: mxman_print_versions: WLBT FW: O|7358|2021-11-15 11:50:16 UTC|leman_s620|S620_E9610_R3-1_Y21W46A
+[   32.017827] wlbt: [MXMAN]: mxman_print_versions: WLBT Driver: 11.19.0.18.0
+[   32.017916] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/wlan/wlan.hcf
+[   32.018019] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/leman_s620_univ/wlan/wlan.hcf
+[   32.018061] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140_wlan.hcf
+[   32.018366] wlbt: [MX_FILE]: __mx140_file_request_conf: loaded mx140_wlan.hcf
+[   32.018413] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/wlan/wlan_sw.hcf
+[   32.018476] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/leman_s620_univ/wlan/wlan_sw.hcf
+[   32.018517] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140_wlan_sw.hcf
+[   32.020733] wlbt: [MX_FILE]: __mx140_file_request_conf: loaded mx140_wlan_sw.hcf
+[   32.024777] wlbt: [MXMAN]: scsc_mx_service_start: 1
+[   32.156932] wlbt: [MXMAN]: srv_message_handler: Received SM_MSG_START_CFM message service=00000000305890ca with service_id=1 from the firmware
+[   32.157115] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/wlan/localmib.hcf
+[   32.157200] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/leman_s620_univ/wlan/localmib.hcf
+[   32.157241] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140_localmib.hcf
+[   32.204137] wlbt: [MX_FILE]: __mx140_release_firmware: firmp=0000000000000000
+[   32.375343] URfkill[1392]: Setting device 0 (BLUETOOTH) to blocked
+[   32.375608] URfkill[1392]: set_soft: Setting BLUETOOTH to blocked
+[   32.392097] URfkill[1392]: Setting BLUETOOTH devices to blocked
+[   32.392332] URfkill[1392]: set_soft: Setting BLUETOOTH to blocked
+[   36.100803] binder_debug: 7 callbacks suppressed
+[   36.837610] (uetoothd)[2249]: bluetooth.service: ConfigurationDirectory 'bluetooth' already exists but the mode is different. (File system: 755 ConfigurationDirectoryMode: 555)
+[   36.838204] systemd[1]: Starting bluetooth.service - Bluetooth service...
+[   37.011499] systemd[1]: Started bluetooth.service - Bluetooth service.
+[   37.152743] systemd[2154]: mpris-proxy.service - Bluetooth mpris proxy was skipped because of an unmet condition check (ConditionUser=!@system).
+
+M94_B1_UNBLOCK uptime=90.93
+
+CMD: rfkill unblock bluetooth
+RC=0
+hci0_after_s=0
+hci: hci0
+
+CMD: rfkill list bluetooth
+0: scsc-bluez-rfkill: Bluetooth
+	Soft blocked: no
+	Hard blocked: no
+2: hci0: Bluetooth
+	Soft blocked: no
+	Hard blocked: no
+RC=0
+
+CMD: btmgmt info
+Index list with 1 item
+hci0:	Primary controller
+	addr <mac> version 9 manufacturer 117 class 0x1c020c
+	supported settings: powered connectable fast-connectable discoverable bondable link-security ssp br/edr le advertising secure-conn debug-keys privacy static-addr phy-configuration ll-privacy
+	current settings: powered bondable ssp br/edr le secure-conn ll-privacy
+	name SM-A505F
+	short name
+RC=0
+
+CMD: sh -c bluetoothctl power on
+Changing power on succeeded
+RC=0
+
+CMD: btmgmt info
+Index list with 1 item
+hci0:	Primary controller
+	addr <mac> version 9 manufacturer 117 class 0x1c020c
+	supported settings: powered connectable fast-connectable discoverable bondable link-security ssp br/edr le advertising secure-conn debug-keys privacy static-addr phy-configuration ll-privacy
+	current settings: powered bondable ssp br/edr le secure-conn ll-privacy
+	name SM-A505F
+	short name
+RC=0
+
+M94_B1_SCAN uptime=97.13
+
+CMD: sh -c bluetoothctl --timeout 15 scan on >/dev/null 2>&1; bluetoothctl devices | wc -l
+6
+RC=0
+
+M94_B1_UNBLOCK_LOG
+[    0.000000] printk: debug: ignoring loglevel setting.
+[    0.052046] Bluetooth: Core ver 2.22
+[    0.052065] NET: Registered PF_BLUETOOTH protocol family
+[    0.052071] Bluetooth: HCI device and connection manager initialized
+[    0.052080] Bluetooth: HCI socket layer initialized
+[    0.052087] Bluetooth: L2CAP socket layer initialized
+[    0.052096] Bluetooth: SCO socket layer initialized
+[    0.104213] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_create: Creating MIF platform device
+[    0.104228] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_create: platform->mem_start 0x8fd600000 platform->mem_size 0x1000000
+[    0.104251] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_create: platform->reg_start 119c0000 size 180 base (____ptrval____)
+[    0.104310] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_create: MBOX irq 70 flag 0x4
+[    0.104341] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_create: ALIVE irq 71 flag 0x4
+[    0.104369] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_create: WDOG irq 72 flag 0x4
+[    0.104398] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_create: CFG_REQ irq 73 flag 0x4
+[    0.104590] wlbt: [MXMAN]: scsc_mx_module_init: mx140 Core Driver scsc_release 11.19.0.18.0
+[    0.104716] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_irq_reg_handler: Registering mif int handler mifiintrman_isr+0x0/0xe0 in (____ptrval____) (____ptrval____)
+[    0.104741] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_suspend_reg_handler: Registering mif suspend/resume handlers in (____ptrval____) (____ptrval____)
+[    0.105021] wlbt: [LERNA]: scsc_lerna_init: lerna intialisation complete.
+[    0.105029] wlbt: [MXMAN]: srvman_init:
+[    0.105034] wlbt: [MXMAN]: srvman_set_error: error:0
+[    0.105041] wlbt: [MXMAN]: mx_syserr_init: MM_SYSERR_INIT: syserr_reset_min_interval 300000 syserr_reset_monitor_period 3600000
+[    0.105076] wlbt: [MXMAN]: scsc_mx_module_probe_registered_clients: No clients registered
+[    0.105085] wlbt: [BT_COMMON]: scsc_bt_module_init: SCSC MX BT Driver -devel (C) Samsung Electronics Co., Ltd
+[    0.105195] wlbt: [BT_COMMON]: slsi_bt_service_probe: BT service probe (BT driver (____ptrval____))
+[    0.105206] wlbt: [BT_COMMON]: slsi_bt_notify_probe: SLSI BT BlueZ probe
+[    0.312026] Bluetooth: HCI UART driver ver 2.3
+[    0.312033] Bluetooth: HCI UART protocol H4 registered
+[    0.363388] Bluetooth: RFCOMM TTY layer initialized
+[    0.363399] Bluetooth: RFCOMM socket layer initialized
+[    0.363414] Bluetooth: RFCOMM ver 1.11
+[    0.363422] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
+[    0.363428] Bluetooth: BNEP filters: protocol multicast
+[    0.363434] Bluetooth: BNEP socket layer initialized
+[    0.363439] Bluetooth: HIDP (Human Interface Emulation) ver 1.2
+[    0.363447] Bluetooth: HIDP socket layer initialized
+[    0.393835] wlbt: [MXMAN_TEST]: client_module_probe: mx140:
+[    0.393845] wlbt: [MXMAN_TEST]: client_module_probe: OK
+[   21.293448] systemd[1]: Mounting var-lib-bluetooth.mount - /var/lib/bluetooth...
+[   21.567314] systemd[1]: Mounted var-lib-bluetooth.mount - /var/lib/bluetooth.
+[   23.298470] init: Parsing file /vendor/etc/init/android.hardware.bluetooth@1.0-service.rc...
+[   29.895147] init: starting service 'vendor.bluetooth-1-0'...
+[   29.896979] init: createProcessGroup(1002, 126) failed for service 'vendor.bluetooth-1-0': Read-only file system
+[   30.182630] systemd[1]: Starting bluetooth-touch.service - Bluetooth init for Touch devices...
+[   30.978333] systemd[1]: bluetooth-touch.service: Deactivated successfully.
+[   30.978889] systemd[1]: Started bluetooth-touch.service - Bluetooth init for Touch devices.
+[   31.965997] wlbt: [MXMAN]: scsc_mx_service_open: 1
+[   31.966006] wlbt: [MXMAN]: __mxman_open: Auto-recovery: off
+[   31.966137] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_map: Map: virt 000000007614b969 phys 8fd600000
+[   31.966154] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_register_irq: Registering IRQs
+[   31.966164] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_register_irq: Registering MBOX irq: 70 flag 0x4
+[   31.966209] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_register_irq: Registering WDOG irq: 72 flag 0x4
+[   31.966229] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_register_irq: Registering CFG_REQ irq: 73 flag 0x4
+[   31.966248] wlbt: [MXMAN]: mxman_start: Allocated 16777216 bytes
+[   31.966256] wlbt: [MX_FILE]: mx140_file_download_fw: try 0
+[   31.966263] wlbt: [MX_FILE]: __mx140_file_download_fw: firmware_variant=mx140 ()
+[   31.966271] wlbt: [MX_FILE]: __mx140_file_download_fw: Load WLBT fw mx140.bin in shared address 000000007614b969
+[   31.975899] wlbt: [FW_LOAD]: fwhdr_parse_v02: hdr_length=420
+[   31.975926] wlbt: [MXMAN]: fwhdr_init: FW HEADER version: hdr_major: 1 hdr_minor: 0
+[   31.975936] wlbt: [MXMAN]: fwhdr_init: FWAPI version: fwapi_major: 0 fwapi_minor: 2
+[   31.982284] wlbt: [MXMAN]: fw_init: Firmware BUILD_ID: O|7358|2021-11-15 11:50:16 UTC|leman_s620|S620_E9610_R3-1_Y21W46A
+[   31.982315] wlbt: [MXMAN]: fw_init: Firmware ttid: 0016369771614143d0da5284b5a0bfc
+[   31.982326] wlbt: [MIF]: miframman_init: MIFRAMMAN_BLOCK_SIZE = 64
+[   31.982359] wlbt: [MIF]: miframman_init: MIFRAMMAN_BLOCK_SIZE = 64
+[   31.982395] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_irq_reg_handler: Registering mif int handler mifiintrman_isr+0x0/0xe0 in 0000000002a903ca 000000002377fa0d
+[   31.991187] wlbt: [GDB_TRANS]: gdb_transport_probe_registered_clients: No clients registered
+[   31.992171] wlbt: [GDB_TRANS]: gdb_transport_probe_registered_clients: No clients registered
+[   31.997010] wlbt: [MXLOG_TRANS]: mxlog_thread_start: Started thread mxlog_thread
+[   31.997199] wlbt: [MXMAN]: transports_init: mxconf flags 0x00000000
+[   32.000526] wlbt: [MX_FW]: mxlog_init: Loaded 881149 bytes of log-strings from common/log-strings.bin
+[   32.000555] wlbt: [MX_FW]: mxlog_init: Log-strings is versioned...checking against fw_build_id.
+[   32.000589] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_irq_reg_reset_request_handler: Registering mif reset_request int handler panicmon_isr+0x0/0x28 in 0000000002a903ca 000000002377fa0d
+[   32.000617] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_power: power 1
+[   32.000633] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_hold_reset: reset 0
+[   32.000644] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_start: start 1
+[   32.000655] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_start: update WIFI_CTRL_S[WIFI_START]: 0
+[   32.002185] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_cfg_req_isr: INT received
+[   32.002347] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_cfg_req_isr: SMC_CMD_CONN_IF run successfully : 0
+[   32.002374] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_cfg_req_isr: CHIP_VERSION_ID 0xa4942824 end
+[   32.002447] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_cfg_req_isr: BOOT_CFG_ACK done
+[   32.017732] wlbt: [MXMAN]: mxman_message_handler: Received MM_START_IND message from the firmware, arg=0x0000
+[   32.017786] wlbt: [MXMAN]: mxman_print_versions: RF_CHIP_VERSION: 0x0000: Unknown (0x00), EVT0.0
+[   32.017804] wlbt: [MXMAN]: mxman_print_versions: WLBT FW: O|7358|2021-11-15 11:50:16 UTC|leman_s620|S620_E9610_R3-1_Y21W46A
+[   32.017827] wlbt: [MXMAN]: mxman_print_versions: WLBT Driver: 11.19.0.18.0
+[   32.017916] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/wlan/wlan.hcf
+[   32.018019] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/leman_s620_univ/wlan/wlan.hcf
+[   32.018061] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140_wlan.hcf
+[   32.018366] wlbt: [MX_FILE]: __mx140_file_request_conf: loaded mx140_wlan.hcf
+[   32.018413] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/wlan/wlan_sw.hcf
+[   32.018476] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/leman_s620_univ/wlan/wlan_sw.hcf
+[   32.018517] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140_wlan_sw.hcf
+[   32.020733] wlbt: [MX_FILE]: __mx140_file_request_conf: loaded mx140_wlan_sw.hcf
+[   32.024777] wlbt: [MXMAN]: scsc_mx_service_start: 1
+[   32.156932] wlbt: [MXMAN]: srv_message_handler: Received SM_MSG_START_CFM message service=00000000305890ca with service_id=1 from the firmware
+[   32.157115] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/wlan/localmib.hcf
+[   32.157200] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/leman_s620_univ/wlan/localmib.hcf
+[   32.157241] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140_localmib.hcf
+[   32.204137] wlbt: [MX_FILE]: __mx140_release_firmware: firmp=0000000000000000
+[   32.375343] URfkill[1392]: Setting device 0 (BLUETOOTH) to blocked
+[   32.375608] URfkill[1392]: set_soft: Setting BLUETOOTH to blocked
+[   32.392097] URfkill[1392]: Setting BLUETOOTH devices to blocked
+[   32.392332] URfkill[1392]: set_soft: Setting BLUETOOTH to blocked
+[   36.100803] binder_debug: 7 callbacks suppressed
+[   36.837610] (uetoothd)[2249]: bluetooth.service: ConfigurationDirectory 'bluetooth' already exists but the mode is different. (File system: 755 ConfigurationDirectoryMode: 555)
+[   36.838204] systemd[1]: Starting bluetooth.service - Bluetooth service...
+[   37.011499] systemd[1]: Started bluetooth.service - Bluetooth service.
+[   37.152743] systemd[2154]: mpris-proxy.service - Bluetooth mpris proxy was skipped because of an unmet condition check (ConditionUser=!@system).
+[   90.952840] URfkill[1392]: device_changed_cb: scsc-bluez-rfkill
+[   90.954789] rfkill[4810]: unblock set for type bluetooth
+[   90.955208] wlbt: [BT_COMMON]: slsi_bt_open: enter
+[   90.955222] wlbt: [BT_COMMON]: scsc_bt_h4_open: (h4_users=0)
+[   90.955229] wlbt: [MXMAN]: scsc_mx_service_open: 2
+[   90.955236] wlbt: [MXMAN]: __mxman_open: Auto-recovery: off
+[   90.955240] wlbt: [MXMAN]: __mxman_open: Already opened: users=2
+[   90.955245] wlbt: [MXMAN]: mxman_print_versions: RF_CHIP_VERSION: 0x0000: Unknown (0x00), EVT0.0
+[   90.955249] wlbt: [MXMAN]: mxman_print_versions: WLBT FW: O|7358|2021-11-15 11:50:16 UTC|leman_s620|S620_E9610_R3-1_Y21W46A
+[   90.955253] wlbt: [MXMAN]: mxman_print_versions: WLBT Driver: 11.19.0.18.0
+[   90.956018] wlbt: [BT_COMMON]: slsi_sm_bt_service_start: regions (bhcs_ref=0x005dec20, bsmhcp_ref=0x005deca0, config_ref=0x00000000, abox_ref=0x00000000)
+[   90.956030] wlbt: [BT_COMMON]: slsi_sm_bt_service_start: version=2
+[   90.956038] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/bluetooth/bt.hcf
+[   90.956104] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/bluetooth/bt.hcf failed with error -2
+[   90.956119] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/leman_s620_univ/bluetooth/bt.hcf
+[   90.956143] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/leman_s620_univ/bluetooth/bt.hcf failed with error -2
+[   90.956150] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140_bt.hcf
+[   90.959509] wlbt: [MX_FILE]: __mx140_file_request_conf: loaded mx140_bt.hcf
+[   90.959980] wlbt: [MXMAN]: scsc_mx_service_start: 2
+[   90.961748] wlbt: [MXMAN]: srv_message_handler: Received SM_MSG_START_CFM message service=00000000a0cfbe7d with service_id=2 from the firmware
+[   90.962808] wlbt: [BT_COMMON]: slsi_bt_open: done
+[   90.966748] Bluetooth: hci0: unexpected event for opcode 0x0000
+[   90.969912] URfkill[1392]: Setting device 2 (BLUETOOTH) to unblocked
+[   90.970087] URfkill[1392]: set_soft: Setting BLUETOOTH to unblocked
+[   90.987186] systemd[2154]: Reached target bluetooth.target - Bluetooth.
+[   91.023067] systemd[1]: Reached target bluetooth.target - Bluetooth Support.
+[   91.105990] Bluetooth: MGMT ver 1.23
+
+M94_B1_BLOCK uptime=112.29
+
+CMD: rfkill block bluetooth
+RC=0
+hci:
+
+CMD: rfkill unblock bluetooth
+RC=0
+hci0_again_after_s=0
+hci: hci0
+
+CMD: btmgmt info
+Index list with 1 item
+hci0:	Primary controller
+	addr <mac> version 9 manufacturer 117 class 0x1c020c
+	supported settings: powered connectable fast-connectable discoverable bondable link-security ssp br/edr le advertising secure-conn debug-keys privacy static-addr phy-configuration ll-privacy
+	current settings: powered bondable ssp br/edr le secure-conn ll-privacy
+	name SM-A505F
+	short name
+RC=0
+
+M94_B1_FINAL uptime=120.55
+
+CMD: sh -c grep -E "wlbt|scsc" /proc/interrupts | tr -s " "; cat /proc/sys/kernel/tainted
+ 70: 623 0 0 0 0 0 0 0 GIC-0 74 Level scsc_wlbt
+ 72: 0 0 0 0 0 0 0 0 GIC-0 104 Level scsc_wlbt
+ 73: 1 0 0 0 0 0 0 0 GIC-0 105 Level scsc_wlbt
+512
+RC=0
+
+CMD: systemctl show bluetooth.service bluebinder.service -p Id -p ActiveState -p SubState -p NRestarts
+NRestarts=0
+Id=bluetooth.service
+ActiveState=active
+SubState=running
+
+NRestarts=72
+Id=bluebinder.service
+ActiveState=activating
+SubState=auto-restart
+RC=0
+faults=0
+
+M94_B1_FINAL_LOG
+[   32.392097] URfkill[1392]: Setting BLUETOOTH devices to blocked
+[   32.392332] URfkill[1392]: set_soft: Setting BLUETOOTH to blocked
+[   36.100803] binder_debug: 7 callbacks suppressed
+[   36.837610] (uetoothd)[2249]: bluetooth.service: ConfigurationDirectory 'bluetooth' already exists but the mode is different. (File system: 755 ConfigurationDirectoryMode: 555)
+[   36.838204] systemd[1]: Starting bluetooth.service - Bluetooth service...
+[   37.011499] systemd[1]: Started bluetooth.service - Bluetooth service.
+[   37.152743] systemd[2154]: mpris-proxy.service - Bluetooth mpris proxy was skipped because of an unmet condition check (ConditionUser=!@system).
+[   90.952840] URfkill[1392]: device_changed_cb: scsc-bluez-rfkill
+[   90.954789] rfkill[4810]: unblock set for type bluetooth
+[   90.955208] wlbt: [BT_COMMON]: slsi_bt_open: enter
+[   90.955222] wlbt: [BT_COMMON]: scsc_bt_h4_open: (h4_users=0)
+[   90.955229] wlbt: [MXMAN]: scsc_mx_service_open: 2
+[   90.955236] wlbt: [MXMAN]: __mxman_open: Auto-recovery: off
+[   90.955240] wlbt: [MXMAN]: __mxman_open: Already opened: users=2
+[   90.955245] wlbt: [MXMAN]: mxman_print_versions: RF_CHIP_VERSION: 0x0000: Unknown (0x00), EVT0.0
+[   90.955249] wlbt: [MXMAN]: mxman_print_versions: WLBT FW: O|7358|2021-11-15 11:50:16 UTC|leman_s620|S620_E9610_R3-1_Y21W46A
+[   90.955253] wlbt: [MXMAN]: mxman_print_versions: WLBT Driver: 11.19.0.18.0
+[   90.956018] wlbt: [BT_COMMON]: slsi_sm_bt_service_start: regions (bhcs_ref=0x005dec20, bsmhcp_ref=0x005deca0, config_ref=0x00000000, abox_ref=0x00000000)
+[   90.956030] wlbt: [BT_COMMON]: slsi_sm_bt_service_start: version=2
+[   90.956038] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/bluetooth/bt.hcf
+[   90.956104] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/bluetooth/bt.hcf failed with error -2
+[   90.956119] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/leman_s620_univ/bluetooth/bt.hcf
+[   90.956143] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/leman_s620_univ/bluetooth/bt.hcf failed with error -2
+[   90.956150] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140_bt.hcf
+[   90.959509] wlbt: [MX_FILE]: __mx140_file_request_conf: loaded mx140_bt.hcf
+[   90.959980] wlbt: [MXMAN]: scsc_mx_service_start: 2
+[   90.961748] wlbt: [MXMAN]: srv_message_handler: Received SM_MSG_START_CFM message service=00000000a0cfbe7d with service_id=2 from the firmware
+[   90.962808] wlbt: [BT_COMMON]: slsi_bt_open: done
+[   90.966748] Bluetooth: hci0: unexpected event for opcode 0x0000
+[   90.969912] URfkill[1392]: Setting device 2 (BLUETOOTH) to unblocked
+[   90.970087] URfkill[1392]: set_soft: Setting BLUETOOTH to unblocked
+[   90.987186] systemd[2154]: Reached target bluetooth.target - Bluetooth.
+[   91.023067] systemd[1]: Reached target bluetooth.target - Bluetooth Support.
+[   91.105990] Bluetooth: MGMT ver 1.23
+[  112.309148] wlbt: [BT_COMMON]: slsi_bt_close: terminating reader thread
+[  112.309187] wlbt: [BT_H4]: scsc_bt_shm_h4_read_kernel: BT_READ_OP_HCI_EVT_ERROR
+[  112.309202] wlbt: [BT_COMMON]: slsi_bt_fs_read_func: BT BlueZ: Exiting slsi_bt_fs_read_func
+[  112.309735] URfkill[1392]: device_changed_cb: scsc-bluez-rfkill
+[  112.312774] wlbt: [BT_COMMON]: slsi_bt_close: releasing service
+[  112.312800] wlbt: [BT_COMMON]: scsc_bt_h4_release:
+[  112.312809] wlbt: [BT_COMMON]: slsi_sm_bt_service_stop: bt service users 1
+[  112.312818] wlbt: [MXMAN]: scsc_mx_service_stop: 2
+[  112.428238] wlbt: [MXMAN]: srv_message_handler: Received SM_MSG_STOP_CFM message for service=00000000a0cfbe7d with service_id=2 from the firmware
+[  112.428332] wlbt: [MXMAN]: scsc_mx_service_close: 2
+[  112.428349] wlbt: [MXMAN]: mxman_close:
+[  112.428356] wlbt: [MXMAN]: mxman_close: Current number of users=1
+[  112.428429] wlbt: [BT_COMMON]: slsi_bt_close: done
+[  112.428922] URfkill[1392]: device_changed_cb: hci0
+[  112.431670] rfkill[5477]: block set for type bluetooth
+[  112.438591] URfkill[1392]: removing killswitch idx 2 hci0
+[  112.439080] systemd[2154]: Stopped target bluetooth.target - Bluetooth.
+[  112.440728] systemd[1]: Stopped target bluetooth.target - Bluetooth Support.
+[  112.476432] pulseaudio[2209]: org.bluez.BatteryProviderManager1.UnregisterBatteryProvider() Failed: org.freedesktop.DBus.Error.UnknownObject:Method "UnregisterBatteryProvider" with signature "o" on interface "org.bluez.BatteryProviderManager1" doesn't exist
+[  117.481818] wlbt: [BT_COMMON]: slsi_bt_open: enter
+[  117.481836] wlbt: [BT_COMMON]: scsc_bt_h4_open: (h4_users=0)
+[  117.481842] wlbt: [MXMAN]: scsc_mx_service_open: 2
+[  117.481848] wlbt: [MXMAN]: __mxman_open: Auto-recovery: off
+[  117.481852] wlbt: [MXMAN]: __mxman_open: Already opened: users=2
+[  117.481857] wlbt: [MXMAN]: mxman_print_versions: RF_CHIP_VERSION: 0x0000: Unknown (0x00), EVT0.0
+[  117.481860] wlbt: [MXMAN]: mxman_print_versions: WLBT FW: O|7358|2021-11-15 11:50:16 UTC|leman_s620|S620_E9610_R3-1_Y21W46A
+[  117.481864] wlbt: [MXMAN]: mxman_print_versions: WLBT Driver: 11.19.0.18.0
+[  117.482632] wlbt: [BT_COMMON]: slsi_sm_bt_service_start: regions (bhcs_ref=0x005dec20, bsmhcp_ref=0x005deca0, config_ref=0x00000000, abox_ref=0x00000000)
+[  117.482643] wlbt: [BT_COMMON]: slsi_sm_bt_service_start: version=2
+[  117.482650] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/bluetooth/bt.hcf
+[  117.482706] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/bluetooth/bt.hcf failed with error -2
+[  117.482720] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/leman_s620_univ/bluetooth/bt.hcf
+[  117.482744] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/leman_s620_univ/bluetooth/bt.hcf failed with error -2
+[  117.482751] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140_bt.hcf
+[  117.482784] URfkill[1392]: device_changed_cb: scsc-bluez-rfkill
+[  117.482841] wlbt: [MX_FILE]: __mx140_file_request_conf: loaded mx140_bt.hcf
+[  117.483090] rfkill[5628]: unblock set for type bluetooth
+[  117.483272] wlbt: [MXMAN]: scsc_mx_service_start: 2
+[  117.487154] wlbt: [MXMAN]: srv_message_handler: Received SM_MSG_START_CFM message service=000000006011601c with service_id=2 from the firmware
+[  117.487494] wlbt: [BT_COMMON]: slsi_bt_open: done
+[  117.487560] Bluetooth: hci0: unexpected event for opcode 0x0000
+[  117.494617] URfkill[1392]: Setting device 3 (BLUETOOTH) to unblocked
+[  117.494754] URfkill[1392]: set_soft: Setting BLUETOOTH to unblocked
+[  117.494788] systemd[2154]: Reached target bluetooth.target - Bluetooth.
+[  117.527654] systemd[1]: Reached target bluetooth.target - Bluetooth Support.
+[  117.625695] Bluetooth: MGMT ver 1.23

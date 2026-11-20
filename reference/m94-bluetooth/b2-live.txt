@@ -1,0 +1,150 @@
+
+CMD: uname -r
+6.18.33-a50-diag+
+RC=0
+
+CMD: systemctl show bluetooth.service bluebinder.service -p Id -p LoadState -p ActiveState -p SubState -p NRestarts
+NRestarts=0
+Id=bluetooth.service
+LoadState=loaded
+ActiveState=active
+SubState=running
+
+NRestarts=0
+Id=bluebinder.service
+LoadState=masked
+ActiveState=inactive
+SubState=dead
+RC=0
+
+CMD: rfkill list bluetooth
+0: scsc-bluez-rfkill: Bluetooth
+	Soft blocked: no
+	Hard blocked: no
+2: hci0: Bluetooth
+	Soft blocked: no
+	Hard blocked: no
+RC=0
+
+M94_B2_ON uptime=85.74
+
+CMD: rfkill unblock bluetooth
+RC=0
+hci0_after_s=0
+Changing power on succeeded
+
+M94_B2_SCAN uptime=88.83 (owner: speaker in pairing mode)
+devices_seen=5 audio_sink_found=yes rssi=-100 after_s=12
+
+M94_B2_PAIR uptime=99.18
+Attempting to pair with <mac>
+[[0;93mCHG[0m] Device <mac>
+[[0;93mCHG[0m] Device <mac>
+[[0;93mCHG[0m] Device <mac>
+[[0;93mCHG[0m] Device <mac>
+Changing <mac> trust succeeded
+
+M94_B2_CONNECT uptime=139.31
+Attempting to connect to <mac>
+Failed to connect: org.bluez.Error.Failed br-connection-sdp-search
+	Paired: yes
+	Bonded: yes
+	Trusted: yes
+	Connected: no
+	LegacyPairing: no
+	CablePairing: no
+bluez_sink_present=no
+
+M94_B2_RECONNECT uptime=145.57
+Attempting to disconnect from <mac>
+Disconnection successful
+Attempting to connect to <mac>
+Failed to connect: org.bluez.Error.Failed br-connection-sdp-search
+bluez_sink_after_reconnect=no
+
+M94_B2_CLEANUP uptime=155.77
+Attempting to disconnect from <mac>
+Disconnection successful
+
+M94_B2_FINAL uptime=155.86
+
+CMD: systemctl show bluetooth.service bluebinder.service -p Id -p LoadState -p ActiveState -p SubState -p NRestarts
+NRestarts=0
+Id=bluetooth.service
+LoadState=loaded
+ActiveState=active
+SubState=running
+
+NRestarts=0
+Id=bluebinder.service
+LoadState=masked
+ActiveState=inactive
+SubState=dead
+RC=0
+
+CMD: sh -c grep -E "wlbt|scsc" /proc/interrupts | tr -s " "
+ 70: 996 0 0 0 0 0 0 0 GIC-0 74 Level scsc_wlbt
+ 72: 0 0 0 0 0 0 0 0 GIC-0 104 Level scsc_wlbt
+ 73: 2 0 0 0 0 0 0 0 GIC-0 105 Level scsc_wlbt
+RC=0
+faults=0
+
+M94_B2_LOG
+[    0.000000] printk: debug: ignoring loglevel setting.
+[    0.058486] Bluetooth: Core ver 2.22
+[    0.058538] NET: Registered PF_BLUETOOTH protocol family
+[    0.058550] Bluetooth: HCI device and connection manager initialized
+[    0.058570] Bluetooth: HCI socket layer initialized
+[    0.058584] Bluetooth: L2CAP socket layer initialized
+[    0.058602] Bluetooth: SCO socket layer initialized
+[    0.150387] wlbt: [BT_COMMON]: scsc_bt_module_init: SCSC MX BT Driver -devel (C) Samsung Electronics Co., Ltd
+[    0.150699] wlbt: [BT_COMMON]: slsi_bt_notify_probe: SLSI BT BlueZ probe
+[    0.363062] Bluetooth: HCI UART driver ver 2.3
+[    0.363089] Bluetooth: HCI UART protocol H4 registered
+[    0.425455] Bluetooth: RFCOMM TTY layer initialized
+[    0.425495] Bluetooth: RFCOMM socket layer initialized
+[    0.425527] Bluetooth: RFCOMM ver 1.11
+[    0.425544] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
+[    0.425556] Bluetooth: BNEP filters: protocol multicast
+[    0.425571] Bluetooth: BNEP socket layer initialized
+[    0.425582] Bluetooth: HIDP (Human Interface Emulation) ver 1.2
+[    0.425596] Bluetooth: HIDP socket layer initialized
+[   21.749155] systemd[1]: Mounting var-lib-bluetooth.mount - /var/lib/bluetooth...
+[   22.015828] systemd[1]: Mounted var-lib-bluetooth.mount - /var/lib/bluetooth.
+[   23.941802] init: Parsing file /vendor/etc/init/android.hardware.bluetooth@1.0-service.rc...
+[   24.422865] wlbt: [BT_COMMON]: scsc_bt_h4_open: (h4_users=0)
+[   24.459788] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/bluetooth/bt.hcf
+[   24.459861] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/bluetooth/bt.hcf failed with error -2
+[   24.459876] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/leman_s620_univ/bluetooth/bt.hcf
+[   24.459901] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/leman_s620_univ/bluetooth/bt.hcf failed with error -2
+[   24.552279] Bluetooth: hci0: unexpected event for opcode 0x0000
+[   26.754814] wlbt: [BT_H4]: scsc_bt_shm_h4_read_kernel: BT_READ_OP_HCI_EVT_ERROR
+[   26.754849] wlbt: [BT_COMMON]: slsi_bt_fs_read_func: BT BlueZ: Exiting slsi_bt_fs_read_func
+[   26.754891] wlbt: [BT_COMMON]: scsc_bt_h4_release:
+[   30.537148] init: starting service 'vendor.bluetooth-1-0'...
+[   30.538950] init: createProcessGroup(1002, 126) failed for service 'vendor.bluetooth-1-0': Read-only file system
+[   30.759697] systemd[1]: Starting bluetooth-touch.service - Bluetooth init for Touch devices...
+[   31.352186] systemd[1]: bluetooth-touch.service: Deactivated successfully.
+[   31.352629] systemd[1]: Started bluetooth-touch.service - Bluetooth init for Touch devices.
+[   32.119562] systemd[1]: Starting bluetooth.service - Bluetooth service...
+[   32.122571] (uetoothd)[1637]: bluetooth.service: ConfigurationDirectory 'bluetooth' already exists but the mode is different. (File system: 755 ConfigurationDirectoryMode: 555)
+[   32.307970] URfkill[1409]: Setting device 0 (BLUETOOTH) to unblocked
+[   32.308423] URfkill[1409]: set_soft: Setting BLUETOOTH to unblocked
+[   32.327227] URfkill[1409]: Setting device 2 (BLUETOOTH) to unblocked
+[   32.327675] URfkill[1409]: set_soft: Setting BLUETOOTH to unblocked
+[   32.329483] URfkill[1409]: Setting BLUETOOTH devices to unblocked
+[   32.329885] URfkill[1409]: set_soft: Setting BLUETOOTH to unblocked
+[   32.335612] URfkill[1409]: set_soft: Setting BLUETOOTH to unblocked
+[   32.859663] systemd[1]: Started bluetooth.service - Bluetooth service.
+[   32.862591] systemd[1]: Reached target bluetooth.target - Bluetooth Support.
+[   32.970288] Bluetooth: MGMT ver 1.23
+[   32.982781] wlbt: [BT_COMMON]: scsc_bt_h4_open: (h4_users=0)
+[   32.983631] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/bluetooth/bt.hcf
+[   32.983695] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/bluetooth/bt.hcf failed with error -2
+[   32.983715] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/leman_s620_univ/bluetooth/bt.hcf
+[   32.983745] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/leman_s620_univ/bluetooth/bt.hcf failed with error -2
+[   32.992300] Bluetooth: hci0: unexpected event for opcode 0x0000
+[   37.030776] binder_debug: 2 callbacks suppressed
+[   39.946375] systemd[2251]: mpris-proxy.service - Bluetooth mpris proxy was skipped because of an unmet condition check (ConditionUser=!@system).
+[   85.769763] rfkill[4038]: unblock set for type bluetooth
+[   99.471125] systemd[2251]: Reached target bluetooth.target - Bluetooth.
