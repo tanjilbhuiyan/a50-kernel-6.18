@@ -46,8 +46,9 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
 - **Before ticket closure:** A2 PCM/card acceptance and explicit remaining regressions; GIC supplier-readiness guard
   and fault worker's GPR MMIO reads still need review. The clock fix resolves the boot stall, not all recovery paths.
   ADR-0005 audio-HAL deferral remains; no phone speaker/microphone test or calibration change performed.
-- **Outer Git:** parent **1bdebd875cab7670a9637e58a1df86e145c89f02**; current M10.2 tools/logs/evidence/public A1 build
-  pending final publication commit/push. Earlier Claude work preserved, source/test branches not merged into common.
+- **Outer publication source commit:** **9483297** on main, after parent 1bdebd8, records all prior Claude M10.2
+  evidence/tools plus the Codex fix/tests and validated public A1 profile. This final handoff follows it; destination
+  **origin/main**. Earlier Claude work preserved; source/test branches are not merged into common.
 
 ## Earlier handoff (M9 done; M10.1 done; superseded by M10.2 review)
 - **M9 done** (`docs/05-plan.md` M9 DoD evaluation). Wi-Fi S4 (M9.3) and Bluetooth S8 (M9.4: native BlueZ, ADR-0008;
