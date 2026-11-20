@@ -1,0 +1,365 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Fri, 20 Nov 2026 23:21:01 +0600
+Subject: [PATCH 10/14] ASoC: samsung: add the Galaxy A50 ABOX sound card
+
+A machine driver for the ABOX card of the Galaxy A50 (SM-A505F), with
+the DAI link layout of the stock vogue-rt5665 driver so the vendor audio
+HAL finds the same card: name "Exynos9610-Audio", RDMA0-7 and WDMA0-4 as
+DPCM front ends (ALSA devices 0-12; RDMA5 is the compress device) and
+UAIF0/1/2/4, DSIF, SPDY and SIFS0-2 as back ends. The ABOX components get
+the "ABOX" name prefix and the ABOX effect block is an auxiliary device,
+as on stock, so the controls keep the names the HAL mixer paths use.
+
+Each link's DAIs come from a child of the sound node named after the
+link; without a "codec" child the link uses the dummy codec. The codec
+and amplifier links (RT5665, TFA9872) are added later.
+
+6.18 adaptations of the stock driver:
+- links built from DT with snd_soc_of_get_dlc() and the dummy dlc;
+- the Samsung POST_PRE/PRE_POST trigger orders become mainline POST
+  (playback) and PRE (capture), which give the same order;
+- 6.18 calls be_hw_params_fixup() without the stream, so a wrapper
+  finds the stream whose front end is updating the back end and passes
+  it to abox_hw_params_fixup_helper();
+- back-end formats and clock roles from the generic "format",
+  "bitclock-master" and "frame-master" properties.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: Idbe775549bd0dbc90dfc423555027bce3255f6c9
+---
+ sound/soc/samsung/Kconfig          |   8 +
+ sound/soc/samsung/Makefile         |   2 +
+ sound/soc/samsung/exynos9610-a50.c | 289 +++++++++++++++++++++++++++++
+ 3 files changed, 299 insertions(+)
+ create mode 100644 sound/soc/samsung/exynos9610-a50.c
+
+diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
+index 1f5a0d2aa..79d0cb219 100644
+--- a/sound/soc/samsung/Kconfig
++++ b/sound/soc/samsung/Kconfig
+@@ -150,4 +150,12 @@ config SND_SOC_SAMSUNG_MIDAS_WM1811
+ 
+ source "sound/soc/samsung/abox/Kconfig"
+ 
++config SND_SOC_SAMSUNG_EXYNOS9610_A50
++	tristate "ABOX sound card for the Galaxy A50 (Exynos9610)"
++	depends on SND_SOC_SAMSUNG_ABOX
++	help
++	  Say Y to register the ABOX sound card of the Samsung Galaxy A50
++	  (SM-A505F): the ABOX DMA front ends and its UAIF, DSIF, SPDY and
++	  SIFS back ends.
++
+ endif #SND_SOC_SAMSUNG
+diff --git a/sound/soc/samsung/Makefile b/sound/soc/samsung/Makefile
+index 1451b3e89..e1e087b83 100644
+--- a/sound/soc/samsung/Makefile
++++ b/sound/soc/samsung/Makefile
+@@ -2,6 +2,7 @@
+ # S3c24XX Platform Support
+ snd-soc-s3c-dma-y := dmaengine.o
+ snd-soc-idma-y := idma.o
++snd-soc-exynos9610-a50-y := exynos9610-a50.o
+ snd-soc-samsung-spdif-y := spdif.o
+ snd-soc-pcm-y := pcm.o
+ snd-soc-i2s-y := i2s.o
+@@ -43,3 +44,4 @@ obj-$(CONFIG_SND_SOC_SAMSUNG_TM2_WM5110) += snd-soc-tm2-wm5110.o
+ obj-$(CONFIG_SND_SOC_SAMSUNG_ARIES_WM8994) += snd-soc-aries-wm8994.o
+ obj-$(CONFIG_SND_SOC_SAMSUNG_MIDAS_WM1811) += snd-soc-midas-wm1811.o
+ obj-$(CONFIG_SND_SOC_SAMSUNG_ABOX) += abox/
++obj-$(CONFIG_SND_SOC_SAMSUNG_EXYNOS9610_A50) += snd-soc-exynos9610-a50.o
+diff --git a/sound/soc/samsung/exynos9610-a50.c b/sound/soc/samsung/exynos9610-a50.c
+new file mode 100644
+index 000000000..072e475bf
+--- /dev/null
++++ b/sound/soc/samsung/exynos9610-a50.c
+@@ -0,0 +1,289 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Galaxy A50 (Exynos9610) ABOX sound card
++ *
++ * The DAI link layout follows the stock vogue-rt5665 machine driver
++ * (Samsung, 4.14): ABOX RDMA0-7 and WDMA0-4 are DPCM front ends (PCM
++ * devices 0-12, RDMA5 a compress device), UAIF0/1/2/4, DSIF, SPDY and
++ * SIFS0-2 are back ends. Each link's DAIs come from a child of the sound
++ * node named after the link; a link without a "codec" child uses the
++ * dummy codec.
++ */
++
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <sound/pcm_params.h>
++#include <sound/soc.h>
++#include <sound/soc-dpcm.h>
++#include <sound/samsung/abox.h>
++
++#define A50_MAX_CODEC_CONF	8
++#define A50_MAX_AUX		2
++
++enum a50_link_kind {
++	A50_FE_PLAYBACK,
++	A50_FE_CAPTURE,
++	A50_BE,
++	A50_BE_PLAYBACK,
++	A50_BE_CAPTURE,
++};
++
++struct a50_link_desc {
++	const char *name;	/* link and stream name */
++	const char *node;	/* child of the sound node */
++	enum a50_link_kind kind;
++};
++
++/* Order sets the ALSA device numbers; it matches the stock card. */
++static const struct a50_link_desc a50_links[] = {
++	{ "RDMA0", "rdma0", A50_FE_PLAYBACK },
++	{ "RDMA1", "rdma1", A50_FE_PLAYBACK },
++	{ "RDMA2", "rdma2", A50_FE_PLAYBACK },
++	{ "RDMA3", "rdma3", A50_FE_PLAYBACK },
++	{ "RDMA4", "rdma4", A50_FE_PLAYBACK },
++	{ "RDMA5", "rdma5", A50_FE_PLAYBACK },
++	{ "RDMA6", "rdma6", A50_FE_PLAYBACK },
++	{ "RDMA7", "rdma7", A50_FE_PLAYBACK },
++	{ "WDMA0", "wdma0", A50_FE_CAPTURE },
++	{ "WDMA1", "wdma1", A50_FE_CAPTURE },
++	{ "WDMA2", "wdma2", A50_FE_CAPTURE },
++	{ "WDMA3", "wdma3", A50_FE_CAPTURE },
++	{ "WDMA4", "wdma4", A50_FE_CAPTURE },
++	{ "UAIF0", "uaif0", A50_BE },
++	{ "UAIF1", "uaif1", A50_BE },
++	{ "UAIF2", "uaif2", A50_BE },
++	{ "UAIF4", "uaif4", A50_BE },
++	{ "DSIF",  "dsif",  A50_BE_PLAYBACK },
++	{ "SPDY",  "spdy",  A50_BE_CAPTURE },
++	{ "SIFS0", "sifs0", A50_BE },
++	{ "SIFS1", "sifs1", A50_BE },
++	{ "SIFS2", "sifs2", A50_BE },
++};
++
++struct a50_card {
++	struct snd_soc_card card;
++	struct snd_soc_codec_conf codec_conf[A50_MAX_CODEC_CONF];
++	struct snd_soc_aux_dev aux_dev[A50_MAX_AUX];
++};
++
++/*
++ * The 4.14 ABOX fixup helper takes the stream; 6.18 calls
++ * be_hw_params_fixup() without it. The stream whose front end is
++ * updating this back end is the one being configured.
++ */
++static int a50_be_hw_params_fixup(struct snd_soc_pcm_runtime *be,
++				  struct snd_pcm_hw_params *params)
++{
++	struct snd_soc_dpcm *dpcm;
++	int stream;
++
++	for_each_pcm_streams(stream) {
++		for_each_dpcm_fe(be, stream, dpcm) {
++			if (dpcm->fe->dpcm[stream].runtime_update !=
++			    SND_SOC_DPCM_UPDATE_NO)
++				return abox_hw_params_fixup_helper(be, params,
++								   stream);
++		}
++	}
++
++	return 0;
++}
++
++static int a50_dsif_hw_params(struct snd_pcm_substream *substream,
++			      struct snd_pcm_hw_params *params)
++{
++	struct snd_soc_pcm_runtime *rtd = snd_soc_substream_to_rtd(substream);
++	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
++	unsigned int tx_slot[] = { 0, 1 };
++
++	/* As stock: bclk ratio 64 (DSD64), left channel first. */
++	snd_soc_dai_set_bclk_ratio(cpu_dai, 64);
++
++	return snd_soc_dai_set_channel_map(cpu_dai, 2, tx_slot, 0, NULL);
++}
++
++static const struct snd_soc_ops a50_dsif_ops = {
++	.hw_params = a50_dsif_hw_params,
++};
++
++static int a50_parse_link(struct device *dev, struct device_node *np,
++			  const struct a50_link_desc *desc,
++			  struct snd_soc_dai_link *link)
++{
++	struct device_node *child;
++	int ret;
++
++	link->name = desc->name;
++	link->stream_name = desc->name;
++	link->ignore_suspend = 1;
++
++	link->cpus = devm_kzalloc(dev, sizeof(*link->cpus), GFP_KERNEL);
++	if (!link->cpus)
++		return -ENOMEM;
++	link->num_cpus = 1;
++
++	child = of_get_child_by_name(np, "cpu");
++	if (!child)
++		return dev_err_probe(dev, -EINVAL, "%pOF: no cpu\n", np);
++	ret = snd_soc_of_get_dlc(child, NULL, link->cpus, 0);
++	of_node_put(child);
++	if (ret)
++		return dev_err_probe(dev, ret, "%pOF: bad cpu dai\n", np);
++
++	child = of_get_child_by_name(np, "platform");
++	if (child) {
++		link->platforms = devm_kzalloc(dev, sizeof(*link->platforms),
++					       GFP_KERNEL);
++		if (!link->platforms) {
++			of_node_put(child);
++			return -ENOMEM;
++		}
++		link->platforms->of_node = of_parse_phandle(child, "sound-dai",
++							     0);
++		of_node_put(child);
++		if (!link->platforms->of_node)
++			return dev_err_probe(dev, -EINVAL,
++					     "%pOF: bad platform\n", np);
++		link->num_platforms = 1;
++	}
++
++	child = of_get_child_by_name(np, "codec");
++	if (child) {
++		ret = snd_soc_of_get_dai_link_codecs(dev, child, link);
++		of_node_put(child);
++		if (ret)
++			return dev_err_probe(dev, ret, "%pOF: bad codec\n", np);
++	} else {
++		link->codecs = &snd_soc_dummy_dlc;
++		link->num_codecs = 1;
++	}
++
++	switch (desc->kind) {
++	case A50_FE_PLAYBACK:
++	case A50_FE_CAPTURE:
++		link->dynamic = 1;
++		/*
++		 * Stock POST_PRE (playback) and PRE_POST (capture): back end
++		 * started first and stopped last for playback, the reverse
++		 * for capture. Mainline POST/PRE give the same order.
++		 */
++		link->trigger[SNDRV_PCM_STREAM_PLAYBACK] =
++			SND_SOC_DPCM_TRIGGER_POST;
++		link->trigger[SNDRV_PCM_STREAM_CAPTURE] =
++			SND_SOC_DPCM_TRIGGER_PRE;
++		link->playback_only = desc->kind == A50_FE_PLAYBACK;
++		link->capture_only = desc->kind == A50_FE_CAPTURE;
++		break;
++	default:
++		link->no_pcm = 1;
++		link->ignore_pmdown_time = 1;
++		link->be_hw_params_fixup = a50_be_hw_params_fixup;
++		link->playback_only = desc->kind == A50_BE_PLAYBACK;
++		link->capture_only = desc->kind == A50_BE_CAPTURE;
++		/* Codec-side clock roles, as in the stock DT. */
++		link->dai_fmt = snd_soc_daifmt_parse_format(np, NULL);
++		if (link->dai_fmt)
++			link->dai_fmt |=
++				snd_soc_daifmt_parse_clock_provider_as_flag(np,
++									    NULL);
++		if (!strcmp(desc->name, "DSIF"))
++			link->ops = &a50_dsif_ops;
++		break;
++	}
++
++	return 0;
++}
++
++static int a50_audio_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device_node *np = dev->of_node;
++	struct snd_soc_dai_link *links;
++	struct a50_card *priv;
++	struct snd_soc_card *card;
++	int i, n, ret;
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	links = devm_kcalloc(dev, ARRAY_SIZE(a50_links), sizeof(*links),
++			     GFP_KERNEL);
++	if (!links)
++		return -ENOMEM;
++
++	card = &priv->card;
++	card->dev = dev;
++	card->owner = THIS_MODULE;
++	card->name = "Exynos9610-Audio";
++	snd_soc_card_set_drvdata(card, priv);
++
++	for (i = 0, n = 0; i < ARRAY_SIZE(a50_links); i++) {
++		struct device_node *child;
++
++		child = of_get_child_by_name(np, a50_links[i].node);
++		if (!child)
++			continue;
++		ret = a50_parse_link(dev, child, &a50_links[i], &links[n]);
++		of_node_put(child);
++		if (ret)
++			return ret;
++		n++;
++	}
++	if (!n)
++		return dev_err_probe(dev, -EINVAL, "no DAI links\n");
++	card->dai_link = links;
++	card->num_links = n;
++
++	/* Stock names every ABOX control/widget "ABOX ...". */
++	for (i = 0; i < A50_MAX_CODEC_CONF; i++) {
++		struct snd_soc_codec_conf *conf = &priv->codec_conf[i];
++
++		conf->dlc.of_node = of_parse_phandle(np, "samsung,codec", i);
++		if (!conf->dlc.of_node)
++			break;
++		ret = of_property_read_string_index(np, "samsung,prefix", i,
++						    &conf->name_prefix);
++		if (ret)
++			conf->name_prefix = "";
++	}
++	card->codec_conf = priv->codec_conf;
++	card->num_configs = i;
++
++	for (i = 0; i < A50_MAX_AUX; i++) {
++		priv->aux_dev[i].dlc.of_node = of_parse_phandle(np,
++							"samsung,aux", i);
++		if (!priv->aux_dev[i].dlc.of_node)
++			break;
++	}
++	card->aux_dev = priv->aux_dev;
++	card->num_aux_devs = i;
++
++	if (of_property_present(np, "samsung,routing")) {
++		ret = snd_soc_of_parse_audio_routing(card, "samsung,routing");
++		if (ret)
++			return ret;
++	}
++
++	return devm_snd_soc_register_card(dev, card);
++}
++
++static const struct of_device_id a50_audio_of_match[] = {
++	{ .compatible = "samsung,exynos9610-audio" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, a50_audio_of_match);
++
++static struct platform_driver a50_audio_driver = {
++	.driver = {
++		.name = "exynos9610-a50-audio",
++		.pm = &snd_soc_pm_ops,
++		.of_match_table = a50_audio_of_match,
++	},
++	.probe = a50_audio_probe,
++};
++module_platform_driver(a50_audio_driver);
++
++MODULE_DESCRIPTION("Galaxy A50 ABOX sound card");
++MODULE_LICENSE("GPL");

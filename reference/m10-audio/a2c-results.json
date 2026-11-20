@@ -1,0 +1,59 @@
+{
+  "test": "M10.2 A2c: A2b + IOMMU fault-worker power gate + ABOX GIC supplier check; Wi-Fi join + router ping",
+  "source": "a50-m10-a2c-test/b0d0aa421111",
+  "clean": "a50-audio e548f4301 (14 commits after M9 e7a5bee84)",
+  "boot_sha256": "caeaac8eba7b337b0f6ddc1c2d0cba4bdc1ef0d3310bceeca5c50d73b6b03b7e",
+  "owner_presence": "present, flash A2c",
+  "flash": "01:49:11",
+  "usb_ssh_verified": "01:50:07",
+  "wifi": {
+    "join_uptime_s": 76.98,
+    "dev": "wlan0",
+    "state": "connected",
+    "stock_profiles": "four unbound from swlan0 with nmcli --temporary (memory only)",
+    "ping_router": "20/20, 0% loss, rtt min/avg/max 2.158/13.419/51.252 ms",
+    "link": "2442 MHz, -69 dBm, 39.0 MBit/s MCS 4"
+  },
+  "bluetooth": {
+    "controller": "hci0, Powered yes, PowerState on",
+    "traffic": "not exercised (A2DP proven in M9E2)"
+  },
+  "dsp": {
+    "ready": "Calliope is ready to sing (version:rSK1) at 21.974934 s",
+    "reset_count": 0,
+    "runtime_status": "active"
+  },
+  "interrupts_at_150s": {
+    "abox_sysmmu_14920000": 0,
+    "abox_gic_ipc": 38
+  },
+  "gic_supplier": "abox-gic probe complete 0.390230 s, ABOX probe 0.390847-0.397545 s, no deferral",
+  "card_pcm_list_identical_to_A2b_and_stock": true,
+  "control_names_identical_to_A2b": true,
+  "controls_total": 153,
+  "dai_fmt": {
+    "UAIF0": "0x1001",
+    "UAIF1": "0x1001",
+    "UAIF2": "0x1001",
+    "UAIF4": "0x4001",
+    "DSIF": "0x1007"
+  },
+  "regressions_150s": {
+    "display_frames": 899,
+    "display_copied_fallbacks_timeouts": 0,
+    "failed_units": 0,
+    "kernel_fault_signatures": 0
+  },
+  "timed_dump": "sync 431.050561 s, complete, zero oops/SError/BUG/panic/IOMMU-fault signatures",
+  "limits": [
+    "late 390 s snapshot and kernel stream timed out (rc 124): known shared USB issue (M12), as A1l/A2b",
+    "fault-worker and GIC-deferral paths are not exercised by a healthy boot (no fault, GIC bound first)",
+    "no PCM opened, no mixer access"
+  ],
+  "restore": {
+    "stock_booted": "01:57:21",
+    "preflight": "ALL CHECKS PASSED",
+    "fsck": "clean, 7164/3440640 files, 1989058/13745152 blocks",
+    "stock_wifi_after_restore": "swlan0 connected (profiles intact)"
+  }
+}

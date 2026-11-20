@@ -1,0 +1,42 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Sat, 21 Nov 2026 01:30:06 +0600
+Subject: [PATCH 12/14] ASoC: samsung: abox: do not free the ABOX regmap when
+ the component goes
+
+abox_cmpnt_remove() called snd_soc_component_exit_regmap(), which frees
+the component's regmap. That regmap is the ABOX device's own, created
+with devm_regmap_init_mmio() at probe and used by the driver after the
+card is gone (firmware load, runtime PM save/restore). On the phone
+(M10.2 A2r) the card failed to register at 0.4 s, ASoC removed the
+components, and the firmware load at 21.9 s called regcache_cache_only()
+on the freed regmap: "Unable to handle kernel execute from non-executable
+memory" in abox_enable(). The same call is in the 4.14 driver; stock never
+hit it because its card always registered. The regmap is also freed by
+devm at unbind, so the component must leave it alone.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: Iffb58b4761657cfbe562a9c890229460bac47b3d
+---
+ sound/soc/samsung/abox/abox.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/samsung/abox/abox.c b/sound/soc/samsung/abox/abox.c
+index eff54b772..ed88497cc 100644
+--- a/sound/soc/samsung/abox/abox.c
++++ b/sound/soc/samsung/abox/abox.c
+@@ -1259,9 +1259,12 @@ static void abox_cmpnt_remove(struct snd_soc_component *component)
+ {
+ 	struct device *dev = component->dev;
+ 
++	/*
++	 * The regmap belongs to the ABOX device (devm, created at probe) and
++	 * stays in use after the card goes away (firmware load, runtime PM);
++	 * the component must not free it.
++	 */
+ 	dev_info(dev, "%s\n", __func__);
+-
+-	snd_soc_component_exit_regmap(component);
+ }
+ 
+ static int abox_sample_rate_get(struct snd_kcontrol *kcontrol,

@@ -1,0 +1,845 @@
+# 6.18 dump read back from /proc/last_kmsg (identifiers redacted: 2)
+===== A50 6.18 DMESG BEGIN (panic) =====
+[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x410fd034]
+[    0.000000] Linux version 6.18.33-a50-diag+ (a50@firstlight) (Android (15323222, +pgo, +bolt, +lto, +mlgo, based on r584948c) clang version 22.0.1 (https://android.googlesource.com/toolchain/llvm-project 2d65e4108033380e6fe8e08b1f1826cd2bfb0c99), LLD 22.0.1 (/mnt/disks/build-disk/src/googleplex-android/llvm-r584948-release/out/llvm-project/llvm 2d65e4108033380e6fe8e08b1f1826cd2bfb0c99)) #1 SMP Wed Nov  4 00:00:00 UTC 2026
+[    0.000000] Machine model: Samsung Galaxy A50 (SM-A505F)
+[    0.000000] printk: debug: ignoring loglevel setting.
+[    0.000000] [Firmware Bug]: Kernel image misaligned at boot, please fix your bootloader!
+[    0.000000] OF: reserved mem: 0x00000008fd600000..0x00000008fe5fffff (16384 KiB) map non-reusable wlbt-mem
+[    0.000000] OF: reserved mem: 0x00000008fab00000..0x00000008fd5fffff (44032 KiB) nomap non-reusable abox-fw-mem
+[    0.000000] OF: reserved mem: 0x0000000080000000..0x0000000080000fff (4 KiB) nomap non-reusable sec_debug_magic@80000000
+[    0.000000] OF: reserved mem: 0x00000000b8000000..0x00000000b84fffff (5120 KiB) nomap non-reusable vipx_fw@b8000000
+[    0.000000] OF: reserved mem: 0x00000000c0000000..0x00000000c007ffff (512 KiB) nomap non-reusable seclog@c0000000
+[    0.000000] OF: reserved mem: 0x00000000ca000000..0x00000000ca9fffff (10240 KiB) nomap non-reusable fb_reserved@ca000000
+[    0.000000] OF: reserved mem: 0x00000000e9400000..0x00000000ebbfffff (40960 KiB) nomap non-reusable abox@e9400000
+[    0.000000] OF: reserved mem: 0x00000000ed000000..0x00000000f59fffff (141312 KiB) nomap non-reusable modem_if@ed000000
+[    0.000000] OF: reserved mem: 0x00000000f5a00000..0x00000000f77fffff (30720 KiB) nomap non-reusable cp_ram_logging@f5a00000
+[    0.000000] OF: reserved mem: 0x00000000f9000000..0x00000000fa70ffff (23616 KiB) nomap non-reusable debug_snapshot@f9000000
+[    0.000000] OF: reserved mem: 0x0000000091202000..0x0000000091387fff (1560 KiB) nomap non-reusable sec_debug_bufs@91202000
+[    0.000000] OF: reserved mem: 0x0000000091388000..0x0000000091b87fff (8192 KiB) nomap non-reusable sec_debug_next@91388000
+[    0.000000] OF: reserved mem: 0x00000000fb000000..0x00000000fb7fffff (8192 KiB) nomap non-reusable gnss_if@fb000000
+[    0.000000] OF: reserved mem: 0x00000000fd000000..0x00000000fd07ffff (512 KiB) nomap non-reusable chub@fd000000
+[    0.000000] OF: reserved mem: 0x0000000087000000..0x00000000871fffff (2048 KiB) map non-reusable el2_code
+[    0.000000] OF: reserved mem: 0x00000008fe600000..0x00000008ffffffff (26624 KiB) map non-reusable el2_earlymem
+[    0.000000] OF: reserved mem: 0x0000000080001000..0x0000000080001fff (4 KiB) map non-reusable kaslr
+[    0.000000] Zone ranges:
+[    0.000000]   DMA      [mem 0x0000000080000000-0x00000000ffffffff]
+[    0.000000]   DMA32    empty
+[    0.000000]   Normal   [mem 0x0000000100000000-0x00000008ffffffff]
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000080000000-0x0000000080000fff]
+[    0.000000]   node   0: [mem 0x0000000080001000-0x0000000091201fff]
+[    0.000000]   node   0: [mem 0x0000000091202000-0x0000000091b87fff]
+[    0.000000]   node   0: [mem 0x0000000091b88000-0x00000000b7ffffff]
+[    0.000000]   node   0: [mem 0x00000000b8000000-0x00000000b84fffff]
+[    0.000000]   node   0: [mem 0x00000000b8500000-0x00000000baafffff]
+[    0.000000]   node   0: [mem 0x00000000c0000000-0x00000000c007ffff]
+[    0.000000]   node   0: [mem 0x00000000c0080000-0x00000000c9ffffff]
+[    0.000000]   node   0: [mem 0x00000000ca000000-0x00000000ca9fffff]
+[    0.000000]   node   0: [mem 0x00000000caa00000-0x00000000dfffffff]
+[    0.000000]   node   0: [mem 0x00000000e1900000-0x00000000e93fffff]
+[    0.000000]   node   0: [mem 0x00000000e9400000-0x00000000ebbfffff]
+[    0.000000]   node   0: [mem 0x00000000ebc00000-0x00000000ecffffff]
+[    0.000000]   node   0: [mem 0x00000000ed000000-0x00000000f77fffff]
+[    0.000000]   node   0: [mem 0x00000000f7800000-0x00000000f8ffffff]
+[    0.000000]   node   0: [mem 0x00000000f9000000-0x00000000fa70ffff]
+[    0.000000]   node   0: [mem 0x00000000fa710000-0x00000000faffffff]
+[    0.000000]   node   0: [mem 0x00000000fb000000-0x00000000fb7fffff]
+[    0.000000]   node   0: [mem 0x00000000fb800000-0x00000000fcffffff]
+[    0.000000]   node   0: [mem 0x00000000fd000000-0x00000000fd07ffff]
+[    0.000000]   node   0: [mem 0x00000000fd080000-0x00000000ffffffff]
+[    0.000000]   node   0: [mem 0x0000000880000000-0x00000008faafffff]
+[    0.000000]   node   0: [mem 0x00000008fab00000-0x00000008fd5fffff]
+[    0.000000]   node   0: [mem 0x00000008fd600000-0x00000008ffffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000080000000-0x00000008ffffffff]
+[    0.000000] On node 0, zone DMA: 21760 pages in unavailable ranges
+[    0.000000] On node 0, zone DMA: 6400 pages in unavailable ranges
+[    0.000000] psci: probing for conduit method from DT.
+[    0.000000] psci: Using PSCI v0.1 Function IDs from DT
+[    0.000000] WARNING: x1-x3 nonzero in violation of boot protocol:
+[    0.000000] 	x1: 0000000080000000
+[    0.000000] 	x2: 0000000000238000
+[    0.000000] 	x3: 0000000080238000
+[    0.000000] This indicates a broken bootloader or old kernel
+[    0.000000] percpu: Embedded 26 pages/cpu s74968 r0 d31528 u106496
+[    0.000000] pcpu-alloc: s74968 r0 d31528 u106496 alloc=26*4096
+[    0.000000] pcpu-alloc: [0] 0 [0] 1 [0] 2 [0] 3 [0] 4 [0] 5 [0] 6 [0] 7
+[    0.000000] Detected VIPT I-cache on CPU0
+[    0.000000] CPU features: detected: ARM erratum 845719
+[    0.000000] alternatives: applying boot alternatives
+[    0.000000] Kernel command line: console=tty0 loglevel=7 ignore_loglevel clk_ignore_unused printk.devkmsg=on systemd.log_target=kmsg systemd.journald.forward_to_kmsg=1 systemd.show_status=1 systemd.mask=repowerd.service systemd.mask=a50-enable-autosuspend.service systemd.mask=sleep.target firmware_class.path=/vendor/firmware,/vendor/etc/wifi log_buf_len=4M systemd.mask=bluebinder.service console=ram loglevel=4 sec_debug.pcb_offset=7346944 sec_debug.smd_offset=7348992 sec_debug.lpddr4_size=4 sec_debug.dram_info=01,06,01,4G sec_debug.pwrsrc_rs=0x0001000820000000 sec_debug.reset_reason=7 sec_reset.reset_reason=7 sec_debug.reset_rwc=1 sec_debug.level=0 sec_watchdog.sec_pet=5 androidboot.debug_level=0x4f4c androidboot.force_upload=0x0 softdog.soft_margin=100 softdog.soft_panic=1 sec_debug.dump_sink=0x0 sec_debug.upload_count=0 androidboot.dram_info=01,06,01,4G androidboot.fmm_lock=0 sec_debug.fmm_lock_offset=7340600 sec_debug.sjl=1 androidboot.sn.param.offset=7343024 androidboot.prototype.param.offset=7351040 \
+[    0.000000] Kernel command line: androidboot.recovery_offset=7355136 printk.devkmsg=on ess_setup=0xf9000000 sec_avc_log=0x40000@0x91202000 sec_tsp_log=0x40000@0x91244000 sec_disp_log=0x100000@0x91286000 sec_debug_next=0x800000@0x91388000 charging_mode=0x3000 s3cfb.bootloaderfb=0xca000000 lcdtype=9453571 androidboot.carrierid.param.offset=7340608 androidboot.carrierid=BKD consoleblank=0 ehci_hcd.park=3 oops=panic pmic_info=27 ccic_info=1 fg_reset=0 androidboot.emmc_checksum=3 androidboot.sales.param.offset=7340572 sales_code=BKD androidboot.odin_download=1 androidboot.bootloader=A505FDDS9CWA2 androidboot.selinux=enforcing androidboot.product.model=SM-A505F androidboot.ucs_mode=0 androidboot.revision=6 androidboot.hardware=exynos9610 androidboot.warranty_bit=1 androidboot.wb.hs=0e03 androidboot.rp=9 androidboot.wb.snapQB=CUSTOM sec_debug.bin=A androidboot.hmac_mismatch=0 androidboot.sec_atd.tty=/dev/ttySAC0 androidboot.serialno=<redacted> androidboot.ap_serial=<redacted> snd_soc_core.pmdown_time=1000 \
+[    0.000000] Kernel command line: androidboot.cp_reserved_mem=off skip_initramfs rootwait ro init=/init root
+[    0.000000] Unknown kernel command line parameters "root ess_setup=0xf9000000 sec_avc_log=0x40000@0x91202000 sec_tsp_log=0x40000@0x91244000 sec_disp_log=0x100000@0x91286000 sec_debug_next=0x800000@0x91388000 charging_mode=0x3000 lcdtype=9453571 pmic_info=27 ccic_info=1 fg_reset=0 sales_code=BKD", will be passed to user space.
+[    0.000000] printk: log buffer data + meta data: 4194304 + 14680064 = 18874368 bytes
+[    0.000000] printk: early log buf free: 123368(94%)
+[    0.000000] Dentry cache hash table entries: 524288 (order: 10, 4194304 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 262144 (order: 9, 2097152 bytes, linear)
+[    0.000000] software IO TLB: area num 8.
+[    0.000000] software IO TLB: mapped [mem 0x00000000e5400000-0x00000000e9400000] (64MB)
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 1020416
+[    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=8, Nodes=1
+[    0.000000] rcu: Hierarchical RCU implementation.
+[    0.000000] rcu: 	RCU event tracing is enabled.
+[    0.000000] rcu: 	RCU restricting CPUs from NR_CPUS=512 to nr_cpu_ids=8.
+[    0.000000] 	Tracing variant of Tasks RCU enabled.
+[    0.000000] rcu: RCU calculated value of scheduler-enlistment delay is 25 jiffies.
+[    0.000000] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=8
+[    0.000000] RCU Tasks Trace: Setting shift to 3 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=8.
+[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000] Root IRQ handler: gic_handle_irq
+[    0.000000] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.000000] /soc@0/clock-controller@12100000: incorrect res size for automatic clocks
+[    0.000000] /soc@0/clock-controller@12100000: incorrect res size for automatic clocks
+[    0.000000] arch_timer: cp15 timer running at 26.00MHz (virt).
+[    0.000000] clocksource: arch_sys_counter: mask: 0xffffffffffffff max_cycles: 0x5ff13d5a9, max_idle_ns: 440795202370 ns
+[    0.000000] sched_clock: 56 bits at 26MHz, resolution 38ns, wraps every 4398046511088ns
+[    0.000467] Console: colour dummy device 80x25
+[    0.000480] printk: legacy console [tty0] enabled
+[    0.001419] Calibrating delay loop (skipped), value calculated using timer frequency.. 52.00 BogoMIPS (lpj=104000)
+[    0.001442] pid_max: default: 32768 minimum: 301
+[    0.001577] LSM: initializing lsm=capability,yama,apparmor,tomoyo,evm
+[    0.001652] Yama: becoming mindful.
+[    0.001872] AppArmor: AppArmor initialized
+[    0.001935] TOMOYO Linux initialized
+[    0.002061] Mount-cache hash table entries: 8192 (order: 4, 65536 bytes, linear)
+[    0.002092] Mountpoint-cache hash table entries: 8192 (order: 4, 65536 bytes, linear)
+[    0.003210] cacheinfo: Unable to detect cache hierarchy for CPU 0
+[    0.004329] rcu: Hierarchical SRCU implementation.
+[    0.004357] rcu: 	Max phase no-delay instances is 1000.
+[    0.005048] smp: Bringing up secondary CPUs ...
+[    0.005627] Detected VIPT I-cache on CPU1
+[    0.005713] CPU1: Booted secondary processor 0x0000000001 [0x410fd034]
+[    0.006429] Detected VIPT I-cache on CPU2
+[    0.006510] CPU2: Booted secondary processor 0x0000000002 [0x410fd034]
+[    0.007216] Detected VIPT I-cache on CPU3
+[    0.007297] CPU3: Booted secondary processor 0x0000000003 [0x410fd034]
+[    0.008090] CPU features: detected: Spectre-v2
+[    0.008102] CPU features: detected: Spectre-v4
+[    0.008104] CPU features: detected: Spectre-BHB
+[    0.008108] CPU features: detected: ARM erratum 858921
+[    0.008112] Detected VIPT I-cache on CPU4
+[    0.008154] arch_timer: Enabling local workaround for ARM erratum 858921
+[    0.008166] arch_timer: CPU4: Trapping CNTVCT access
+[    0.008174] CPU4: Booted secondary processor 0x0000000100 [0x410fd092]
+[    0.008887] Detected VIPT I-cache on CPU5
+[    0.008913] arch_timer: Enabling local workaround for ARM erratum 858921
+[    0.008919] arch_timer: CPU5: Trapping CNTVCT access
+[    0.008924] CPU5: Booted secondary processor 0x0000000101 [0x410fd092]
+[    0.009559] Detected VIPT I-cache on CPU6
+[    0.009586] arch_timer: Enabling local workaround for ARM erratum 858921
+[    0.009592] arch_timer: CPU6: Trapping CNTVCT access
+[    0.009597] CPU6: Booted secondary processor 0x0000000102 [0x410fd092]
+[    0.010233] Detected VIPT I-cache on CPU7
+[    0.010260] arch_timer: Enabling local workaround for ARM erratum 858921
+[    0.010266] arch_timer: CPU7: Trapping CNTVCT access
+[    0.010272] CPU7: Booted secondary processor 0x0000000103 [0x410fd092]
+[    0.010356] smp: Brought up 1 node, 8 CPUs
+[    0.010573] SMP: Total of 8 processors activated.
+[    0.010585] CPU: All CPU(s) started at EL1
+[    0.010596] CPU features: detected: 32-bit EL0 Support
+[    0.010609] CPU features: detected: CRC32 instructions
+[    0.010624] CPU features: detected: PMUv3
+[    0.010697] alternatives: applying system-wide alternatives
+[    0.012316] Memory: 3514852K/4081664K available (12160K kernel code, 1692K rwdata, 3212K rodata, 14720K init, 1347K bss, 558332K reserved, 0K cma-reserved)
+[    0.012997] devtmpfs: initialized
+[    0.019581] A50DIAG: DSS readout armed (buf 1 hdr 1 log 1 pmu 1), dump_after=420
+[    0.019938] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+[    0.019989] posixtimers hash table entries: 4096 (order: 4, 65536 bytes, linear)
+[    0.020119] futex hash table entries: 2048 (131072 bytes on 1 NUMA nodes, total 128 KiB, linear).
+[    0.020378] pinctrl core: initialized pinctrl subsystem
+[    0.021641] NET: Registered PF_NETLINK/PF_ROUTE protocol family
+[    0.022825] DMA: preallocated 512 KiB GFP_KERNEL pool for atomic allocations
+[    0.022945] DMA: preallocated 512 KiB GFP_KERNEL|GFP_DMA pool for atomic allocations
+[    0.023008] audit: initializing netlink subsys (disabled)
+[    0.023211] audit: type=2000 audit(0.020:1): state=initialized audit_enabled=0 res=1
+[    0.023514] thermal_sys: Registered thermal governor 'step_wise'
+[    0.024199] hw-breakpoint: found 6 breakpoint and 4 watchpoint registers.
+[    0.024573] ASID allocator initialised with 65536 entries
+[    0.028849] /soc@0/interrupt-controller@12301000: Fixed dependency cycle(s) with /soc@0/interrupt-controller@12301000
+[    0.034318] samsung-pinctrl 11c20000.pinctrl: irq number for muxed EINTs not found
+[    0.039933] /soc@0/clock-controller@13030000: incorrect res size for automatic clocks
+[    0.040019] /soc@0/clock-controller@13030000: incorrect res size for automatic clocks
+[    0.041118] /soc@0/clock-controller@13400000: incorrect res size for automatic clocks
+[    0.041189] /soc@0/clock-controller@13400000: incorrect res size for automatic clocks
+[    0.049073] /soc@0/clock-controller@14980000: incorrect res size for automatic clocks
+[    0.049184] /soc@0/clock-controller@14980000: incorrect res size for automatic clocks
+[    0.050023] exynos-sysmmu 14820000.iommu: hardware version: 7.2
+[    0.050675] exynos-sysmmu 14920000.iommu: hardware version: 7.2
+[    0.061111] iommu: Default domain type: Translated
+[    0.061135] iommu: DMA domain TLB invalidation policy: strict mode
+[    0.061979] SCSI subsystem initialized
+[    0.062282] s3c-i2c 13830000.i2c: slave address 0x00
+[    0.062303] s3c-i2c 13830000.i2c: bus frequency set to 378 KHz
+[    0.062541] s3c-i2c 13830000.i2c: i2c-0: S3C I2C adapter
+[    0.062699] s3c-i2c 13840000.i2c: slave address 0x00
+[    0.062718] s3c-i2c 13840000.i2c: bus frequency set to 378 KHz
+[    0.062924] s3c-i2c 13840000.i2c: i2c-1: S3C I2C adapter
+[    0.063075] s3c-i2c 13860000.i2c: slave address 0x00
+[    0.063093] s3c-i2c 13860000.i2c: bus frequency set to 65 KHz
+[    0.063258] s3c-i2c 13860000.i2c: i2c-2: S3C I2C adapter
+[    0.063403] s3c-i2c 13870000.i2c: slave address 0x00
+[    0.063421] s3c-i2c 13870000.i2c: bus frequency set to 378 KHz
+[    0.063812] s3c-i2c 13870000.i2c: i2c-3: S3C I2C adapter
+[    0.064113] s3c-i2c 13890000.i2c: slave address 0x00
+[    0.064134] s3c-i2c 13890000.i2c: bus frequency set to 65 KHz
+[    0.064319] s3c-i2c 13890000.i2c: i2c-4: S3C I2C adapter
+[    0.064494] pps_core: LinuxPPS API ver. 1 registered
+[    0.064508] pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti <giometti@linux.it>
+[    0.064534] PTP clock support registered
+[    0.066111] Advanced Linux Sound Architecture Driver Initialized.
+[    0.066685] Bluetooth: Core ver 2.22
+[    0.066734] NET: Registered PF_BLUETOOTH protocol family
+[    0.066746] Bluetooth: HCI device and connection manager initialized
+[    0.066764] Bluetooth: HCI socket layer initialized
+[    0.066778] Bluetooth: L2CAP socket layer initialized
+[    0.066798] Bluetooth: SCO socket layer initialized
+[    0.066817] NetLabel: Initializing
+[    0.066827] NetLabel:  domain hash size = 128
+[    0.066836] NetLabel:  protocols = UNLABELED CIPSOv4 CALIPSO
+[    0.066901] NetLabel:  unlabeled traffic allowed by default
+[    0.072388] clocksource: Switched to clocksource arch_sys_counter
+[    0.073261] AppArmor: AppArmor Filesystem Enabled
+[    0.079819] NET: Registered PF_INET protocol family
+[    0.080057] IP idents hash table entries: 65536 (order: 7, 524288 bytes, linear)
+[    0.083077] tcp_listen_portaddr_hash hash table entries: 2048 (order: 3, 32768 bytes, linear)
+[    0.083138] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+[    0.083172] TCP established hash table entries: 32768 (order: 6, 262144 bytes, linear)
+[    0.083424] TCP bind hash table entries: 32768 (order: 8, 1048576 bytes, linear)
+[    0.084310] TCP: Hash tables configured (established 32768 bind 32768)
+[    0.084491] UDP hash table entries: 2048 (order: 5, 131072 bytes, linear)
+[    0.084659] UDP-Lite hash table entries: 2048 (order: 5, 131072 bytes, linear)
+[    0.084991] NET: Registered PF_UNIX/PF_LOCAL protocol family
+[    0.095570] Initialise system trusted keyrings
+[    0.095740] workingset: timestamp_bits=46 max_order=20 bucket_order=0
+[    0.120154] Key type asymmetric registered
+[    0.120163] Asymmetric key parser 'x509' registered
+[    0.120194] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 249)
+[    0.120203] io scheduler mq-deadline registered
+[    0.122060] ------------[ cut here ]------------
+[    0.122069] a50-decon 148b0000.decon_f: late IOMMU probe at driver bind, something fishy here!
+[    0.122099] WARNING: CPU: 5 PID: 1 at drivers/iommu/iommu.c:612 __iommu_probe_device+0x1b4/0x464
+[    0.122121] CPU: 5 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.18.33-a50-diag+ #1 NONE
+[    0.122131] Hardware name: Samsung Galaxy A50 (SM-A505F) (DT)
+[    0.122138] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[    0.122145] pc : __iommu_probe_device+0x1b4/0x464
+[    0.122155] lr : __iommu_probe_device+0x1b4/0x464
+[    0.122163] sp : ffff8000820fba60
+[    0.122168] x29: ffff8000820fba70 x28: 0000000000000000 x27: 0000000000000000
+[    0.122181] x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
+[    0.122192] x23: ffff000800d12900 x22: ffff800080cb6730 x21: 0000000000000001
+[    0.122202] x20: 0000000000000000 x19: ffff000801134c10 x18: 0000000000000005
+[    0.122213] x17: 6d6f73202c646e69 x16: 6220726576697264 x15: 0000000000000003
+[    0.122222] x14: ffff000875000000 x13: 0000000000000003 x12: 0000000000000003
+[    0.122231] x11: 00000000fffdffff x10: c0000000fffdffff x9 : 6b998aebe53a5d00
+[    0.122241] x8 : 6b998aebe53a5d00 x7 : 0720072007200720 x6 : 0720072007200720
+[    0.122250] x5 : ffff000800120f00 x4 : ffff000800120fa0 x3 : 0000000000000000
+[    0.122259] x2 : 0000000000000000 x1 : ffff8000820fb840 x0 : 0000000000000052
+[    0.122269] Call trace:
+[    0.122274]  __iommu_probe_device+0x1b4/0x464 (P)
+[    0.122285]  iommu_probe_device+0x30/0x70
+[    0.122294]  of_iommu_configure+0x1d4/0x268
+[    0.122304]  of_dma_configure_id+0xb0/0x1ac
+[    0.122316]  platform_dma_configure+0x84/0x8c
+[    0.122325]  really_probe+0xe0/0x318
+[    0.122333]  __driver_probe_device+0x90/0xc8
+[    0.122340]  driver_probe_device+0x3c/0x198
+[    0.122347]  __driver_attach+0xf8/0x184
+[    0.122354]  bus_for_each_dev+0x10c/0x180
+[    0.122365]  driver_attach+0x20/0x28
+[    0.122371]  bus_add_driver+0x164/0x250
+[    0.122380]  driver_register+0x64/0xf8
+[    0.122387]  __platform_driver_register+0x1c/0x24
+[    0.122396]  a50_decon_driver_init+0x18/0x20
+[    0.122405]  do_one_initcall+0x68/0x1b4
+[    0.122415]  do_initcall_level+0x90/0xf4
+[    0.122424]  do_initcalls+0x50/0x8c
+[    0.122433]  do_basic_setup+0x18/0x20
+[    0.122441]  kernel_init_freeable+0xf8/0x164
+[    0.122449]  kernel_init+0x1c/0x118
+[    0.122458]  ret_from_fork+0x10/0x20
+[    0.122469] ---[ end trace 0000000000000000 ]---
+[    0.122480] a50-decon 148b0000.decon_f: Adding to iommu group 0
+[    0.122650] a50-decon 148b0000.decon_f: exynos_iommu_attach_device: Attached IOMMU with pgtable 0x0000000881b1c000
+[    0.122732] exynos-sysmmu 14820000.iommu: restoring state
+[    0.122763] a50-decon 148b0000.decon_f: handover state GLOBAL=0x00000133 TRIG=0x00003010 FRAME_COUNT=3, 5 clocks enabled
+[    0.123069] genirq: irq_chip gpc2 did not update eff. affinity mask of irq 67
+[    0.123184] a50-decon 148b0000.decon_f: fb0 on the boot framebuffer [mem 0xca000000-0xca9fffff]
+[    0.123205] a50-decon 148b0000.decon_f: iommu domain=yes type=0x3 iova 0xca000000 -> 0x00000000ca000000, 0xca9a3f7c -> 0x00000000ca9a3f7c, sysmmu MMU_CTRL=0x00000005 PT_BASE=0x00881b1c CAPA1=0x00000091 rpm_active=1
+[    0.123619] mali 11500000.mali: Kernel DDK version r26p0-01eac0
+[    0.123743] mali 11500000.mali: A50 G1: fixed 260 MHz, domain retained, no DVFS/secure calls
+[    0.123794] mali 11500000.mali: GPU identified as 0x1 arch 6.2.2 r0p1 status 0
+[    0.123841] mali 11500000.mali: No memory group manager is configured
+[    0.124601] workqueue: name exceeds WQ_NAME_LEN. Truncating to: kbase_job_fault_resume_work_que
+[    0.124890] mali 11500000.mali: mali_jd_thread set to RT prio: 60
+[    0.124979] mali 11500000.mali: Probed as mali0
+[    0.132439] loop: module loaded
+[    0.132546] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_create: Creating MIF platform device
+[    0.132562] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_create: platform->mem_start 0x8fd600000 platform->mem_size 0x1000000
+[    0.132599] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_create: platform->reg_start 119c0000 size 180 base (____ptrval____)
+[    0.132658] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_create: MBOX irq 71 flag 0x4
+[    0.132689] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_create: ALIVE irq 72 flag 0x4
+[    0.132718] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_create: WDOG irq 73 flag 0x4
+[    0.132746] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_create: CFG_REQ irq 74 flag 0x4
+[    0.132935] wlbt: [MXMAN]: scsc_mx_module_init: mx140 Core Driver scsc_release 11.19.0.18.0
+[    0.133048] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_irq_reg_handler: Registering mif int handler mifiintrman_isr+0x0/0xe0 in (____ptrval____) (____ptrval____)
+[    0.133070] scsc_wlbt 119c0000.wlbt: wlbt: [PLAT_MIF]: platform_mif_suspend_reg_handler: Registering mif suspend/resume handlers in (____ptrval____) (____ptrval____)
+[    0.133487] wlbt: [LERNA]: scsc_lerna_init: lerna intialisation complete.
+[    0.133495] wlbt: [MXMAN]: srvman_init:
+[    0.133501] wlbt: [MXMAN]: srvman_set_error: error:0
+[    0.133507] wlbt: [MXMAN]: mx_syserr_init: MM_SYSERR_INIT: syserr_reset_min_interval 300000 syserr_reset_monitor_period 3600000
+[    0.133540] wlbt: [MXMAN]: scsc_mx_module_probe_registered_clients: No clients registered
+[    0.133550] wlbt: [BT_COMMON]: scsc_bt_module_init: SCSC MX BT Driver -devel (C) Samsung Electronics Co., Ltd
+[    0.133662] wlbt: [BT_COMMON]: slsi_bt_service_probe: BT service probe (BT driver (____ptrval____))
+[    0.133672] wlbt: [BT_COMMON]: slsi_bt_notify_probe: SLSI BT BlueZ probe
+[    0.133905] ieee80211 phy.: wlbt: I: slsi_dev_load: Loading Maxwell Wi-Fi driver
+[    0.133918] ieee80211 phy.: wlbt: I: slsi_wlan_service_probe: WLAN service probe
+[    0.133970] ieee80211 phy0: wlbt: wlan0: I: slsi_netif_add_locked: Initializing Hs2 Del Vif Work
+[    0.136411] ieee80211 phy.: wlbt: I: sap_mlme_init: Registering SAP
+[    0.136422] ieee80211 phy.: wlbt: I: sap_ma_init: Registering SAP
+[    0.136427] ieee80211 phy.: wlbt: I: sap_dbg_init: Registering SAP
+[    0.136433] ieee80211 phy.: wlbt: I: sap_test_init: Registering SAP
+[    0.136441] wlbt: [MXMAN]: mxman_wifi_kobject_ref_get: wifi_kobj_ref: 0x(____ptrval____)
+[    0.136449] wifi_kobj_ref: 0x(____ptrval____)
+[    0.136455] ieee80211 phy.: wlbt: I: slsi_dev_load: --- Maxwell Wi-Fi driver loaded successfully ---
+[    0.349149] input: MELFAS MIP4 Touchscreen as /devices/platform/soc@0/13870000.i2c/i2c-3/3-0048/input/input0
+[    0.349417] i2c_dev: i2c /dev entries driver
+[    0.349748] exynos9610-tmu 10070000.thermal-sensor: sensor 0: trim 278/338, two-point
+[    0.349762] exynos9610-tmu 10070000.thermal-sensor: sensor 1: trim 278/338, two-point
+[    0.349772] exynos9610-tmu 10070000.thermal-sensor: sensor 2: trim 279/338, two-point
+[    0.350045] Bluetooth: HCI UART driver ver 2.3
+[    0.350053] Bluetooth: HCI UART protocol H4 registered
+[    0.350412] exynos-ufshc 13520000.ufs: ufshcd_populate_vreg: Unable to find vdd-hba-supply regulator, assuming enabled
+[    0.350425] exynos-ufshc 13520000.ufs: ufshcd_populate_vreg: Unable to find vcc-supply regulator, assuming enabled
+[    0.350435] exynos-ufshc 13520000.ufs: ufshcd_populate_vreg: Unable to find vccq-supply regulator, assuming enabled
+[    0.350443] exynos-ufshc 13520000.ufs: ufshcd_populate_vreg: Unable to find vccq2-supply regulator, assuming enabled
+[    0.351088] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: self-test passed, write guard active
+[    0.351096] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: writes allowed on LUN 0 blocks 0x1c8700-0xee42ff only
+[    0.382925] Unpacking initramfs...
+[    0.398383] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x4 idn 0xd
+[    0.398397] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x7 idn 0x4
+[    0.398447] exynos-ufshc 13520000.ufs: dme-set: attr-id 0x9540 val 0x1 failed 0 retries
+[    0.398467] exynos-ufshc 13520000.ufs: dme-set: attr-id 0x321 val 0x15 failed 0 retries
+[    0.398487] exynos-ufshc 13520000.ufs: dme-set: attr-id 0x9540 val 0x0 failed 0 retries
+[    0.400385] exynos-ufshc 13520000.ufs: Power mode changed to : FAST series_B G_3 L_1
+[    0.400396] scsi host0: ufshcd
+[    0.401153] ashmem_rust: Using Rust implementation.
+[    0.401716] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x4 idn 0x3
+[    0.401974] samsung-abox-gic 14af1000.abox-gic: samsung_abox_gic_probe
+[    0.402013] scsi 0:0:0:49488: Well-known LUN    SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.402154] samsung-abox-gic 14af1000.abox-gic: samsung_abox_gic_probe: probe complete
+[    0.402274] ------------[ cut here ]------------
+[    0.402280] samsung-abox 14a50000.abox: late IOMMU probe at driver bind, something fishy here!
+[    0.402310] WARNING: CPU: 4 PID: 1 at drivers/iommu/iommu.c:612 __iommu_probe_device+0x1b4/0x464
+[    0.402333] CPU: 4 UID: 0 PID: 1 Comm: swapper/0 Tainted: G        W           6.18.33-a50-diag+ #1 NONE
+[    0.402345] Tainted: [W]=WARN
+[    0.402349] Hardware name: Samsung Galaxy A50 (SM-A505F) (DT)
+[    0.402356] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[    0.402363] pc : __iommu_probe_device+0x1b4/0x464
+[    0.402372] lr : __iommu_probe_device+0x1b4/0x464
+[    0.402381] sp : ffff8000820fba60
+[    0.402386] x29: ffff8000820fba70 x28: 0000000000000000 x27: 0000000000000000
+[    0.402399] x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
+[    0.402410] x23: ffff000800d12d00 x22: ffff800080cb6730 x21: 0000000000000001
+[    0.402422] x20: 0000000000000000 x19: ffff000801132010 x18: 000000000000000f
+[    0.402433] x17: 6d6f73202c646e69 x16: 6220726576697264 x15: 0000000000000003
+[    0.402442] x14: ffff000875000000 x13: 0000000000000003 x12: 0000000000000003
+[    0.402452] x11: 00000000fffdffff x10: c0000000fffdffff x9 : 6b998aebe53a5d00
+[    0.402461] x8 : 6b998aebe53a5d00 x7 : 0720072007200720 x6 : 0720072007200720
+[    0.402471] x5 : ffff000800120f00 x4 : ffff000800120fa0 x3 : 0000000000000000
+[    0.402480] x2 : 0000000000000000 x1 : ffff8000820fb840 x0 : 0000000000000052
+[    0.402490] Call trace:
+[    0.402497]  __iommu_probe_device+0x1b4/0x464 (P)
+[    0.402508]  iommu_probe_device+0x30/0x70
+[    0.402517]  of_iommu_configure+0x1d4/0x268
+[    0.402527]  of_dma_configure_id+0xb0/0x1ac
+[    0.402539]  platform_dma_configure+0x84/0x8c
+[    0.402549]  really_probe+0xe0/0x318
+[    0.402557]  __driver_probe_device+0x90/0xc8
+[    0.402563]  driver_probe_device+0x3c/0x198
+[    0.402571]  __driver_attach+0xf8/0x184
+[    0.402577]  bus_for_each_dev+0x10c/0x180
+[    0.402588]  driver_attach+0x20/0x28
+[    0.402594]  bus_add_driver+0x164/0x250
+[    0.402603]  driver_register+0x64/0xf8
+[    0.402610]  __platform_driver_register+0x1c/0x24
+[    0.402618]  samsung_abox_driver_init+0x18/0x20
+[    0.402630]  do_one_initcall+0x68/0x1b4
+[    0.402640]  do_initcall_level+0x90/0xf4
+[    0.402648]  do_initcalls+0x50/0x8c
+[    0.402656]  do_basic_setup+0x18/0x20
+[    0.402663]  kernel_init_freeable+0xf8/0x164
+[    0.402671]  kernel_init+0x1c/0x118
+[    0.402680]  ret_from_fork+0x10/0x20
+[    0.402693] ---[ end trace 0000000000000000 ]---
+[    0.402705] samsung-abox 14a50000.abox: Adding to iommu group 1
+[    0.402751] samsung-abox 14a50000.abox: exynos_iommu_attach_device: Attached IOMMU with pgtable 0x000000088295c000
+[    0.402794] samsung-abox 14a50000.abox: samsung_abox_probe
+[    0.403040] samsung-abox 14a50000.abox: Couldn't get pins (-19)
+[    0.403105] samsung-abox 14a50000.abox: exynos_iommu_identity_attach: Restored IOMMU to IDENTITY from pgtable 0x000000088295c000
+[    0.403116] samsung-abox 14a50000.abox: exynos_iommu_attach_device: Attached IOMMU with pgtable 0x0000000882960000
+[    0.405387] scsi 0:0:0:49476: Well-known LUN    SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.406390] scsi 0:0:0:49456: Well-known LUN    SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.406803] samsung-abox 14a50000.abox: dram firmware(0x00000008fab00000) is mapped on (____ptrval____) with size of 18874368
+[    0.406816] samsung-abox 14a50000.abox: abox_iommu_map(0x80000000, 0x00000008fab00000, 0x1200000, (____ptrval____))
+[    0.406834] samsung-abox 14a50000.abox: private: 0x00000008fbd00000(0x800000) => (____ptrval____)
+[    0.407430] scsi 0:0:0:0: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.408604] sd 0:0:0:0: [sda] 15616000 4096-byte logical blocks: (64.0 GB/59.6 GiB)
+[    0.408636] scsi 0:0:0:1: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.408666] sd 0:0:0:0: [sda] Write Protect is off
+[    0.408680] sd 0:0:0:0: [sda] Mode Sense: 00 32 00 10
+[    0.408761] sd 0:0:0:0: [sda] Write cache: enabled, read cache: enabled, supports DPO and FUA
+[    0.408809] sd 0:0:0:0: [sda] Preferred minimum I/O size 8192 bytes
+[    0.408822] sd 0:0:0:0: [sda] Optimal transfer size 8192 bytes
+[    0.409160] samsung-abox 14a50000.abox: no modem: zeroed VSS scratch 0x00000008fc500000 (0x1000000 + 0x100000)
+[    0.409172] samsung-abox 14a50000.abox: abox_iommu_map(0xa0000000, 0x00000008fc500000, 0x1000000, (____ptrval____))
+[    0.409188] samsung-abox 14a50000.abox: abox_iommu_map(0xa1000000, 0x00000008fd500000, 0x100000, (____ptrval____))
+[    0.409199] samsung-abox 14a50000.abox: abox_iommu_map(0x10000000, 0x0000000010000000, 0x1000, 0000000000000000)
+[    0.409216] samsung-abox 14a50000.abox: abox_iommu_map: no virtual address
+[    0.409265] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(0, (%pf?))
+[    0.409275] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(1, (%pf?))
+[    0.409283] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(2, (%pf?))
+[    0.409291] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(3, (%pf?))
+[    0.409298] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(4, (%pf?))
+[    0.409305] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(5, (%pf?))
+[    0.409312] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(6, (%pf?))
+[    0.409320] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(7, (%pf?))
+[    0.409327] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(8, (%pf?))
+[    0.409335] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(9, (%pf?))
+[    0.409342] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(10, (%pf?))
+[    0.409349] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(11, (%pf?))
+[    0.409356] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(12, (%pf?))
+[    0.409363] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(13, (%pf?))
+[    0.409370] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(14, (%pf?))
+[    0.409377] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(15, (%pf?))
+[    0.409529] samsung-abox 14a50000.abox: samsung_abox_probe: probe complete
+[    0.409619] exynos-sysmmu 14920000.iommu: restoring state
+[    0.409635] samsung-abox 14a50000.abox: abox_enable
+[    0.409642] samsung-abox 14a50000.abox: abox_request_cpu_gear(ab0cdefa, 1)
+[    0.409702] samsung-abox 14a50000.abox: audif clock: 24074450
+[    0.409710] samsung-abox 14a50000.abox: abox_cfg_gpio(default)
+[    0.409722] samsung-abox-gic 14af1000.abox-gic: abox_gic_init_gic
+[    0.409743] samsung-abox 14a50000.abox: abox_download_firmware
+[    0.409752] samsung-abox 14a50000.abox: SRAM firmware downloading is deferred
+[    0.409759] samsung-abox 14a50000.abox: abox_request_cpu_gear(ab0cdefa, 12)
+[    0.409947] samsung-abox 14a50000.abox: Direct firmware load for calliope_sram.bin failed with error -2
+[    0.410343] scsi 0:0:0:2: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.410378] sd 0:0:0:1: [sdb] 1024 4096-byte logical blocks: (4.19 MB/4.00 MiB)
+[    0.410432] sd 0:0:0:1: [sdb] Write Protect is on
+[    0.410445] sd 0:0:0:1: [sdb] Mode Sense: 00 32 00 90
+[    0.410525] sd 0:0:0:1: [sdb] Write cache: disabled, read cache: enabled, supports DPO and FUA
+[    0.410573] sd 0:0:0:1: [sdb] Preferred minimum I/O size 8192 bytes
+[    0.410585] sd 0:0:0:1: [sdb] Optimal transfer size 8192 bytes
+[    0.412030] scsi 0:0:0:3: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.412127] sd 0:0:0:2: [sdc] 1024 4096-byte logical blocks: (4.19 MB/4.00 MiB)
+[    0.412176] sd 0:0:0:2: [sdc] Write Protect is on
+[    0.412190] sd 0:0:0:2: [sdc] Mode Sense: 00 32 00 90
+[    0.412269] sd 0:0:0:2: [sdc] Write cache: disabled, read cache: enabled, supports DPO and FUA
+[    0.412317] sd 0:0:0:2: [sdc] Preferred minimum I/O size 8192 bytes
+[    0.412324] sd 0:0:0:2: [sdc] Optimal transfer size 8192 bytes
+[    0.413613] samsung-abox 14a50000.abox: abox_cmpnt_probe
+[    0.413742] scsi 0:0:0:4: Direct-Access     SAMSUNG  KLUCG4J1ED-B0C1  0003 PQ: 0 ANSI: 6
+[    0.413781] sd 0:0:0:3: [sdd] 2048 4096-byte logical blocks: (8.39 MB/8.00 MiB)
+[    0.413836] sd 0:0:0:3: [sdd] Write Protect is on
+[    0.413849] sd 0:0:0:3: [sdd] Mode Sense: 00 32 00 90
+[    0.413931] sd 0:0:0:3: [sdd] Write cache: disabled, read cache: enabled, supports DPO and FUA
+[    0.413980] sd 0:0:0:3: [sdd] Preferred minimum I/O size 8192 bytes
+[    0.413993] sd 0:0:0:3: [sdd] Optimal transfer size 8192 bytes
+[    0.414244] samsung-abox 14a50000.abox: abox_iommu_map(0x93500000, 0x00000000e1980000, 0x28000, (____ptrval____))
+[    0.414337] samsung-abox-if 14a50500.abox-uaif: abox_if_cmpnt_probe
+[    0.414419] samsung-abox-if 14a50510.abox-uaif: abox_if_cmpnt_probe
+[    0.414485] samsung-abox-if 14a50520.abox-uaif: abox_if_cmpnt_probe
+[    0.414546] samsung-abox-if 14a50540.abox-uaif: abox_if_cmpnt_probe
+[    0.414599] samsung-abox-if 14a50550.abox-dsif: abox_if_cmpnt_probe
+[    0.414638] samsung-abox-if 14a50560.abox-spdy: abox_if_cmpnt_probe
+[    0.415362] samsung-abox-if 14a50500.abox-uaif: abox_uaif_set_fmt(0x00001001)
+[    0.415394] samsung-abox-if 14a50510.abox-uaif: abox_uaif_set_fmt(0x00001001)
+[    0.415413] samsung-abox-if 14a50520.abox-uaif: abox_uaif_set_fmt(0x00001001)
+[    0.415430] samsung-abox-if 14a50540.abox-uaif: abox_uaif_set_fmt(0x00001001)
+[    0.415446] sd 0:0:0:4: [sde] 2048 4096-byte logical blocks: (8.39 MB/8.00 MiB)
+[    0.415447] samsung-abox-if 14a50550.abox-dsif: abox_dsif_set_fmt(0x00001007)
+[    0.415508] sd 0:0:0:4: [sde] Write Protect is on
+[    0.415517] sd 0:0:0:4: [sde] Mode Sense: 00 32 00 90
+[    0.415527] exynos9610-a50-audio sound: ASoC: driver name too long 'Exynos9610-Audio' -> 'Exynos9610-Audi'
+[    0.415597] sd 0:0:0:4: [sde] Write cache: disabled, read cache: enabled, supports DPO and FUA
+[    0.415641] sd 0:0:0:4: [sde] Preferred minimum I/O size 8192 bytes
+[    0.415648] sd 0:0:0:4: [sde] Optimal transfer size 8192 bytes
+[    0.416747] exynos9610-a50-audio sound: ASoC: failed to register soundcard -16
+[    0.417160] samsung-abox 14a50000.abox: abox_cmpnt_remove
+[    0.417535] samsung-abox 14a50000.abox: abox_iommu_unmap(0x93500000)
+[    0.417650] samsung-abox-if 14a50500.abox-uaif: abox_if_cmpnt_remove
+[    0.417671] samsung-abox-if 14a50510.abox-uaif: abox_if_cmpnt_remove
+[    0.417690] samsung-abox-if 14a50520.abox-uaif: abox_if_cmpnt_remove
+[    0.417709] samsung-abox-if 14a50540.abox-uaif: abox_if_cmpnt_remove
+[    0.417729] samsung-abox-if 14a50550.abox-dsif: abox_if_cmpnt_remove
+[    0.417746] samsung-abox-if 14a50560.abox-spdy: abox_if_cmpnt_remove
+[    0.418730] exynos9610-a50-audio sound: probe with driver exynos9610-a50-audio failed with error -16
+[    0.419246] xt_time: kernel timezone is -0000
+[    0.419345] Initializing XFRM netlink socket
+[    0.419377] NET: Registered PF_INET6 protocol family
+[    0.420008] Segment Routing with IPv6
+[    0.420035] In-situ OAM (IOAM) with IPv6
+[    0.420103] sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
+[    0.420385] NET: Registered PF_PACKET protocol family
+[    0.420397] NET: Registered PF_KEY protocol family
+[    0.420494] Bluetooth: RFCOMM TTY layer initialized
+[    0.420504] Bluetooth: RFCOMM socket layer initialized
+[    0.420524] Bluetooth: RFCOMM ver 1.11
+[    0.420533] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
+[    0.420538] Bluetooth: BNEP filters: protocol multicast
+[    0.420546] Bluetooth: BNEP socket layer initialized
+[    0.420551] Bluetooth: HIDP (Human Interface Emulation) ver 1.2
+[    0.420559] Bluetooth: HIDP socket layer initialized
+[    0.420585] Key type dns_resolver registered
+[    0.429670] Loading compiled-in X.509 certificates
+[    0.434498] Key type encrypted registered
+[    0.434518] AppArmor: AppArmor sha256 policy hashing enabled
+[    0.434543] evm: Initialising EVM extended attributes:
+[    0.434549] evm: security.selinux
+[    0.434555] evm: security.SMACK64
+[    0.434559] evm: security.SMACK64EXEC (disabled)
+[    0.434566] evm: security.SMACK64TRANSMUTE (disabled)
+[    0.434570] evm: security.SMACK64MMAP (disabled)
+[    0.434576] evm: security.apparmor
+[    0.434580] evm: security.ima (disabled)
+[    0.434586] evm: security.capability
+[    0.434592] evm: HMAC attrs: 0x1
+[    0.436840] sd 0:0:0:1: [sdb] Attached SCSI disk
+[    0.438368] Alternate GPT is invalid, using primary GPT.
+[    0.438424]  sda: sda1 sda2 sda3 sda4 sda5 sda6 sda7 sda8 sda9 sda10 sda11 sda12 sda13 sda14 sda15 sda16 sda17 sda18 sda19 sda20 sda21 sda22 sda23 sda24 sda25 sda26 sda27 sda28 sda29 sda30 sda31 sda32
+[    0.440203] sd 0:0:0:0: [sda] Attached SCSI disk
+[    0.448825] sd 0:0:0:4: [sde] Attached SCSI disk
+[    0.449048] sd 0:0:0:2: [sdc] Attached SCSI disk
+[    0.450647]  sdd: sdd1
+[    0.450817] sd 0:0:0:3: [sdd] Attached SCSI disk
+[    0.452189] wlbt: [MXMAN_TEST]: client_module_probe: mx140:
+[    0.452200] wlbt: [MXMAN_TEST]: client_module_probe: OK
+[    0.452650] input: gpio-keys as /devices/platform/gpio-keys/input/input1
+[    0.452990] input: Hall sensors as /devices/platform/hall-sensors/input/input2
+[    0.453234] samsung_abox_log_late_initcall
+[    0.453249] samsung_abox_late_initcall
+[    0.453292] cfg80211: Loading compiled-in X.509 certificates for regulatory database
+[    0.453928] Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+[    0.454384] Loaded X.509 cert 'wens: 61c038651aabdcf94bd0ac7ff06c7248db18c600'
+[    1.456611] faux_driver regulatory: Direct firmware load for regulatory.db failed with error -2
+[    1.456636] cfg80211: failed to load regulatory.db
+[    2.152380] a50-decon 148b0000.decon_f: G2b fence owner: context=1 driver=a50-decon timeline=decon_f seq=0 pending=0 stage=idle worker_seq=0 worker_layers=0 completed=0
+[    2.152400] a50-decon 148b0000.decon_f: 2 s after probe: frames req=1 done=2 start=2 timeouts=0 extra=0 te=122 FRAME_COUNT=4 GLOBAL=0x00000133 TRIG=0x00003010 vsync_on=0 win_configs=0 copied=0 skipped=0 acq_timeouts=0 frame_wait_timeouts=0 scanned=0 dma_fallbacks=0 shadow_wait_timeouts=0 IDMA0=0xca000000 blanks=0 unblanks=0 dcs=0 dcs_timeouts=0
+[    2.152426] a50-decon 148b0000.decon_f: G2g IDMA geometry: src_size=0x09240438 src_offset=0x00000000 img_size=0x09240438 padded_scanned=0
+[   11.458329] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked query opcode 0x4 idn 0xf
+[   15.459178] clk: Not disabling unused clocks
+[   15.459186] PM: genpd: Disabling unused power domains
+[   15.459195] ALSA device list:
+[   15.459201]   No soundcards found.
+[   15.462006] Freeing unused kernel memory: 14720K
+[   15.462117] Run /init as init process
+[   15.462125]   with arguments:
+[   15.462129]     /init
+[   15.462134]     root
+[   15.462138]   with environment:
+[   15.462143]     HOME=/
+[   15.462147]     TERM=linux
+[   15.462151]     ess_setup=0xf9000000
+[   15.462156]     sec_avc_log=0x40000@0x91202000
+[   15.462161]     sec_tsp_log=0x40000@0x91244000
+[   15.462165]     sec_disp_log=0x100000@0x91286000
+[   15.462170]     sec_debug_next=0x800000@0x91388000
+[   15.462175]     charging_mode=0x3000
+[   15.462179]     lcdtype=9453571
+[   15.462183]     pmic_info=27
+[   15.462187]     ccic_info=1
+[   15.462191]     fg_reset=0
+[   15.462194]     sales_code=BKD
+[   15.495305] systemd-udevd[148]: starting version 232
+[   16.444401] random: crng init done
+[   16.744935] mip4_ts 3-0048: P3 empty packet #0 ready_status 0xa0 err 0
+[   16.752996] Begin: Running /scripts/nfs-top ...
+[   16.753060] done.
+[   16.753132] Begin: Running /scripts/nfs-premount ...
+[   16.753186] done.
+[   16.753264] Begin: Running /scripts/local-top ...
+[   16.753316] done.
+[   16.753366] Begin: Running /scripts/local-premount ...
+[   16.755005] done.
+[   16.757947] initrd: Loading kernel modules from /lib/modules
+[   16.758484] cat: can't open 'modules.load': No such file or directory
+[   16.759037] /
+[   16.759078] initrd: Finished loading kernel modules
+[   17.781882] initrd: checking filesystem integrity for the userdata partition
+[   18.518755] EXT4-fs (sda32): recovery complete
+[   18.519355] EXT4-fs (sda32): mounted filesystem 6be7290a-f5e9-4537-8738-6adea31bf339 r/w with ordered data mode. Quota mode: disabled.
+[   18.521550] EXT4-fs (sda32): unmounting filesystem 6be7290a-f5e9-4537-8738-6adea31bf339.
+[   18.675425] initrd: checking filesystem for userdata took (including e2fsck) 1 seconds
+[   18.681599] dumpe2fs 1.43.4 (31-Jan-2017)
+[   18.685138] initrd: mounting /dev/sda32
+[   18.701571] EXT4-fs: Warning: mounting with data=journal disables delayed allocation, dioread_nolock, O_DIRECT and fast_commit support!
+[   18.702020] EXT4-fs: Mount option(s) incompatible with ext2
+[   18.704488] EXT4-fs (sda32): mounted filesystem 6be7290a-f5e9-4537-8738-6adea31bf339 r/w with journalled data mode. Quota mode: disabled.
+[   18.706904] initrd: Halium rootfs is /tmpmnt/ubuntu.img
+[   18.707367] initrd: mounting system rootfs at /halium-system
+[   18.708852] loop0: detected capacity change from 0 to 12582912
+[   18.762143] EXT4-fs (loop0): mounted filesystem e00143fa-d6ec-408e-b9f2-061fce1fe573 r/w with ordered data mode. Quota mode: disabled.
+[   18.769570] initrd: mounting  /tmpmnt/ubuntu.img (image developer mode)
+[   18.769690] initrd: mounting android system image (/tmpmnt/android-rootfs.img) ro, in /android-rootfs (rootfs mode)
+[   18.769731] initrd: mounting android system image from system rootfs
+[   18.771897] loop1: detected capacity change from 0 to 925296
+[   18.832375] EXT4-fs (loop1): mounted filesystem db906ff9-90b8-4ccb-bda6-79dd7205d5e0 ro without journal. Quota mode: disabled.
+[   18.844916] initrd: Android system image API level is 30
+[   18.844982] initrd: boot mode: halium
+[   18.845804] initrd: Normal boot
+[   18.868908] initrd: WARNING: Didn't find a device name. Is the Android system image mounted correctly?
+[   18.868966] initrd: device is unknown
+[   18.872755] initrd: Adding bind-mounts to /root/etc/fstab
+[   19.269180] initrd: checking fstab /root/var/lib/lxc/android/rootfs/fstab* for additional mount points
+[   19.271426] cat: can't open '/root/var/lib/lxc/android/rootfs/fstab*': No such file or directory
+[   19.273688] mkdir: can't create directory '/root/android/cache': File exists
+[   19.276024] initrd: moving Android system to /android/system
+[   19.279917] Begin: Running /scripts/local-bottom ...
+[   19.279988] done.
+[   19.280043] done.
+[   19.283317] Begin: Running /scripts/nfs-bottom ...
+[   19.283373] done.
+[   19.283523] Begin: Running /scripts/init-bottom ...
+[   19.291378] done.
+[   19.292320] Target filesystem doesn't have requested /root-rescue2.sh.
+[   19.328116] A50STATUS: observer armed in new root
+[   20.312036] A50M64: runtime observer armed
+[   20.329715] Not activating Mandatory Access Control as /sbin/tomoyo-init does not exist.
+[   20.382604] systemd[1]: System time before build time, advancing clock.
+[   20.415535] systemd[1]: systemd 255.4-1ubuntu8.15+0~20260429201649.9+ubports26.04.1~1.gbp732c4b running in system mode (+PAM +AUDIT +SELINUX +APPARMOR +IMA +SMACK +SECCOMP +GCRYPT -GNUTLS +OPENSSL +ACL +BLKID +CURL +ELFUTILS +FIDO2 +IDN2 -IDN +IPTC +KMOD +LIBCRYPTSETUP +LIBFDISK +PCRE2 -PWQUALITY +P11KIT +QRENCODE +TPM2 +BZIP2 +LZ4 +XZ +ZLIB +ZSTD -BPF_FRAMEWORK -XKBCOMMON +UTMP +SYSVINIT default-hierarchy=unified)
+[   20.415577] systemd[1]: Detected architecture arm64.
+[   20.418108] systemd[1]: Hostname set to <ubuntu-phablet>.
+[   20.476066] systemd-fstab-generator[482]: Missing argument for root= kernel command line switch, ignoring.
+[   21.116019] systemd[1]: Queued start job for default target graphical.target.
+[   21.134473] systemd[1]: Created slice system-modprobe.slice - Slice /system/modprobe.
+[   21.136502] systemd[1]: Created slice user.slice - User and Session Slice.
+[   21.137154] systemd[1]: Started systemd-ask-password-wall.path - Forward Password Requests to Wall Directory Watch.
+[   21.137858] systemd[1]: proc-sys-fs-binfmt_misc.automount - Arbitrary Executable File Formats File System Automount Point was skipped because of an unmet condition check (ConditionPathExists=/proc/sys/fs/binfmt_misc).
+[   21.138098] systemd[1]: Reached target integritysetup.target - Local Integrity Protected Volumes.
+[   21.138573] systemd[1]: Reached target remote-fs.target - Remote File Systems.
+[   21.138876] systemd[1]: Reached target slices.target - Slice Units.
+[   21.139171] systemd[1]: Reached target snapd.mounts-pre.target - Mounting snaps.
+[   21.139446] systemd[1]: Reached target snapd.mounts.target - Mounted snaps.
+[   21.139853] systemd[1]: Reached target veritysetup.target - Local Verity Protected Volumes.
+[   21.140580] systemd[1]: Listening on systemd-initctl.socket - initctl Compatibility Named Pipe.
+[   21.141623] systemd[1]: Listening on systemd-journald-dev-log.socket - Journal Socket (/dev/log).
+[   21.142743] systemd[1]: Listening on systemd-journald.socket - Journal Socket.
+[   21.143362] systemd[1]: systemd-pcrextend.socket - TPM2 PCR Extension (Varlink) was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
+[   21.144640] systemd[1]: Listening on systemd-udevd-control.socket - udev Control Socket.
+[   21.145546] systemd[1]: Listening on systemd-udevd-kernel.socket - udev Kernel Socket.
+[   21.146571] systemd[1]: dev-hugepages.mount - Huge Pages File System was skipped because of an unmet condition check (ConditionPathExists=/sys/kernel/mm/hugepages).
+[   21.147078] systemd[1]: dev-mqueue.mount - POSIX Message Queue File System was skipped because of an unmet condition check (ConditionPathExists=/proc/sys/fs/mqueue).
+[   21.151250] systemd[1]: Mounting sys-kernel-debug.mount - Kernel Debug File System...
+[   21.154965] systemd[1]: Mounting sys-kernel-tracing.mount - Kernel Trace File System...
+[   21.165298] systemd[1]: Starting systemd-journald.service - Journal Service...
+[   21.171118] systemd[1]: Starting keyboard-setup.service - Set the console keyboard layout...
+[   21.171565] systemd[1]: kmod-static-nodes.service - Create List of Static Device Nodes was skipped because of an unmet condition check (ConditionFileNotEmpty=/lib/modules/6.18.33-a50-diag+/modules.devname).
+[   21.177025] systemd[1]: Starting modprobe@configfs.service - Load Kernel Module configfs...
+[   21.182017] systemd[1]: Starting modprobe@dm_mod.service - Load Kernel Module dm_mod...
+[   21.187601] systemd[1]: Starting modprobe@drm.service - Load Kernel Module drm...
+[   21.192910] systemd[1]: Starting modprobe@efi_pstore.service - Load Kernel Module efi_pstore...
+[   21.198614] systemd[1]: Starting modprobe@fuse.service - Load Kernel Module fuse...
+[   21.204287] systemd[1]: Starting modprobe@loop.service - Load Kernel Module loop...
+[   21.204829] systemd[1]: mount-android-system.service - Find the Android's system or root image was skipped because of an unmet condition check (ConditionPathIsMountPoint=!/android).
+[   21.206162] systemd[1]: systemd-pcrmachine.service - TPM2 PCR Machine ID Measurement was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
+[   21.211902] systemd[1]: Starting systemd-remount-fs.service - Remount Root and Kernel File Systems...
+[   21.215523] systemd-journald[496]: Collecting audit messages is disabled.
+[   21.217205] systemd[1]: Starting systemd-tmpfiles-setup-dev-early.service - Create Static Device Nodes in /dev gracefully...
+[   21.217627] systemd[1]: systemd-tpm2-setup-early.service - TPM2 SRK Setup (Early) was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
+[   21.247328] systemd[1]: Started systemd-journald.service - Journal Service.
+[   21.251567] systemd[1]: Mounted sys-kernel-debug.mount - Kernel Debug File System.
+[   21.252434] systemd[1]: Mounted sys-kernel-tracing.mount - Kernel Trace File System.
+[   21.253922] systemd[1]: modprobe@configfs.service: Deactivated successfully.
+[   21.254651] systemd[1]: Finished modprobe@configfs.service - Load Kernel Module configfs.
+[   21.256206] systemd[1]: modprobe@dm_mod.service: Deactivated successfully.
+[   21.256999] systemd[1]: Finished modprobe@dm_mod.service - Load Kernel Module dm_mod.
+[   21.258481] systemd[1]: modprobe@drm.service: Deactivated successfully.
+[   21.259144] systemd[1]: Finished modprobe@drm.service - Load Kernel Module drm.
+[   21.260837] systemd[1]: modprobe@efi_pstore.service: Deactivated successfully.
+[   21.261670] systemd[1]: Finished modprobe@efi_pstore.service - Load Kernel Module efi_pstore.
+[   21.263272] systemd[1]: modprobe@fuse.service: Deactivated successfully.
+[   21.263968] systemd[1]: Finished modprobe@fuse.service - Load Kernel Module fuse.
+[   21.265641] systemd[1]: modprobe@loop.service: Deactivated successfully.
+[   21.266354] systemd[1]: Finished modprobe@loop.service - Load Kernel Module loop.
+[   21.267954] systemd[1]: Finished systemd-tmpfiles-setup-dev-early.service - Create Static Device Nodes in /dev gracefully.
+[   21.286202] systemd[1]: sys-fs-fuse-connections.mount - FUSE Control File System was skipped because of an unmet condition check (ConditionPathExists=/sys/fs/fuse/connections).
+[   21.289299] exynos-ufshc 13520000.ufs: A50_UFS_SAFE: blocked SCSI opcode 0x42 lun 0
+[   21.289348] sd 0:0:0:0: [sda] tag#0 UNKNOWN(0x2003) Result: hostbyte=0x00 driverbyte=DRIVER_OK cmd_age=0s
+[   21.289361] sd 0:0:0:0: [sda] tag#0 Sense Key : 0x5 [current]
+[   21.289369] sd 0:0:0:0: [sda] tag#0 ASC=0x20 ASCQ=0x0
+[   21.289379] sd 0:0:0:0: [sda] tag#0 CDB: opcode=0x42 42 00 00 00 00 00 00 00 18 00
+[   21.289387] critical target error, dev sda, sector 111745024 op 0x3:(DISCARD) flags 0x800 phys_seg 1 prio class 2
+[   21.308599] systemd[1]: Mounting sys-kernel-config.mount - Kernel Configuration File System...
+[   21.308869] systemd[1]: systemd-repart.service - Repartition Root Disk was skipped because no trigger condition checks were met.
+[   21.312088] EXT4-fs (loop0): re-mounted e00143fa-d6ec-408e-b9f2-061fce1fe573 ro.
+[   21.330752] systemd[1]: Finished systemd-remount-fs.service - Remount Root and Kernel File Systems.
+[   21.331232] systemd[1]: Mounted sys-kernel-config.mount - Kernel Configuration File System.
+[   21.332788] systemd[1]: userdata-SWAP.img.swap - /userdata/SWAP.img was skipped because of an unmet condition check (ConditionPathExists=/userdata/SWAP.img).
+[   21.332892] systemd[1]: Reached target swap.target - Swaps.
+[   21.334448] systemd[1]: systemd-hwdb-update.service - Rebuild Hardware Database was skipped because of an unmet condition check (ConditionNeedsUpdate=/etc).
+[   21.334728] systemd[1]: systemd-sysusers.service - Create System Users was skipped because no trigger condition checks were met.
+[   21.337107] systemd[1]: Starting systemd-tmpfiles-setup-dev.service - Create Static Device Nodes in /dev...
+[   21.393075] systemd[1]: Finished systemd-tmpfiles-setup-dev.service - Create Static Device Nodes in /dev.
+[   21.433042] systemd[1]: Finished keyboard-setup.service - Set the console keyboard layout.
+[   21.433748] systemd[1]: Reached target local-fs-pre.target - Preparation for Local File Systems.
+[   21.434417] systemd[1]: home.mount: Directory /home to mount over is not empty, mounting anyway.
+[   21.476558] systemd[1]: Mounting home.mount - /home...
+[   21.479263] systemd[1]: Mounting media.mount - /media...
+[   21.481698] systemd[1]: Mounting nix.mount - /nix...
+[   21.484514] systemd[1]: Mounting opt-click.ubuntu.com.mount - /opt/click.ubuntu.com...
+[   21.485254] systemd[1]: root.mount: Directory /root to mount over is not empty, mounting anyway.
+[   21.487989] systemd[1]: Mounting root.mount - /root...
+[   21.490931] systemd[1]: Mounting snap.mount - /snap...
+[   21.494013] systemd[1]: Mounting tmp.mount - /tmp...
+[   21.494638] systemd[1]: var-cache-apparmor.mount: Directory /var/cache/apparmor to mount over is not empty, mounting anyway.
+[   21.497311] systemd[1]: Mounting var-cache-apparmor.mount - /var/cache/apparmor...
+[   21.501042] systemd[1]: Mounting var-cache-snapd.mount - /var/cache/snapd...
+[   21.501916] systemd[1]: var-lib-AccountsService.mount: Directory /var/lib/AccountsService to mount over is not empty, mounting anyway.
+[   21.504902] systemd[1]: Mounting var-lib-AccountsService.mount - /var/lib/AccountsService...
+[   21.507918] systemd[1]: Mounting var-lib-NetworkManager.mount - /var/lib/NetworkManager...
+[   21.511262] systemd[1]: Mounting var-lib-PackageKit.mount - /var/lib/PackageKit...
+[   21.514377] systemd[1]: Mounting var-lib-aethercast.mount - /var/lib/aethercast...
+[   21.517643] systemd[1]: Mounting var-lib-android\x2ddata.mount - /var/lib/android-data...
+[   21.518258] systemd[1]: var-lib-apparmor.mount: Directory /var/lib/apparmor to mount over is not empty, mounting anyway.
+[   21.521013] systemd[1]: Mounting var-lib-apparmor.mount - /var/lib/apparmor...
+[   21.530555] systemd[1]: Mounting var-lib-bluetooth.mount - /var/lib/bluetooth...
+[   21.531045] systemd[1]: var-lib-extrausers.mount: Directory /var/lib/extrausers to mount over is not empty, mounting anyway.
+[   21.533796] systemd[1]: Mounting var-lib-extrausers.mount - /var/lib/extrausers...
+[   21.537166] systemd[1]: Mounting var-lib-lightdm.mount - /var/lib/lightdm...
+[   21.540186] systemd[1]: Mounting var-lib-lightdm\x2ddata.mount - /var/lib/lightdm-data...
+[   21.543032] systemd[1]: Mounting var-lib-logrotate.mount - /var/lib/logrotate...
+[   21.545993] systemd[1]: Mounting var-lib-lomiri\x2dlocation\x2dservice.mount - /var/lib/lomiri-location-service...
+[   21.548898] systemd[1]: Mounting var-lib-misc.mount - /var/lib/misc...
+[   21.552333] systemd[1]: Mounting var-lib-nfcd.mount - /var/lib/nfcd...
+[   21.560727] systemd[1]: Mounting var-lib-ofono.mount - /var/lib/ofono...
+[   21.561457] systemd[1]: var-lib-snapd.mount: Directory /var/lib/snapd to mount over is not empty, mounting anyway.
+[   21.564234] systemd[1]: Mounting var-lib-snapd.mount - /var/lib/snapd...
+[   21.565555] systemd[1]: var-lib-sudo.mount: Directory /var/lib/sudo to mount over is not empty, mounting anyway.
+[   21.568571] systemd[1]: Mounting var-lib-sudo.mount - /var/lib/sudo...
+[   21.569393] systemd[1]: var-lib-system\x2dimage.mount: Directory /var/lib/system-image to mount over is not empty, mounting anyway.
+[   21.572738] systemd[1]: Mounting var-lib-system\x2dimage.mount - /var/lib/system-image...
+[   21.573358] systemd[1]: var-lib-systemd.mount: Directory /var/lib/systemd to mount over is not empty, mounting anyway.
+[   21.576345] systemd[1]: Mounting var-lib-systemd.mount - /var/lib/systemd...
+[   21.580411] systemd[1]: Mounting var-lib-upower.mount - /var/lib/upower...
+[   21.583912] systemd[1]: Mounting var-lib-urfkill.mount - /var/lib/urfkill...
+[   21.587083] systemd[1]: Mounting var-lib-usb\x2dmoded.mount - /var/lib/usb-moded...
+[   21.590576] systemd[1]: Mounting var-lib-usermetrics.mount - /var/lib/usermetrics...
+[   21.594347] systemd[1]: Mounting var-lib-waydroid.mount - /var/lib/waydroid...
+[   21.595114] systemd[1]: var-log.mount: Directory /var/log to mount over is not empty, mounting anyway.
+[   21.598276] systemd[1]: Mounting var-log.mount - /var/log...
+[   21.602809] systemd[1]: Mounting var-snap.mount - /var/snap...
+[   21.607006] systemd[1]: Mounting var-tmp.mount - /var/tmp...
+[   21.678820] systemd[1]: Mounted home.mount - /home.
+[   21.679339] systemd[1]: Mounted media.mount - /media.
+[   21.679675] systemd[1]: Mounted nix.mount - /nix.
+[   21.679985] systemd[1]: Mounted opt-click.ubuntu.com.mount - /opt/click.ubuntu.com.
+[   21.680295] systemd[1]: Mounted root.mount - /root.
+[   21.680609] systemd[1]: Mounted snap.mount - /snap.
+[   21.680902] systemd[1]: Mounted tmp.mount - /tmp.
+[   21.681204] systemd[1]: Mounted var-cache-apparmor.mount - /var/cache/apparmor.
+[   21.681520] systemd[1]: Mounted var-cache-snapd.mount - /var/cache/snapd.
+[   21.681827] systemd[1]: Mounted var-lib-AccountsService.mount - /var/lib/AccountsService.
+[   21.682132] systemd[1]: Mounted var-lib-NetworkManager.mount - /var/lib/NetworkManager.
+[   21.682454] systemd[1]: Mounted var-lib-PackageKit.mount - /var/lib/PackageKit.
+[   21.682759] systemd[1]: Mounted var-lib-aethercast.mount - /var/lib/aethercast.
+[   21.683059] systemd[1]: Mounted var-lib-android\x2ddata.mount - /var/lib/android-data.
+[   21.683358] systemd[1]: Mounted var-lib-apparmor.mount - /var/lib/apparmor.
+[   21.683654] systemd[1]: Mounted var-lib-bluetooth.mount - /var/lib/bluetooth.
+[   21.683960] systemd[1]: Mounted var-lib-extrausers.mount - /var/lib/extrausers.
+[   21.684267] systemd[1]: Mounted var-lib-lightdm.mount - /var/lib/lightdm.
+[   21.684573] systemd[1]: Mounted var-lib-lightdm\x2ddata.mount - /var/lib/lightdm-data.
+[   21.684864] systemd[1]: Mounted var-lib-logrotate.mount - /var/lib/logrotate.
+[   21.685159] systemd[1]: Mounted var-lib-lomiri\x2dlocation\x2dservice.mount - /var/lib/lomiri-location-service.
+[   21.685484] systemd[1]: Mounted var-lib-misc.mount - /var/lib/misc.
+[   21.685779] systemd[1]: Mounted var-lib-nfcd.mount - /var/lib/nfcd.
+[   21.686083] systemd[1]: Mounted var-lib-ofono.mount - /var/lib/ofono.
+[   21.686380] systemd[1]: Mounted var-lib-snapd.mount - /var/lib/snapd.
+[   21.686679] systemd[1]: Mounted var-lib-sudo.mount - /var/lib/sudo.
+[   21.686976] systemd[1]: Mounted var-lib-system\x2dimage.mount - /var/lib/system-image.
+[   21.687279] systemd[1]: Mounted var-lib-systemd.mount - /var/lib/systemd.
+[   21.687588] systemd[1]: Mounted var-lib-upower.mount - /var/lib/upower.
+[   21.687893] systemd[1]: Mounted var-lib-urfkill.mount - /var/lib/urfkill.
+[   21.688212] systemd[1]: Mounted var-lib-usb\x2dmoded.mount - /var/lib/usb-moded.
+[   21.688526] systemd[1]: Mounted var-lib-usermetrics.mount - /var/lib/usermetrics.
+[   21.688820] systemd[1]: Mounted var-lib-waydroid.mount - /var/lib/waydroid.
+[   21.689112] systemd[1]: Mounted var-log.mount - /var/log.
+[   21.689436] systemd[1]: Mounted var-snap.mount - /var/snap.
+[   21.689741] systemd[1]: Mounted var-tmp.mount - /var/tmp.
+[   21.723383] systemd[1]: Reached target local-fs.target - Local File Systems.
+[   21.726404] systemd[1]: Listening on systemd-sysext.socket - System Extension Image Management (Varlink).
+[   21.752710] systemd[1]: Starting console-setup.service - Set console font and keymap...
+[   21.753124] systemd[1]: ldconfig.service - Rebuild Dynamic Linker Cache was skipped because no trigger condition checks were met.
+[   21.755463] systemd[1]: Starting mount-android-partitions.service - Mount Android partitions...
+[   21.757953] systemd[1]: Starting plymouth-read-write.service - Tell Plymouth To Write Out Runtime Data...
+[   21.759154] systemd[1]: systemd-binfmt.service - Set Up Additional Binary Formats was skipped because of an unmet condition check (ConditionPathIsMountPoint=/proc/sys/fs/binfmt_misc).
+[   21.761934] systemd[1]: Starting systemd-journal-flush.service - Flush Journal to Persistent Storage...
+[   21.762288] systemd[1]: systemd-pstore.service - Platform Persistent Storage Archival was skipped because of an unmet condition check (ConditionDirectoryNotEmpty=/sys/fs/pstore).
+[   21.765268] systemd[1]: Starting systemd-random-seed.service - Load/Save OS Random Seed...
+[   21.765589] systemd[1]: systemd-tpm2-setup.service - TPM2 SRK Setup was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
+[   21.768614] systemd[1]: Starting ufw.service - Uncomplicated firewall...
+[   21.784494] systemd-journald[496]: Received client request to flush runtime journal.
+[   21.784637] systemd[1]: Finished ufw.service - Uncomplicated firewall.
+[   21.785479] systemd[1]: Reached target network-pre.target - Preparation for Network.
+[   21.786887] systemd[1]: Finished console-setup.service - Set console font and keymap.
+[   21.801379] systemd[1]: Finished plymouth-read-write.service - Tell Plymouth To Write Out Runtime Data.
+[   21.802263] systemd[1]: Finished systemd-random-seed.service - Load/Save OS Random Seed.
+[   21.803491] systemd-journald[496]: /var/log/journal/8b7a4ea163e84f4f89218e4a86aedb78/system.journal: Realtime clock jumped backwards relative to last journal entry, rotating.
+[   21.803527] systemd-journald[496]: Rotating system journal.
+[   21.842945] EXT4-fs (sda26): mounting with "discard" option, but the device does not support discard
+[   21.843034] EXT4-fs (sda26): mounted filesystem 07373cec-6e3e-5f97-9250-62eb356c889e ro without journal. Quota mode: disabled.
+[   21.916694] systemd[1]: Finished systemd-journal-flush.service - Flush Journal to Persistent Storage.
+[   21.929525] samsung-abox 14a50000.abox: SRAM firmware found after 21 retries
+[   21.929551] samsung-abox 14a50000.abox: SRAM firmware loaded
+[   21.935004] samsung-abox 14a50000.abox: calliope_dram.bin is loaded
+[   21.935045] samsung-abox 14a50000.abox: abox_enable
+[   21.935053] samsung-abox 14a50000.abox: abox_request_cpu_gear(ab0cdefa, 1)
+[   21.935092] samsung-abox 14a50000.abox: audif clock: 24074450
+[   21.935101] samsung-abox 14a50000.abox: abox_cfg_gpio(default)
+[   21.935110] Unable to handle kernel execute from non-executable memory at virtual address ffff800080cc8e30
+[   21.935120] Mem abort info:
+[   21.935124]   ESR = 0x000000008600000f
+[   21.935129]   EC = 0x21: IABT (current EL), IL = 32 bits
+[   21.935135]   SET = 0, FnV = 0
+[   21.935140]   EA = 0, S1PTW = 0
+[   21.935145]   FSC = 0x0f: level 3 permission fault
+[   21.935151] swapper pgtable: 4k pages, 48-bit VAs, pgdp=0000000081153000
+[   21.935158] [ffff800080cc8e30] pgd=0000000000000000, p4d=10000000822b1003, pud=10000000822b2003, pmd=10000000822b4003, pte=00e0000080ec8783
+[   21.935179] Internal error: Oops: 000000008600000f [#1]  SMP
+[   21.935190] CPU: 4 UID: 0 PID: 127 Comm: kworker/4:3 Tainted: G        W           6.18.33-a50-diag+ #1 NONE
+[   21.935203] Tainted: [W]=WARN
+[   21.935208] Hardware name: Samsung Galaxy A50 (SM-A505F) (DT)
+[   21.935215] Workqueue: events abox_retry_sram_firmware
+[   21.935233] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[   21.935242] pc : 0xffff800080cc8e30
+[   21.935248] lr : regcache_cache_only+0x20/0x90
+[   21.935259] sp : ffff800082c43c70
+[   21.935263] x29: ffff800082c43c70 x28: ffff0008029c0130 x27: ffff800080e6b4ed
+[   21.935275] x26: ffff0008029c0080 x25: ffff000802be2040 x24: ffff800080ea6565
+[   21.935285] x23: ffff0008029ccbc8 x22: ffff000801132000 x21: 0000000000000000
+[   21.935296] x20: 0000000000000000 x19: ffff000802577800 x18: ffff800081f28000
+[   21.935306] x17: ffff800081dc2db8 x16: 00786f62612e3030 x15: 0000000000000003
+[   21.935316] x14: ffff000875000000 x13: 0000000000000003 x12: 0000000000000003
+[   21.935325] x11: 0000000000000000 x10: 0000000000000027 x9 : cefbca354736e100
+[   21.935335] x8 : ffff800080cc8e30 x7 : 0774076c07750761 x6 : 0766076507640728
+[   21.935345] x5 : ffff000800120f00 x4 : ffff000800120fa0 x3 : 0000000000000000
+[   21.935355] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff000800d1f028
+[   21.935365] Call trace:
+[   21.935370]  0xffff800080cc8e30 (P)
+[   21.935377]  abox_enable+0x22c/0x38c
+[   21.935387]  abox_complete_sram_firmware_request+0x284/0x2a0
+[   21.935397]  abox_retry_sram_firmware+0x58/0x90
+[   21.935405]  process_scheduled_works+0x170/0x388
+[   21.935416]  worker_thread+0x2c4/0x444
+[   21.935424]  kthread+0x1d8/0x238
+[   21.935432]  ret_from_fork+0x10/0x20
+[   21.935443] Code: 80ebac16 ffff8000 80e58236 ffff8000 (807bdd44)
+[   21.935450] ---[ end trace 0000000000000000 ]---
+[   21.935457] Kernel panic - not syncing: Oops: Fatal exception
+[   21.935463] SMP: stopping secondary CPUs
+[   21.935474] Kernel Offset: disabled
+[   21.935479] CPU features: 0x000,00000000,00306800,00004000,0400400b
+[   21.935487] Memory Limit: none
+[   21.935493] samsung-abox 14a50000.abox: exynos_abox_panic_handler: dump is skipped due to no power
+===== A50 6.18 DMESG END =====

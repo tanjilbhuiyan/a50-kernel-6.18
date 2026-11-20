@@ -1,0 +1,64 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Sat, 21 Nov 2026 01:44:59 +0600
+Subject: [PATCH 13/14] ASoC: samsung: abox: IOMMU fault worker only touches a
+ powered ABOX
+
+The fault worker (added for 6.18 when the dump moved out of hard IRQ)
+read the ABOX CPU registers and halted the CPU without checking that the
+ABOX block was still powered. If the ABOX runtime-suspends between the
+fault and the work item, those reads hit a powered-down block and stall
+the bus (the freeze class seen in M10.2 A1d2). Its one-shot flag was also
+never cleared, so after the DSP restarts a later fault was only logged.
+
+- Hold a runtime-PM reference only if the device is active
+  (pm_runtime_get_if_active()) and act only while the CPU is enabled;
+  otherwise report the fault without a dump.
+- Re-arm the report in abox_enable(), after flushing a pending worker.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I18f5cbb50ad3ec0938fcf63387cc181bffad0781
+---
+ sound/soc/samsung/abox/abox.c | 22 +++++++++++++++++++---
+ 1 file changed, 19 insertions(+), 3 deletions(-)
+
+diff --git a/sound/soc/samsung/abox/abox.c b/sound/soc/samsung/abox/abox.c
+index ed88497cc..f216c3d60 100644
+--- a/sound/soc/samsung/abox/abox.c
++++ b/sound/soc/samsung/abox/abox.c
+@@ -206,9 +206,21 @@ static void abox_iommu_fault_work_func(struct work_struct *work)
+ 			iommu_fault_work);
+ 	struct device *dev = &data->pdev->dev;
+ 
+-	abox_dbg_print_gpr(dev, data);
+-	abox_cpu_enable(false);
+-	dev_err(dev, "ABOX CPU halted after an IOMMU fault\n");
++	/*
++	 * The CPU registers are in the ABOX block: read them only while it is
++	 * powered (a read of a powered-down block stalls the bus). If it was
++	 * suspended meanwhile, the CPU is already stopped.
++	 */
++	if (pm_runtime_get_if_active(dev) <= 0) {
++		dev_err(dev, "IOMMU fault: ABOX off, no register dump\n");
++		return;
++	}
++	if (data->enabled) {
++		abox_dbg_print_gpr(dev, data);
++		abox_cpu_enable(false);
++		dev_err(dev, "ABOX CPU halted after an IOMMU fault\n");
++	}
++	pm_runtime_put(dev);
+ }
+ 
+ static void abox_cpu_power(bool on);
+@@ -5485,6 +5497,10 @@ static int abox_enable(struct device *dev)
+ 
+ 	dev_info(dev, "%s\n", __func__);
+ 
++	/* A new DSP start gets its own fault report and halt. */
++	cancel_work_sync(&data->iommu_fault_work);
++	data->iommu_fault = false;
++
+ 	abox_gic_enable_irq(data->dev_gic);
+ 
+ 	abox_request_cpu_gear(dev, data, DEFAULT_CPU_GEAR_ID, ABOX_CPU_GEAR_MAX);

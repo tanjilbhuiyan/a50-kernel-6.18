@@ -1,0 +1,53 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Fri, 20 Nov 2026 23:15:38 +0600
+Subject: [PATCH 08/14] ASoC: samsung: abox: take the UAIF/DSIF clock role from
+ the CPU side
+
+Since 5.17 snd_soc_runtime_set_dai_fmt() flips the clock-provider bits
+before calling set_fmt() on the CPU DAI of every link, so a CPU driver
+sees its own role (BP_FP = provider, BC_FC = consumer). 4.14 flipped
+only for codec-to-codec links, and the 4.14 ABOX driver read the codec
+role (CBS_CFS = codec consumer = ABOX master). The 6.18 build renamed
+the 4.14 macros by value, which inverts every UAIF master/slave setting
+and makes DSIF reject its only valid format, failing the card.
+
+- UAIF: BP_FP selects ABOX_MODE 1 (UAIF drives BCLK/WS), BC_FC mode 0.
+- DSIF: accept BP_FP, the role 4.14 accepted as CBS_CFS.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I71c183d50c1d7a051b2d4b45f19a2a96b98497d0
+---
+ sound/soc/samsung/abox/abox_if.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/sound/soc/samsung/abox/abox_if.c b/sound/soc/samsung/abox/abox_if.c
+index bbd0668f6..07aca82b7 100644
+--- a/sound/soc/samsung/abox/abox_if.c
++++ b/sound/soc/samsung/abox/abox_if.c
+@@ -176,8 +176,9 @@ static int abox_dsif_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+ 		ret = -EINVAL;
+ 	}
+ 
++	/* 6.18 passes the CPU-side clock role: DSIF always drives the clocks. */
+ 	switch (fmt & SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK) {
+-	case SND_SOC_DAIFMT_CBC_CFC:
++	case SND_SOC_DAIFMT_BP_FP:
+ 		break;
+ 	default:
+ 		ret = -EINVAL;
+@@ -324,11 +325,12 @@ static int abox_uaif_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+ 		ret = -EINVAL;
+ 	}
+ 
++	/* 6.18 passes the CPU-side clock role (4.14 passed the codec side). */
+ 	switch (fmt & SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK) {
+-	case SND_SOC_DAIFMT_CBP_CFP:
++	case SND_SOC_DAIFMT_BC_FC:
+ 		set_value_by_name(ctrl0, ABOX_MODE, 0);
+ 		break;
+-	case SND_SOC_DAIFMT_CBC_CFC:
++	case SND_SOC_DAIFMT_BP_FP:
+ 		set_value_by_name(ctrl0, ABOX_MODE, 1);
+ 		break;
+ 	default:

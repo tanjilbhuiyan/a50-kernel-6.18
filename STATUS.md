@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-20 (M10.2 A1 normal boot fixed; clean restore and public build passed)
+Updated: 2026-11-21 (M10.2 done: ABOX sound card matches stock; next M10.3)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -8,7 +8,33 @@ Read this file, then the active ticket and its log. Before trusting anything her
 branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and on the phone. At the end of a session, update
 **RESUME HERE** with commits, branch, image hashes, last test and rollback result, and the next action.
 
-## RESUME HERE (2026-11-20, M10.2 A1 fixed; next A2)
+## RESUME HERE (2026-11-21, M10.2 done; M10.3 next)
+- **M10.2 closed by the owner 2026-11-21.** Next ticket `tasks/M10.3-codec-amplifier.md` (RT5665 + TFA9872 +
+  machine widgets on the A2 card), not started. Open owner decision before the amp work: TFA factory calibration
+  (uncalibrated defaults vs read-only EFS + ADR).
+- **A2b (card):** card 0 "Exynos9610-Audio", `/proc/asound/pcm` identical to stock (RDMA0-4/6/7 playback, WDMA0-4
+  capture, comprC0D5); all 136 ABOX control names = stock (only M11 `ABOX VSS State` missing; 213 codec/amp/machine
+  controls for M10.3); DSP rSK1 ~22 s, SysMMU faults 0, IPC IRQs 38. `reference/m10-audio/a2b-results.json`.
+- **A2c (robustness + Wi-Fi):** + fault-worker power gate + GIC supplier check; Wi-Fi joined with ABOX running
+  (stock profiles unbound from swlan0 with nmcli --temporary), 20/20 router pings; BT controller powered; results
+  otherwise identical to A2b; no faults to the 431 s dump. `a2c-results.json`.
+- **Failed attempts:** A2 = heimdall BOOT transfer failure (recovered from Samsung's error screen, kernel never ran);
+  A2r = static ALSA minors -EBUSY -> component remove freed the ABOX regmap -> panic 21.9 s. Fixed (see log).
+- **Phone last verified:** stock restored **2026-11-21 01:57:07**, 4.14.194 booted **01:57:21**, pre-flight passed
+  (live DTB/DTBO/BOOT == stock/baseline), fsck clean **7164/3440640 files, 1989058/13745152 blocks**, stock Wi-Fi
+  back on swlan0. No test active. Fresh presence/pre-flight required for future phone work.
+- **Clean kernel:** `src/m10/clean-kernel` **a50-audio/e548f4301** (14 commits after M9 e7a5bee84), tree
+  **ca8b6631f4bc21df0797cda9de1f3319ad16366f**; exported and replay-verified in `reference/m10-audio/a2-clean-patches/`.
+  Test branches in `src/m10/a2-kernel`: a50-m10-a2-test (A2/A2r), a50-m10-a2b-test (55a8a2eea), a50-m10-a2c-test
+  (**b0d0aa421**, worktree checkout). Config on top of M9: card + `SND_DYNAMIC_MINORS` (`tools/m10/build_a2c.py`).
+- **A2c inputs:** BOOT `src/m10/boot-a2c.img` **caeaac8eba7b337b…**, DT `src/m10/dt-a2c.img` (= A2/A2b DTB); 23 hashes
+  in `reference/m10-audio/a2c-inputs.json`; frozen `src/m10/a2c-as-built/`.
+- **Limits:** the late 390 s snapshot is lost every run (shared USB issue, M12); fault-worker/deferral paths are not
+  exercised by a healthy boot; no PCM opened or mixer touched yet (M10.3). Public reproducible build
+  (`reproduce/m10-a1/`) still covers A1 only; A2 refresh pending (can fold into M10.4's publication refresh).
+- **Outer Git:** M10.2 A2 tools/evidence/log/ticket/STATUS committed and pushed ("M10.2 done" after c0bc839).
+
+## Earlier handoff (2026-11-20, M10.2 A1 fixed; superseded by A2)
 - **Active ticket:** `tasks/M10.2-abox-core.md`, in progress. **A1 normal DSP boot passes. Next A2:** DMA/interface
   children plus a test card matching stock seven playback/five capture PCMs. No A2 build/flash yet; codec/amp and
   PulseAudio remain M10.3/M10.4. Read the latest result in `log/2026-11-20-M10.2-abox-core.md` before older summaries.

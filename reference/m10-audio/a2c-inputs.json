@@ -1,0 +1,105 @@
+{
+  "test": "A2c normal boot: A2b plus IOMMU fault-worker power gate and ABOX GIC supplier check; Wi-Fi join + router ping added to the collector",
+  "source_commit": "b0d0aa4211118b057d14dd652021fe706770761b",
+  "source_branch": "a50-m10-a2c-test",
+  "source_compared_to_A2b": "two commits in sound/soc/samsung/abox/abox.c",
+  "clean_branch_commits": "a50-audio ... b5d4d4b86 7bdc44378 e548f4301",
+  "config_same_as_A2b": true,
+  "dtb_same_as_A2b": true,
+  "runtime_cpio_same_as_A2b": true,
+  "owner_presence": "present, flash A2c",
+  "files": {
+    "src/m10/boot-a2c.img": {
+      "size": 32671744,
+      "sha256": "caeaac8eba7b337b0f6ddc1c2d0cba4bdc1ef0d3310bceeca5c50d73b6b03b7e"
+    },
+    "src/m10/dt-a2c.img": {
+      "size": 8388608,
+      "sha256": "0c207f8cb077231c973b886044fa89c3958f572ab77a3af7d2d3da548e2449b3"
+    },
+    "src/m10/a2c-as-built/.config": {
+      "size": 126354,
+      "sha256": "ee0c2a6a67e3465d29a373e07d8e9154ca15dcb76d2f59b4938926bb128fb362"
+    },
+    "src/m10/a2c-as-built/Image": {
+      "size": 32665608,
+      "sha256": "8ef42c5b74d0a10a75c7e08fa8eae2c22429acbc6975a89c3f497a7729aac5d0"
+    },
+    "src/m10/a2c-as-built/exynos9610-a50-gpu.dtb": {
+      "size": 28991,
+      "sha256": "2b3e8c03aa4a9c34bcc65559bc973acae5da051a77acf790bb60ef17d6f8dae5"
+    },
+    "src/m10/a2c-as-built/initramfs_data.cpio": {
+      "size": 25968640,
+      "sha256": "aded41aa0cd365dd211ff3971b674698d5bf77cd855711920957124ba7c80718"
+    },
+    "src/m10/a2c-as-built/System.map": {
+      "size": 3455795,
+      "sha256": "5e6e6472f763923a3ef2a6a98e240d192f9d9f3a46b46f8477b0f6d9a16b88a2"
+    },
+    "tools/m10/build_a1.py": {
+      "size": 5437,
+      "sha256": "4140ec532655656e70ba4d0f7da25ac57452c5e51c1d5eedd19b66f65d594365"
+    },
+    "tools/m10/build_a2c.py": {
+      "size": 783,
+      "sha256": "7b277456231b38f17c9958ec8671469ab3ca0ed1cd3c366acf5f1b2143c60fdd"
+    },
+    "tools/m10/run_a2c.sh": {
+      "size": 4130,
+      "sha256": "4f0e7863e96b184a8e7e43682b6bfe452b70ad93ae9d6c637e12c817e57198b1"
+    },
+    "tools/m10/collect_a2c.sh": {
+      "size": 4863,
+      "sha256": "2ca563078af0bd12003b77a389d895e096935c6f6cf942257ec94575b2a44c39"
+    },
+    "tools/m32_run_test.sh": {
+      "size": 4701,
+      "sha256": "fb03aa8a9411f6d5a4292a23342a18b24a0b597ba568c7c9def703d44bfc7235"
+    },
+    "tools/m32_read_618.sh": {
+      "size": 1238,
+      "sha256": "e750045b3417db5a9f9a6aad25e96cf85f1367aef897c45f039e8e440ac765c7"
+    },
+    "tools/m24_preflight.sh": {
+      "size": 4118,
+      "sha256": "6beca4aa8634c3e1b687e4242d700a311c89f2f18322398ef7a9d08a3fc13d8e"
+    },
+    "tools/m54/watch_ssh.py": {
+      "size": 4321,
+      "sha256": "f656a6f1092266c2214ba0f3afee37ac81b0b62620b7feb57cadf6a71db52bfd"
+    },
+    "tools/m22_pack.sh": {
+      "size": 1098,
+      "sha256": "08212aa1743ed07df3447dc8414d634e775a4bc224e945b570a86be1c3757097"
+    },
+    "tools/dt_table.py": {
+      "size": 7313,
+      "sha256": "f601fa4f6fb98ed558cdad2617ab9c01e9353a6bb59691c5367860358d1fd10d"
+    },
+    "reference/stock-images/dt.img": {
+      "size": 8388608,
+      "sha256": "59209aa52dc3b35e2c7cc025c465ed1cdb48dadaa13cf5d1f50324b3bf503547"
+    },
+    "reference/stock-images/dtbo.img": {
+      "size": 8388608,
+      "sha256": "40e47ed1477a8ffb6cbb34e5cb59a1af786c2552544f3b556373f3c553d40d21"
+    },
+    "reference/dt-6.18/images/dtbo.img": {
+      "size": 8388608,
+      "sha256": "6d81cce87faca914d75f024f36e183ae6592e61adc786bbb6c7c47cdd3a151fe"
+    },
+    "baseline/ut-26.04-2026-10-19-aa17rf2/boot.img": {
+      "size": 53624832,
+      "sha256": "7d5855efd34e01f09659c7d47ecb0773c30f2acc7443ee87181a0536804086c5"
+    },
+    "reference/m10-audio/a2c-build-results.json": {
+      "size": 17675,
+      "sha256": "e014d677fa4374aa9d523de2ecb6457cdd8ee77a5b5cddd80717917fc989c76c"
+    },
+    "reference/m10-audio/a2b-results.json": {
+      "size": 2936,
+      "sha256": "61d216c986a452afc0ad4a68152c98c95589ed66306a0bba4588db4660829009"
+    }
+  }
+}

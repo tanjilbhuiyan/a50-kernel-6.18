@@ -1,0 +1,109 @@
+{
+  "test": "M10.2 A2b: ABOX DMA/interface children + A50 sound card (dummy codecs), normal boot",
+  "source": "a50-m10-a2b-test/55a8a2eeadf1",
+  "clean": "a50-audio 0fc026aeb fd7e4ef71 9a780c37a fa8f47121 b5d4d4b86",
+  "boot_sha256": "d068aff3bc5fc4924423d2e1b3727cc627dc5be1124a8affa1bcd168cfe69e60",
+  "owner_presence": "present, flash A2b",
+  "flash": "01:34:02",
+  "usb_ssh_verified": "01:35:00 (uptime 38.6 s)",
+  "card": "0 [Exynos9610Audio]: Exynos9610-Audi - Exynos9610-Audio (same as stock)",
+  "pcm_devices": {
+    "playback": [
+      "RDMA0",
+      "RDMA1",
+      "RDMA2",
+      "RDMA3",
+      "RDMA4",
+      "RDMA6",
+      "RDMA7"
+    ],
+    "playback_device_numbers": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      6,
+      7
+    ],
+    "capture": [
+      "WDMA0",
+      "WDMA1",
+      "WDMA2",
+      "WDMA3",
+      "WDMA4"
+    ],
+    "capture_device_numbers": [
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "compress": "comprC0D5"
+  },
+  "pcm_list_identical_to_stock": true,
+  "controls": {
+    "total": 153,
+    "stock_total": 367,
+    "abox_prefixed": 136,
+    "stock_abox_prefixed": 137,
+    "abox_missing_vs_stock": [
+      "ABOX VSS State (vogue machine driver, voice/VSS, M11)"
+    ],
+    "names_not_in_stock": 0,
+    "non_abox_missing_vs_stock": 213,
+    "note": "non-ABOX gap = RT5665/TFA9872/machine controls (M10.3)"
+  },
+  "dsp": {
+    "ready": "Calliope is ready to sing (version:rSK1) at 22.970128 s",
+    "calliope_version": "rSK1",
+    "reset_count": 0,
+    "runtime_status": "active"
+  },
+  "interrupts_at_150s": {
+    "abox_sysmmu_14920000": 0,
+    "abox_gic_ipc": 38
+  },
+  "dai_fmt": {
+    "UAIF0": "0x1001",
+    "UAIF1": "0x1001",
+    "UAIF2": "0x1001",
+    "UAIF4": "0x4001 (consumer, UAIF0 slave)",
+    "DSIF": "0x1007"
+  },
+  "no_card_users": {
+    "alsa_restore_state": "inactive, ConditionResult=no",
+    "dev_snd_open_fds": 0
+  },
+  "regressions_150s": {
+    "input": [
+      "MELFAS MIP4 Touchscreen",
+      "gpio-keys",
+      "Hall sensors"
+    ],
+    "userdata": "rw",
+    "lomiri": 1,
+    "display_frames": 1343,
+    "display_copied_fallbacks_timeouts": 0,
+    "failed_units": 0,
+    "hci0": true,
+    "wlan0": "present, disconnected (traffic not retested)"
+  },
+  "kernel_faults_live_and_dump": 0,
+  "timed_dump": "431.075441 s sync, complete dump recovered",
+  "limits": [
+    "late 390 s snapshot timed out (rc 124), kernel stream ended (124): known shared USB issue, as A1l",
+    "Wi-Fi association/BT traffic not retested",
+    "no PCM opened, no mixer access (registration test only)"
+  ],
+  "restore": {
+    "stock_booted": "01:42:13",
+    "preflight": "ALL CHECKS PASSED",
+    "fsck": "clean, 7156/3440640 files, 1990523/13745152 blocks"
+  },
+  "prior_attempts": {
+    "A2": "heimdall BOOT transfer failure, recovered to stock, kernel never ran",
+    "A2r": "card -EBUSY (static minors) -> component remove freed ABOX regmap -> panic 21.935 s; fixed in A2b"
+  }
+}

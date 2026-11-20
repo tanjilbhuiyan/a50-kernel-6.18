@@ -1,0 +1,834 @@
+
+CMD: uname -r
+6.18.33-a50-diag+
+RC=0
+
+CMD: cat /proc/uptime
+37.14 216.82
+RC=0
+
+A2C_WIFI
+profile 5c42efd5 interface-name=swlan0 -> temporary unbind rc=0
+profile 91da68dc interface-name=swlan0 -> temporary unbind rc=0
+profile 1d935e14 interface-name=swlan0 -> temporary unbind rc=0
+profile 9bb212c7 interface-name=swlan0 -> temporary unbind rc=0
+A2C_WIFI_JOIN uptime=76.98 dev=wlan0 state=connected ip_present=yes waited=33s unbound=yes
+nm: wlan0:wifi:connected p2p-dev-wlan0:wifi-p2p:disconnected
+
+CMD: ping -c 20 -i 0.5 -W 2 -I wlan0 <lan-ip>
+PING <lan-ip> (<lan-ip>) from <lan-ip> wlan0: 56(84) bytes of data.
+64 bytes from <lan-ip>: icmp_seq=1 ttl=64 time=11.9 ms
+64 bytes from <lan-ip>: icmp_seq=2 ttl=64 time=42.1 ms
+64 bytes from <lan-ip>: icmp_seq=3 ttl=64 time=15.1 ms
+64 bytes from <lan-ip>: icmp_seq=4 ttl=64 time=7.09 ms
+64 bytes from <lan-ip>: icmp_seq=5 ttl=64 time=2.16 ms
+64 bytes from <lan-ip>: icmp_seq=6 ttl=64 time=7.36 ms
+64 bytes from <lan-ip>: icmp_seq=7 ttl=64 time=3.78 ms
+64 bytes from <lan-ip>: icmp_seq=8 ttl=64 time=51.3 ms
+64 bytes from <lan-ip>: icmp_seq=9 ttl=64 time=20.5 ms
+64 bytes from <lan-ip>: icmp_seq=10 ttl=64 time=27.7 ms
+64 bytes from <lan-ip>: icmp_seq=11 ttl=64 time=2.47 ms
+64 bytes from <lan-ip>: icmp_seq=12 ttl=64 time=7.37 ms
+64 bytes from <lan-ip>: icmp_seq=13 ttl=64 time=7.33 ms
+64 bytes from <lan-ip>: icmp_seq=14 ttl=64 time=7.10 ms
+64 bytes from <lan-ip>: icmp_seq=15 ttl=64 time=7.18 ms
+64 bytes from <lan-ip>: icmp_seq=16 ttl=64 time=8.29 ms
+64 bytes from <lan-ip>: icmp_seq=17 ttl=64 time=11.4 ms
+64 bytes from <lan-ip>: icmp_seq=18 ttl=64 time=13.3 ms
+64 bytes from <lan-ip>: icmp_seq=19 ttl=64 time=7.72 ms
+64 bytes from <lan-ip>: icmp_seq=20 ttl=64 time=7.43 ms
+
+--- <lan-ip> ping statistics ---
+20 packets transmitted, 20 received, 0% packet loss, time 9575ms
+rtt min/avg/max/mdev = 2.158/13.419/51.252/12.602 ms
+RC=0
+
+CMD: sh -c iw dev wlan0 link | grep -E 'freq|signal|tx bitrate'
+	freq: 2442.0
+	signal: -69 dBm
+	tx bitrate: 39.0 MBit/s MCS 4
+RC=0
+
+CMD: sh -c bluetoothctl show 2>&1 | grep -E 'Powered|PowerState|Discoverable'; ls /sys/class/bluetooth
+	Powered: yes
+	PowerState: on
+	Discoverable: no
+	DiscoverableTimeout: 0x000000b4 (180)
+hci0
+RC=0
+
+CMD: sh -c dmesg | grep -i -E 'scsc|slsi|wlbt' | grep -i -E 'error|fail|panic|timeout' | tail -n 20
+[   32.022857] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/leman_s620_univ/bluetooth/bt.hcf failed with error -2
+[   32.282257] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/wlan/wlan.hcf failed with error -2
+[   32.282304] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/leman_s620_univ/wlan/wlan.hcf failed with error -2
+[   32.285658] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/wlan/wlan_sw.hcf failed with error -2
+[   32.285702] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/leman_s620_univ/wlan/wlan_sw.hcf failed with error -2
+[   32.422636] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/wlan/localmib.hcf failed with error -2
+[   32.422685] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/leman_s620_univ/wlan/localmib.hcf failed with error -2
+[   32.422755] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140_localmib.hcf failed with error -2
+[   32.464331] ieee80211 phy0: wlbt: I: slsi_clear_sys_error_buffer: Clear system error buffer, bytes written = 147
+[   35.980662] init: createProcessGroup(1010, 375) failed for service 'wlbtd': Read-only file system
+[   40.986628] init: createProcessGroup(1010, 427) failed for service 'wlbtd': Read-only file system
+[   45.992776] init: createProcessGroup(1010, 472) failed for service 'wlbtd': Read-only file system
+[   50.994661] init: createProcessGroup(1010, 518) failed for service 'wlbtd': Read-only file system
+[   55.998583] init: createProcessGroup(1010, 564) failed for service 'wlbtd': Read-only file system
+[   61.002613] init: createProcessGroup(1010, 611) failed for service 'wlbtd': Read-only file system
+[   66.007708] init: createProcessGroup(1010, 656) failed for service 'wlbtd': Read-only file system
+[   71.011734] init: createProcessGroup(1010, 703) failed for service 'wlbtd': Read-only file system
+[   76.015704] init: createProcessGroup(1010, 747) failed for service 'wlbtd': Read-only file system
+[   81.019779] init: createProcessGroup(1010, 794) failed for service 'wlbtd': Read-only file system
+[   86.023777] init: createProcessGroup(1010, 839) failed for service 'wlbtd': Read-only file system
+RC=0
+
+A2C_ABOX
+
+CMD: sh -c dmesg | grep -i -E 'abox|calliope|14a50000|14920000|14af|sysmmu|iommu|Unable to handle|SError|Internal error|BUG:|WARNING:' | grep -v -i mali | tail -n 200
+[    0.000000] printk: debug: ignoring loglevel setting.
+[    0.000000] OF: reserved mem: 0x00000008fab00000..0x00000008fd5fffff (44032 KiB) nomap non-reusable abox-fw-mem
+[    0.000000] OF: reserved mem: 0x00000000e9400000..0x00000000ebbfffff (40960 KiB) nomap non-reusable abox@e9400000
+[    0.000000] WARNING: x1-x3 nonzero in violation of boot protocol:
+[    0.048105] exynos-sysmmu 14820000.iommu: hardware version: 7.2
+[    0.048832] exynos-sysmmu 14920000.iommu: hardware version: 7.2
+[    0.057138] iommu: Default domain type: Translated
+[    0.057162] iommu: DMA domain TLB invalidation policy: strict mode
+[    0.117881] a50-decon 148b0000.decon_f: late IOMMU probe at driver bind, something fishy here!
+[    0.117912] WARNING: CPU: 5 PID: 1 at drivers/iommu/iommu.c:612 __iommu_probe_device+0x1b4/0x464
+[    0.117958] pc : __iommu_probe_device+0x1b4/0x464
+[    0.117968] lr : __iommu_probe_device+0x1b4/0x464
+[    0.118087]  __iommu_probe_device+0x1b4/0x464 (P)
+[    0.118097]  iommu_probe_device+0x30/0x70
+[    0.118107]  of_iommu_configure+0x1d4/0x268
+[    0.118282] a50-decon 148b0000.decon_f: Adding to iommu group 0
+[    0.118452] a50-decon 148b0000.decon_f: exynos_iommu_attach_device: Attached IOMMU with pgtable 0x0000000880c58000
+[    0.118538] exynos-sysmmu 14820000.iommu: restoring state
+[    0.118957] a50-decon 148b0000.decon_f: iommu domain=yes type=0x3 iova 0xca000000 -> 0x00000000ca000000, 0xca9a3f7c -> 0x00000000ca9a3f7c, sysmmu MMU_CTRL=0x00000005 PT_BASE=0x00880c58 CAPA1=0x00000091 rpm_active=1
+[    0.390068] samsung-abox-gic 14af1000.abox-gic: samsung_abox_gic_probe
+[    0.390230] samsung-abox-gic 14af1000.abox-gic: samsung_abox_gic_probe: probe complete
+[    0.390353] samsung-abox 14a50000.abox: late IOMMU probe at driver bind, something fishy here!
+[    0.390381] WARNING: CPU: 5 PID: 1 at drivers/iommu/iommu.c:612 __iommu_probe_device+0x1b4/0x464
+[    0.390434] pc : __iommu_probe_device+0x1b4/0x464
+[    0.390444] lr : __iommu_probe_device+0x1b4/0x464
+[    0.390565]  __iommu_probe_device+0x1b4/0x464 (P)
+[    0.390576]  iommu_probe_device+0x30/0x70
+[    0.390585]  of_iommu_configure+0x1d4/0x268
+[    0.390682]  samsung_abox_driver_init+0x18/0x20
+[    0.390764] samsung-abox 14a50000.abox: Adding to iommu group 1
+[    0.390808] samsung-abox 14a50000.abox: exynos_iommu_attach_device: Attached IOMMU with pgtable 0x000000088160c000
+[    0.390847] samsung-abox 14a50000.abox: samsung_abox_probe
+[    0.391107] samsung-abox 14a50000.abox: Couldn't get pins (-19)
+[    0.391163] samsung-abox 14a50000.abox: exynos_iommu_identity_attach: Restored IOMMU to IDENTITY from pgtable 0x000000088160c000
+[    0.391175] samsung-abox 14a50000.abox: exynos_iommu_attach_device: Attached IOMMU with pgtable 0x0000000881610000
+[    0.394859] samsung-abox 14a50000.abox: dram firmware(0x00000008fab00000) is mapped on (____ptrval____) with size of 18874368
+[    0.394873] samsung-abox 14a50000.abox: abox_iommu_map(0x80000000, 0x00000008fab00000, 0x1200000, (____ptrval____))
+[    0.394892] samsung-abox 14a50000.abox: private: 0x00000008fbd00000(0x800000) => (____ptrval____)
+[    0.397207] samsung-abox 14a50000.abox: no modem: zeroed VSS scratch 0x00000008fc500000 (0x1000000 + 0x100000)
+[    0.397217] samsung-abox 14a50000.abox: abox_iommu_map(0xa0000000, 0x00000008fc500000, 0x1000000, (____ptrval____))
+[    0.397232] samsung-abox 14a50000.abox: abox_iommu_map(0xa1000000, 0x00000008fd500000, 0x100000, (____ptrval____))
+[    0.397244] samsung-abox 14a50000.abox: abox_iommu_map(0x10000000, 0x0000000010000000, 0x1000, 0000000000000000)
+[    0.397258] samsung-abox 14a50000.abox: abox_iommu_map: no virtual address
+[    0.397285] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(0, (%pf?))
+[    0.397294] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(1, (%pf?))
+[    0.397301] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(2, (%pf?))
+[    0.397308] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(3, (%pf?))
+[    0.397316] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(4, (%pf?))
+[    0.397323] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(5, (%pf?))
+[    0.397330] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(6, (%pf?))
+[    0.397337] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(7, (%pf?))
+[    0.397343] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(8, (%pf?))
+[    0.397350] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(9, (%pf?))
+[    0.397357] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(10, (%pf?))
+[    0.397365] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(11, (%pf?))
+[    0.397372] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(12, (%pf?))
+[    0.397379] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(13, (%pf?))
+[    0.397386] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(14, (%pf?))
+[    0.397393] samsung-abox-gic 14af1000.abox-gic: abox_gic_register_irq_handler(15, (%pf?))
+[    0.397545] samsung-abox 14a50000.abox: samsung_abox_probe: probe complete
+[    0.397627] exynos-sysmmu 14920000.iommu: restoring state
+[    0.397642] samsung-abox 14a50000.abox: abox_enable
+[    0.397650] samsung-abox 14a50000.abox: abox_request_cpu_gear(ab0cdefa, 1)
+[    0.397722] samsung-abox 14a50000.abox: audif clock: 24074450
+[    0.397731] samsung-abox 14a50000.abox: abox_cfg_gpio(default)
+[    0.397743] samsung-abox-gic 14af1000.abox-gic: abox_gic_init_gic
+[    0.397763] samsung-abox 14a50000.abox: abox_download_firmware
+[    0.397773] samsung-abox 14a50000.abox: SRAM firmware downloading is deferred
+[    0.397780] samsung-abox 14a50000.abox: abox_request_cpu_gear(ab0cdefa, 12)
+[    0.401337] samsung-abox 14a50000.abox: abox_cmpnt_probe
+[    0.401984] samsung-abox 14a50000.abox: abox_iommu_map(0x93500000, 0x00000000e1980000, 0x28000, (____ptrval____))
+[    0.402075] samsung-abox-if 14a50500.abox-uaif: abox_if_cmpnt_probe
+[    0.402142] samsung-abox-if 14a50510.abox-uaif: abox_if_cmpnt_probe
+[    0.402195] samsung-abox-if 14a50520.abox-uaif: abox_if_cmpnt_probe
+[    0.402264] samsung-abox-if 14a50540.abox-uaif: abox_if_cmpnt_probe
+[    0.402328] samsung-abox-if 14a50550.abox-dsif: abox_if_cmpnt_probe
+[    0.402365] samsung-abox-if 14a50560.abox-spdy: abox_if_cmpnt_probe
+[    0.403075] samsung-abox-if 14a50500.abox-uaif: abox_uaif_set_fmt(0x00001001)
+[    0.403112] samsung-abox-if 14a50510.abox-uaif: abox_uaif_set_fmt(0x00001001)
+[    0.403132] samsung-abox-if 14a50520.abox-uaif: abox_uaif_set_fmt(0x00001001)
+[    0.403149] samsung-abox-if 14a50540.abox-uaif: abox_uaif_set_fmt(0x00004001)
+[    0.403165] samsung-abox-if 14a50550.abox-dsif: abox_dsif_set_fmt(0x00001007)
+[    0.438096] samsung_abox_log_late_initcall
+[    0.438110] samsung_abox_late_initcall
+[    1.439896] samsung-abox 14a50000.abox: Direct firmware load for calliope_sram.bin failed with error -2
+[   18.813431] EXT4-fs: Warning: mounting with data=journal disables delayed allocation, dioread_nolock, O_DIRECT and fast_commit support!
+[   18.934285] initrd: WARNING: Didn't find a device name. Is the Android system image mounted correctly?
+[   21.925722] samsung-abox 14a50000.abox: SRAM firmware found after 20 retries
+[   21.925749] samsung-abox 14a50000.abox: SRAM firmware loaded
+[   21.930961] samsung-abox 14a50000.abox: calliope_dram.bin is loaded
+[   21.931002] samsung-abox 14a50000.abox: abox_enable
+[   21.931012] samsung-abox 14a50000.abox: abox_request_cpu_gear(ab0cdefa, 1)
+[   21.931055] samsung-abox 14a50000.abox: audif clock: 24074450
+[   21.931058] samsung-abox 14a50000.abox: cpu clock: 393216014Hz (gear 1)
+[   21.931064] samsung-abox 14a50000.abox: abox_cfg_gpio(default)
+[   21.931076] samsung-abox-gic 14af1000.abox-gic: abox_gic_init_gic
+[   21.931117] samsung-abox 14a50000.abox: abox_download_firmware
+[   21.936421] abox_cpu_power(1)
+[   21.936442] abox_cpu_enable(1)
+[   21.974934] samsung-abox 14a50000.abox: Calliope is ready to sing (version:rSK1)
+[   21.974998] samsung-abox 14a50000.abox: abox_request_cpu_gear(b00d, 3)
+[   21.975394] samsung-abox 14a50000.abox: abox_restore_data
+[   21.975473] samsung-abox 14a50000.abox: abox_request_cpu_gear(ab0cdefa, 12)
+[   21.975496] samsung-abox 14a50000.abox: abox_boot_done_work_func:release wake lock
+[   21.976300] samsung-abox 14a50000.abox: cpu clock: 393216014Hz (gear 3)
+[   21.985102] samsung-abox 14a50000.abox: abox_log_register_buffer_work_func(0)
+[   22.295781] samsung-abox 14a50000.abox: abox_request_cpu_gear(b00d, 12)
+[   22.296040] samsung-abox 14a50000.abox: cpu clock: 393216014Hz (gear 12)
+[   24.301002] wlbt: [BT_COMMON]: slsi_sm_bt_service_start: regions (bhcs_ref=0x0035dbe0, bsmhcp_ref=0x0035dc60, config_ref=0x00000000, abox_ref=0x00000000)
+[   30.971912] capability: warning: `cbd' uses deprecated v2 capabilities in a way that may be insecure
+[   31.623448] capability: warning: `ofonod' uses 32-bit capabilities (legacy support in use)
+[   32.022670] wlbt: [BT_COMMON]: slsi_sm_bt_service_start: regions (bhcs_ref=0x0035dbe0, bsmhcp_ref=0x0035dc60, config_ref=0x00000000, abox_ref=0x00000000)
+[   37.343481] samsung-abox 14a50000.abox: abox_request_cpu_gear(b00d, 12)
+[   77.763592] ieee80211 phy0: wlbt: W: slsi_rx_debug: WF_FW_INFO: |cpu PHY|id 0x2C76|arg 0x0000A35E|count 1|timestamp   45655637|
+[  103.978415] ieee80211 phy0: wlbt: W: slsi_rx_debug: WF_FW_INFO: |cpu PHY|id 0x2C76|arg 0x0000A35E|count 1|timestamp   71826154|
+[  116.471100] ieee80211 phy0: wlbt: W: slsi_rx_debug: WF_FW_INFO: |cpu PHY|id 0x2C76|arg 0x0000A35E|count 1|timestamp   84363562|
+[  129.027319] ieee80211 phy0: wlbt: W: slsi_rx_debug: WF_FW_INFO: |cpu PHY|id 0x2C76|arg 0x0000A35E|count 1|timestamp   96945361|
+RC=0
+
+CMD: sh -c ls /sys/devices/platform/soc@0/14a50000.abox; cat /sys/devices/platform/soc@0/14a50000.abox/calliope_version /sys/devices/platform/soc@0/14a50000.abox/reset_count /sys/devices/platform/soc@0/14a50000.abox/power/runtime_status 2>&1
+14a50500.abox-uaif
+14a50510.abox-uaif
+14a50520.abox-uaif
+14a50540.abox-uaif
+14a50550.abox-dsif
+14a50560.abox-spdy
+14a51000.abox-rdma
+14a51100.abox-rdma
+14a51200.abox-rdma
+14a51300.abox-rdma
+14a51400.abox-rdma
+14a51500.abox-rdma
+14a51600.abox-rdma
+14a51700.abox-rdma
+14a52000.abox-wdma
+14a52100.abox-wdma
+14a52200.abox-wdma
+14a52300.abox-wdma
+14a52400.abox-wdma
+14b2c000.abox-effect
+calliope_cmd
+calliope_debug
+calliope_version
+driver
+driver_override
+iommu
+iommu_group
+modalias
+of_node
+power
+reset
+reset_count
+service
+subsystem
+supplier:platform:14920000.iommu
+supplier:platform:14980000.clock-controller
+supplier:platform:14af1000.abox-gic
+uevent
+wakeup
+rSK1
+ 0
+active
+RC=0
+
+CMD: sh -c ls -l /sys/kernel/iommu_groups/*/devices/ 2>/dev/null | grep -E '14a50000|14820000'
+lrwxrwxrwx 1 root root 0 Nov 21  2026 14a50000.abox -> ../../../../devices/platform/soc@0/14a50000.abox
+RC=0
+
+CMD: sh -c grep -i -E 'aud|abox' /sys/kernel/debug/clk/clk_summary | head -60
+    dout_clk_aud_fm_spdy             0       0        0        30000000    0          0     50000      Y      deviceless                      no_connection_id
+ ioclk_audiocdclk1                   0       0        0        100000000   0          0     50000      Y   deviceless                      no_connection_id
+ ioclk_audiocdclk0                   0       0        0        10000000    0          0     50000      Y   deviceless                      no_connection_id
+    gout_clk_dispaud_oscclk_clk      0       0        0        26000000    0          0     50000      Y      deviceless                      no_connection_id
+    mout_clk_aud_fm                  0       1        0        26000000    0          0     50000      Y      deviceless                      no_connection_id
+       gout_clk_dispaud_abox_osc_spdy 0       0        0        26000000    0          0     50000      Y         deviceless                      no_connection_id
+       dout_clk_aud_fm               0       2        0        188406      0          0     50000      Y         14a50560.abox-spdy              bclk
+          gout_clk_dispaud_abox_bclk_spdy 0       1        0        188406      0          0     50000      Y            14a50560.abox-spdy              bclk_gate
+    fout_aud_pll                     3       4        0        1179648040  0          0     50000      Y      14a50000.abox                   pll
+       dout_clk_aud_cpu              2       1        0        393216014   0          0     50000      Y         14a50000.abox                   cpu
+          mout_clk_aud_cpu           0       0        0        393216014   0          0     50000      Y            deviceless                      no_connection_id
+             mout_clk_aud_cpu_hch    0       0        0        393216014   0          0     50000      Y               deviceless                      no_connection_id
+                gout_dispaud_clk_aud_cpu_clkin_clk 0       0        0        393216014   0          0     50000      Y                  deviceless                      no_connection_id
+                gout_clk_dispaud_abox_cclk_ca7 0       0        0        393216014   0          0     50000      Y                  deviceless                      no_connection_id
+                dout_clk_aud_cpu_pclkdbg 0       0        0        49152002    0          0     50000      Y                  deviceless                      no_connection_id
+                   gout_dispaud_clk_aud_cpu_pclkdbg_clk 0       0        0        49152002    0          0     50000      Y                     deviceless                      no_connection_id
+                   gout_clk_dispaud_abox_cclk_dbg 0       0        0        49152002    0          0     50000      Y                     deviceless                      no_connection_id
+                dout_clk_aud_cpu_aclk 0       0        0        196608007   0          0     50000      Y                  deviceless                      no_connection_id
+                   gout_dispaud_clk_aud_cpu_aclk_clk 0       0        0        196608007   0          0     50000      Y                     deviceless                      no_connection_id
+                   gout_clk_dispaud_abox_cclk_asb 0       0        0        196608007   0          0     50000      Y                     deviceless                      no_connection_id
+       dout_clk_aud_bus              1       2        0        196608007   0          0     50000      Y         14a50000.abox                   bus
+          mout_clk_aud_bus           1       1        0        196608007   0          0     50000      Y            deviceless                      no_connection_id
+             gout_dispaud_wdt_aud_pclk 0       0        0        196608007   0          0     50000      Y               deviceless                      no_connection_id
+             gout_dispaud_smmu_abox_clk 1       1        0        196608007   0          0     50000      Y               14920000.iommu                  sysmmu
+             gout_dispaud_clk_aud_clk 0       0        0        196608007   0          0     50000      Y               deviceless                      no_connection_id
+             gout_dispaud_ppmu_abox_pclk 0       0        0        196608007   0          0     50000      Y               deviceless                      no_connection_id
+             gout_dispaud_ppmu_abox_aclk 0       0        0        196608007   0          0     50000      Y               deviceless                      no_connection_id
+             gout_dispaud_peri_axi_asb_pclk 0       0        0        196608007   0          0     50000      Y               deviceless                      no_connection_id
+             gout_dispaud_peri_axi_asb_aclkm 0       0        0        196608007   0          0     50000      Y               deviceless                      no_connection_id
+             gout_dispaud_lhs_axi_d_abox_clk 0       0        0        196608007   0          0     50000      Y               deviceless                      no_connection_id
+             gout_dispaud_lhm_axi_p_dispaud_clk 0       0        0        196608007   0          0     50000      Y               deviceless                      no_connection_id
+             gout_dispaud_gpio_dispaud_pclk 0       0        0        196608007   0          0     50000      Y               deviceless                      no_connection_id
+             gout_dispaud_btm_abox_aclk 0       0        0        196608007   0          0     50000      Y               deviceless                      no_connection_id
+             gout_dispaud_clk_dispaud_aud 0       0        0        196608007   0          0     50000      Y               deviceless                      no_connection_id
+             gout_dispaud_axi_us_32to128_aclk 0       0        0        196608007   0          0     50000      Y               deviceless                      no_connection_id
+             gout_clk_dispaud_abox_aclk 0       0        0        196608007   0          0     50000      Y               deviceless                      no_connection_id
+       dout_clk_aud_audif            2       5        0        24074450    0          0     50000      Y         14a50000.abox                   audif
+          gout_dispaud_dftmux_aud_codec_mclk 0       0        0        24074450    0          0     50000      Y            deviceless                      no_connection_id
+          dout_clk_aud_uaif2         0       2        0        12037225    0          0     50000      Y            14a50520.abox-uaif              bclk
+             mout_clk_aud_uaif2      0       1        0        12037225    0          0     50000      Y               deviceless                      no_connection_id
+                gout_clk_dispaud_clk_aud_uaif2_clk 0       0        0        12037225    0          0     50000      Y                  deviceless                      no_connection_id
+                gout_clk_dispaud_abox_bclk_uaif2 0       1        0        12037225    0          0     50000      Y                  14a50520.abox-uaif              bclk_gate
+          dout_clk_aud_uaif1         0       2        0        12037225    0          0     50000      Y            14a50510.abox-uaif              bclk
+             mout_clk_aud_uaif1      0       1        0        12037225    0          0     50000      Y               deviceless                      no_connection_id
+                gout_clk_dispaud_clk_aud_uaif1_clk 0       0        0        12037225    0          0     50000      Y                  deviceless                      no_connection_id
+                gout_clk_dispaud_abox_bclk_uaif1 0       1        0        12037225    0          0     50000      Y                  14a50510.abox-uaif              bclk_gate
+          dout_clk_aud_uaif0         0       3        0        12037225    0          0     50000      Y            14a50540.abox-uaif              bclk
+                                                                                                                    14a50500.abox-uaif              bclk
+             mout_clk_aud_uaif0      0       1        0        12037225    0          0     50000      Y               deviceless                      no_connection_id
+                gout_clk_dispaud_clk_aud_uaif0_clk 0       0        0        12037225    0          0     50000      Y                  deviceless                      no_connection_id
+                gout_clk_dispaud_abox_bclk_uaif0 0       2        0        12037225    0          0     50000      Y                  14a50540.abox-uaif              bclk_gate
+                                                                                                                          14a50500.abox-uaif              bclk_gate
+          dout_clk_aud_dsif          0       2        0        12037225    0          0     50000      Y            14a50550.abox-dsif              bclk
+             gout_dispaud_clk_aud_dsif_clk 0       0        0        12037225    0          0     50000      Y               deviceless                      no_connection_id
+             gout_clk_dispaud_abox_bclk_dsif 0       1        0        12037225    0          0     50000      Y               14a50550.abox-dsif              bclk_gate
+             mout_cmu_dispaud_aud    0       0        0        533000000   0          0     50000      Y               deviceless                      no_connection_id
+                gout_cmu_dispaud_aud 0       0        0        533000000   0          0     50000      Y                  deviceless                      no_connection_id
+                   dout_cmu_dispaud_aud 0       0        0        533000000   0          0     50000      Y                     deviceless                      no_connection_id
+                      mout_pll_dispaud_aud_user 0       0        0        533000000   0          0     50000      Y                        deviceless                      no_connection_id
+             mout_cmu_dispaud_disp   1       1        0        533000000   0          0     50000      Y               deviceless                      no_connection_id
+RC=0
+
+CMD: sh -c cat /proc/asound/cards; ls -l /dev/snd 2>&1
+ 0 [Exynos9610Audio]: Exynos9610-Audi - Exynos9610-Audio
+                      Exynos9610-Audio
+total 0
+drwxr-xr-x  2 root root       60 Apr 30  2026 by-path
+crw-rw----+ 1 root audio 116, 14 Apr 30  2026 comprC0D5
+crw-rw----+ 1 root audio 116, 15 Apr 30  2026 controlC0
+crw-rw----+ 1 root audio 116,  2 Apr 30  2026 pcmC0D0p
+crw-rw----+ 1 root audio 116, 11 Apr 30  2026 pcmC0D10c
+crw-rw----+ 1 root audio 116, 12 Apr 30  2026 pcmC0D11c
+crw-rw----+ 1 root audio 116, 13 Apr 30  2026 pcmC0D12c
+crw-rw----+ 1 root audio 116,  3 Apr 30  2026 pcmC0D1p
+crw-rw----+ 1 root audio 116,  4 Apr 30  2026 pcmC0D2p
+crw-rw----+ 1 root audio 116,  5 Apr 30  2026 pcmC0D3p
+crw-rw----+ 1 root audio 116,  6 Apr 30  2026 pcmC0D4p
+crw-rw----+ 1 root audio 116,  7 Apr 30  2026 pcmC0D6p
+crw-rw----+ 1 root audio 116,  8 Apr 30  2026 pcmC0D7p
+crw-rw----+ 1 root audio 116,  9 Apr 30  2026 pcmC0D8c
+crw-rw----+ 1 root audio 116, 10 Apr 30  2026 pcmC0D9c
+crw-rw----+ 1 root audio 116, 33 Apr 30  2026 timer
+RC=0
+
+CMD: sh -c ls -l /sys/kernel/debug/abox 2>&1; head -c 4000 /sys/kernel/debug/abox/log-00 2>&1 | strings | tail -n 60
+total 0
+-rw-rw-r-- 1 1041 system 0 Apr 30  2026 log-00
+-rw-rw---- 1 root root   0 Jan  1  1970 log_auto_save
+[   0.032026] [USB]Event Handle VA:0xc0000040
+[   0.032108] [PCMOUT:INFO] PCM 0 thread was started: type: 1
+[   0.032132] [PCMOUT:INFO] PCM 1 thread was started: type: 1
+[   0.032157] [PCMOUT:INFO] PCM 2 thread was started: type: 1
+[   0.032181] [PCMOUT:INFO] PCM 3 thread was started: type: 1
+[   0.032205] [PCMOUT:INFO] PCM 0 thread was started: type: 2
+[   0.032227] [PCMOUT:INFO] PCM 1 thread was started: type: 2
+[   0.032251] [ERAP:INFO] ERAP thread was started
+[   0.032251] [ERAP:INFO] ERAP thread c00000a0, size:2736
+[   0.032302] [USB]OUT Task ID:0x8f5c
+[   0.032331] [USB]OUT Sig ID:0x13
+[   0.032355] [USB]IN Task ID:0x8f90
+[   0.032383] [USB]IN Sig ID:0x14
+[   0.032407] [USB]USB ISR thread start
+[   0.032422] [USB]ISR Task ID:0x8fc4
+[   0.032451] [USB]ISR Sig ID:0x12
+[   0.032474] mailbox_init done
+[   0.032488] Init OEM component
+[   0.032503] [PCMTASK:INFO] Now broadcasting msg: 2, 201
+[   0.032550] [USB]USB Out thread start
+[   0.032567] [USB]USB In thread start
+[   0.032594] [OEM:FM] Request for registration of OEM components...
+[   0.033110] [ERAP:INFO] Request for registering controls of the ERAP.
+[   0.033131] [PCM:INFO] Request for registering controls of the PCM ext.
+[   0.033213] D-Cache invalidated
+[   0.033229] I-Cache invalidated
+[   0.033252] VSS task was inited
+[   0.033264] Now it's ready to get IPC message
+[   0.033298] ABox system was inited: rSK1
+[   0.033312] ABox fiwmare version: rSK-1
+[  21.975369] [ABOXSYSTEM:INFO] A-Box resumed: 0
+[  21.976353] [ABOXCONFIG:INFO] Changing MIXER sample rate: 48000
+[  21.976617] [MIDDLEWARE/INFO] SIFS1 sample rate: 48000KHz
+[  21.980611] [MIDDLEWARE/INFO] SIFS2 sample rate: 48000KHz
+[  21.984598] [ABOXCONFIG:INFO] Changing RECP sample rate: 48000
+[  21.984635] [MIDDLEWARE/WARNING] RECP format was fixed as 16bit stereo
+[  21.988599] [ABOXCONFIG:INFO] Changing INMUX[0] sample rate: 48000
+[  21.992600] [ABOXCONFIG:INFO] Changing INMUX[1] sample rate: 48000
+[  21.994796] Init PCM dump
+[  21.994813] [IPCMANAGER:INFO] register PCM dump: name: rd0, id: 0, addr: 0x808C0000, size: 0x4000
+[  21.996598] [ABOXCONFIG:INFO] Changing INMUX[2] sample rate: 48000
+[  22.000596] [ABOXCONFIG:INFO] Changing INMUX[3] sample rate: 48000
+[  22.004607] [ABOXCONFIG:ERROR] Invalid ABOX config MSG: 9
+[  22.004827] [IPCMANAGER:INFO] register PCM dump: name: rd1, id: 1, addr: 0x808C4000, size: 0x4000
+[  22.008594] [MIDDLEWARE/INFO] set MIXER format: 16 -> 9
+[  22.012594] [MIDDLEWARE/INFO] set OUT1 bit format: 16
+[  22.014856] [IPCMANAGER:INFO] register PCM dump: name: rd2, id: 2, addr: 0x808C8000, size: 0x4000
+[  22.016597] [MIDDLEWARE/INFO] set OUT2 bit format: 16
+[  22.020599] [MIDDLEWARE/INFO] set RECP bit format: 16
+[  22.024641] [MIDDLEWARE/INFO] set INMUX #0 bit format: 16 asrc bit width: 1
+[  22.024885] [IPCMANAGER:INFO] register PCM dump: name: rd3, id: 3, addr: 0x808CC000, size: 0x4000
+[  22.028606] [MIDDLEWARE/INFO] set INMUX #1 bit format: 16 asrc bit width: 1
+[  22.032592] [MIDDLEWARE/INFO] set INMUX #2 bit format: 16 asrc bit width: 1
+[  22.034914] [IPCMANAGER:INFO] register PCM dump: name: rd7, id: 4, addr: 0x808D0000, size: 0x4000
+[  22.036595] [MIDDLEWARE/INFO] set INMUX #3 bit format: 16 asrc bit width: 1
+[  22.040597] [MIDDLEWARE/INFO] set INMUX #4 bit format: 16 asrc bit width: 1
+[  22.044593] [ABOXSYSTEM:INFO] GEAR CHANGED - freq: 393MHz, time: 21.976330108sec.
+[  22.044944] [IPCMANAGER:INFO] register PCM dump: name: wr0, id: 5, addr: 0x808D4000, size: 0x4000
+[  22.054972] [IPCMANAGER:INFO] register PCM dump: name: wr1, id: 6, addr: 0x808D8000, size: 0x4000
+[  22.065000] [
+RC=0
+
+CMD: sh -c grep -E 'abox|ABox|14920000|14af1000' /proc/interrupts
+ 58:          0          0          0          0          0          0          0          0 GIC-0 248 Level     14920000.iommu
+ 77:         38          0          0          0          0          0          0          0 GIC-0 230 Edge      14af1000.abox-gic
+RC=0
+
+A2C_CARD
+
+CMD: sh -c cat /proc/asound/cards /proc/asound/pcm /proc/asound/devices; ls -l /dev/snd; ls /proc/asound/card0
+ 0 [Exynos9610Audio]: Exynos9610-Audi - Exynos9610-Audio
+                      Exynos9610-Audio
+00-00: RDMA0 (*) :  : playback 1
+00-01: RDMA1 (*) :  : playback 1
+00-02: RDMA2 (*) :  : playback 1
+00-03: RDMA3 (*) :  : playback 1
+00-04: RDMA4 (*) :  : playback 1
+00-06: RDMA6 (*) :  : playback 1
+00-07: RDMA7 (*) :  : playback 1
+00-08: WDMA0 (*) :  : capture 1
+00-09: WDMA1 (*) :  : capture 1
+00-10: WDMA2 (*) :  : capture 1
+00-11: WDMA3 (*) :  : capture 1
+00-12: WDMA4 (*) :  : capture 1
+  2: [ 0- 0]: digital audio playback
+  3: [ 0- 1]: digital audio playback
+  4: [ 0- 2]: digital audio playback
+  5: [ 0- 3]: digital audio playback
+  6: [ 0- 4]: digital audio playback
+  7: [ 0- 6]: digital audio playback
+  8: [ 0- 7]: digital audio playback
+  9: [ 0- 8]: digital audio capture
+ 10: [ 0- 9]: digital audio capture
+ 11: [ 0-10]: digital audio capture
+ 12: [ 0-11]: digital audio capture
+ 13: [ 0-12]: digital audio capture
+ 14: [ 0- 5]: compress
+ 15: [ 0]   : control
+ 33:        : timer
+total 0
+drwxr-xr-x  2 root root       60 Apr 30  2026 by-path
+crw-rw----+ 1 root audio 116, 14 Apr 30  2026 comprC0D5
+crw-rw----+ 1 root audio 116, 15 Apr 30  2026 controlC0
+crw-rw----+ 1 root audio 116,  2 Apr 30  2026 pcmC0D0p
+crw-rw----+ 1 root audio 116, 11 Apr 30  2026 pcmC0D10c
+crw-rw----+ 1 root audio 116, 12 Apr 30  2026 pcmC0D11c
+crw-rw----+ 1 root audio 116, 13 Apr 30  2026 pcmC0D12c
+crw-rw----+ 1 root audio 116,  3 Apr 30  2026 pcmC0D1p
+crw-rw----+ 1 root audio 116,  4 Apr 30  2026 pcmC0D2p
+crw-rw----+ 1 root audio 116,  5 Apr 30  2026 pcmC0D3p
+crw-rw----+ 1 root audio 116,  6 Apr 30  2026 pcmC0D4p
+crw-rw----+ 1 root audio 116,  7 Apr 30  2026 pcmC0D6p
+crw-rw----+ 1 root audio 116,  8 Apr 30  2026 pcmC0D7p
+crw-rw----+ 1 root audio 116,  9 Apr 30  2026 pcmC0D8c
+crw-rw----+ 1 root audio 116, 10 Apr 30  2026 pcmC0D9c
+crw-rw----+ 1 root audio 116, 33 Apr 30  2026 timer
+compr5
+id
+pcm0p
+pcm10c
+pcm11c
+pcm12c
+pcm1p
+pcm2p
+pcm3p
+pcm4p
+pcm6p
+pcm7p
+pcm8c
+pcm9c
+RC=0
+
+CMD: sh -c for f in /proc/asound/card0/pcm*/info; do echo "== $f"; grep -E "^(id|name|stream|subdevices_count):" $f; done
+== /proc/asound/card0/pcm0p/info
+stream: PLAYBACK
+id: RDMA0 (*)
+name:
+subdevices_count: 1
+== /proc/asound/card0/pcm10c/info
+stream: CAPTURE
+id: WDMA2 (*)
+name:
+subdevices_count: 1
+== /proc/asound/card0/pcm11c/info
+stream: CAPTURE
+id: WDMA3 (*)
+name:
+subdevices_count: 1
+== /proc/asound/card0/pcm12c/info
+stream: CAPTURE
+id: WDMA4 (*)
+name:
+subdevices_count: 1
+== /proc/asound/card0/pcm1p/info
+stream: PLAYBACK
+id: RDMA1 (*)
+name:
+subdevices_count: 1
+== /proc/asound/card0/pcm2p/info
+stream: PLAYBACK
+id: RDMA2 (*)
+name:
+subdevices_count: 1
+== /proc/asound/card0/pcm3p/info
+stream: PLAYBACK
+id: RDMA3 (*)
+name:
+subdevices_count: 1
+== /proc/asound/card0/pcm4p/info
+stream: PLAYBACK
+id: RDMA4 (*)
+name:
+subdevices_count: 1
+== /proc/asound/card0/pcm6p/info
+stream: PLAYBACK
+id: RDMA6 (*)
+name:
+subdevices_count: 1
+== /proc/asound/card0/pcm7p/info
+stream: PLAYBACK
+id: RDMA7 (*)
+name:
+subdevices_count: 1
+== /proc/asound/card0/pcm8c/info
+stream: CAPTURE
+id: WDMA0 (*)
+name:
+subdevices_count: 1
+== /proc/asound/card0/pcm9c/info
+stream: CAPTURE
+id: WDMA1 (*)
+name:
+subdevices_count: 1
+RC=0
+
+CMD: sh -c amixer -c 0 controls | wc -l; amixer -c 0 controls
+153
+numid=48,iface=MIXER,name='ABOX Audio Mode'
+numid=41,iface=MIXER,name='ABOX Auto Config Inmux0'
+numid=42,iface=MIXER,name='ABOX Auto Config Inmux1'
+numid=43,iface=MIXER,name='ABOX Auto Config Inmux2'
+numid=44,iface=MIXER,name='ABOX Auto Config Inmux3'
+numid=45,iface=MIXER,name='ABOX Auto Config Inmux4'
+numid=37,iface=MIXER,name='ABOX Auto Config Mixer'
+numid=38,iface=MIXER,name='ABOX Auto Config Out1'
+numid=39,iface=MIXER,name='ABOX Auto Config Out2'
+numid=40,iface=MIXER,name='ABOX Auto Config Recp'
+numid=14,iface=MIXER,name='ABOX Bit Width Inmux0'
+numid=32,iface=MIXER,name='ABOX Bit Width Inmux0 Min'
+numid=15,iface=MIXER,name='ABOX Bit Width Inmux1'
+numid=33,iface=MIXER,name='ABOX Bit Width Inmux1 Min'
+numid=16,iface=MIXER,name='ABOX Bit Width Inmux2'
+numid=34,iface=MIXER,name='ABOX Bit Width Inmux2 Min'
+numid=17,iface=MIXER,name='ABOX Bit Width Inmux3'
+numid=35,iface=MIXER,name='ABOX Bit Width Inmux3 Min'
+numid=18,iface=MIXER,name='ABOX Bit Width Inmux4'
+numid=36,iface=MIXER,name='ABOX Bit Width Inmux4 Min'
+numid=10,iface=MIXER,name='ABOX Bit Width Mixer'
+numid=28,iface=MIXER,name='ABOX Bit Width Mixer Min'
+numid=11,iface=MIXER,name='ABOX Bit Width Out1'
+numid=29,iface=MIXER,name='ABOX Bit Width Out1 Min'
+numid=12,iface=MIXER,name='ABOX Bit Width Out2'
+numid=30,iface=MIXER,name='ABOX Bit Width Out2 Min'
+numid=13,iface=MIXER,name='ABOX Bit Width Recp'
+numid=31,iface=MIXER,name='ABOX Bit Width Recp Min'
+numid=121,iface=MIXER,name='ABOX DSIF SPK'
+numid=71,iface=MIXER,name='ABOX DSIF channel'
+numid=72,iface=MIXER,name='ABOX DSIF rate'
+numid=70,iface=MIXER,name='ABOX DSIF width'
+numid=146,iface=MIXER,name='ABOX ERAP info Bypass On'
+numid=145,iface=MIXER,name='ABOX ERAP info DSM On'
+numid=148,iface=MIXER,name='ABOX ERAP info FM Radio On'
+numid=147,iface=MIXER,name='ABOX ERAP info Mute Primary'
+numid=151,iface=MIXER,name='ABOX ERAP info REF8CH On'
+numid=149,iface=MIXER,name='ABOX ERAP info USB Rx On'
+numid=150,iface=MIXER,name='ABOX ERAP info USB Tx On'
+numid=46,iface=MIXER,name='ABOX Echo Cancellation'
+numid=141,iface=MIXER,name='ABOX Forte Media AP Call BW'
+numid=140,iface=MIXER,name='ABOX Forte Media AP Call type'
+numid=142,iface=MIXER,name='ABOX Forte Media Bargein type'
+numid=144,iface=MIXER,name='ABOX Forte Media Conference'
+numid=143,iface=MIXER,name='ABOX Forte Media Energyinfo'
+numid=139,iface=MIXER,name='ABOX Forte Media FM Mode'
+numid=124,iface=MIXER,name='ABOX NSRC0'
+numid=125,iface=MIXER,name='ABOX NSRC1'
+numid=126,iface=MIXER,name='ABOX NSRC2'
+numid=127,iface=MIXER,name='ABOX NSRC3'
+numid=152,iface=MIXER,name='ABOX PCM ext APCALL BUFFTYPE'
+numid=153,iface=MIXER,name='ABOX PCM ext VPCMIN ON'
+numid=52,iface=MIXER,name='ABOX RDMA VOL FACTOR3'
+numid=128,iface=MIXER,name='ABOX RECP PIFS0'
+numid=129,iface=MIXER,name='ABOX RECP PIFS1'
+numid=122,iface=MIXER,name='ABOX RSRC0'
+numid=123,iface=MIXER,name='ABOX RSRC1'
+numid=134,iface=MIXER,name='ABOX SIFM0'
+numid=135,iface=MIXER,name='ABOX SIFM1'
+numid=136,iface=MIXER,name='ABOX SIFM2'
+numid=137,iface=MIXER,name='ABOX SIFM3'
+numid=138,iface=MIXER,name='ABOX SIFMS'
+numid=114,iface=MIXER,name='ABOX SIFS1'
+numid=115,iface=MIXER,name='ABOX SIFS2'
+numid=89,iface=MIXER,name='ABOX SIFSM'
+numid=74,iface=MIXER,name='ABOX SPDY channel'
+numid=75,iface=MIXER,name='ABOX SPDY rate'
+numid=73,iface=MIXER,name='ABOX SPDY width'
+numid=130,iface=MIXER,name='ABOX SPUM ASRC0'
+numid=131,iface=MIXER,name='ABOX SPUM ASRC1'
+numid=132,iface=MIXER,name='ABOX SPUM ASRC2'
+numid=133,iface=MIXER,name='ABOX SPUM ASRC3'
+numid=98,iface=MIXER,name='ABOX SPUS ASRC0'
+numid=99,iface=MIXER,name='ABOX SPUS ASRC1'
+numid=100,iface=MIXER,name='ABOX SPUS ASRC2'
+numid=101,iface=MIXER,name='ABOX SPUS ASRC3'
+numid=102,iface=MIXER,name='ABOX SPUS ASRC4'
+numid=103,iface=MIXER,name='ABOX SPUS ASRC5'
+numid=104,iface=MIXER,name='ABOX SPUS ASRC6'
+numid=105,iface=MIXER,name='ABOX SPUS ASRC7'
+numid=90,iface=MIXER,name='ABOX SPUS IN0'
+numid=91,iface=MIXER,name='ABOX SPUS IN1'
+numid=92,iface=MIXER,name='ABOX SPUS IN2'
+numid=93,iface=MIXER,name='ABOX SPUS IN3'
+numid=94,iface=MIXER,name='ABOX SPUS IN4'
+numid=95,iface=MIXER,name='ABOX SPUS IN5'
+numid=96,iface=MIXER,name='ABOX SPUS IN6'
+numid=97,iface=MIXER,name='ABOX SPUS IN7'
+numid=106,iface=MIXER,name='ABOX SPUS OUT0'
+numid=107,iface=MIXER,name='ABOX SPUS OUT1'
+numid=108,iface=MIXER,name='ABOX SPUS OUT2'
+numid=109,iface=MIXER,name='ABOX SPUS OUT3'
+numid=110,iface=MIXER,name='ABOX SPUS OUT4'
+numid=111,iface=MIXER,name='ABOX SPUS OUT5'
+numid=112,iface=MIXER,name='ABOX SPUS OUT6'
+numid=113,iface=MIXER,name='ABOX SPUS OUT7'
+numid=88,iface=MIXER,name='ABOX SPUSM'
+numid=5,iface=MIXER,name='ABOX Sampling Rate Inmux0'
+numid=23,iface=MIXER,name='ABOX Sampling Rate Inmux0 Min'
+numid=6,iface=MIXER,name='ABOX Sampling Rate Inmux1'
+numid=24,iface=MIXER,name='ABOX Sampling Rate Inmux1 Min'
+numid=7,iface=MIXER,name='ABOX Sampling Rate Inmux2'
+numid=25,iface=MIXER,name='ABOX Sampling Rate Inmux2 Min'
+numid=8,iface=MIXER,name='ABOX Sampling Rate Inmux3'
+numid=26,iface=MIXER,name='ABOX Sampling Rate Inmux3 Min'
+numid=9,iface=MIXER,name='ABOX Sampling Rate Inmux4'
+numid=27,iface=MIXER,name='ABOX Sampling Rate Inmux4 Min'
+numid=1,iface=MIXER,name='ABOX Sampling Rate Mixer'
+numid=19,iface=MIXER,name='ABOX Sampling Rate Mixer Min'
+numid=2,iface=MIXER,name='ABOX Sampling Rate Out1'
+numid=20,iface=MIXER,name='ABOX Sampling Rate Out1 Min'
+numid=3,iface=MIXER,name='ABOX Sampling Rate Out2'
+numid=21,iface=MIXER,name='ABOX Sampling Rate Out2 Min'
+numid=4,iface=MIXER,name='ABOX Sampling Rate Recp'
+numid=22,iface=MIXER,name='ABOX Sampling Rate Recp Min'
+numid=49,iface=MIXER,name='ABOX Sound Type'
+numid=50,iface=MIXER,name='ABOX Tickle'
+numid=116,iface=MIXER,name='ABOX UAIF0 SPK'
+numid=59,iface=MIXER,name='ABOX UAIF0 channel'
+numid=60,iface=MIXER,name='ABOX UAIF0 rate'
+numid=58,iface=MIXER,name='ABOX UAIF0 width'
+numid=117,iface=MIXER,name='ABOX UAIF1 SPK'
+numid=62,iface=MIXER,name='ABOX UAIF1 channel'
+numid=63,iface=MIXER,name='ABOX UAIF1 rate'
+numid=61,iface=MIXER,name='ABOX UAIF1 width'
+numid=118,iface=MIXER,name='ABOX UAIF2 SPK'
+numid=65,iface=MIXER,name='ABOX UAIF2 channel'
+numid=66,iface=MIXER,name='ABOX UAIF2 rate'
+numid=64,iface=MIXER,name='ABOX UAIF2 width'
+numid=119,iface=MIXER,name='ABOX UAIF3 SPK'
+numid=120,iface=MIXER,name='ABOX UAIF4 SPK'
+numid=68,iface=MIXER,name='ABOX UAIF4 channel'
+numid=69,iface=MIXER,name='ABOX UAIF4 rate'
+numid=67,iface=MIXER,name='ABOX UAIF4 width'
+numid=47,iface=MIXER,name='ABOX VI Sensing'
+numid=51,iface=MIXER,name='ABOX Wakelock'
+numid=77,iface=MIXER,name='Audio DHA data'
+numid=55,iface=MIXER,name='ComprTx0 Bit'
+numid=56,iface=MIXER,name='ComprTx0 Ch'
+numid=54,iface=MIXER,name='ComprTx0 Format'
+numid=57,iface=MIXER,name='ComprTx0 Rate'
+numid=53,iface=MIXER,name='ComprTx0 Volume'
+numid=81,iface=MIXER,name='ESA BBoost data'
+numid=82,iface=MIXER,name='ESA EQ data'
+numid=79,iface=MIXER,name='LRSM data'
+numid=80,iface=MIXER,name='MSP data'
+numid=83,iface=MIXER,name='NXP BDL data'
+numid=84,iface=MIXER,name='NXP RVB ctx data'
+numid=85,iface=MIXER,name='NXP RVB param data'
+numid=76,iface=MIXER,name='SA data'
+numid=86,iface=MIXER,name='SB rotation'
+numid=87,iface=MIXER,name='UPSCALER'
+numid=78,iface=MIXER,name='VSP data'
+RC=0
+
+CMD: sh -c cat /sys/kernel/debug/asoc/components; cat /sys/kernel/debug/asoc/dais
+14b2c000.abox-effect
+14a50560.abox-spdy
+14a50550.abox-dsif
+14a50540.abox-uaif
+14a50520.abox-uaif
+14a50510.abox-uaif
+14a50500.abox-uaif
+14a52400.abox-wdma
+14a52300.abox-wdma
+14a52200.abox-wdma
+14a52100.abox-wdma
+14a52000.abox-wdma
+14a51700.abox-rdma
+14a51600.abox-rdma
+14a51500.abox-rdma
+14a51400.abox-rdma
+14a51300.abox-rdma
+14a51200.abox-rdma
+14a51100.abox-rdma
+14a51000.abox-rdma
+14a50000.abox
+snd-soc-dummy
+snd-soc-dummy
+SPDY
+DSIF
+UAIF4
+UAIF2
+UAIF1
+UAIF0
+RDMA0
+RDMA1
+RDMA2
+RDMA3
+RDMA4
+RDMA5
+RDMA6
+RDMA7
+WDMA0
+WDMA1
+WDMA2
+WDMA3
+WDMA4
+SIFS0
+SIFS1
+SIFS2
+snd-soc-dummy-dai
+RC=0
+
+CMD: sh -c cat /sys/kernel/debug/devices_deferred
+RC=0
+
+CMD: sh -c dmesg | grep -i -E 'asoc|snd|soc-|sound|Exynos9610-Audio|a50-audio|rdma|wdma|uaif|dsif|spdy|sifs|effect|compr|iommu_map' | tail -n 200
+[    0.000000] Kernel command line: androidboot.recovery_offset=7355136 printk.devkmsg=on ess_setup=0xf9000000 sec_avc_log=0x40000@0x91202000 sec_tsp_log=0x40000@0x91244000 sec_disp_log=0x100000@0x91286000 sec_debug_next=0x800000@0x91388000 charging_mode=0x3000 s3cfb.bootloaderfb=0xca000000 lcdtype=9453571 androidboot.carrierid.param.offset=7340608 androidboot.carrierid=BKD consoleblank=0 ehci_hcd.park=3 oops=panic pmic_info=27 ccic_info=1 fg_reset=0 androidboot.emmc_checksum=3 androidboot.sales.param.offset=7340572 sales_code=BKD androidboot.odin_download=1 androidboot.bootloader=A505FDDS9CWA2 androidboot.selinux=enforcing androidboot.product.model=SM-A505F androidboot.ucs_mode=0 androidboot.revision=6 androidboot.hardware=exynos9610 androidboot.warranty_bit=1 androidboot.wb.hs=0e03 androidboot.rp=9 androidboot.wb.snapQB=CUSTOM sec_debug.bin=A androidboot.hmac_mismatch=0 androidboot.sec_atd.tty=/dev/ttySAC0 androidboot.serialno=<redacted> androidboot.ap_serial=<redacted> snd_soc_core.pmdown_time=1000 \
+[    0.061981] Advanced Linux Sound Architecture Driver Initialized.
+[    0.394873] samsung-abox 14a50000.abox: abox_iommu_map(0x80000000, 0x00000008fab00000, 0x1200000, (____ptrval____))
+[    0.397217] samsung-abox 14a50000.abox: abox_iommu_map(0xa0000000, 0x00000008fc500000, 0x1000000, (____ptrval____))
+[    0.397232] samsung-abox 14a50000.abox: abox_iommu_map(0xa1000000, 0x00000008fd500000, 0x100000, (____ptrval____))
+[    0.397244] samsung-abox 14a50000.abox: abox_iommu_map(0x10000000, 0x0000000010000000, 0x1000, 0000000000000000)
+[    0.397258] samsung-abox 14a50000.abox: abox_iommu_map: no virtual address
+[    0.401984] samsung-abox 14a50000.abox: abox_iommu_map(0x93500000, 0x00000000e1980000, 0x28000, (____ptrval____))
+[    0.402075] samsung-abox-if 14a50500.abox-uaif: abox_if_cmpnt_probe
+[    0.402142] samsung-abox-if 14a50510.abox-uaif: abox_if_cmpnt_probe
+[    0.402195] samsung-abox-if 14a50520.abox-uaif: abox_if_cmpnt_probe
+[    0.402264] samsung-abox-if 14a50540.abox-uaif: abox_if_cmpnt_probe
+[    0.402328] samsung-abox-if 14a50550.abox-dsif: abox_if_cmpnt_probe
+[    0.402365] samsung-abox-if 14a50560.abox-spdy: abox_if_cmpnt_probe
+[    0.403075] samsung-abox-if 14a50500.abox-uaif: abox_uaif_set_fmt(0x00001001)
+[    0.403112] samsung-abox-if 14a50510.abox-uaif: abox_uaif_set_fmt(0x00001001)
+[    0.403132] samsung-abox-if 14a50520.abox-uaif: abox_uaif_set_fmt(0x00001001)
+[    0.403149] samsung-abox-if 14a50540.abox-uaif: abox_uaif_set_fmt(0x00004001)
+[    0.403165] samsung-abox-if 14a50550.abox-dsif: abox_dsif_set_fmt(0x00001007)
+[    0.403248] exynos9610-a50-audio sound: ASoC: driver name too long 'Exynos9610-Audio' -> 'Exynos9610-Audi'
+[    0.562497] Initramfs unpacking failed: invalid magic at start of compressed archive
+[   15.442841]   #0: Exynos9610-Audio
+[   30.110371] systemd[1]: Starting a50-audio-hidl-compat.service - A50: present the 64-bit audio HIDL compat wrapper to PulseAudio...
+[   30.160004] systemd[1]: alsa-state.service - Manage Sound Card State (restore and store) was skipped because of an unmet condition check (ConditionPathExists=!/lib/systemd/system/lxc-android-config.service).
+[   30.160280] systemd[1]: alsa-restore.service - Save/Restore Sound Card State was skipped because of an unmet condition check (ConditionPathExists=!/lib/systemd/system/lxc-android-config.service).
+[   30.160507] systemd[1]: Reached target sound.target - Sound Card.
+[   31.222179] systemd[1]: Finished a50-audio-hidl-compat.service - A50: present the 64-bit audio HIDL compat wrapper to PulseAudio.
+[   32.835687] systemd[1]: Starting a50-audio-route.service - A50: pin PulseAudio playback to sink.primary-out...
+[   36.521198] systemd[2185]: pulseaudio.socket - Sound System was skipped because of an unmet condition check (ConditionUser=!root).
+[   36.631975] systemd[2185]: pulseaudio.service - Sound Service was skipped because of an unmet condition check (ConditionUser=!root).
+[   60.752259] A50M64: CMD systemctl show rild.service ofono.service bluebinder.service a50-audio-route.service -p Id -p ActiveState -p SubState -p Result -p ExecMainStatus -p Job
+[   60.798713] A50M64: Id=a50-audio-route.service
+[   61.879897] A50STATUS: 200 a50-audio-route.service              start running
+[  120.141841] A50M64: CMD systemctl show rild.service ofono.service bluebinder.service a50-audio-route.service -p Id -p ActiveState -p SubState -p Result -p ExecMainStatus -p Job
+[  120.198539] A50M64: Id=a50-audio-route.service
+[  120.570418] A50STATUS: 200 a50-audio-route.service              start running
+RC=0
+
+CMD: sh -c systemctl show -p ActiveState -p ConditionResult alsa-restore.service alsa-state.service sound.target
+ActiveState=inactive
+ConditionResult=no
+
+ActiveState=inactive
+ConditionResult=no
+
+ActiveState=active
+ConditionResult=yes
+RC=0
+
+CMD: sh -c fuser -v /dev/snd/* 2>&1; ls -l /proc/*/fd 2>/dev/null | grep -c /dev/snd
+sh: 1: fuser: not found
+0
+RC=1
+
+A2C_REGRESSION
+
+CMD: sh -c grep -E "^N:" /proc/bus/input/devices
+N: Name="MELFAS MIP4 Touchscreen"
+N: Name="gpio-keys"
+N: Name="Hall sensors"
+RC=0
+
+CMD: sh -c findmnt -no TARGET,OPTIONS /userdata | cut -c1-80
+/userdata rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+RC=0
+
+CMD: sh -c head -n 1 /sys/devices/platform/148b0000.decon_f/g2b_stats; pgrep -c -x lomiri; systemctl show -p SystemState -p NFailedUnits
+fence_ctx=1 fence_seq=899 pending=0 win_configs=899 scanned=899 copied=0 dma_fallbacks=0 skipped=0 acq_timeouts=0 completed=899 stage=idle worker_seq=899 worker_layers=1 padded_scanned=899 scan_full_w=1088 scan_full_h=2352
+1
+NFailedUnits=0
+SystemState=starting
+RC=0
+
+CMD: sh -c nmcli -t -f DEVICE,TYPE,STATE dev; ls /sys/class/bluetooth
+wlan0:wifi:connected
+lo:loopback:connected (externally)
+p2p-dev-wlan0:wifi-p2p:disconnected
+usb0:ethernet:unmanaged
+sit0:iptunnel:unmanaged
+hci0
+RC=0
+
+CMD: sh -c dmesg | grep -c -E 'Unable to handle|SError|Internal error|BUG:'
+0
+RC=1
+
+A2C_DONE

@@ -1,0 +1,150 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Fri, 20 Nov 2026 23:21:00 +0600
+Subject: [PATCH 09/14] ASoC: samsung: abox: map PCM buffers by physical
+ address, per stream
+
+4.14 allocated each RDMA/WDMA PCM buffer against the ABOX device, whose
+DMA API returned physical addresses there, and with USE_FIXED_MEMORY
+mapped that address plus a fixed 128 KiB into the ABOX IOMMU domain at
+PCM construction. On 6.18 the ABOX device sits behind exynos-iommu with
+a DMA default domain, so the same call returns an IOVA of that unused
+default domain, and the fixed mapping would point the DSP at unrelated
+physical memory as soon as the card registers.
+
+- Preallocate against the RDMA/WDMA platform device, which has no IOMMU
+  and returns the physical address the ABOX domain must map.
+- Drop USE_FIXED_MEMORY: the driver's existing alternative maps the
+  stream's own buffer (its actual size) at hw_params and unmaps it at
+  hw_free, so nothing is mapped into the DSP's view without a stream.
+
+The compress buffer (RDMA5) already uses the RDMA device and is unchanged.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I7546123b6918d041ce81e3734ed44ac0ffa90a07
+---
+ sound/soc/samsung/abox/abox_rdma.c | 25 ++++++++++---------------
+ sound/soc/samsung/abox/abox_wdma.c | 23 ++++++++++-------------
+ 2 files changed, 20 insertions(+), 28 deletions(-)
+
+diff --git a/sound/soc/samsung/abox/abox_rdma.c b/sound/soc/samsung/abox/abox_rdma.c
+index 9f8c5038a..fe8c8ee9d 100644
+--- a/sound/soc/samsung/abox/abox_rdma.c
++++ b/sound/soc/samsung/abox/abox_rdma.c
+@@ -43,7 +43,10 @@
+ 
+ #define COMPR_USE_COPY
+ #define COMPR_USE_FIXED_MEMORY
+-#define USE_FIXED_MEMORY
++/*
++ * 6.18: no USE_FIXED_MEMORY. The PCM buffer is mapped into the ABOX domain
++ * at hw_params and unmapped at hw_free, sized to the stream's buffer.
++ */
+ 
+ /* Mailbox between driver and firmware for offload */
+ #define COMPR_CMD_CODE		(0x0004)
+@@ -1630,7 +1633,6 @@ static int abox_rdma_new(struct snd_soc_component *cmpnt,
+ 	struct snd_pcm_substream *substream = stream->substream;
+ 	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *data = dev_get_drvdata(dev);
+-	struct device *dev_abox = &data->abox_data->pdev->dev;
+ 	int id = data->id;
+ 	size_t buffer_bytes;
+ 	int ret = 0;
+@@ -1665,14 +1667,13 @@ static int abox_rdma_new(struct snd_soc_component *cmpnt,
+ 			break;
+ 		}
+ 
++		/*
++		 * 6.18: the ABOX device sits behind the SysMMU, so its DMA
++		 * API returns IOVAs of its default domain; this DMA device has
++		 * no IOMMU and yields the physical address the ABOX domain maps.
++		 */
+ 		snd_pcm_lib_preallocate_pages(substream, SNDRV_DMA_TYPE_DEV,
+-				snd_soc_rtd_to_cpu(runtime, 0)->dev, buffer_bytes, buffer_bytes);
+-
+-#ifdef USE_FIXED_MEMORY
+-		abox_iommu_map(dev_abox, IOVA_RDMA_BUFFER(id),
+-				substream->dma_buffer.addr, BUFFER_BYTES_MAX,
+-				substream->dma_buffer.area);
+-#endif
++				dev, buffer_bytes, buffer_bytes);
+ 	}
+ 
+ 	return ret;
+@@ -1686,9 +1687,6 @@ static void abox_rdma_free(struct snd_soc_component *cmpnt,
+ 	struct snd_soc_pcm_runtime *runtime = substream->private_data;
+ 	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *data = dev_get_drvdata(dev);
+-	struct device *dev_abox = &data->abox_data->pdev->dev;
+-	int id = data->id;
+-
+ 	int ret = 0;
+ 
+ 	if (data->buf_type == BUFFER_TYPE_ION) {
+@@ -1701,9 +1699,6 @@ static void abox_rdma_free(struct snd_soc_component *cmpnt,
+ 			data->hwdep = NULL;
+ 		}
+ 	} else {
+-#ifdef USE_FIXED_MEMORY
+-		abox_iommu_unmap(dev_abox, IOVA_RDMA_BUFFER(id));
+-#endif
+ 		snd_pcm_lib_preallocate_free_for_all(pcm);
+ 	}
+ }
+diff --git a/sound/soc/samsung/abox/abox_wdma.c b/sound/soc/samsung/abox/abox_wdma.c
+index 1121b09fe..3210b05ac 100644
+--- a/sound/soc/samsung/abox/abox_wdma.c
++++ b/sound/soc/samsung/abox/abox_wdma.c
+@@ -40,7 +40,10 @@
+ #include "abox_mmapfd.h"
+ #include "abox.h"
+ 
+-#define USE_FIXED_MEMORY
++/*
++ * 6.18: no USE_FIXED_MEMORY. The PCM buffer is mapped into the ABOX domain
++ * at hw_params and unmapped at hw_free, sized to the stream's buffer.
++ */
+ 
+ static const struct snd_pcm_hardware abox_wdma_hardware = {
+ 	.info			= SNDRV_PCM_INFO_INTERLEAVED
+@@ -587,14 +590,13 @@ static int abox_wdma_new(struct snd_soc_component *cmpnt,
+ 			break;
+ 		}
+ 
++		/*
++		 * 6.18: the ABOX device sits behind the SysMMU, so its DMA
++		 * API returns IOVAs of its default domain; this DMA device has
++		 * no IOMMU and yields the physical address the ABOX domain maps.
++		 */
+ 		snd_pcm_lib_preallocate_pages(substream, SNDRV_DMA_TYPE_DEV,
+-				snd_soc_rtd_to_cpu(runtime, 0)->dev, buffer_bytes, buffer_bytes);
+-
+-#ifdef USE_FIXED_MEMORY
+-		ret = abox_iommu_map(&data->abox_data->pdev->dev, IOVA_WDMA_BUFFER(id),
+-				substream->dma_buffer.addr, BUFFER_BYTES_MAX,
+-				substream->dma_buffer.area);
+-#endif
++				dev, buffer_bytes, buffer_bytes);
+ 	}
+ 
+ 	return ret;
+@@ -608,8 +610,6 @@ static void abox_wdma_free(struct snd_soc_component *cmpnt,
+ 	struct snd_soc_pcm_runtime *runtime = substream->private_data;
+ 	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *data = dev_get_drvdata(dev);
+-	int id = data->id;
+-
+ 	int ret = 0;
+ 
+ 	if (data->buf_type == BUFFER_TYPE_ION) {
+@@ -622,9 +622,6 @@ static void abox_wdma_free(struct snd_soc_component *cmpnt,
+ 			data->hwdep = NULL;
+ 		}
+ 	} else {
+-#ifdef USE_FIXED_MEMORY
+-		abox_iommu_unmap(&data->abox_data->pdev->dev, IOVA_WDMA_BUFFER(id));
+-#endif
+ 		snd_pcm_lib_preallocate_free_for_all(pcm);
+ 	}
+ }

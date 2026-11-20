@@ -1,0 +1,79 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Sat, 21 Nov 2026 01:45:00 +0600
+Subject: [PATCH 14/14] ASoC: samsung: abox: require a bound ABOX GIC before
+ probing
+
+The probe registers its IPC handlers through the ABOX GIC driver's data,
+but only checked that the GIC platform device existed, not that its
+driver had bound; link order alone kept the data valid (a NULL GIC
+driver data panics in abox_gic_register_irq_handler(), seen in a test
+build in M10.2 A1d). The lookup also ran after the IOMMU mappings, so a
+deferral there would leave mappings that make the next probe fail.
+
+Look the GIC up first, before anything is allocated or mapped, defer
+until its driver is bound, and add a device link so the GIC cannot
+unbind while the ABOX uses it.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: Ib04ba5accb09c5d39da151823632a42fdd9aa13e
+---
+ sound/soc/samsung/abox/abox.c | 34 +++++++++++++++++++++++-----------
+ 1 file changed, 23 insertions(+), 11 deletions(-)
+
+diff --git a/sound/soc/samsung/abox/abox.c b/sound/soc/samsung/abox/abox.c
+index f216c3d60..a00809ff8 100644
+--- a/sound/soc/samsung/abox/abox.c
++++ b/sound/soc/samsung/abox/abox.c
+@@ -5896,10 +5896,32 @@ static int samsung_abox_probe(struct platform_device *pdev)
+ 	struct platform_device *pdev_tmp;
+ 	struct abox_data *data;
+ 	phys_addr_t paddr __maybe_unused;
++	struct device *dev_gic;
+ 	int ret, i;
+ 
+ 	dev_info(dev, "%s\n", __func__);
+ 
++	/*
++	 * The ABOX GIC driver must be bound first: its driver data is used
++	 * below to register the IPC handlers. Check before anything is
++	 * allocated or mapped so a deferral leaves no state behind, and link
++	 * the devices so the GIC cannot go away under the ABOX.
++	 */
++	np_tmp = of_parse_phandle(np, "abox_gic", 0);
++	if (!np_tmp)
++		return dev_err_probe(dev, -EINVAL, "no abox_gic phandle\n");
++	pdev_tmp = of_find_device_by_node(np_tmp);
++	of_node_put(np_tmp);
++	if (!pdev_tmp)
++		return dev_err_probe(dev, -EPROBE_DEFER, "abox_gic not created\n");
++	dev_gic = &pdev_tmp->dev;
++	if (!dev_get_drvdata(dev_gic) ||
++	    !device_link_add(dev, dev_gic, DL_FLAG_AUTOREMOVE_CONSUMER)) {
++		put_device(dev_gic);
++		return dev_err_probe(dev, -EPROBE_DEFER, "abox_gic not bound\n");
++	}
++	put_device(dev_gic);
++
+ 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+ 		return -ENOMEM;
+@@ -6136,17 +6158,7 @@ static int samsung_abox_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	np_tmp = of_parse_phandle(np, "abox_gic", 0);
+-	if (!np_tmp) {
+-		dev_err(dev, "Failed to get abox_gic device node\n");
+-		return -EPROBE_DEFER;
+-	}
+-	pdev_tmp = of_find_device_by_node(np_tmp);
+-	if (!pdev_tmp) {
+-		dev_err(dev, "Failed to get abox_gic platform device\n");
+-		return -EPROBE_DEFER;
+-	}
+-	data->dev_gic = &pdev_tmp->dev;
++	data->dev_gic = dev_gic;
+ 
+ 	if (abox_test_quirk(data, ABOX_QUIRK_SHARE_VTS_SRAM)) {
+ 		np_tmp = of_parse_phandle(np, "vts", 0);

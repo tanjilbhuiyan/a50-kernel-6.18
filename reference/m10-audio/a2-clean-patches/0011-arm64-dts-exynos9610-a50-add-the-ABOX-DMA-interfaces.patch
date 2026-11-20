@@ -1,0 +1,425 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Fri, 20 Nov 2026 23:21:01 +0600
+Subject: [PATCH 11/14] arm64: dts: exynos9610-a50: add the ABOX DMA,
+ interfaces and sound card
+
+Add the ABOX children of the stock DT under the ABOX node: RDMA0-7 (RDMA5
+the compress channel with its mailbox), WDMA0-4, UAIF0/1/2/4, DSIF, SPDY
+and the effect block, with the mainline CMU_DISPAUD UAIF/DSIF/FM dividers
+and their ABOX BCLK gates. Pin control for the I2S buses is left out; no
+pin changes until the codec and amplifier are added.
+
+Add the sound card node with the link layout of the stock DTBO: DMA front
+ends on the ABOX DAIs, back ends on the interfaces and SIFS0-2, every back
+end on the dummy codec for now, UAIF4 as clock consumer (UAIF0 slave).
+The Bluetooth (SCO), VSS, debug and synchronized-IPC children stay out.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: Ibef98943fead84f2df909617bcf1d43f7c8dfde8
+---
+ .../boot/dts/exynos/exynos9610-a50-sysmmu.dts | 385 +++++++++++++++++-
+ 1 file changed, 384 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610-a50-sysmmu.dts b/arch/arm64/boot/dts/exynos/exynos9610-a50-sysmmu.dts
+index 97301a01a..9766f8601 100644
+--- a/arch/arm64/boot/dts/exynos/exynos9610-a50-sysmmu.dts
++++ b/arch/arm64/boot/dts/exynos/exynos9610-a50-sysmmu.dts
+@@ -44,7 +44,7 @@ abox_gic: abox-gic@14af0000 {
+ 		interrupts = <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>;
+ 	};
+ 
+-	/* ABOX audio DSP core (M10.2 boot test A1: firmware + IPC only). */
++	/* ABOX audio DSP core with its DMA, interface and effect children. */
+ 	abox: abox@14a50000 {
+ 		compatible = "samsung,abox";
+ 		reg = <0x14a50000 0x10000>, <0x14810000 0x3000>,
+@@ -68,5 +68,388 @@ abox: abox@14a50000 {
+ 		samsung,pmu-syscon = <&pmu_system_controller>;
+ 		pm_qos_int = <0 0 0 0 0>;
+ 		pm_qos_aud = <1180000 800000 590000 394000 0>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		abox_rdma_0: abox-rdma@14a51000 {
++			compatible = "samsung,abox-rdma";
++			reg = <0x14a51000 0x100>;
++			id = <0>;
++			type = "normal";
++			buffer_type = "dma";
++			#sound-dai-cells = <0>;
++		};
++
++		abox_rdma_1: abox-rdma@14a51100 {
++			compatible = "samsung,abox-rdma";
++			reg = <0x14a51100 0x100>;
++			id = <1>;
++			type = "normal";
++			buffer_type = "dma";
++			#sound-dai-cells = <0>;
++		};
++
++		abox_rdma_2: abox-rdma@14a51200 {
++			compatible = "samsung,abox-rdma";
++			reg = <0x14a51200 0x100>;
++			id = <2>;
++			type = "normal";
++			buffer_type = "dma";
++			#sound-dai-cells = <0>;
++		};
++
++		abox_rdma_3: abox-rdma@14a51300 {
++			compatible = "samsung,abox-rdma";
++			reg = <0x14a51300 0x100>;
++			id = <3>;
++			type = "sync";
++			buffer_type = "dma";
++			#sound-dai-cells = <0>;
++		};
++
++		abox_rdma_4: abox-rdma@14a51400 {
++			compatible = "samsung,abox-rdma";
++			reg = <0x14a51400 0x100>;
++			id = <4>;
++			type = "call";
++			buffer_type = "dma";
++			#sound-dai-cells = <0>;
++		};
++
++		abox_rdma_5: abox-rdma@14a51500 {
++			compatible = "samsung,abox-rdma";
++			reg = <0x14a51500 0x100>, <0x14b22600 0x70>;
++			reg-names = "sfr", "mailbox";
++			id = <5>;
++			type = "compress";
++			buffer_type = "dma";
++			#sound-dai-cells = <0>;
++		};
++
++		abox_rdma_6: abox-rdma@14a51600 {
++			compatible = "samsung,abox-rdma";
++			reg = <0x14a51600 0x100>;
++			id = <6>;
++			type = "normal";
++			buffer_type = "dma";
++			#sound-dai-cells = <0>;
++		};
++
++		abox_rdma_7: abox-rdma@14a51700 {
++			compatible = "samsung,abox-rdma";
++			reg = <0x14a51700 0x100>;
++			id = <7>;
++			type = "realtime";
++			buffer_type = "dma";
++			#sound-dai-cells = <0>;
++		};
++
++		abox_wdma_0: abox-wdma@14a52000 {
++			compatible = "samsung,abox-wdma";
++			reg = <0x14a52000 0x100>;
++			id = <0>;
++			type = "normal";
++			buffer_type = "dma";
++			#sound-dai-cells = <0>;
++		};
++
++		abox_wdma_1: abox-wdma@14a52100 {
++			compatible = "samsung,abox-wdma";
++			reg = <0x14a52100 0x100>;
++			id = <1>;
++			type = "normal";
++			buffer_type = "dma";
++			#sound-dai-cells = <0>;
++		};
++
++		abox_wdma_2: abox-wdma@14a52200 {
++			compatible = "samsung,abox-wdma";
++			reg = <0x14a52200 0x100>;
++			id = <2>;
++			type = "call";
++			buffer_type = "dma";
++			#sound-dai-cells = <0>;
++		};
++
++		abox_wdma_3: abox-wdma@14a52300 {
++			compatible = "samsung,abox-wdma";
++			reg = <0x14a52300 0x100>;
++			id = <3>;
++			type = "realtime";
++			buffer_type = "dma";
++			#sound-dai-cells = <0>;
++		};
++
++		abox_wdma_4: abox-wdma@14a52400 {
++			compatible = "samsung,abox-wdma";
++			reg = <0x14a52400 0x100>;
++			id = <4>;
++			type = "normal";
++			buffer_type = "dma";
++			#sound-dai-cells = <0>;
++		};
++
++		abox_uaif_0: abox-uaif@14a50500 {
++			compatible = "samsung,abox-uaif";
++			reg = <0x14a50500 0x10>;
++			id = <0>;
++			clocks = <&cmu_dispaud CLK_DOUT_CLK_AUD_UAIF0>,
++				 <&cmu_dispaud CLK_GOUT_CLK_DISPAUD_ABOX_BCLK_UAIF0>;
++			clock-names = "bclk", "bclk_gate";
++			#sound-dai-cells = <0>;
++		};
++
++		abox_uaif_1: abox-uaif@14a50510 {
++			compatible = "samsung,abox-uaif";
++			reg = <0x14a50510 0x10>;
++			id = <1>;
++			clocks = <&cmu_dispaud CLK_DOUT_CLK_AUD_UAIF1>,
++				 <&cmu_dispaud CLK_GOUT_CLK_DISPAUD_ABOX_BCLK_UAIF1>;
++			clock-names = "bclk", "bclk_gate";
++			#sound-dai-cells = <0>;
++		};
++
++		abox_uaif_2: abox-uaif@14a50520 {
++			compatible = "samsung,abox-uaif";
++			reg = <0x14a50520 0x10>;
++			id = <2>;
++			clocks = <&cmu_dispaud CLK_DOUT_CLK_AUD_UAIF2>,
++				 <&cmu_dispaud CLK_GOUT_CLK_DISPAUD_ABOX_BCLK_UAIF2>;
++			clock-names = "bclk", "bclk_gate";
++			#sound-dai-cells = <0>;
++		};
++
++		abox_uaif_4: abox-uaif@14a50540 {
++			compatible = "samsung,abox-uaif";
++			reg = <0x14a50540 0x10>;
++			id = <4>;
++			/* UAIF4 is connected to UAIF0 as slave. */
++			clocks = <&cmu_dispaud CLK_DOUT_CLK_AUD_UAIF0>,
++				 <&cmu_dispaud CLK_GOUT_CLK_DISPAUD_ABOX_BCLK_UAIF0>;
++			clock-names = "bclk", "bclk_gate";
++			#sound-dai-cells = <0>;
++		};
++
++		abox_dsif: abox-dsif@14a50550 {
++			compatible = "samsung,abox-dsif";
++			reg = <0x14a50550 0x10>;
++			id = <5>;
++			clocks = <&cmu_dispaud CLK_DOUT_CLK_AUD_DSIF>,
++				 <&cmu_dispaud CLK_GOUT_DISPAUD_ABOX_BCLK_DSIF>;
++			clock-names = "bclk", "bclk_gate";
++			#sound-dai-cells = <0>;
++		};
++
++		abox_spdy: abox-spdy@14a50560 {
++			compatible = "samsung,abox-spdy";
++			reg = <0x14a50560 0x10>;
++			id = <6>;
++			clocks = <&cmu_dispaud CLK_DOUT_CLK_AUD_FM>,
++				 <&cmu_dispaud CLK_GOUT_DISPAUD_ABOX_BCLK_SPDY>;
++			clock-names = "bclk", "bclk_gate";
++			#sound-dai-cells = <0>;
++		};
++
++		abox_effect: abox-effect@14b2c000 {
++			compatible = "samsung,abox-effect";
++			reg = <0x14b2c000 0x1000>;
++			reg-names = "reg";
++			abox = <&abox>;
++		};
++	};
++};
++
++/ {
++	/*
++	 * ABOX sound card, link layout of the stock DTBO "sound" node. Every
++	 * back end uses the dummy codec until the RT5665 codec and TFA9872
++	 * amplifier are added (M10.3).
++	 */
++	sound {
++		compatible = "samsung,exynos9610-audio";
++		samsung,codec = <&abox &abox_uaif_0 &abox_uaif_1 &abox_uaif_2
++				 &abox_uaif_4 &abox_dsif &abox_spdy>;
++		samsung,prefix = "ABOX", "ABOX", "ABOX", "ABOX", "ABOX", "ABOX",
++				 "ABOX";
++		samsung,aux = <&abox_effect>;
++
++		rdma0 {
++			cpu {
++				sound-dai = <&abox 0>;
++			};
++			platform {
++				sound-dai = <&abox_rdma_0>;
++			};
++		};
++
++		rdma1 {
++			cpu {
++				sound-dai = <&abox 1>;
++			};
++			platform {
++				sound-dai = <&abox_rdma_1>;
++			};
++		};
++
++		rdma2 {
++			cpu {
++				sound-dai = <&abox 2>;
++			};
++			platform {
++				sound-dai = <&abox_rdma_2>;
++			};
++		};
++
++		rdma3 {
++			cpu {
++				sound-dai = <&abox 3>;
++			};
++			platform {
++				sound-dai = <&abox_rdma_3>;
++			};
++		};
++
++		rdma4 {
++			cpu {
++				sound-dai = <&abox 4>;
++			};
++			platform {
++				sound-dai = <&abox_rdma_4>;
++			};
++		};
++
++		rdma5 {
++			cpu {
++				sound-dai = <&abox 5>;
++			};
++			platform {
++				sound-dai = <&abox_rdma_5>;
++			};
++		};
++
++		rdma6 {
++			cpu {
++				sound-dai = <&abox 6>;
++			};
++			platform {
++				sound-dai = <&abox_rdma_6>;
++			};
++		};
++
++		rdma7 {
++			cpu {
++				sound-dai = <&abox 7>;
++			};
++			platform {
++				sound-dai = <&abox_rdma_7>;
++			};
++		};
++
++		wdma0 {
++			cpu {
++				sound-dai = <&abox 8>;
++			};
++			platform {
++				sound-dai = <&abox_wdma_0>;
++			};
++		};
++
++		wdma1 {
++			cpu {
++				sound-dai = <&abox 9>;
++			};
++			platform {
++				sound-dai = <&abox_wdma_1>;
++			};
++		};
++
++		wdma2 {
++			cpu {
++				sound-dai = <&abox 10>;
++			};
++			platform {
++				sound-dai = <&abox_wdma_2>;
++			};
++		};
++
++		wdma3 {
++			cpu {
++				sound-dai = <&abox 11>;
++			};
++			platform {
++				sound-dai = <&abox_wdma_3>;
++			};
++		};
++
++		wdma4 {
++			cpu {
++				sound-dai = <&abox 12>;
++			};
++			platform {
++				sound-dai = <&abox_wdma_4>;
++			};
++		};
++
++		uaif0 {
++			format = "i2s";
++			cpu {
++				sound-dai = <&abox_uaif_0>;
++			};
++		};
++
++		uaif1 {
++			format = "i2s";
++			cpu {
++				sound-dai = <&abox_uaif_1>;
++			};
++		};
++
++		uaif2 {
++			format = "i2s";
++			cpu {
++				sound-dai = <&abox_uaif_2>;
++			};
++		};
++
++		uaif4 {
++			format = "i2s";
++			bitclock-master;
++			frame-master;
++			cpu {
++				sound-dai = <&abox_uaif_4>;
++			};
++		};
++
++		dsif {
++			format = "pdm";
++			cpu {
++				sound-dai = <&abox_dsif>;
++			};
++		};
++
++		spdy {
++			cpu {
++				sound-dai = <&abox_spdy>;
++			};
++		};
++
++		sifs0 {
++			cpu {
++				sound-dai = <&abox 13>;
++			};
++		};
++
++		sifs1 {
++			cpu {
++				sound-dai = <&abox 14>;
++			};
++		};
++
++		sifs2 {
++			cpu {
++				sound-dai = <&abox 15>;
++			};
++		};
+ 	};
+ };

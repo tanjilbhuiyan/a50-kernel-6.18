@@ -1,0 +1,107 @@
+{
+  "test": "A2 normal boot: A1l plus ABOX DMA/interface children and the A50 sound card (dummy codecs)",
+  "source_commit": "8c11ad94bc698b4ad0b6a7bb875fc0bc653e8457",
+  "source_branch": "a50-m10-a2-test",
+  "source_compared_to_A1l": "four commits: UAIF/DSIF CPU-side clock role, PCM buffers by physical address per stream, A50 sound card driver, DT children + sound node",
+  "clean_branch_commits": "a50-audio 0fc026aeb fd7e4ef71 0ee9db037 e5921ca3f (sound/, A50 DT and clk identical to a2-test)",
+  "config_delta_from_A1l": [
+    "CONFIG_SND_SOC_SAMSUNG_EXYNOS9610_A50=y"
+  ],
+  "runtime_cpio_same_as_A1l": true,
+  "dtb_delta_from_A1l": "additive only: 20 ABOX child nodes and the sound node (phandles renumbered)",
+  "owner_presence": "present, flash A2",
+  "files": {
+    "src/m10/boot-a2.img": {
+      "size": 32671744,
+      "sha256": "87ff1769e20e112fd886784668375e0b85e780f6c07c9893bd7cf4a436f22cbe"
+    },
+    "src/m10/dt-a2.img": {
+      "size": 8388608,
+      "sha256": "0c207f8cb077231c973b886044fa89c3958f572ab77a3af7d2d3da548e2449b3"
+    },
+    "src/m10/a2-as-built/.config": {
+      "size": 126341,
+      "sha256": "27aeecb9642e04dde52b7a5b6fc3acd642413ed2fa59c99ef4ccc5dcce335cc5"
+    },
+    "src/m10/a2-as-built/Image": {
+      "size": 32665608,
+      "sha256": "9a913de57b2ea51669b09c72b924175e3b922e441382d4fd3901942dab91363c"
+    },
+    "src/m10/a2-as-built/exynos9610-a50-gpu.dtb": {
+      "size": 28991,
+      "sha256": "2b3e8c03aa4a9c34bcc65559bc973acae5da051a77acf790bb60ef17d6f8dae5"
+    },
+    "src/m10/a2-as-built/initramfs_data.cpio": {
+      "size": 25968640,
+      "sha256": "aded41aa0cd365dd211ff3971b674698d5bf77cd855711920957124ba7c80718"
+    },
+    "src/m10/a2-as-built/System.map": {
+      "size": 3455795,
+      "sha256": "20c9b7d23dcd82bd258fcd7cfa93c63ce6a15b59ee3c41ff78581f85f716913b"
+    },
+    "tools/m10/build_a1.py": {
+      "size": 5437,
+      "sha256": "4140ec532655656e70ba4d0f7da25ac57452c5e51c1d5eedd19b66f65d594365"
+    },
+    "tools/m10/build_a2.py": {
+      "size": 563,
+      "sha256": "8af73ff6b03a9f3a5ebed97441d7df1f1a86336b2aaec5247ed6b672d556cea1"
+    },
+    "tools/m10/run_a2.sh": {
+      "size": 4138,
+      "sha256": "a984b8f132195f5a0039f5b69dd169ad3a15e7dd4b5364b9dca440ba2fd9eed0"
+    },
+    "tools/m10/collect_a2.sh": {
+      "size": 2883,
+      "sha256": "f8470ab3f0d22cdfb12f26d04a8a755b23a2dee75e5e88a469d59065b8a09e53"
+    },
+    "tools/m32_run_test.sh": {
+      "size": 4701,
+      "sha256": "fb03aa8a9411f6d5a4292a23342a18b24a0b597ba568c7c9def703d44bfc7235"
+    },
+    "tools/m32_read_618.sh": {
+      "size": 1238,
+      "sha256": "e750045b3417db5a9f9a6aad25e96cf85f1367aef897c45f039e8e440ac765c7"
+    },
+    "tools/m24_preflight.sh": {
+      "size": 4118,
+      "sha256": "6beca4aa8634c3e1b687e4242d700a311c89f2f18322398ef7a9d08a3fc13d8e"
+    },
+    "tools/m54/watch_ssh.py": {
+      "size": 4321,
+      "sha256": "f656a6f1092266c2214ba0f3afee37ac81b0b62620b7feb57cadf6a71db52bfd"
+    },
+    "tools/m22_pack.sh": {
+      "size": 1098,
+      "sha256": "08212aa1743ed07df3447dc8414d634e775a4bc224e945b570a86be1c3757097"
+    },
+    "tools/dt_table.py": {
+      "size": 7313,
+      "sha256": "f601fa4f6fb98ed558cdad2617ab9c01e9353a6bb59691c5367860358d1fd10d"
+    },
+    "reference/stock-images/dt.img": {
+      "size": 8388608,
+      "sha256": "59209aa52dc3b35e2c7cc025c465ed1cdb48dadaa13cf5d1f50324b3bf503547"
+    },
+    "reference/stock-images/dtbo.img": {
+      "size": 8388608,
+      "sha256": "40e47ed1477a8ffb6cbb34e5cb59a1af786c2552544f3b556373f3c553d40d21"
+    },
+    "reference/dt-6.18/images/dtbo.img": {
+      "size": 8388608,
+      "sha256": "6d81cce87faca914d75f024f36e183ae6592e61adc786bbb6c7c47cdd3a151fe"
+    },
+    "baseline/ut-26.04-2026-10-19-aa17rf2/boot.img": {
+      "size": 53624832,
+      "sha256": "7d5855efd34e01f09659c7d47ecb0773c30f2acc7443ee87181a0536804086c5"
+    },
+    "reference/m10-audio/a2-build-results.json": {
+      "size": 17609,
+      "sha256": "d8082ecec5124fdcd351b4dfe569e7529304a78ac0152479897822e6db26254b"
+    },
+    "reference/m10-audio/a1l-results.json": {
+      "size": 2598,
+      "sha256": "2f719c3293fd1802b2097ad1706aec30e36c7204d73f8d6717c9b7db53a79be6"
+    }
+  }
+}

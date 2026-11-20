@@ -1,0 +1,96 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Fri, 20 Nov 2026 18:23:36 +0600
+Subject: [PATCH 04/14] arm64: dts: exynos9610-a50: add the ABOX audio DSP core
+
+Describe the ABOX core of the Exynos 9610 DISPAUD block from the stock
+device tree: its SysMMU (0x14920000, SPI 216), its private GIC
+(0x14af1000/0x14af2000, SPI 198) and the ABOX node (SFR, sysreg, SRAM,
+IPC offsets, quirks without the not-ported "scsc bt"). Clocks come from
+the mainline CMU_DISPAUD (AUD PLL, AUD CPU/AUDIF/BUS dividers), the PMU
+through its syscon, and the firmware DRAM + private area (26 MiB) from a
+new dynamically placed no-map reserved region.
+
+No DMA, interface or debug children yet (boot test A1: firmware + IPC).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I1837533aa4fe9b892ae929d4318e09d3ea2e6b5d
+---
+ .../boot/dts/exynos/exynos9610-a50-sysmmu.dts | 44 +++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos9610-a50.dts | 10 +++++
+ 2 files changed, 54 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610-a50-sysmmu.dts b/arch/arm64/boot/dts/exynos/exynos9610-a50-sysmmu.dts
+index 9e314b3fc..97301a01a 100644
+--- a/arch/arm64/boot/dts/exynos/exynos9610-a50-sysmmu.dts
++++ b/arch/arm64/boot/dts/exynos/exynos9610-a50-sysmmu.dts
+@@ -25,4 +25,48 @@ sysmmu_dpu: iommu@14820000 {
+ 		clock-names = "sysmmu";
+ 		#iommu-cells = <0>;
+ 	};
++
++	/* Stock ABOX SysMMU ("ABox"), DISPAUD block. */
++	sysmmu_abox: iommu@14920000 {
++		compatible = "samsung,exynos-sysmmu";
++		reg = <0x14920000 0x9000>;
++		interrupts = <GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cmu_dispaud CLK_GOUT_DISPAUD_SMMU_ABOX_CLK>;
++		clock-names = "sysmmu";
++		#iommu-cells = <0>;
++	};
++
++	/* ABOX private GIC (distributor + CPU interface for the ABOX CA7). */
++	abox_gic: abox-gic@14af0000 {
++		compatible = "samsung,abox_gic";
++		reg = <0x14af1000 0x1000>, <0x14af2000 0x1004>;
++		reg-names = "gicd", "gicc";
++		interrupts = <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>;
++	};
++
++	/* ABOX audio DSP core (M10.2 boot test A1: firmware + IPC only). */
++	abox: abox@14a50000 {
++		compatible = "samsung,abox";
++		reg = <0x14a50000 0x10000>, <0x14810000 0x3000>,
++		      <0x14b00000 0x35000>;
++		reg-names = "sfr", "sysreg", "sram";
++		quirks = "try to asrc off", "off on suspend";
++		#sound-dai-cells = <1>;
++		ipc_tx_offset = <0x22000>;
++		ipc_rx_offset = <0x22300>;
++		ipc_tx_ack_offset = <0x222fc>;
++		ipc_rx_ack_offset = <0x225fc>;
++		abox_gic = <&abox_gic>;
++		clocks = <&cmu_dispaud CLK_FOUT_AUD_PLL>,
++			 <&cmu_dispaud CLK_DOUT_CLK_AUD_CPU>,
++			 <&cmu_dispaud CLK_DOUT_CLK_AUD_AUDIF>,
++			 <&cmu_dispaud CLK_DOUT_CLK_AUD_BUS>;
++		clock-names = "pll", "cpu", "audif", "bus";
++		uaif_max_div = <512>;
++		iommus = <&sysmmu_abox>;
++		memory-region = <&abox_fw_mem>;
++		samsung,pmu-syscon = <&pmu_system_controller>;
++		pm_qos_int = <0 0 0 0 0>;
++		pm_qos_aud = <1180000 800000 590000 394000 0>;
++	};
+ };
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610-a50.dts b/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
+index 822cc3fa2..ce178f96c 100644
+--- a/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
++++ b/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
+@@ -189,6 +189,16 @@ wlbt_mem: wlbt-mem {
+ 			size = <0x1000000>;
+ 			alignment = <0x0 0x1000>;
+ 		};
++		/*
++		 * ABOX firmware DRAM (18 MiB) + private area (8 MiB), mapped by
++		 * the ABOX SysMMU at fixed IOVAs (M10.2; stock used
++		 * dma_alloc_coherent on the ABOX device).
++		 */
++		abox_fw_mem: abox-fw-mem {
++			size = <0x1a00000>;
++			alignment = <0x0 0x100000>;
++			no-map;
++		};
+ 		cp_ram_logging@f5a00000 {
+ 			reg = <0x0 0xf5a00000 0x1e00000>;
+ 			no-map;
