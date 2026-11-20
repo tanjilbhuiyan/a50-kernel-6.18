@@ -38,7 +38,8 @@ Current state and next action: [STATUS.md](STATUS.md).
 | M7 | Display/GPU: Lomiri UI on the Mali GPU | done with limits (G2D omitted, fixed GPU clock, light-load soak) |
 | M8 | Input: I2C, touch, keys, hall sensor and vibrator | done with limits (hall events, USB resets, memory review → M12) |
 | M9 | Wi-Fi/Bluetooth (SCSC) | done: Wi-Fi (S4) and Bluetooth pairing + A2DP audio (S8), factory addresses (ADR-0009) |
-| M10-M12 | Audio, modem, power/charging | planned |
+| M10 | Audio: ABOX, codec, amplifier, PulseAudio | in progress; ABOX DSP boots normally, PCM/card and audio paths pending |
+| M11-M12 | Modem, power/charging | planned |
 
 Current bring-up limits (details in [the M6.4 log](log/2026-11-14-M6.4-runtime.md)):
 
@@ -51,7 +52,9 @@ Current bring-up limits (details in [the M6.4 log](log/2026-11-14-M6.4-runtime.m
   re-enumeration reproduced without keys; its cause remains unresolved (M12).
 - A per-boot read-only RC bind defers unported TEEGRIS startup, with vendor unchanged and no fake readiness. Secure heaps
   and security-dependent HALs are unsupported; only the measured normal system heap is implemented.
-- Audio is unported (M10). Per [ADR-0005](docs/decisions/ADR-0005-defer-android-audio-hal.md), 6.18 boots overlay
+- Audio is in progress (M10): the ABOX DSP boots automatically after the CMU bus-clock fix
+  ([A1l evidence](log/2026-11-20-M10.2-abox-core.md)); PCM/card, codec and amplifier work remain.
+  Per [ADR-0005](docs/decisions/ADR-0005-defer-android-audio-hal.md), 6.18 boots overlay
   PulseAudio's startup script without the Android audio HAL module, so the session can start; there is no sound.
 - Hardware video codecs are unported (MFC, M13). Per [ADR-0006](docs/decisions/ADR-0006-defer-gst-hybris-codecs.md),
   6.18 boots hide GStreamer's Android codec plugin so the session can start; only software codecs are available.
@@ -76,10 +79,13 @@ Full plan with each milestone's Definition of Done: [docs/05-plan.md](docs/05-pl
 
 ## Kernel source
 
-- **Build the current M8 driver stack:** [reproduce/m8/](reproduce/m8/README.md).
+- **Build the stable M9 driver stack:** [reproduce/m8/](reproduce/m8/README.md).
   After cloning, run `python3 -I tools/reproduce_m8.py --jobs 16`. This fetches pinned public inputs, applies all
   70 patches, reconstructs the current Halium runtime and builds Image, raw DTB and BOOT without private backups.
   This clean image excludes timed-test code and has not itself been flashed; the individual drivers have phone evidence.
+- **Build the experimental ABOX DSP core:** [reproduce/m10-a1/](reproduce/m10-a1/README.md).
+  Run `python3 -I tools/reproduce_m10_a1.py --jobs 16` for the 77-patch A1 source and unchanged I5 runtime.
+  The DSP boots; speaker/microphone support is still in progress. No private inputs are required.
 - **Build the historical phone-tested M6 snapshot:** [reproduce/m6/](reproduce/m6/README.md).
   After cloning, run `python3 -I tools/reproduce_m6.py --jobs 16`. This fetches pinned public
   inputs and builds the kernel, embedded runtime, raw DTB and BOOT image without private backups.

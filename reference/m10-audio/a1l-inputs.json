@@ -1,0 +1,119 @@
+{
+  "test": "A1l normal boot: A1b plus single DISPAUD CMU parent-clock line",
+  "source_commit": "7412efd15a6ece3b618783090f95a554d96c57ef",
+  "source_branch": "a50-m10-a1l-test",
+  "source_compared_to_failed_A1b": "one insertion in drivers/clk/samsung/clk-exynos9610.c",
+  "probe_panic_firmware_hold_breadcrumbs_removed": true,
+  "same_config_DTB_runtime_as_A1b": true,
+  "owner_presence": "Present, USB connected, Claude idle; run normal boot A1l.",
+  "files": {
+    "src/m10/boot-a1l.img": {
+      "size": 32671744,
+      "sha256": "e999612e0aced2706d4d7559b00fbedcde8aa1290e8ceac77893a25271ea72b7"
+    },
+    "src/m10/dt-a1l.img": {
+      "size": 8388608,
+      "sha256": "9c04b0e045d5fe86274f56c13634922659201dd00ba01879260cd7221bf1fe65"
+    },
+    "src/m10/a1l-as-built/.config": {
+      "size": 126301,
+      "sha256": "fb6e9a2a59bf5ccd8309db144cc128cacb9e31820bddc70091fd1159db51eb45"
+    },
+    "src/m10/a1l-as-built/Image": {
+      "size": 32665608,
+      "sha256": "e92c8098a2022f9fb879bcf16369d6efe70cc91589c65bf3fa5efa02d6a4866d"
+    },
+    "src/m10/a1l-as-built/exynos9610-a50-gpu.dtb": {
+      "size": 23655,
+      "sha256": "31e21d6a393c94ab0a6f4a595a4e61ec4622ae3c6eda8a72206f632354f64ddc"
+    },
+    "src/m10/a1l-as-built/initramfs_data.cpio": {
+      "size": 25968640,
+      "sha256": "aded41aa0cd365dd211ff3971b674698d5bf77cd855711920957124ba7c80718"
+    },
+    "src/m10/a1l-as-built/System.map": {
+      "size": 3455518,
+      "sha256": "56cc42fb98605c5ba0a54e3b88f381cc310de101ef0ac25c23b6917b7a44d6b4"
+    },
+    "src/m10/a1l-as-built/exynos-iommu.o": {
+      "size": 37112,
+      "sha256": "5d849130b7892d6fccf818fd0851d5f2933e812c124868b06fd9ad85a72af00a"
+    },
+    "tools/m10/build_checkpoint_incremental.py": {
+      "size": 4698,
+      "sha256": "eb9773e4479ccad91d2ca998b78feaff601e26339fbb5f76863cdb5bb521b218"
+    },
+    "tools/m10/run_a1l.sh": {
+      "size": 4132,
+      "sha256": "cee69a3ab226619bf750b2ad1666f3b7dbc8de456a6c994b99400ea5df347d16"
+    },
+    "tools/m10/collect_a1l.sh": {
+      "size": 2017,
+      "sha256": "5391b9ca2be09c87f7beb3a2a0de22fbafb71518298510b5bccbde9f7f83c5f3"
+    },
+    "tools/m32_run_test.sh": {
+      "size": 4701,
+      "sha256": "fb03aa8a9411f6d5a4292a23342a18b24a0b597ba568c7c9def703d44bfc7235"
+    },
+    "tools/m32_read_618.sh": {
+      "size": 1238,
+      "sha256": "e750045b3417db5a9f9a6aad25e96cf85f1367aef897c45f039e8e440ac765c7"
+    },
+    "tools/m24_preflight.sh": {
+      "size": 4118,
+      "sha256": "6beca4aa8634c3e1b687e4242d700a311c89f2f18322398ef7a9d08a3fc13d8e"
+    },
+    "tools/m54/watch_ssh.py": {
+      "size": 4321,
+      "sha256": "f656a6f1092266c2214ba0f3afee37ac81b0b62620b7feb57cadf6a71db52bfd"
+    },
+    "tools/m22_pack.sh": {
+      "size": 1098,
+      "sha256": "08212aa1743ed07df3447dc8414d634e775a4bc224e945b570a86be1c3757097"
+    },
+    "tools/dt_table.py": {
+      "size": 7313,
+      "sha256": "f601fa4f6fb98ed558cdad2617ab9c01e9353a6bb59691c5367860358d1fd10d"
+    },
+    "reference/stock-images/dt.img": {
+      "size": 8388608,
+      "sha256": "59209aa52dc3b35e2c7cc025c465ed1cdb48dadaa13cf5d1f50324b3bf503547"
+    },
+    "reference/stock-images/dtbo.img": {
+      "size": 8388608,
+      "sha256": "40e47ed1477a8ffb6cbb34e5cb59a1af786c2552544f3b556373f3c553d40d21"
+    },
+    "reference/dt-6.18/images/dtbo.img": {
+      "size": 8388608,
+      "sha256": "6d81cce87faca914d75f024f36e183ae6592e61adc786bbb6c7c47cdd3a151fe"
+    },
+    "baseline/ut-26.04-2026-10-19-aa17rf2/boot.img": {
+      "size": 53624832,
+      "sha256": "7d5855efd34e01f09659c7d47ecb0773c30f2acc7443ee87181a0536804086c5"
+    },
+    "reference/m10-audio/a1l-normal-boot-delta.patch": {
+      "size": 537,
+      "sha256": "1f480231536320733a5d7e5a82e78c4940a55b5636c380cd623707167332caba"
+    },
+    "reference/m10-audio/a1l-build-results.json": {
+      "size": 1471,
+      "sha256": "247672d508b32ec7db4adf48cdf839707680d0b05b905f9942a032f1c017b639"
+    },
+    "reference/m10-audio/incremental-builder-control.json": {
+      "size": 1759,
+      "sha256": "2287d50d79b759d7ec19bfed5f6fcf7258fd185f07917667e6df31e3c5ed0149"
+    },
+    "src/m10/a1i-prep/backup-hash.txt": {
+      "size": 113,
+      "sha256": "2b9e1952c14a7ac9f9e8a63d62bf2930ca43f1013f024939af4b8b7a9bd95e36"
+    },
+    "src/m10/a1k-raw/run.txt": {
+      "size": 791,
+      "sha256": "6e9291e15a92682478940724fc7456d4cc22cb1a7f8740ef1673ca3fcdb62121"
+    },
+    "src/m10/a1k-raw/baseline-fsck.txt": {
+      "size": 91,
+      "sha256": "8b2930be5576870e6ee8a602e884af0d1b918b5c64e4e6dde0e614ad5914aaf2"
+    }
+  }
+}

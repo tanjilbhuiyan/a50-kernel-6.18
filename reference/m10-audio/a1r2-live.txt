@@ -1,0 +1,170 @@
+
+CMD: uname -r
+6.18.33-a50-diag+
+RC=0
+
+CMD: cat /proc/uptime
+38.20 221.57
+RC=0
+
+A1R2_CMU_DISPAUD
+PLL_LOCKTIME_PLL_AUD 0x14980000 0x0000079E
+PLL_CON0_MUX_DISPAUD_AUD_USER 0x14980100 0x00000010
+PLL_CON0_MUX_DISPAUD_CPU_USER 0x14980120 0x00000010
+PLL_CON0_MUX_DISPAUD_DISP_USER 0x14980140 0x00000010
+PLL_CON0_PLL_AUD 0x14980160 0xA02D0110
+PLL_CON3_PLL_AUD 0x1498016c 0x00005EFF
+MUX_CLK_AUD_BUS 0x14981000 0x00000000
+MUX_CLK_AUD_CPU 0x14981004 0x00000000
+MUX_CLK_AUD_CPU_HCH 0x14981008 0x00000000
+DIV_CLK_AUD_BUS 0x14981808 0x00000005
+DIV_CLK_AUD_CPU 0x1498180c 0x00000002
+GAT_ABOX_ACLK 0x14982020 0x00300000
+GAT_ABOX_CCLK_CA7 0x14982030 0x00300000
+GAT_SMMU_ABOX 0x149820b0 0x00300000
+GAT_SMMU_DPU 0x149820b4 0x00300000
+PMU_ABOX_CPU_CONFIGURATION 0x11862520 0x00000001
+PMU_ABOX_CPU_STATUS 0x11862524 0x10010000
+PMU_ABOX_CPU_OPTION 0x11862528 0x00000000
+PMU_PAD_RETENTION_ABOX_OPTION 0x11863048 0x00000000
+PMU_ABOX_MAGIC 0x11860814 0x00003100
+
+A1R2_CCF
+
+CMD: sh -c grep -i -E 'aud|abox|dispaud' /sys/kernel/debug/clk/clk_summary
+    dout_clk_aud_fm_spdy             0       0        0        30000000    0          0     50000      Y      deviceless                      no_connection_id
+ ioclk_audiocdclk1                   0       0        0        100000000   0          0     50000      Y   deviceless                      no_connection_id
+ ioclk_audiocdclk0                   0       0        0        10000000    0          0     50000      Y   deviceless                      no_connection_id
+    gout_clk_dispaud_oscclk_clk      0       0        0        26000000    0          0     50000      Y      deviceless                      no_connection_id
+    mout_clk_aud_fm                  0       0        0        26000000    0          0     50000      Y      deviceless                      no_connection_id
+       gout_clk_dispaud_abox_osc_spdy 0       0        0        26000000    0          0     50000      Y         deviceless                      no_connection_id
+       dout_clk_aud_fm               0       0        0        188406      0          0     50000      Y         deviceless                      no_connection_id
+          gout_clk_dispaud_abox_bclk_spdy 0       0        0        188406      0          0     50000      Y            deviceless                      no_connection_id
+    fout_aud_pll                     0       0        0        1179648040  0          0     50000      Y      deviceless                      no_connection_id
+       dout_clk_aud_cpu              0       0        0        393216014   0          0     50000      Y         deviceless                      no_connection_id
+          mout_clk_aud_cpu           0       0        0        393216014   0          0     50000      Y            deviceless                      no_connection_id
+             mout_clk_aud_cpu_hch    0       0        0        393216014   0          0     50000      Y               deviceless                      no_connection_id
+                gout_dispaud_clk_aud_cpu_clkin_clk 0       0        0        393216014   0          0     50000      Y                  deviceless                      no_connection_id
+                gout_clk_dispaud_abox_cclk_ca7 0       0        0        393216014   0          0     50000      Y                  deviceless                      no_connection_id
+                dout_clk_aud_cpu_pclkdbg 0       0        0        49152002    0          0     50000      Y                  deviceless                      no_connection_id
+                   gout_dispaud_clk_aud_cpu_pclkdbg_clk 0       0        0        49152002    0          0     50000      Y                     deviceless                      no_connection_id
+                   gout_clk_dispaud_abox_cclk_dbg 0       0        0        49152002    0          0     50000      Y                     deviceless                      no_connection_id
+                dout_clk_aud_cpu_aclk 0       0        0        196608007   0          0     50000      Y                  deviceless                      no_connection_id
+                   gout_dispaud_clk_aud_cpu_aclk_clk 0       0        0        196608007   0          0     50000      Y                     deviceless                      no_connection_id
+                   gout_clk_dispaud_abox_cclk_asb 0       0        0        196608007   0          0     50000      Y                     deviceless                      no_connection_id
+       dout_clk_aud_bus              0       0        0        196608007   0          0     50000      Y         deviceless                      no_connection_id
+          mout_clk_aud_bus           0       0        0        196608007   0          0     50000      Y            deviceless                      no_connection_id
+             gout_dispaud_wdt_aud_pclk 0       0        0        196608007   0          0     50000      Y               deviceless                      no_connection_id
+             gout_dispaud_smmu_abox_clk 0       0        0        196608007   0          0     50000      Y               deviceless                      no_connection_id
+             gout_dispaud_clk_aud_clk 0       0        0        196608007   0          0     50000      Y               deviceless                      no_connection_id
+             gout_dispaud_ppmu_abox_pclk 0       0        0        196608007   0          0     50000      Y               deviceless                      no_connection_id
+             gout_dispaud_ppmu_abox_aclk 0       0        0        196608007   0          0     50000      Y               deviceless                      no_connection_id
+             gout_dispaud_peri_axi_asb_pclk 0       0        0        196608007   0          0     50000      Y               deviceless                      no_connection_id
+             gout_dispaud_peri_axi_asb_aclkm 0       0        0        196608007   0          0     50000      Y               deviceless                      no_connection_id
+             gout_dispaud_lhs_axi_d_abox_clk 0       0        0        196608007   0          0     50000      Y               deviceless                      no_connection_id
+             gout_dispaud_lhm_axi_p_dispaud_clk 0       0        0        196608007   0          0     50000      Y               deviceless                      no_connection_id
+             gout_dispaud_gpio_dispaud_pclk 0       0        0        196608007   0          0     50000      Y               deviceless                      no_connection_id
+             gout_dispaud_btm_abox_aclk 0       0        0        196608007   0          0     50000      Y               deviceless                      no_connection_id
+             gout_dispaud_clk_dispaud_aud 0       0        0        196608007   0          0     50000      Y               deviceless                      no_connection_id
+             gout_dispaud_axi_us_32to128_aclk 0       0        0        196608007   0          0     50000      Y               deviceless                      no_connection_id
+             gout_clk_dispaud_abox_aclk 0       0        0        196608007   0          0     50000      Y               deviceless                      no_connection_id
+       dout_clk_aud_audif            0       0        0        49152002    0          0     50000      Y         deviceless                      no_connection_id
+          gout_dispaud_dftmux_aud_codec_mclk 0       0        0        49152002    0          0     50000      Y            deviceless                      no_connection_id
+          dout_clk_aud_uaif2         0       0        0        24576001    0          0     50000      Y            deviceless                      no_connection_id
+             mout_clk_aud_uaif2      0       0        0        24576001    0          0     50000      Y               deviceless                      no_connection_id
+                gout_clk_dispaud_clk_aud_uaif2_clk 0       0        0        24576001    0          0     50000      Y                  deviceless                      no_connection_id
+                gout_clk_dispaud_abox_bclk_uaif2 0       0        0        24576001    0          0     50000      Y                  deviceless                      no_connection_id
+          dout_clk_aud_uaif1         0       0        0        24576001    0          0     50000      Y            deviceless                      no_connection_id
+             mout_clk_aud_uaif1      0       0        0        24576001    0          0     50000      Y               deviceless                      no_connection_id
+                gout_clk_dispaud_clk_aud_uaif1_clk 0       0        0        24576001    0          0     50000      Y                  deviceless                      no_connection_id
+                gout_clk_dispaud_abox_bclk_uaif1 0       0        0        24576001    0          0     50000      Y                  deviceless                      no_connection_id
+          dout_clk_aud_uaif0         0       0        0        24576001    0          0     50000      Y            deviceless                      no_connection_id
+             mout_clk_aud_uaif0      0       0        0        24576001    0          0     50000      Y               deviceless                      no_connection_id
+                gout_clk_dispaud_clk_aud_uaif0_clk 0       0        0        24576001    0          0     50000      Y                  deviceless                      no_connection_id
+                gout_clk_dispaud_abox_bclk_uaif0 0       0        0        24576001    0          0     50000      Y                  deviceless                      no_connection_id
+          dout_clk_aud_dsif          0       0        0        24576001    0          0     50000      Y            deviceless                      no_connection_id
+             gout_dispaud_clk_aud_dsif_clk 0       0        0        24576001    0          0     50000      Y               deviceless                      no_connection_id
+             gout_clk_dispaud_abox_bclk_dsif 0       0        0        24576001    0          0     50000      Y               deviceless                      no_connection_id
+             mout_cmu_dispaud_aud    0       0        0        533000000   0          0     50000      Y               deviceless                      no_connection_id
+                gout_cmu_dispaud_aud 0       0        0        533000000   0          0     50000      Y                  deviceless                      no_connection_id
+                   dout_cmu_dispaud_aud 0       0        0        533000000   0          0     50000      Y                     deviceless                      no_connection_id
+                      mout_pll_dispaud_aud_user 0       0        0        533000000   0          0     50000      Y                        deviceless                      no_connection_id
+             mout_cmu_dispaud_disp   1       1        0        533000000   0          0     50000      Y               deviceless                      no_connection_id
+                gout_cmu_dispaud_disp 2       2        0        533000000   0          0     50000      Y                  decon_f@148b0000                no_connection_id
+                   dout_cmu_dispaud_disp 1       1        0        533000000   0          0     50000      Y                     deviceless                      no_connection_id
+                      mout_pll_dispaud_disp_user 4       4        0        533000000   0          0     50000      Y                        deviceless                      no_connection_id
+                         gout_dispaud_smmu_dpu_clk 2       2        0        533000000   0          0     50000      Y                           decon_f@148b0000                no_connection_id
+                         gout_dispaud_clk_disp_clk 0       0        0        533000000   0          0     50000      Y                           deviceless                      no_connection_id
+                         gout_dispaud_ppmu_dpu_aclk 0       0        0        533000000   0          0     50000      Y                           deviceless                      no_connection_id
+                         gout_dispaud_lhs_acel_d_dpu_clk 0       0        0        533000000   0          0     50000      Y                           deviceless                      no_connection_id
+                         gout_dispaud_dpu_aclk_dpp 1       1        0        533000000   0          0     50000      Y                           decon_f@148b0000                no_connection_id
+                         gout_dispaud_dpu_aclk_dma 1       1        0        533000000   0          0     50000      Y                           decon_f@148b0000                no_connection_id
+                         gout_dispaud_dpu_aclk_decon 1       1        0        533000000   0          0     50000      Y                           decon_f@148b0000                no_connection_id
+                         gout_dispaud_btm_dpu_aclk 0       0        0        533000000   0          0     50000      Y                           deviceless                      no_connection_id
+                         gout_dispaud_clk_dispaud_disp 0       0        0        533000000   0          0     50000      Y                           deviceless                      no_connection_id
+                         dout_clk_dispaud_busp 0       0        0        266500000   0          0     50000      Y                           deviceless                      no_connection_id
+                            gout_dispaud_sysreg_pclk 0       0        0        266500000   0          0     50000      Y                              deviceless                      no_connection_id
+                            gout_dispaud_clk_busp_clk 0       0        0        266500000   0          0     50000      Y                              deviceless                      no_connection_id
+                            gout_dispaud_ppmu_dpu_pclk 0       0        0        266500000   0          0     50000      Y                              deviceless                      no_connection_id
+                            gout_dispaud_btm_dpu_pclk 0       0        0        266500000   0          0     50000      Y                              deviceless                      no_connection_id
+                            gout_dispaud_btm_abox_pclk 0       0        0        266500000   0          0     50000      Y                              deviceless                      no_connection_id
+                            gout_clk_dispaud_cmu_pclk 0       0        0        266500000   0          0     50000      Y                              deviceless                      no_connection_id
+             mout_cmu_dispaud_cpu    0       0        0        799500000   0          0     50000      Y               deviceless                      no_connection_id
+                gout_cmu_dispaud_cpu 0       0        0        799500000   0          0     50000      Y                  deviceless                      no_connection_id
+                   dout_cmu_dispaud_cpu 0       0        0        799500000   0          0     50000      Y                     deviceless                      no_connection_id
+                      mout_pll_dispaud_cpu_user 0       0        0        799500000   0          0     50000      Y                        deviceless                      no_connection_id
+RC=0
+
+CMD: sh -c dmesg | grep -i -E 'abox|14a50000|14920000|snd|asoc|alsa|sound' | head -40
+[    0.000000] OF: reserved mem: 0x00000008fbc00000..0x00000008fd5fffff (26624 KiB) nomap non-reusable abox-fw-mem
+[    0.000000] OF: reserved mem: 0x00000000e9400000..0x00000000ebbfffff (40960 KiB) nomap non-reusable abox@e9400000
+[    0.000000] Kernel command line: androidboot.recovery_offset=7355136 printk.devkmsg=on ess_setup=0xf9000000 sec_avc_log=0x40000@0x91202000 sec_tsp_log=0x40000@0x91244000 sec_disp_log=0x100000@0x91286000 sec_debug_next=0x800000@0x91388000 charging_mode=0x3000 s3cfb.bootloaderfb=0xca000000 lcdtype=9453571 androidboot.carrierid.param.offset=7340608 androidboot.carrierid=BKD consoleblank=0 ehci_hcd.park=3 oops=panic pmic_info=27 ccic_info=1 fg_reset=0 androidboot.emmc_checksum=3 androidboot.sales.param.offset=7340572 sales_code=BKD androidboot.odin_download=1 androidboot.bootloader=A505FDDS9CWA2 androidboot.selinux=enforcing androidboot.product.model=SM-A505F androidboot.ucs_mode=0 androidboot.revision=6 androidboot.hardware=exynos9610 androidboot.warranty_bit=1 androidboot.wb.hs=0e03 androidboot.rp=9 androidboot.wb.snapQB=CUSTOM sec_debug.bin=A androidboot.hmac_mismatch=0 androidboot.sec_atd.tty=/dev/ttySAC0 androidboot.serialno=<redacted> androidboot.ap_serial=<redacted> snd_soc_core.pmdown_time=1000 \
+[    0.055818] Advanced Linux Sound Architecture Driver Initialized.
+[    0.410688] samsung_abox_log_late_initcall
+[    0.410708] samsung_abox_late_initcall
+[    0.410714] samsung_abox_late_initcall: p_abox_data or pdev is null
+[   15.415482] ALSA device list:
+[   15.415487]   No soundcards found.
+[   24.520400] wlbt: [BT_COMMON]: slsi_sm_bt_service_start: regions (bhcs_ref=0x0035dbe0, bsmhcp_ref=0x0035dc60, config_ref=0x00000000, abox_ref=0x00000000)
+[   32.706315] wlbt: [BT_COMMON]: slsi_sm_bt_service_start: regions (bhcs_ref=0x005dec20, bsmhcp_ref=0x005deca0, config_ref=0x00000000, abox_ref=0x00000000)
+[   37.301931] systemd[2101]: pulseaudio.socket - Sound System was skipped because of an unmet condition check (ConditionUser=!root).
+[   37.513892] systemd[2101]: pulseaudio.service - Sound Service was skipped because of an unmet condition check (ConditionUser=!root).
+RC=0
+
+CMD: sh -c cat /proc/asound/cards
+--- no soundcards ---
+RC=0
+
+A1R2_REGRESSION
+
+CMD: sh -c grep -E "^N:" /proc/bus/input/devices
+N: Name="MELFAS MIP4 Touchscreen"
+N: Name="gpio-keys"
+N: Name="Hall sensors"
+RC=0
+
+CMD: sh -c findmnt -no TARGET,OPTIONS /userdata | cut -c1-80
+/userdata rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+RC=0
+
+CMD: sh -c head -n 1 /sys/devices/platform/148b0000.decon_f/g2b_stats; pgrep -c -x lomiri; systemctl show -p SystemState -p NFailedUnits
+fence_ctx=1 fence_seq=1206 pending=1 win_configs=1206 scanned=1206 copied=0 dma_fallbacks=0 skipped=0 acq_timeouts=0 completed=1205 stage=dma-frame-sync worker_seq=1206 worker_layers=1 padded_scanned=1206 scan_full_w=1088 scan_full_h=2352
+1
+NFailedUnits=0
+SystemState=starting
+RC=0
+
+CMD: sh -c nmcli -t -f DEVICE,TYPE,STATE dev; ls /sys/class/bluetooth
+lo:loopback:connected (externally)
+wlan0:wifi:disconnected
+p2p-dev-wlan0:wifi-p2p:disconnected
+usb0:ethernet:unmanaged
+sit0:iptunnel:unmanaged
+hci0
+RC=0
+
+CMD: sh -c dmesg | grep -c -E 'Unable to handle|SError|Internal error|BUG:'
+0
+RC=1
+
+A1R2_DONE

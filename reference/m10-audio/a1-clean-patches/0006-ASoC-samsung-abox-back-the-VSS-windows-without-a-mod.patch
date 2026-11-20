@@ -1,0 +1,170 @@
+From f5cf0dc6754b39255783f5e8bde352e13c7472eb Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Fri, 20 Nov 2026 19:53:53 +0600
+Subject: [PATCH 6/7] ASoC: samsung: abox: back the VSS windows without a
+ modem; safe IOMMU faults
+
+On the phone (M10.2 A1d2) the ABOX firmware booted, then wrote to IOVA
+0xa0670000 in the VSS window, which stock maps to the modem's VSS shared
+memory and which this kernel left unmapped (no modem drivers yet, plan
+M11). The SysMMU fault handler then read the ABOX CPU registers in hard
+IRQ context while the SysMMU was blocked on that transaction, which
+stalled the bus and froze the phone (also the likely A1 boot hang).
+
+- Without SND_SOC_SAMSUNG_ABOX_VSS, map zeroed scratch behind the VSS
+  window (16 MiB, its full IOVA span) and the voice-parameter window
+  (1 MiB) from the ABOX no-map region; VSS magic 0 means "voice subsystem
+  not running", as stock's clean_vss_magic_code() writes it. The DT
+  region grows to 43 MiB.
+- The IOMMU fault handler only logs (ratelimited) and returns; the ABOX
+  CPU register dump and a halt of the ABOX CPU run from a work item, so a
+  stray DSP access is reported instead of freezing the system.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: Icb91dd7e97bd00ffa7635d8ca04720f82f9fb79c
+---
+ arch/arm64/boot/dts/exynos/exynos9610-a50.dts |  5 +-
+ sound/soc/samsung/abox/abox.c                 | 50 +++++++++++++++++--
+ sound/soc/samsung/abox/abox.h                 |  9 ++++
+ 3 files changed, 57 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610-a50.dts b/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
+index ce178f96c..41f005599 100644
+--- a/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
++++ b/arch/arm64/boot/dts/exynos/exynos9610-a50.dts
+@@ -192,10 +192,11 @@ wlbt_mem: wlbt-mem {
+ 		/*
+ 		 * ABOX firmware DRAM (18 MiB) + private area (8 MiB), mapped by
+ 		 * the ABOX SysMMU at fixed IOVAs (M10.2; stock used
+-		 * dma_alloc_coherent on the ABOX device).
++		 * dma_alloc_coherent on the ABOX device), + zeroed VSS (16 MiB)
++		 * and voice-parameter (1 MiB) scratch until the modem (M11).
+ 		 */
+ 		abox_fw_mem: abox-fw-mem {
+-			size = <0x1a00000>;
++			size = <0x2b00000>;
+ 			alignment = <0x0 0x100000>;
+ 			no-map;
+ 		};
+diff --git a/sound/soc/samsung/abox/abox.c b/sound/soc/samsung/abox/abox.c
+index d6f2ff4bd..eff54b772 100644
+--- a/sound/soc/samsung/abox/abox.c
++++ b/sound/soc/samsung/abox/abox.c
+@@ -177,18 +177,41 @@ struct abox_data *abox_get_abox_data(void)
+ 	return p_abox_data;
+ }
+ 
++static int abox_cpu_enable(bool enable);
++
++/*
++ * 6.18: called in hard-IRQ context with the SysMMU blocked on the faulting
++ * ABOX transaction. Reading the ABOX CPU registers here stalls the bus (seen
++ * on the phone, M10.2 A1d2), so only record the fault; the register dump and
++ * a halt of the ABOX CPU (no fault storm) run from a work item.
++ */
+ static int abox_iommu_fault_handler(
+ 		struct iommu_domain *domain, struct device *dev,
+ 		unsigned long fault_addr, int fault_flags, void *token)
+ {
+ 	struct abox_data *data = token;
+ 
+-	abox_dbg_print_gpr(&data->pdev->dev, data);
++	dev_err_ratelimited(&data->pdev->dev, "ABOX IOMMU fault at %#lx (flags %#x)\n",
++			fault_addr, fault_flags);
++	if (!data->iommu_fault) {
++		data->iommu_fault = true;
++		schedule_work(&data->iommu_fault_work);
++	}
+ 	return 0;
+ }
+ 
++static void abox_iommu_fault_work_func(struct work_struct *work)
++{
++	struct abox_data *data = container_of(work, struct abox_data,
++			iommu_fault_work);
++	struct device *dev = &data->pdev->dev;
++
++	abox_dbg_print_gpr(dev, data);
++	abox_cpu_enable(false);
++	dev_err(dev, "ABOX CPU halted after an IOMMU fault\n");
++}
++
+ static void abox_cpu_power(bool on);
+-static int abox_cpu_enable(bool enable);
+ static int abox_cpu_pm_ipc(struct abox_data *data, bool resume);
+ static void abox_boot_done(struct device *dev, unsigned int version);
+ static int abox_enable(struct device *dev);
+@@ -5969,12 +5992,14 @@ static int samsung_abox_probe(struct platform_device *pdev)
+ 		void *area;
+ 
+ 		of_node_put(np_mem);
+-		if (!rmem || rmem->size < DRAM_FIRMWARE_SIZE + PRIVATE_SIZE) {
++		if (!rmem || rmem->size < DRAM_FIRMWARE_SIZE + PRIVATE_SIZE +
++				(IS_ENABLED(CONFIG_SND_SOC_SAMSUNG_ABOX_VSS) ? 0 :
++				 VSS_SCRATCH_SIZE + VPARAM_SCRATCH_SIZE)) {
+ 			dev_err(dev, "memory-region missing or too small\n");
+ 			return -EINVAL;
+ 		}
+-		area = devm_memremap(dev, rmem->base,
+-				DRAM_FIRMWARE_SIZE + PRIVATE_SIZE, MEMREMAP_WC);
++		area = devm_memremap(dev, rmem->base, rmem->size,
++				MEMREMAP_WC);
+ 		if (IS_ERR(area))
+ 			return PTR_ERR(area);
+ 		data->dram_base = area;
+@@ -5983,6 +6008,7 @@ static int samsung_abox_probe(struct platform_device *pdev)
+ 		data->priv_base_phys = rmem->base + DRAM_FIRMWARE_SIZE;
+ 	}
+ 	memset(data->dram_base, 0, DRAM_FIRMWARE_SIZE + PRIVATE_SIZE);
++	INIT_WORK(&data->iommu_fault_work, abox_iommu_fault_work_func);
+ 	dev_info(dev, "%s(%pa) is mapped on %p with size of %d\n",
+ 			"dram firmware", &data->dram_base_phys, data->dram_base,
+ 			DRAM_FIRMWARE_SIZE);
+@@ -6005,6 +6031,20 @@ static int samsung_abox_probe(struct platform_device *pdev)
+ 	dev_info(dev, "%s(%#x) alloc\n", "vss parameter",
+ 			shm_get_vparam_size());
+ 	abox_iommu_map(dev, IOVA_VSS_PARAMETER, paddr, shm_get_vparam_size(), 0);
++#else
++	{
++		phys_addr_t scratch = data->priv_base_phys + PRIVATE_SIZE;
++		void *area = data->priv_base + PRIVATE_SIZE;
++
++		memset(area, 0, VSS_SCRATCH_SIZE + VPARAM_SCRATCH_SIZE);
++		dev_info(dev, "no modem: zeroed VSS scratch %pa (%#x + %#x)\n",
++				&scratch, VSS_SCRATCH_SIZE, VPARAM_SCRATCH_SIZE);
++		abox_iommu_map(dev, IOVA_VSS_FIRMWARE, scratch,
++				VSS_SCRATCH_SIZE, area);
++		abox_iommu_map(dev, IOVA_VSS_PARAMETER,
++				scratch + VSS_SCRATCH_SIZE, VPARAM_SCRATCH_SIZE,
++				area + VSS_SCRATCH_SIZE);
++	}
+ #endif
+ 
+ 	abox_iommu_map(dev, 0x10000000, 0x10000000, PAGE_SIZE, 0);
+diff --git a/sound/soc/samsung/abox/abox.h b/sound/soc/samsung/abox/abox.h
+index e89b713a2..ef8d82402 100644
+--- a/sound/soc/samsung/abox/abox.h
++++ b/sound/soc/samsung/abox/abox.h
+@@ -402,6 +402,13 @@
+ #define IOVA_DUMP_BUFFER		(0xD0000000)
+ #define IOVA_PRIVATE			(0xE0000000)
+ #define PRIVATE_SIZE			(SZ_8M)
++/*
++ * 6.18 without the modem (plan M11): zeroed scratch behind the VSS windows
++ * (VSS magic 0 = voice subsystem not running). The VSS window is sized to
++ * its full IOVA span (up to IOVA_VSS_PARAMETER).
++ */
++#define VSS_SCRATCH_SIZE		(SZ_16M)
++#define VPARAM_SCRATCH_SIZE		(SZ_1M)
+ #define PHSY_VSS_FIRMWARE		(0xFEE00000)
+ #define PHSY_VSS_SIZE			(SZ_4M + SZ_2M)
+ 
+@@ -688,6 +695,8 @@ struct abox_data {
+ 	enum sound_type sound_type;
+ 	atomic_t suspend_state;
+ 	struct wakeup_source *ws;
++	struct work_struct iommu_fault_work;
++	bool iommu_fault;
+ 	struct wakeup_source *ws_boot;
+ };
+ 

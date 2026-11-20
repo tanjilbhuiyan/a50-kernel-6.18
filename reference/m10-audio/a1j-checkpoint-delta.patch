@@ -1,0 +1,20 @@
+diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+index 75eda1095..11d7157f9 100644
+--- a/drivers/iommu/exynos-iommu.c
++++ b/drivers/iommu/exynos-iommu.c
+@@ -775,11 +775,11 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
+ 	data->sysmmu = dev;
+ 	spin_lock_init(&data->lock);
+ 
+-	__sysmmu_get_version(data);
+-
+-	/* TEST ONLY M10.2 A1i: advance the validated A1h checkpoint past version detection. */
++	/* TEST ONLY M10.2 A1j: split IRQ/clock acquisition from clock enable/version MMIO. */
+ 	if (res->start == 0x14920000)
+-		panic("A1i: ABOX SysMMU IRQ/clock/version setup completed");
++		panic("A1j: ABOX SysMMU IRQ/clock acquisition completed, before clock enable/version MMIO");
++
++	__sysmmu_get_version(data);
+ 
+ 	ret = iommu_device_sysfs_add(&data->iommu, &pdev->dev, NULL,
+ 				     dev_name(data->sysmmu));

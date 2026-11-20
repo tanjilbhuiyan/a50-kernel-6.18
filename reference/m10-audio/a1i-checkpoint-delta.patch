@@ -1,0 +1,27 @@
+diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+index 7bdcd90a5..75eda1095 100644
+--- a/drivers/iommu/exynos-iommu.c
++++ b/drivers/iommu/exynos-iommu.c
+@@ -731,11 +731,6 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
+ 	struct sysmmu_drvdata *data;
+ 	struct resource *res;
+ 
+-	/* TEST ONLY M10.2 A1h: move A1g's checkpoint before ABOX SysMMU hardware access. */
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (res && res->start == 0x14920000)
+-		panic("A1h: ABOX SysMMU probe entered before IRQ/clock/MMIO setup");
+-
+ 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+ 		return -ENOMEM;
+@@ -782,6 +777,10 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
+ 
+ 	__sysmmu_get_version(data);
+ 
++	/* TEST ONLY M10.2 A1i: advance the validated A1h checkpoint past version detection. */
++	if (res->start == 0x14920000)
++		panic("A1i: ABOX SysMMU IRQ/clock/version setup completed");
++
+ 	ret = iommu_device_sysfs_add(&data->iommu, &pdev->dev, NULL,
+ 				     dev_name(data->sysmmu));
+ 	if (ret)

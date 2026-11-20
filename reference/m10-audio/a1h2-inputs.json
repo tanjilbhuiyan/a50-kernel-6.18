@@ -1,0 +1,120 @@
+{
+  "test": "A1h retry (A1h2): identical checkpoint image, other host USB port",
+  "source_commit": "8702376a3e7ac3e6ddaa3b4b5e95ac6642634158",
+  "source_branch": "a50-m10-a1h-test",
+  "parent_A1g": "72c0fb92f021fb005341ad12383efcf11aeeb7bc",
+  "same_config_DTB_runtime_as_A1g": true,
+  "owner_presence_for_A1h": "Moved to another port; present, Claude idle; retry A1h.",
+  "fresh_preflight": "stock 4.14.194, all three hashes correct, 100% Charging; USB 7-1",
+  "files": {
+    "src/m10/a1h-out/.config": {
+      "size": 126301,
+      "sha256": "fb6e9a2a59bf5ccd8309db144cc128cacb9e31820bddc70091fd1159db51eb45"
+    },
+    "src/m10/a1h-out/arch/arm64/boot/Image": {
+      "size": 32665608,
+      "sha256": "6431d8b4b26329b4924939f7a3a88ed9b1af396bcf1e77642999200670fc574e"
+    },
+    "src/m10/a1h-out/arch/arm64/boot/dts/exynos/exynos9610-a50-gpu.dtb": {
+      "size": 23655,
+      "sha256": "31e21d6a393c94ab0a6f4a595a4e61ec4622ae3c6eda8a72206f632354f64ddc"
+    },
+    "src/m10/a1h-out/usr/initramfs_data.cpio": {
+      "size": 25968640,
+      "sha256": "aded41aa0cd365dd211ff3971b674698d5bf77cd855711920957124ba7c80718"
+    },
+    "src/m10/boot-a1h.img": {
+      "size": 32671744,
+      "sha256": "ca81357c0e69ea5a7097db76fc74dc6b44c707630c2cb6e7f07b50b7745647d6"
+    },
+    "src/m10/dt-a1h.img": {
+      "size": 8388608,
+      "sha256": "9c04b0e045d5fe86274f56c13634922659201dd00ba01879260cd7221bf1fe65"
+    },
+    "tools/m10/build_a1.py": {
+      "size": 5437,
+      "sha256": "4140ec532655656e70ba4d0f7da25ac57452c5e51c1d5eedd19b66f65d594365"
+    },
+    "tools/m10/run_early_checkpoint.sh": {
+      "size": 2902,
+      "sha256": "5760e1675b29c5867fee49eb3c7d567b01094975d1e91e0e42c9a32cca8a2f16"
+    },
+    "tools/m32_run_test.sh": {
+      "size": 4701,
+      "sha256": "fb03aa8a9411f6d5a4292a23342a18b24a0b597ba568c7c9def703d44bfc7235"
+    },
+    "tools/m32_read_618.sh": {
+      "size": 1238,
+      "sha256": "e750045b3417db5a9f9a6aad25e96cf85f1367aef897c45f039e8e440ac765c7"
+    },
+    "tools/m24_preflight.sh": {
+      "size": 4118,
+      "sha256": "6beca4aa8634c3e1b687e4242d700a311c89f2f18322398ef7a9d08a3fc13d8e"
+    },
+    "tools/m22_pack.sh": {
+      "size": 1098,
+      "sha256": "08212aa1743ed07df3447dc8414d634e775a4bc224e945b570a86be1c3757097"
+    },
+    "tools/dt_table.py": {
+      "size": 7313,
+      "sha256": "f601fa4f6fb98ed558cdad2617ab9c01e9353a6bb59691c5367860358d1fd10d"
+    },
+    "reference/stock-images/dt.img": {
+      "size": 8388608,
+      "sha256": "59209aa52dc3b35e2c7cc025c465ed1cdb48dadaa13cf5d1f50324b3bf503547"
+    },
+    "reference/stock-images/dtbo.img": {
+      "size": 8388608,
+      "sha256": "40e47ed1477a8ffb6cbb34e5cb59a1af786c2552544f3b556373f3c553d40d21"
+    },
+    "reference/dt-6.18/images/dtbo.img": {
+      "size": 8388608,
+      "sha256": "6d81cce87faca914d75f024f36e183ae6592e61adc786bbb6c7c47cdd3a151fe"
+    },
+    "baseline/ut-26.04-2026-10-19-aa17rf2/boot.img": {
+      "size": 53624832,
+      "sha256": "7d5855efd34e01f09659c7d47ecb0773c30f2acc7443ee87181a0536804086c5"
+    },
+    "reference/m10-audio/a1h-checkpoint-delta.patch": {
+      "size": 1236,
+      "sha256": "e76fa6186804754e1d31998dbf6674910990e9059acfdcb3597a5469ed034ca4"
+    },
+    "src/m10/a1g-prep/backup-hash.txt": {
+      "size": 113,
+      "sha256": "2b9e1952c14a7ac9f9e8a63d62bf2930ca43f1013f024939af4b8b7a9bd95e36"
+    },
+    "src/m10/boot-a1h2.img": {
+      "size": 32671744,
+      "sha256": "ca81357c0e69ea5a7097db76fc74dc6b44c707630c2cb6e7f07b50b7745647d6"
+    },
+    "src/m10/dt-a1h2.img": {
+      "size": 8388608,
+      "sha256": "9c04b0e045d5fe86274f56c13634922659201dd00ba01879260cd7221bf1fe65"
+    },
+    "src/m10/a1h2-prep/preflight.txt": {
+      "size": 1242,
+      "sha256": "b79880bb620d077b7578dc18fdfe0917b60737a25350038c5784ba7ae80cb8d1"
+    },
+    "src/m10/a1h2-prep/lsusb.txt": {
+      "size": 705,
+      "sha256": "b4f6d022e53d461c8cb55dc28a8f11ecd5e72686570e973e3fa3ac5b330eda1f"
+    },
+    "src/m10/a1h2-prep/lsusb-tree.txt": {
+      "size": 1230,
+      "sha256": "fc88c7b46000c32233728070ea9864e1c45b5883a3c70919149d3e2b168894e0"
+    },
+    "src/m10/a1h-raw/baseline-fsck.txt": {
+      "size": 91,
+      "sha256": "437d27852905ccac6d60cf3c65ec1a90acf023cb7f0d848e16e2d07d8fe5b1ec"
+    },
+    "reference/m10-audio/a1h2-build-results.json": {
+      "size": 1097,
+      "sha256": "99522982faf49c1c307c229235d27afc06f39201b26e10bf41965110712f3510"
+    }
+  },
+  "backup_sha256": "22cb95a536489c89a738cae3105859c041a15b298c4140c6a1a018883f7bd896",
+  "build_reused_from": "a1h",
+  "boot_image": "src/m10/boot-a1h2.img",
+  "dt_image": "src/m10/dt-a1h2.img",
+  "changed_variable_from_failed_A1h": "same cable moved from USB 5-1 to 7-1; image unchanged"
+}

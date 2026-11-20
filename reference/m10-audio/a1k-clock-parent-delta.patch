@@ -1,0 +1,12 @@
+diff --git a/drivers/clk/samsung/clk-exynos9610.c b/drivers/clk/samsung/clk-exynos9610.c
+index fef245c14..2a05d5fc0 100644
+--- a/drivers/clk/samsung/clk-exynos9610.c
++++ b/drivers/clk/samsung/clk-exynos9610.c
+@@ -3060,6 +3060,7 @@ static const struct samsung_gate_clock dispaud_gate_clks[] __initconst = {
+ };
+ 
+ static const struct samsung_cmu_info dispaud_cmu_info __initconst = {
++	.clk_name		= "dout_cmu_dispaud_disp",
+ 	.pll_clks		= dispaud_pll_clks,
+ 	.nr_pll_clks		= ARRAY_SIZE(dispaud_pll_clks),
+ 	.mux_clks		= dispaud_mux_clks,

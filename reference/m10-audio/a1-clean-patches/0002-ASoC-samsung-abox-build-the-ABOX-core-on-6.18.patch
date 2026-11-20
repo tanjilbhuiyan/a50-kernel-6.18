@@ -1,0 +1,3297 @@
+From 5f96e9827cbee3a0301ad9f819d922e05ec50501 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Fri, 20 Nov 2026 18:20:48 +0600
+Subject: [PATCH 2/7] ASoC: samsung: abox: build the ABOX core on 6.18
+
+Forward-port the Exynos 9610 ABOX audio DSP core (firmware loader, IPC,
+GIC, RDMA/WDMA PCMs, UAIF/DSIF/SPDY, effect, log/debug, failsafe) to the
+6.18 kernel. Built in only (each component registers a platform driver).
+
+Platform/ASoC API:
+- RDMA/WDMA: snd_soc_platform -> snd_soc_component (pcm callbacks with the
+  component argument, pcm_construct/pcm_destruct, snd_compress_ops with
+  snd_compr_tstamp64); Samsung's get_hw_params compress op dropped.
+- DAI: compress_new moved to snd_soc_dai_ops; symmetric_rate/_sample_bits,
+  snd_soc_dai_get_widget_*(), clock provider DAIFMT names, const channel
+  maps, two-argument snd_soc_component_read() (abox_cmpnt_read()).
+- Samsung 4.14 ASoC additions kept local: snd_soc_dapm_connected_*_ep()
+  (abox_dapm_connected_ep(), mainline is_connected_ep() semantics) and
+  SND_SOC_DAPM_DEMUX_E.
+
+Samsung-only kernel infrastructure:
+- IOMMU: ABOX maps memory at fixed IOVAs, so it owns an unmanaged paging
+  domain (iommu_paging_domain_alloc + iommu_attach_device) instead of the
+  DMA API default domain; mappings use IOMMU_READ|IOMMU_WRITE (mainline
+  exynos-iommu enforces access bits, the 4.14 prot 0 would deny access);
+  exynos_sysmmu_control/tlb_invalidate dropped, iommu_set_fault_handler.
+- Firmware DRAM (18 MiB) and private (8 MiB) areas come from a dedicated
+  no-map "memory-region", memremap()ed write-combined, instead of
+  dma_alloc_coherent() on the IOMMU device (which returns IOVAs on 6.18).
+- The debug dump region (exynos,abox_rmem, no-map) is memremap()ed at
+  probe instead of phys_to_virt().
+- exynos_smc -> SMCCC (abox_smc), exynos_pmu_* -> PMU syscon regmap
+  ("samsung,pmu-syscon"), 9610 offsets only.
+- PM QoS: no Samsung QoS classes or AUD DVFS on 6.18; the ABOX CPU clock
+  is set directly through the CMU (the legacy gear path); other classes
+  only record requests. The AUD QoS notifier (SIFS counters on DVFS
+  changes) is dropped with it.
+- wakeup sources registered with wakeup_source_register(); panic notifier
+  and pinctrl headers; FW_ACTION_UEVENT.
+- The DSP log is no longer copied to /data from the kernel (set_fs gone);
+  it stays in debugfs.
+- An "ion" buffer type falls back to DMA buffers (no ION on 6.18).
+
+Not ported, behind Kconfig options that depend on BROKEN, with inline
+stubs: VSS voice path (modem shared memory, plan M11), Bluetooth SCO via
+the WLBT mailbox (A2DP uses BlueZ, ADR-0008), ION MMAP data fds. The dump
+card is optional (SND_SOC_SAMSUNG_ABOX_DUMP). IPC bundle views are sized
+instead of zero-length arrays (same layout).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I92d9df5930b993cf68aeb4f49830cd0380f954ed
+---
+ include/sound/samsung/abox_ipc.h              |   7 +-
+ include/uapi/sound/sounddev_abox.h            |  25 +
+ sound/soc/samsung/Kconfig                     |   2 +
+ sound/soc/samsung/Makefile                    |   1 +
+ sound/soc/samsung/abox/Kconfig                |  52 +-
+ sound/soc/samsung/abox/Makefile               |   7 +-
+ sound/soc/samsung/abox/abox.c                 | 669 ++++++------------
+ sound/soc/samsung/abox/abox.h                 |   6 +-
+ sound/soc/samsung/abox/abox_bt.c              |   4 +-
+ sound/soc/samsung/abox/abox_bt.h              |   6 +
+ sound/soc/samsung/abox/abox_dbg.c             |  44 +-
+ sound/soc/samsung/abox/abox_dump.c            |   4 +-
+ sound/soc/samsung/abox/abox_dump.h            |   9 +
+ sound/soc/samsung/abox/abox_effect.c          |   6 +-
+ sound/soc/samsung/abox/abox_failsafe.c        |   1 +
+ sound/soc/samsung/abox/abox_gic.c             |  24 +-
+ sound/soc/samsung/abox/abox_if.c              |  52 +-
+ sound/soc/samsung/abox/abox_log.c             |  54 +-
+ sound/soc/samsung/abox/abox_mmapfd.h          |  21 +
+ sound/soc/samsung/abox/abox_rdma.c            | 363 ++++------
+ .../soc/samsung/abox/abox_synchronized_ipc.c  |   3 +-
+ sound/soc/samsung/abox/abox_util.c            |  57 +-
+ sound/soc/samsung/abox/abox_util.h            |  27 +
+ sound/soc/samsung/abox/abox_vdma.c            |   4 +-
+ sound/soc/samsung/abox/abox_vss.c             |   3 +-
+ sound/soc/samsung/abox/abox_wdma.c            | 125 ++--
+ 26 files changed, 674 insertions(+), 902 deletions(-)
+ create mode 100644 include/uapi/sound/sounddev_abox.h
+
+diff --git a/include/sound/samsung/abox_ipc.h b/include/sound/samsung/abox_ipc.h
+index 8eb6c44c3..b0c695b3f 100644
+--- a/include/sound/samsung/abox_ipc.h
++++ b/include/sound/samsung/abox_ipc.h
+@@ -295,8 +295,9 @@ struct IPC_SYSTEM_MSG {
+ 	int param2;
+ 	int param3;
+ 	union {
+-		int param_s32[0];
+-		unsigned long long param_u64[0];
++		/* views of param_bundle; sized instead of [0] (same layout) */
++		int param_s32[740 / sizeof(int)];
++		unsigned long long param_u64[740 / sizeof(unsigned long long)];
+ 		char param_bundle[740];
+ 	} bundle;
+ };
+@@ -305,7 +306,7 @@ struct ABOX_LOG_BUFFER {
+ 	unsigned int index_writer;
+ 	unsigned int index_reader;
+ 	unsigned int size;
+-	char buffer[0];
++	char buffer[];
+ };
+ 
+ struct ABOX_COMPONENT_CONTROL {
+diff --git a/include/uapi/sound/sounddev_abox.h b/include/uapi/sound/sounddev_abox.h
+new file mode 100644
+index 000000000..0af2acfdf
+--- /dev/null
++++ b/include/uapi/sound/sounddev_abox.h
+@@ -0,0 +1,25 @@
++/* include/uapi/sound/sounddev_abox.h
++ *
++ * ALSA SoC Audio Layer - Samsung Abox IOCTL header
++ *
++ * Copyright (c) 2018 Samsung Electronics Co. Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#ifndef __SND_DEV_ABOX_H
++#define __SND_DEV_ABOX_H
++
++struct snd_pcm_mmap_fd {
++	int32_t dir;
++	int32_t fd;
++	int32_t size;
++	int32_t actual_size;
++};
++
++#define SNDRV_PCM_IOCTL_MMAP_DATA_FD    _IOWR('U', 0xd2, struct snd_pcm_mmap_fd)
++
++#endif
++
+diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
+index ec7204f57..1f5a0d2aa 100644
+--- a/sound/soc/samsung/Kconfig
++++ b/sound/soc/samsung/Kconfig
+@@ -148,4 +148,6 @@ config SND_SOC_SAMSUNG_MIDAS_WM1811
+ 	help
+ 	  Say Y if you want to add support for SoC audio on the Midas boards.
+ 
++source "sound/soc/samsung/abox/Kconfig"
++
+ endif #SND_SOC_SAMSUNG
+diff --git a/sound/soc/samsung/Makefile b/sound/soc/samsung/Makefile
+index 8d5f09147..1451b3e89 100644
+--- a/sound/soc/samsung/Makefile
++++ b/sound/soc/samsung/Makefile
+@@ -42,3 +42,4 @@ obj-$(CONFIG_SND_SOC_ARNDALE) += snd-soc-arndale.o
+ obj-$(CONFIG_SND_SOC_SAMSUNG_TM2_WM5110) += snd-soc-tm2-wm5110.o
+ obj-$(CONFIG_SND_SOC_SAMSUNG_ARIES_WM8994) += snd-soc-aries-wm8994.o
+ obj-$(CONFIG_SND_SOC_SAMSUNG_MIDAS_WM1811) += snd-soc-midas-wm1811.o
++obj-$(CONFIG_SND_SOC_SAMSUNG_ABOX) += abox/
+diff --git a/sound/soc/samsung/abox/Kconfig b/sound/soc/samsung/abox/Kconfig
+index ae50239e4..0cdfecad1 100644
+--- a/sound/soc/samsung/abox/Kconfig
++++ b/sound/soc/samsung/abox/Kconfig
+@@ -1,25 +1,45 @@
+ config SND_SOC_SAMSUNG_ABOX
+-	tristate "ASoC support for Samsung ABOX Audio"
++	bool "ASoC support for Samsung ABOX Audio"
++	depends on ARCH_EXYNOS && IOMMU_API && MFD_SYSCON
+ 	select REGMAP_MMIO
+ 	select SND_SOC_COMPRESS
+ 	select SND_HWDEP
+ 	help
+-	  Say Y or M if you want to add support for codecs attached to
+-	  the Samsung SoC ABOX interface. You will also need to
+-	  select the audio interfaces to support below.
++	  Samsung ABOX audio DSP of the Exynos 9610 (Galaxy A50): firmware
++	  loader, IPC, RDMA/WDMA PCM devices and the UAIF/DSIF/SPDY interfaces.
++	  Built in only: every component registers its own platform driver.
+ 
+-config SEC_SND_SYNCHRONIZED_IPC
+-	tristate "Samsung ABOX Synchronized IPC for Audio"
+-	depends on SND_SOC_SAMSUNG_ABOX
++if SND_SOC_SAMSUNG_ABOX
++
++config SND_SOC_SAMSUNG_ABOX_DUMP
++	bool "ABOX internal dump capture card (debug)"
++	help
++	  Second ALSA card exposing ABOX internal capture points for debugging.
++
++config SND_SOC_SAMSUNG_ABOX_VSS
++	bool "ABOX voice call path through the modem (not ported)"
++	depends on BROKEN
++	help
++	  Voice call audio through the CP shared memory (shm_ipc). Needs the
++	  modem drivers (plan M11).
++
++config SND_SOC_SAMSUNG_ABOX_BT
++	bool "ABOX Bluetooth SCO through the WLBT mailbox (not ported)"
++	depends on BROKEN
+ 	help
+-	  Say Y or M if you want to add support for external devices attached to
+-	  the Samsung SoC ABOX interface. You will also need to
+-	  select the audio interfaces to support below.
++	  Bluetooth SCO audio routed between ABOX and the SCSC WLBT chip.
++	  A2DP uses BlueZ (ADR-0008) and does not need this.
+ 
+-config SEC_SND_SYNCHRONIZED_IPC_RICHTEK
+-	tristate "Samsung ABOX Synchronized IPC for Audio AMP Richtek"
+-	depends on SND_SOC_SAMSUNG_ABOX
++config SND_SOC_SAMSUNG_ABOX_MMAPFD
++	bool "ABOX MMAP data-fd buffers (not ported)"
++	depends on BROKEN
+ 	help
+-	  Say Y or M if you want to add support for external devices attached to
+-	  the Samsung SoC ABOX interface. You will also need to
+-	  select the audio interfaces to support below.
++	  ION-backed buffers shared with userspace through
++	  SNDRV_PCM_IOCTL_MMAP_DATA_FD (AAudio MMAP streams).
++
++config SEC_SND_SYNCHRONIZED_IPC
++	bool "Samsung ABOX Synchronized IPC for Audio"
++	help
++	  IPC between ABOX and an external amplifier driver (NXP TFA9872).
++
++endif
+diff --git a/sound/soc/samsung/abox/Makefile b/sound/soc/samsung/abox/Makefile
+index cd3c58da9..1f12a3e73 100644
+--- a/sound/soc/samsung/abox/Makefile
++++ b/sound/soc/samsung/abox/Makefile
+@@ -1,3 +1,6 @@
+-obj-$(CONFIG_SND_SOC_SAMSUNG_ABOX) += abox_util.o abox_dbg.o abox_dump.o abox_log.o abox_gic.o abox.o abox_rdma.o abox_wdma.o abox_if.o abox_effect.o abox_vss.o abox_failsafe.o abox_vdma.o abox_bt.o abox_mmapfd.o
++obj-$(CONFIG_SND_SOC_SAMSUNG_ABOX) += abox_util.o abox_dbg.o abox_log.o abox_gic.o abox.o abox_rdma.o abox_wdma.o abox_if.o abox_effect.o abox_failsafe.o
++obj-$(CONFIG_SND_SOC_SAMSUNG_ABOX_DUMP) += abox_dump.o
++obj-$(CONFIG_SND_SOC_SAMSUNG_ABOX_VSS) += abox_vss.o abox_vdma.o
++obj-$(CONFIG_SND_SOC_SAMSUNG_ABOX_BT) += abox_bt.o
++obj-$(CONFIG_SND_SOC_SAMSUNG_ABOX_MMAPFD) += abox_mmapfd.o
+ obj-$(CONFIG_SEC_SND_SYNCHRONIZED_IPC) += abox_synchronized_ipc.o
+-obj-$(CONFIG_SEC_SND_SYNCHRONIZED_IPC_RICHTEK) += abox_synchronized_ipc_richtek.o
+diff --git a/sound/soc/samsung/abox/abox.c b/sound/soc/samsung/abox/abox.c
+index ae50dea4f..d85fad009 100644
+--- a/sound/soc/samsung/abox/abox.c
++++ b/sound/soc/samsung/abox/abox.c
+@@ -19,28 +19,25 @@
+ #include <linux/dma-mapping.h>
+ #include <linux/firmware.h>
+ #include <linux/regmap.h>
+-#include <linux/exynos_iovmm.h>
++#include <linux/panic_notifier.h>
++#include <linux/pinctrl/consumer.h>
++#include <linux/arm-smccc.h>
++#include <linux/iommu.h>
++#include <linux/mfd/syscon.h>
++#include <linux/of_reserved_mem.h>
+ #include <linux/workqueue.h>
+-#include <linux/smc.h>
+ #include <linux/delay.h>
+ #include <linux/suspend.h>
+ #include <linux/sched/clock.h>
+-#include <linux/shm_ipc.h>
+-#include <linux/modem_notifier.h>
+ 
+ #include <sound/soc.h>
+ #include <sound/soc-dapm.h>
+ #include <sound/pcm_params.h>
+ #include <sound/tlv.h>
+ #include <sound/samsung/abox.h>
+-#include <sound/samsung/vts.h>
+-#include <linux/exynos_iovmm.h>
+ 
+-#include <soc/samsung/exynos-pmu.h>
+ #ifdef CONFIG_EXYNOS_ITMON
+-#include <soc/samsung/exynos-itmon.h>
+ #endif
+-#include "../../../../drivers/iommu/exynos-iommu.h"
+ 
+ #include "abox_util.h"
+ #include "abox_dbg.h"
+@@ -51,11 +48,76 @@
+ #include "abox_if.h"
+ #include "abox_vdma.h"
+ #include "abox_effect.h"
+-#ifdef CONFIG_SCSC_BT
++#if IS_ENABLED(CONFIG_SND_SOC_SAMSUNG_ABOX_BT)
+ #include "abox_bt.h"
+ #endif
+ #include "abox.h"
+ 
++/*
++ * 6.18 forward-port shims.
++ *
++ * Secure calls: Samsung's abox_smc() is a plain SMC; use the SMCCC helper.
++ * PMU: Samsung's exynos_pmu_*() accessors become the PMU syscon regmap.
++ * PM QoS: Samsung's INT/MIF/CPU-cluster QoS classes have no 6.18 provider (no
++ * DVFS yet); requests are only recorded. The ABOX CPU clock is set directly
++ * (abox_change_cpu_gear_legacy()).
++ * VTS: the A50 has no VTS block (no "share vts sram" quirk), so the SRAM
++ * sharing calls are never reached.
++ */
++/* Samsung added SND_SOC_DAPM_DEMUX_E to the 4.14 soc-dapm.h */
++#define SND_SOC_DAPM_DEMUX_E(wname, wreg, wshift, winvert, wcontrols, \
++	wevent, wflags) \
++{	.id = snd_soc_dapm_demux, .name = wname, \
++	SND_SOC_DAPM_INIT_REG_VAL(wreg, wshift, winvert), \
++	.kcontrol_news = wcontrols, .num_kcontrols = 1, \
++	.event = wevent, .event_flags = wflags}
++
++static struct regmap *abox_pmu;
++
++static int abox_pmu_read(unsigned int offset, unsigned int *val)
++{
++	return regmap_read(abox_pmu, offset, val);
++}
++
++static int abox_pmu_write(unsigned int offset, unsigned int val)
++{
++	return regmap_write(abox_pmu, offset, val);
++}
++
++static int abox_pmu_update(unsigned int offset, unsigned int mask,
++		unsigned int val)
++{
++	return regmap_update_bits(abox_pmu, offset, mask, val);
++}
++
++struct abox_qos_req {
++	int pm_qos_class;
++	s32 value;
++};
++
++static void abox_qos_add(struct abox_qos_req *req, int pm_qos_class, s32 value)
++{
++	req->pm_qos_class = pm_qos_class;
++	req->value = value;
++}
++
++static void abox_qos_update(struct abox_qos_req *req, s32 value)
++{
++	req->value = value;
++}
++
++static s32 abox_qos_value(struct abox_qos_req *req)
++{
++	return req->value;
++}
++
++static inline void abox_qos_remove(struct abox_qos_req *req) {}
++
++enum { ABOX_QOS_AUD, ABOX_QOS_INT, ABOX_QOS_MIF, ABOX_QOS_LIT, ABOX_QOS_BIG };
++
++static inline int vts_acquire_sram(struct platform_device *pdev, int vts) { return 0; }
++static inline int vts_release_sram(struct platform_device *pdev, int vts) { return 0; }
++
+ #undef EMULATOR
+ #ifdef EMULATOR
+ static void __iomem *pmu_alive;
+@@ -69,37 +131,7 @@ static void update_mask_value(void __iomem *sfr,
+ }
+ #endif
+ 
+-#if IS_ENABLED(CONFIG_SOC_EXYNOS8895)
+-#define GPIO_MODE_ABOX_SYS_PWR_REG		(0x1308)
+-#define PAD_RETENTION_ABOX_OPTION		(0x3048)
+-#define ABOX_MAGIC				(0x0814)
+-#define ABOX_MAGIC_VALUE			(0xAB0CAB0C)
+-#define ABOX_CPU_CONFIGURATION			(0x2520)
+-#define ABOX_CPU_LOCAL_PWR_CFG			(0x00000001)
+-#define ABOX_CPU_STATUS				(0x2524)
+-#define ABOX_CPU_STATUS_STATUS_MASK		(0x00000001)
+-#define ABOX_CPU_STANDBY			ABOX_CPU_STATUS
+-#define ABOX_CPU_STANDBY_WFE_MASK		(0x20000000)
+-#define ABOX_CPU_STANDBY_WFI_MASK		(0x10000000)
+-#define ABOX_CPU_OPTION				(0x2528)
+-#define ABOX_CPU_OPTION_USE_STANDBYWFE_MASK	(0x00020000)
+-#define ABOX_CPU_OPTION_USE_STANDBYWFI_MASK	(0x00010000)
+-#define ABOX_CPU_OPTION_ENABLE_CPU_MASK		(0x00008000)
+-#elif IS_ENABLED(CONFIG_SOC_EXYNOS9810)
+-#define GPIO_MODE_ABOX_SYS_PWR_REG		(0x1424)
+-#define PAD_RETENTION_ABOX_OPTION		(0x4170)
+-#define ABOX_MAGIC				(0x0814)
+-#define ABOX_MAGIC_VALUE			(0xAB0CAB0C)
+-#define ABOX_CPU_CONFIGURATION			(0x415C)
+-#define ABOX_CPU_LOCAL_PWR_CFG			(0x00000001)
+-#define ABOX_CPU_STATUS				(0x4160)
+-#define ABOX_CPU_STATUS_STATUS_MASK		(0x00000001)
+-#define ABOX_CPU_STANDBY			(0x3804)
+-#define ABOX_CPU_STANDBY_WFE_MASK		(0x20000000)
+-#define ABOX_CPU_STANDBY_WFI_MASK		(0x10000000)
+-#define ABOX_CPU_OPTION				(0x4164)
+-#define ABOX_CPU_OPTION_ENABLE_CPU_MASK		(0x10000000)
+-#elif IS_ENABLED(CONFIG_SOC_EXYNOS9610)
++/* Exynos 9610 PMU offsets (the 8895/9810 variants are dropped on 6.18). */
+ #define GPIO_MODE_ABOX_SYS_PWR_REG		(0x1308)
+ #define PAD_RETENTION_ABOX_OPTION		(0x3048)
+ #define ABOX_MAGIC				(0x0814)
+@@ -113,7 +145,6 @@ static void update_mask_value(void __iomem *sfr,
+ #define ABOX_CPU_STANDBY_WFI_MASK		(0x10000000)
+ #define ABOX_CPU_OPTION				(0x2528)
+ #define ABOX_CPU_OPTION_ENABLE_CPU_MASK		(0x00008000)
+-#endif
+ 
+ #define DEFAULT_CPU_GEAR_ID		(0xAB0CDEFA)
+ #define BOOT_CPU_GEAR_ID		(0xB00DB00D)
+@@ -418,14 +449,6 @@ static void abox_set_sif_format(struct abox_data *data,
+ 	data->sif_format[abox_sif_idx(configmsg)] = val;
+ }
+ 
+-static int abox_get_sif_physical_width(struct abox_data *data,
+-		enum ABOX_CONFIGMSG configmsg)
+-{
+-	snd_pcm_format_t format = abox_get_sif_format(data, configmsg);
+-
+-	return snd_pcm_format_physical_width(format);
+-}
+-
+ static int abox_get_sif_width(struct abox_data *data,
+ 		enum ABOX_CONFIGMSG configmsg)
+ {
+@@ -552,7 +575,7 @@ static bool abox_can_calliope_ipc(struct device *dev,
+ 				msecs_to_jiffies(CALLIOPE_ENABLE_TIMEOUT_MS));
+ 		if (data->calliope_state == CALLIOPE_ENABLED)
+ 			break;
+-		/* Fallthrough */
++		fallthrough;
+ 	case CALLIOPE_DISABLED:
+ 	default:
+ 		dev_warn(dev, "Invalid calliope state: %d\n",
+@@ -864,7 +887,7 @@ static int abox_sifs_hw_params(struct snd_pcm_substream *substream,
+ 
+ 	/* sifs count is needed only when SIFS is connected to NSRC */
+ 	list_for_each_entry(dpcm, &be->dpcm[stream].fe_clients, list_fe) {
+-		if (dpcm->fe->cpu_dai->id != ABOX_WDMA0) {
++		if (snd_soc_rtd_to_cpu(dpcm->fe, 0)->id != ABOX_WDMA0) {
+ 			skip = false;
+ 			break;
+ 		}
+@@ -949,6 +972,11 @@ static const struct snd_soc_dai_ops abox_sifs_dai_ops = {
+ 	.hw_free	= abox_sifs_hw_free,
+ };
+ 
++/* 6.18: compress_new moved from snd_soc_dai_driver to snd_soc_dai_ops */
++static const struct snd_soc_dai_ops abox_compr_dai_ops = {
++	.compress_new = snd_soc_new_compress,
++};
++
+ static struct snd_soc_dai_driver abox_dais[] = {
+ 	{
+ 		.name = "RDMA0",
+@@ -1027,7 +1055,7 @@ static struct snd_soc_dai_driver abox_dais[] = {
+ 			.rate_max = 384000,
+ 			.formats = ABOX_SAMPLE_FORMATS,
+ 		},
+-		.compress_new = snd_soc_new_compress,
++		.ops = &abox_compr_dai_ops,
+ 	},
+ 	{
+ 		.name = "RDMA6",
+@@ -1685,7 +1713,7 @@ static int wake_lock_get(struct snd_kcontrol *kcontrol,
+ 	struct snd_soc_component *cmpnt = snd_soc_kcontrol_component(kcontrol);
+ 	struct device *dev = cmpnt->dev;
+ 	struct abox_data *data = dev_get_drvdata(dev);
+-	unsigned int val = data->ws.active;
++	unsigned int val = data->ws->active;
+ 
+ 	dev_dbg(dev, "%s: %u\n", __func__, val);
+ 
+@@ -1705,9 +1733,9 @@ static int wake_lock_put(struct snd_kcontrol *kcontrol,
+ 	dev_info(dev, "%s(%u)\n", __func__, val);
+ 
+ 	if (val)
+-		__pm_stay_awake(&data->ws);
++		__pm_stay_awake(data->ws);
+ 	else
+-		__pm_relax(&data->ws);
++		__pm_relax(data->ws);
+ 
+ 	return 0;
+ }
+@@ -2070,7 +2098,7 @@ static int abox_flush_sifm(struct snd_soc_dapm_widget *w,
+ 
+ 	dev_dbg(dev, "%s\n", __func__);
+ 
+-	if (!snd_soc_dapm_connected_input_ep(w, NULL)) {
++	if (!abox_dapm_connected_ep(w, SND_SOC_DAPM_DIR_IN, NULL)) {
+ 		dev_info(dev, "%s: flush\n", __func__);
+ 		snd_soc_component_update_bits(cmpnt, ABOX_SPUS_CTRL3,
+ 				ABOX_SPUS_SIFM_FLUSH_MASK,
+@@ -2088,7 +2116,7 @@ static int abox_flush_sifs1(struct snd_soc_dapm_widget *w,
+ 
+ 	dev_dbg(dev, "%s\n", __func__);
+ 
+-	if (!snd_soc_dapm_connected_input_ep(w, NULL)) {
++	if (!abox_dapm_connected_ep(w, SND_SOC_DAPM_DIR_IN, NULL)) {
+ 		dev_info(dev, "%s: flush\n", __func__);
+ 		snd_soc_component_update_bits(cmpnt, ABOX_SPUS_CTRL3,
+ 				ABOX_SPUS_SIFS1_FLUSH_MASK,
+@@ -2106,7 +2134,7 @@ static int abox_flush_sifs2(struct snd_soc_dapm_widget *w,
+ 
+ 	dev_dbg(dev, "%s\n", __func__);
+ 
+-	if (!snd_soc_dapm_connected_input_ep(w, NULL)) {
++	if (!abox_dapm_connected_ep(w, SND_SOC_DAPM_DIR_IN, NULL)) {
+ 		dev_info(dev, "%s: flush\n", __func__);
+ 		snd_soc_component_update_bits(cmpnt, ABOX_SPUS_CTRL3,
+ 				ABOX_SPUS_SIFS2_FLUSH_MASK,
+@@ -2124,7 +2152,7 @@ static int abox_flush_recp(struct snd_soc_dapm_widget *w,
+ 
+ 	dev_dbg(dev, "%s\n", __func__);
+ 
+-	if (!snd_soc_dapm_connected_output_ep(w, NULL)) {
++	if (!abox_dapm_connected_ep(w, SND_SOC_DAPM_DIR_OUT, NULL)) {
+ 		dev_info(dev, "%s: flush\n", __func__);
+ 		snd_soc_component_update_bits(cmpnt, ABOX_SPUM_CTRL2,
+ 				ABOX_SPUM_RECP_FLUSH_MASK,
+@@ -2142,7 +2170,7 @@ static int abox_flush_sifm0(struct snd_soc_dapm_widget *w,
+ 
+ 	dev_dbg(dev, "%s\n", __func__);
+ 
+-	if (!snd_soc_dapm_connected_output_ep(w, NULL)) {
++	if (!abox_dapm_connected_ep(w, SND_SOC_DAPM_DIR_OUT, NULL)) {
+ 		dev_info(dev, "%s: flush\n", __func__);
+ 		snd_soc_component_update_bits(cmpnt, ABOX_SPUM_CTRL3,
+ 				ABOX_SPUM_SIFM0_FLUSH_MASK,
+@@ -2160,7 +2188,7 @@ static int abox_flush_sifm1(struct snd_soc_dapm_widget *w,
+ 
+ 	dev_dbg(dev, "%s\n", __func__);
+ 
+-	if (!snd_soc_dapm_connected_output_ep(w, NULL)) {
++	if (!abox_dapm_connected_ep(w, SND_SOC_DAPM_DIR_OUT, NULL)) {
+ 		dev_info(dev, "%s: flush\n", __func__);
+ 		snd_soc_component_update_bits(cmpnt, ABOX_SPUM_CTRL3,
+ 				ABOX_SPUM_SIFM1_FLUSH_MASK,
+@@ -2178,7 +2206,7 @@ static int abox_flush_sifm2(struct snd_soc_dapm_widget *w,
+ 
+ 	dev_dbg(dev, "%s\n", __func__);
+ 
+-	if (!snd_soc_dapm_connected_output_ep(w, NULL)) {
++	if (!abox_dapm_connected_ep(w, SND_SOC_DAPM_DIR_OUT, NULL)) {
+ 		dev_info(dev, "%s: flush\n", __func__);
+ 		snd_soc_component_update_bits(cmpnt, ABOX_SPUM_CTRL3,
+ 				ABOX_SPUM_SIFM2_FLUSH_MASK,
+@@ -2196,7 +2224,7 @@ static int abox_flush_sifm3(struct snd_soc_dapm_widget *w,
+ 
+ 	dev_dbg(dev, "%s\n", __func__);
+ 
+-	if (!snd_soc_dapm_connected_output_ep(w, NULL)) {
++	if (!abox_dapm_connected_ep(w, SND_SOC_DAPM_DIR_OUT, NULL)) {
+ 		dev_info(dev, "%s: flush\n", __func__);
+ 		snd_soc_component_update_bits(cmpnt, ABOX_SPUM_CTRL3,
+ 				ABOX_SPUM_SIFM3_FLUSH_MASK,
+@@ -2857,128 +2885,6 @@ static bool abox_writeable_reg(struct device *dev, unsigned int reg)
+ 	}
+ }
+ 
+-static const struct reg_default abox_reg_defaults_8895[] = {
+-	{0x0000, 0x41424F58},
+-	{0x0010, 0x00000000},
+-	{0x0014, 0x00000000},
+-	{0x0020, 0x00000000},
+-	{0x0024, 0xFFF00000},
+-	{0x0028, 0x13F00000},
+-	{0x0030, 0x7FFFFFFF},
+-	{0x0040, 0x00000000},
+-	{0x0044, 0x00000000},
+-	{0x0048, 0x00000000},
+-	{0x0200, 0x00000000},
+-	{0x0204, 0x00000000},
+-	{0x0208, 0x00000000},
+-	{0x020C, 0x00000000},
+-	{0x0220, 0x00000000},
+-	{0x0224, 0x00000000},
+-	{0x0228, 0x00000000},
+-	{0x022C, 0x00000000},
+-	{0x0230, 0x00000000},
+-	{0x0234, 0x00000000},
+-	{0x0238, 0x00000000},
+-	{0x023C, 0x00000000},
+-	{0x0240, 0x00000000},
+-	{0x0260, 0x00000000},
+-	{0x0300, 0x00000000},
+-	{0x0304, 0x00000000},
+-	{0x0308, 0x00000000},
+-	{0x030C, 0x00000000},
+-	{0x0320, 0x00000000},
+-	{0x0324, 0x00000000},
+-	{0x0328, 0x00000000},
+-	{0x032C, 0x00000000},
+-	{0x0330, 0x00000000},
+-	{0x0334, 0x00000000},
+-	{0x0338, 0x00000000},
+-	{0x033C, 0x00000000},
+-	{0x0340, 0x00000000},
+-	{0x0344, 0x00000000},
+-	{0x0348, 0x00000000},
+-	{0x0500, 0x01000000},
+-	{0x0504, 0x00000000},
+-	{0x050C, 0x00000000},
+-	{0x0510, 0x01000000},
+-	{0x0514, 0x00000000},
+-	{0x051C, 0x00000000},
+-	{0x0520, 0x01000000},
+-	{0x0524, 0x00000000},
+-	{0x052C, 0x00000000},
+-	{0x0530, 0x01000000},
+-	{0x0534, 0x00000000},
+-	{0x053C, 0x00000000},
+-	{0x0540, 0x01000000},
+-	{0x0544, 0x00000000},
+-	{0x054C, 0x00000000},
+-	{0x0550, 0x00000000},
+-	{0x0554, 0x00000000},
+-};
+-
+-static const struct reg_default abox_reg_defaults_9810[] = {
+-	{0x0000, 0x41424F58},
+-	{0x0010, 0x00000000},
+-	{0x0014, 0x00000000},
+-	{0x0020, 0x00004444},
+-	{0x0024, 0xFFF00000},
+-	{0x0028, 0x17D00000},
+-	{0x0030, 0x7FFFFFFF},
+-	{0x0038, 0x00000000},
+-	{0x0040, 0x00000000},
+-	{0x0044, 0x00000000},
+-	{0x0048, 0x00000000},
+-	{0x0200, 0x00000000},
+-	{0x0204, 0x00000000},
+-	{0x0208, 0x00000000},
+-	{0x020C, 0x00000000},
+-	{0x0220, 0x00000000},
+-	{0x0224, 0x00000000},
+-	{0x0228, 0x00000000},
+-	{0x022C, 0x00000000},
+-	{0x0230, 0x00000000},
+-	{0x0234, 0x00000000},
+-	{0x0238, 0x00000000},
+-	{0x023C, 0x00000000},
+-	{0x0240, 0x00000000},
+-	{0x0260, 0x00000000},
+-	{0x0280, 0x00000000},
+-	{0x0284, 0x00000000},
+-	{0x0300, 0x00000000},
+-	{0x0304, 0x00000000},
+-	{0x0308, 0x00000000},
+-	{0x030C, 0x00000000},
+-	{0x0320, 0x00000000},
+-	{0x0324, 0x00000000},
+-	{0x0328, 0x00000000},
+-	{0x032C, 0x00000000},
+-	{0x0330, 0x00000000},
+-	{0x0334, 0x00000000},
+-	{0x0338, 0x00000000},
+-	{0x033C, 0x00000000},
+-	{0x0340, 0x00000000},
+-	{0x0344, 0x00000000},
+-	{0x0348, 0x00000000},
+-	{0x0500, 0x01000010},
+-	{0x0504, 0x00000000},
+-	{0x050C, 0x00000000},
+-	{0x0510, 0x01000010},
+-	{0x0514, 0x00000000},
+-	{0x051C, 0x00000000},
+-	{0x0520, 0x01000010},
+-	{0x0524, 0x00000000},
+-	{0x052C, 0x00000000},
+-	{0x0530, 0x01000010},
+-	{0x0534, 0x00000000},
+-	{0x053C, 0x00000000},
+-	{0x0540, 0x01000010},
+-	{0x0544, 0x00000000},
+-	{0x054C, 0x00000000},
+-	{0x0550, 0x00000000},
+-	{0x0554, 0x00000000},
+-	{0x1318, 0x00000000},
+-};
+-
+ static const struct reg_default abox_reg_defaults_9610[] = {
+ 	{0x0000, 0x41424F58},
+ 	{0x0010, 0x00000000},
+@@ -3180,7 +3086,7 @@ static struct snd_soc_dapm_widget *abox_sync_params(struct abox_data *data,
+ int abox_hw_params_fixup_helper(struct snd_soc_pcm_runtime *rtd,
+ 		struct snd_pcm_hw_params *params, int stream)
+ {
+-	struct snd_soc_dai *dai = rtd->cpu_dai;
++	struct snd_soc_dai *dai = snd_soc_rtd_to_cpu(rtd, 0);
+ 	struct snd_soc_component *cmpnt = dai->component;
+ 	struct device *dev = is_abox(dai->dev) ? dai->dev : dai->dev->parent;
+ 	struct abox_data *data = dev_get_drvdata(dev);
+@@ -3218,21 +3124,21 @@ int abox_hw_params_fixup_helper(struct snd_soc_pcm_runtime *rtd,
+ 		w->endpoints[SND_SOC_DAPM_DIR_OUT] = -1;
+ 	}
+ 
+-	if (!dai->playback_widget)
++	if (!snd_soc_dai_get_widget_playback(dai))
+ 		goto skip_playback;
+-	snd_soc_dapm_widget_for_each_source_path(dai->playback_widget, path) {
++	snd_soc_dapm_widget_for_each_source_path(snd_soc_dai_get_widget_playback(dai), path) {
+ 		if (path->connect) {
+ 			w = path->node[SND_SOC_DAPM_DIR_IN];
+-			snd_soc_dapm_connected_input_ep(w, &widget_list);
++			abox_dapm_connected_ep(w, SND_SOC_DAPM_DIR_IN, &widget_list);
+ 		}
+ 	}
+ skip_playback:
+-	if (!dai->capture_widget)
++	if (!snd_soc_dai_get_widget_capture(dai))
+ 		goto skip_capture;
+-	snd_soc_dapm_widget_for_each_sink_path(dai->capture_widget, path) {
++	snd_soc_dapm_widget_for_each_sink_path(snd_soc_dai_get_widget_capture(dai), path) {
+ 		if (path->connect) {
+ 			w = path->node[SND_SOC_DAPM_DIR_OUT];
+-			snd_soc_dapm_connected_output_ep(w, &widget_list);
++			abox_dapm_connected_ep(w, SND_SOC_DAPM_DIR_OUT, &widget_list);
+ 		}
+ 	}
+ skip_capture:
+@@ -3281,9 +3187,9 @@ int abox_hw_params_fixup_helper(struct snd_soc_pcm_runtime *rtd,
+ 		}
+ 		list_del_init(&widget_list);
+ 		if (stream_mst == SNDRV_PCM_STREAM_PLAYBACK)
+-			snd_soc_dapm_connected_output_ep(w_mst, &widget_list);
++			abox_dapm_connected_ep(w_mst, SND_SOC_DAPM_DIR_OUT, &widget_list);
+ 		else
+-			snd_soc_dapm_connected_input_ep(w_mst, &widget_list);
++			abox_dapm_connected_ep(w_mst, SND_SOC_DAPM_DIR_IN, &widget_list);
+ 
+ 		list_for_each_entry(w, &widget_list, work_list) {
+ 			struct snd_soc_dai *dai;
+@@ -3329,19 +3235,19 @@ int abox_hw_params_fixup_helper(struct snd_soc_pcm_runtime *rtd,
+ 	rate = params_rate(params);
+ 	channels = params_channels(params);
+ 
+-	if (dai->driver->symmetric_samplebits && dai->sample_width &&
+-			dai->sample_width != width) {
+-		width = dai->sample_width;
+-		abox_set_sif_width(data, msg_format, dai->sample_width);
++	if (dai->driver->symmetric_sample_bits && dai->symmetric_sample_bits &&
++			dai->symmetric_sample_bits != width) {
++		width = dai->symmetric_sample_bits;
++		abox_set_sif_width(data, msg_format, dai->symmetric_sample_bits);
+ 		format = abox_get_sif_format(data, msg_format);
+ 	}
+ 
+-	if (dai->driver->symmetric_channels && dai->channels &&
+-			dai->channels != channels)
+-		channels = dai->channels;
++	if (dai->driver->symmetric_channels && dai->symmetric_channels &&
++			dai->symmetric_channels != channels)
++		channels = dai->symmetric_channels;
+ 
+-	if (dai->driver->symmetric_rates && dai->rate && dai->rate != rate)
+-		rate = dai->rate;
++	if (dai->driver->symmetric_rate && dai->symmetric_rate && dai->symmetric_rate != rate)
++		rate = dai->symmetric_rate;
+ 
+ 	dev_dbg(dev, "%s: set to %u bit, %u channel, %uHz\n", __func__,
+ 			width, channels, rate);
+@@ -3371,11 +3277,11 @@ int abox_hw_params_fixup_helper(struct snd_soc_pcm_runtime *rtd,
+ }
+ EXPORT_SYMBOL(abox_hw_params_fixup_helper);
+ 
+-static struct pm_qos_request abox_pm_qos_aud;
+-static struct pm_qos_request abox_pm_qos_int;
+-static struct pm_qos_request abox_pm_qos_mif;
+-static struct pm_qos_request abox_pm_qos_lit;
+-static struct pm_qos_request abox_pm_qos_big;
++static struct abox_qos_req abox_pm_qos_aud;
++static struct abox_qos_req abox_pm_qos_int;
++static struct abox_qos_req abox_pm_qos_mif;
++static struct abox_qos_req abox_pm_qos_lit;
++static struct abox_qos_req abox_pm_qos_big;
+ 
+ unsigned int abox_get_requiring_int_freq_in_khz(void)
+ {
+@@ -3459,7 +3365,7 @@ static void abox_check_cpu_gear(struct device *dev,
+ 			/* new */
+ 			dev_dbg(dev, "%s(%x): new\n", __func__, id);
+ 			pm_wakeup_event(dev_abox, BOOT_DONE_TIMEOUT_MS);
+-			__pm_stay_awake(&data->ws_boot);
++			__pm_stay_awake(data->ws_boot);
+ 			abox_request_dram_on(pdev, (void *)BOOT_CPU_GEAR_ID, true);
+ 		}
+ 	} else {
+@@ -3468,7 +3374,7 @@ static void abox_check_cpu_gear(struct device *dev,
+ 			/* on */
+ 			dev_dbg(dev, "%s(%x): on\n", __func__, id);
+ 			pm_wakeup_event(dev_abox, BOOT_DONE_TIMEOUT_MS);
+-			__pm_stay_awake(&data->ws_boot);
++			__pm_stay_awake(data->ws_boot);
+ 			abox_request_dram_on(pdev, (void *)BOOT_CPU_GEAR_ID, true);
+ 		} else if ((old_gear < ABOX_CPU_GEAR_MIN) &&
+ 				(gear >= ABOX_CPU_GEAR_MIN)) {
+@@ -3554,10 +3460,10 @@ static void abox_change_cpu_gear_legacy(struct device *dev,
+ 
+ 	if (increasing) {
+ 		if (gear <= ARRAY_SIZE(data->pm_qos_int))
+-			pm_qos_update_request(&abox_pm_qos_int,
++			abox_qos_update(&abox_pm_qos_int,
+ 					data->pm_qos_int[gear - 1]);
+ 		else
+-			pm_qos_update_request(&abox_pm_qos_int, 0);
++			abox_qos_update(&abox_pm_qos_int, 0);
+ 	}
+ 
+ 	if (gear >= ABOX_CPU_GEAR_MIN) {
+@@ -3591,78 +3497,25 @@ static void abox_change_cpu_gear_legacy(struct device *dev,
+ 
+ 	if (!increasing) {
+ 		if (gear <= ARRAY_SIZE(data->pm_qos_int))
+-			pm_qos_update_request(&abox_pm_qos_int,
++			abox_qos_update(&abox_pm_qos_int,
+ 					data->pm_qos_int[gear - 1]);
+ 		else
+-			pm_qos_update_request(&abox_pm_qos_int, 0);
++			abox_qos_update(&abox_pm_qos_int, 0);
+ 	}
+ skip:
+ 	abox_notify_cpu_gear(data, clk_get_rate(data->clk_cpu) * 1000, 0);
+ }
+ 
+-static void abox_change_cpu_gear(struct device *dev, struct abox_data *data)
+-{
+-	struct abox_qos_request *request;
+-	unsigned int gear = UINT_MAX;
+-	unsigned int clksrc_to_aclk = 0;
+-	s32 freq;
+-
+-	dev_dbg(dev, "%s\n", __func__);
+-
+-	for (request = data->cpu_gear_requests;
+-			request - data->cpu_gear_requests <
+-			ARRAY_SIZE(data->cpu_gear_requests)
+-			&& request->id;
+-			request++) {
+-		if (gear > request->value)
+-			gear = request->value;
+-
+-		dev_dbg(dev, "id=%x, value=%u, gear=%u\n", request->id,
+-				request->value, gear);
+-	}
+-
+-	if ((data->cpu_gear >= ABOX_CPU_GEAR_MIN) &&
+-			(gear < ABOX_CPU_GEAR_MIN)) {
+-		/* first cpu gear request */
+-		clk_set_rate(data->clk_pll, AUD_PLL_RATE_HZ_FOR_48000);
+-		dev_info(dev, "pll clock: %lu\n", clk_get_rate(data->clk_pll));
+-		clksrc_to_aclk = 1;
+-		pm_runtime_get(dev);
+-	}
+-
+-	if (data->cpu_gear != gear) {
+-		freq = (gear <= ARRAY_SIZE(data->pm_qos_aud)) ?
+-				data->pm_qos_aud[gear - 1] : 0;
+-		pm_qos_update_request(&abox_pm_qos_aud, freq);
+-	}
+-
+-	dev_info(dev, "pm qos request aud: req=%dkHz ret=%dkHz\n", freq,
+-			pm_qos_request(abox_pm_qos_aud.pm_qos_class));
+-	abox_notify_cpu_gear(data,
+-			pm_qos_request(abox_pm_qos_aud.pm_qos_class) * 1000,
+-			clksrc_to_aclk);
+-
+-	if ((data->cpu_gear < ABOX_CPU_GEAR_MIN) &&
+-			(gear >= ABOX_CPU_GEAR_MIN)) {
+-		/* no more cpu gear request */
+-		pm_runtime_mark_last_busy(dev);
+-		pm_runtime_put_autosuspend(dev);
+-		clk_set_rate(data->clk_pll, 0);
+-		dev_info(dev, "pll clock: %lu\n", clk_get_rate(data->clk_pll));
+-	}
+-
+-	data->cpu_gear = gear;
+-}
+-
+ static void abox_change_cpu_gear_work_func(struct work_struct *work)
+ {
+ 	struct abox_data *data = container_of(work, struct abox_data,
+ 			change_cpu_gear_work);
+ 
+-	if (IS_ENABLED(CONFIG_SOC_EXYNOS8895))
+-		abox_change_cpu_gear_legacy(&data->pdev->dev, data);
+-	else
+-		abox_change_cpu_gear(&data->pdev->dev, data);
++	/*
++	 * 6.18: no AUD DVFS (Samsung PM QoS/ACPM). Set the ABOX CPU clock
++	 * directly through the CMU, as the legacy path does.
++	 */
++	abox_change_cpu_gear_legacy(&data->pdev->dev, data);
+ }
+ 
+ int abox_request_cpu_gear(struct device *dev, struct abox_data *data,
+@@ -3749,10 +3602,9 @@ static void abox_change_int_freq_work_func(struct work_struct *work)
+ 	}
+ 
+ 	data->int_freq = freq;
+-	pm_qos_update_request(&abox_pm_qos_int, data->int_freq);
++	abox_qos_update(&abox_pm_qos_int, data->int_freq);
+ 
+-	dev_info(dev, "pm qos request int: %dHz\n", pm_qos_request(
+-			abox_pm_qos_int.pm_qos_class));
++	dev_info(dev, "pm qos request int: %dHz\n", abox_qos_value(&abox_pm_qos_int));
+ }
+ 
+ int abox_request_int_freq(struct device *dev, struct abox_data *data,
+@@ -3806,10 +3658,9 @@ static void abox_change_mif_freq_work_func(struct work_struct *work)
+ 	}
+ 
+ 	data->mif_freq = freq;
+-	pm_qos_update_request(&abox_pm_qos_mif, data->mif_freq);
++	abox_qos_update(&abox_pm_qos_mif, data->mif_freq);
+ 
+-	dev_info(dev, "pm qos request mif: %dHz\n", pm_qos_request(
+-			abox_pm_qos_mif.pm_qos_class));
++	dev_info(dev, "pm qos request mif: %dHz\n", abox_qos_value(&abox_pm_qos_mif));
+ }
+ 
+ static int abox_request_mif_freq(struct device *dev, struct abox_data *data,
+@@ -3864,10 +3715,10 @@ static void abox_change_lit_freq_work_func(struct work_struct *work)
+ 	}
+ 
+ 	data->lit_freq = freq;
+-	pm_qos_update_request(&abox_pm_qos_lit, data->lit_freq);
++	abox_qos_update(&abox_pm_qos_lit, data->lit_freq);
+ 
+ 	dev_info(dev, "pm qos request little: %dkHz\n",
+-			pm_qos_request(abox_pm_qos_lit.pm_qos_class));
++			abox_qos_value(&abox_pm_qos_lit));
+ }
+ 
+ int abox_request_lit_freq(struct device *dev, struct abox_data *data,
+@@ -3926,10 +3777,10 @@ static void abox_change_big_freq_work_func(struct work_struct *work)
+ 	}
+ 
+ 	data->big_freq = freq;
+-	pm_qos_update_request(&abox_pm_qos_big, data->big_freq);
++	abox_qos_update(&abox_pm_qos_big, data->big_freq);
+ 
+ 	dev_info(dev, "pm qos request big: %dkHz\n",
+-			pm_qos_request(abox_pm_qos_big.pm_qos_class));
++			abox_qos_value(&abox_pm_qos_big));
+ }
+ 
+ int abox_request_big_freq(struct device *dev, struct abox_data *data,
+@@ -4075,9 +3926,12 @@ int abox_iommu_map(struct device *dev, unsigned long iova,
+ 			iova, &addr, bytes, area);
+ 
+ 	mutex_lock(&data->iommu_lock);
+-	ret = iommu_map(data->iommu_domain, iova, addr, bytes, 0);
++	/* mainline exynos-iommu enforces access bits: prot 0 means no access */
++	ret = iommu_map(data->iommu_domain, iova, addr, bytes,
++			IOMMU_READ | IOMMU_WRITE, GFP_KERNEL);
+ 	if (ret < 0) {
+ 		dev_err(dev, "Failed to iommu_map: %d\n", ret);
++		mutex_unlock(&data->iommu_lock);
+ 		return ret;
+ 	}
+ 
+@@ -4120,7 +3974,6 @@ int abox_iommu_unmap(struct device *dev, unsigned long iova)
+ 		if (ret < 0)
+ 			dev_err(dev, "Failed to iommu_unmap: %d\n", ret);
+ 
+-		exynos_sysmmu_tlb_invalidate(data->iommu_domain, iova, bytes);
+ 		list_del_rcu(&mapping->list);
+ 		synchronize_rcu();
+ 		devm_kfree(dev, mapping);
+@@ -4137,14 +3990,15 @@ int abox_iommu_map_sg(struct device *dev, unsigned long iova,
+ 		int prot, size_t bytes, void *area)
+ {
+ 	struct abox_data *data = dev_get_drvdata(dev);
+-	int ret;
++	ssize_t mapped;
+ 
+ 	dev_dbg(dev, "%s(%#lx)\n", __func__, iova);
+ 
+-	ret = iommu_map_sg(data->iommu_domain, iova, sg, nents, prot);
+-	if (ret < 0) {
+-		dev_err(dev, "Failed to iommu_map_sg(%#lx): %d\n", iova, ret);
+-		return ret;
++	mapped = iommu_map_sg(data->iommu_domain, iova, sg, nents, prot,
++			GFP_KERNEL);
++	if (mapped < 0) {
++		dev_err(dev, "Failed to iommu_map_sg(%#lx): %zd\n", iova, mapped);
++		return mapped;
+ 	}
+ 
+ 	return 0;
+@@ -4214,7 +4068,7 @@ static bool abox_is_asrc_widget(struct snd_soc_dapm_widget *w)
+ int abox_try_to_asrc_off(struct device *dev, struct abox_data *data,
+ 		struct snd_soc_pcm_runtime *fe, int stream)
+ {
+-	struct snd_soc_dai *dai = fe->cpu_dai;
++	struct snd_soc_dai *dai = snd_soc_rtd_to_cpu(fe, 0);
+ 	struct snd_soc_component *cmpnt = dai->component;
+ 	struct snd_soc_dapm_widget *w, *w_asrc = NULL;
+ 	LIST_HEAD(widget_list);
+@@ -4240,12 +4094,10 @@ int abox_try_to_asrc_off(struct device *dev, struct abox_data *data,
+ 		w->endpoints[SND_SOC_DAPM_DIR_IN] = -1;
+ 		w->endpoints[SND_SOC_DAPM_DIR_OUT] = -1;
+ 	}
+-	if (dai->playback_widget)
+-		snd_soc_dapm_connected_output_ep(dai->playback_widget,
+-				&widget_list);
+-	if (dai->capture_widget)
+-		snd_soc_dapm_connected_input_ep(dai->capture_widget,
+-				&widget_list);
++	if (snd_soc_dai_get_widget_playback(dai))
++		abox_dapm_connected_ep(snd_soc_dai_get_widget_playback(dai), SND_SOC_DAPM_DIR_OUT, &widget_list);
++	if (snd_soc_dai_get_widget_capture(dai))
++		abox_dapm_connected_ep(snd_soc_dai_get_widget_capture(dai), SND_SOC_DAPM_DIR_IN, &widget_list);
+ 
+ 	list_for_each_entry(w, &widget_list, work_list) {
+ 		dev_dbg(dev, "%s", w->name);
+@@ -4703,7 +4555,7 @@ static void abox_boot_done_work_func(struct work_struct *work)
+ 	abox_request_cpu_gear(dev, data, DEFAULT_CPU_GEAR_ID,
+ 			ABOX_CPU_GEAR_MIN);
+ 
+-	__pm_relax(&data->ws_boot);
++	__pm_relax(data->ws_boot);
+ 	dev_info(dev, "%s:release wake lock\n", __func__);
+ }
+ 
+@@ -5117,7 +4969,7 @@ static int abox_cpu_pm_ipc(struct abox_data *data, bool resume)
+ 		unsigned int val;
+ 
+ 		do {
+-			exynos_pmu_read(ABOX_CPU_STANDBY, &val);
++			abox_pmu_read(ABOX_CPU_STANDBY, &val);
+ 		} while (--i && !(val & ABOX_CPU_STANDBY_WFI_MASK));
+ 
+ 		if (!(val & ABOX_CPU_STANDBY_WFI_MASK)) {
+@@ -5135,7 +4987,7 @@ static void abox_pad_retention(bool retention)
+ 		pr_debug("%s:Do not need\n", __func__);
+ 	} else {
+ #ifndef EMULATOR
+-		exynos_pmu_update(PAD_RETENTION_ABOX_OPTION,
++		abox_pmu_update(PAD_RETENTION_ABOX_OPTION,
+ 				0x10000000, 0x10000000);
+ #else
+ 		update_mask_value(pmu_alive + PAD_RETENTION_ABOX_OPTION,
+@@ -5149,7 +5001,7 @@ static void abox_cpu_power(bool on)
+ 	pr_info("%s(%d)\n", __func__, on);
+ 
+ #ifndef EMULATOR
+-	exynos_pmu_update(ABOX_CPU_CONFIGURATION, ABOX_CPU_LOCAL_PWR_CFG,
++	abox_pmu_update(ABOX_CPU_CONFIGURATION, ABOX_CPU_LOCAL_PWR_CFG,
+ 			on ? ABOX_CPU_LOCAL_PWR_CFG : 0);
+ #else
+ 	update_mask_value(pmu_alive + ABOX_CPU_CONFIGURATION,
+@@ -5169,7 +5021,7 @@ static int abox_cpu_enable(bool enable)
+ 	pr_info("%s(%d)\n", __func__, enable);
+ 
+ #ifndef EMULATOR
+-	exynos_pmu_update(ABOX_CPU_OPTION, mask, val);
++	abox_pmu_update(ABOX_CPU_OPTION, mask, val);
+ #else
+ 	update_mask_value(pmu_alive + ABOX_CPU_OPTION, mask, val);
+ #endif
+@@ -5177,7 +5029,7 @@ static int abox_cpu_enable(bool enable)
+ 		after = jiffies + LIMIT_IN_JIFFIES;
+ 		do {
+ #ifndef EMULATOR
+-			exynos_pmu_read(ABOX_CPU_STATUS, &status);
++			abox_pmu_read(ABOX_CPU_STATUS, &status);
+ #else
+ 			status = readl(pmu_alive + ABOX_CPU_STATUS);
+ #endif
+@@ -5305,10 +5157,12 @@ static void abox_download_extra_firmware(struct abox_data *data)
+ 			base = data->dram_base;
+ 			size = DRAM_FIRMWARE_SIZE;
+ 			break;
++#if IS_ENABLED(CONFIG_SND_SOC_SAMSUNG_ABOX_VSS)
+ 		case 2:
+ 			base = phys_to_virt(shm_get_vss_base());
+ 			size = shm_get_vss_size();
+ 			break;
++#endif
+ 		default:
+ 			dev_err(dev, "%s: area is invalid name=%s, area=%u, offset=%u\n",
+ 					__func__, ext_fw->name, ext_fw->area,
+@@ -5416,7 +5270,7 @@ static int abox_download_firmware(struct platform_device *pdev)
+ 
+ 	if (unlikely(!data->firmware_sram)) {
+ 		request_firmware_nowait(THIS_MODULE,
+-			FW_ACTION_HOTPLUG,
++			FW_ACTION_UEVENT,
+ 			"calliope_sram.bin",
+ 			dev,
+ 			GFP_KERNEL,
+@@ -5469,7 +5323,7 @@ static void abox_cfg_gpio(struct device *dev, const char *name)
+ #ifdef MANUAL_SECURITY_CHANGE
+ static void work_temp_function(struct work_struct *work)
+ {
+-	exynos_smc(0x82000701, 0, 0, 0);
++	abox_smc(0x82000701, 0, 0, 0);
+ 	pr_err("%s: ABOX_CA7 security changed!!!\n", __func__);
+ }
+ static DECLARE_DELAYED_WORK(work_temp, work_temp_function);
+@@ -5635,12 +5489,12 @@ static int abox_enable(struct device *dev)
+ 		dev_warn(dev, "setting audio pll clock to 1.2Ghz is failed: %d\n",	ret);
+ 
+ 	if (is_secure_gic()) {
+-		exynos_pmu_write(ABOX_MAGIC, 0);
+-		ret = exynos_smc(0x82000501, 0, 0, 0);
++		abox_pmu_write(ABOX_MAGIC, 0);
++		ret = abox_smc(0x82000501, 0, 0, 0);
+ 		dev_dbg(dev, "%s: smc ret=%d\n", __func__, ret);
+ 
+ 		for (i = 1000; i; i--) {
+-			exynos_pmu_read(ABOX_MAGIC, &value);
++			abox_pmu_read(ABOX_MAGIC, &value);
+ 			if (value == ABOX_MAGIC_VALUE)
+ 				break;
+ 		}
+@@ -5765,8 +5619,6 @@ void abox_poweroff(void)
+ 	dev_info(dev, "%s\n", __func__);
+ 
+ 	abox_disable(dev);
+-
+-	exynos_sysmmu_control(dev, false);
+ }
+ 
+ static int abox_runtime_suspend(struct device *dev)
+@@ -5782,8 +5634,6 @@ static int abox_runtime_resume(struct device *dev)
+ {
+ 	dev_dbg(dev, "%s\n", __func__);
+ 
+-	exynos_sysmmu_control(dev, true);
+-
+ 	return abox_enable(dev);
+ }
+ 
+@@ -5801,83 +5651,6 @@ static int abox_resume(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int abox_qos_notifier(struct notifier_block *nb,
+-		unsigned long action, void *nb_data)
+-{
+-	struct abox_data *data = container_of(nb, struct abox_data, qos_nb);
+-	struct device *dev = &data->pdev->dev;
+-	long value = (long)action;
+-	long qos_class = (long)nb_data;
+-	unsigned long aclk = clk_get_rate(data->clk_bus);
+-	unsigned int sifs_cnt0, sifs_cnt1, cnt_val, rate, pwidth, channels;
+-	unsigned long sifs0_cnt, sifs1_cnt, sifs2_cnt;
+-	int ret;
+-
+-	dev_dbg(dev, "%s(%ldkHz, %ld)\n", __func__, value, qos_class);
+-
+-	ret = regmap_read(data->regmap, ABOX_SPUS_CTRL_SIFS_CNT0, &sifs_cnt0);
+-	if (ret < 0) {
+-		dev_err(dev, "%s: SPUS_CTRL_SIFS_CNT0 read fail: %d\n",
+-				__func__, ret);
+-		goto out;
+-	}
+-	ret = regmap_read(data->regmap, ABOX_SPUS_CTRL_SIFS_CNT1, &sifs_cnt1);
+-	if (ret < 0) {
+-		dev_err(dev, "%s: SPUS_CTRL_SIFS_CNT1 read fail: %d\n",
+-				__func__, ret);
+-		goto out;
+-	}
+-
+-	sifs0_cnt = (sifs_cnt0 & ABOX_SIFS0_CNT_VAL_MASK) >>
+-			ABOX_SIFS0_CNT_VAL_L;
+-	sifs1_cnt = (sifs_cnt0 & ABOX_SIFS1_CNT_VAL_MASK) >>
+-			ABOX_SIFS1_CNT_VAL_L;
+-	sifs2_cnt = (sifs_cnt1 & ABOX_SIFS2_CNT_VAL_MASK) >>
+-			ABOX_SIFS2_CNT_VAL_L;
+-
+-	if (sifs0_cnt) {
+-		rate = abox_get_sif_rate(data, SET_MIXER_SAMPLE_RATE);
+-		pwidth = abox_get_sif_physical_width(data, SET_MIXER_FORMAT);
+-		channels = abox_get_sif_channels(data, SET_MIXER_FORMAT);
+-		cnt_val = abox_sifsx_cnt_val(aclk, rate, pwidth, channels);
+-		dev_info(dev, "%s: %s <= %u\n", __func__, "SIFS0_CNT_VAL",
+-				cnt_val);
+-		ret = regmap_update_bits(data->regmap, ABOX_SPUS_CTRL_SIFS_CNT0,
+-			ABOX_SIFS0_CNT_VAL_MASK,
+-			(unsigned int)cnt_val << ABOX_SIFS0_CNT_VAL_L);
+-		if (ret < 0)
+-			dev_err(dev, "regmap update failed: %d\n", ret);
+-	}
+-	if (sifs1_cnt) {
+-		rate = abox_get_sif_rate(data, SET_OUT1_SAMPLE_RATE);
+-		pwidth = abox_get_sif_physical_width(data, SET_OUT1_FORMAT);
+-		channels = abox_get_sif_channels(data, SET_OUT1_FORMAT);
+-		cnt_val = abox_sifsx_cnt_val(aclk, rate, pwidth, channels);
+-		dev_info(dev, "%s: %s <= %u\n", __func__, "SIFS0_CNT_VAL",
+-				cnt_val);
+-		ret = regmap_update_bits(data->regmap, ABOX_SPUS_CTRL_SIFS_CNT0,
+-			ABOX_SIFS1_CNT_VAL_MASK,
+-			(unsigned int)cnt_val << ABOX_SIFS1_CNT_VAL_L);
+-		if (ret < 0)
+-			dev_err(dev, "regmap update failed: %d\n", ret);
+-	}
+-	if (sifs2_cnt) {
+-		rate = abox_get_sif_rate(data, SET_OUT2_SAMPLE_RATE);
+-		pwidth = abox_get_sif_physical_width(data, SET_OUT2_FORMAT);
+-		channels = abox_get_sif_channels(data, SET_OUT2_FORMAT);
+-		cnt_val = abox_sifsx_cnt_val(aclk, rate, pwidth, channels);
+-		dev_info(dev, "%s: %s <= %u\n", __func__, "SIFS0_CNT_VAL",
+-				cnt_val);
+-		ret = regmap_update_bits(data->regmap, ABOX_SPUS_CTRL_SIFS_CNT1,
+-			ABOX_SIFS2_CNT_VAL_MASK,
+-			(unsigned int)cnt_val << ABOX_SIFS2_CNT_VAL_L);
+-		if (ret < 0)
+-			dev_err(dev, "regmap update failed: %d\n", ret);
+-	}
+-out:
+-	return NOTIFY_DONE;
+-}
+-
+ static int abox_print_power_usage(struct device *dev, void *data)
+ {
+ 	dev_dbg(dev, "%s\n", __func__);
+@@ -5967,6 +5740,7 @@ static int abox_pm_notifier(struct notifier_block *nb,
+ 	return NOTIFY_DONE;
+ }
+ 
++#if IS_ENABLED(CONFIG_SND_SOC_SAMSUNG_ABOX_VSS)
+ static int abox_modem_notifier(struct notifier_block *nb,
+ 		unsigned long action, void *nb_data)
+ {
+@@ -5994,6 +5768,7 @@ static int abox_modem_notifier(struct notifier_block *nb,
+ 
+ 	return NOTIFY_DONE;
+ }
++#endif
+ 
+ #ifdef CONFIG_EXYNOS_ITMON
+ static int abox_itmon_notifier(struct notifier_block *nb,
+@@ -6100,7 +5875,7 @@ static int samsung_abox_probe(struct platform_device *pdev)
+ 	struct device_node *np_tmp;
+ 	struct platform_device *pdev_tmp;
+ 	struct abox_data *data;
+-	phys_addr_t paddr;
++	phys_addr_t paddr __maybe_unused;
+ 	int ret, i;
+ 
+ 	dev_info(dev, "%s\n", __func__);
+@@ -6180,42 +5955,67 @@ static int samsung_abox_probe(struct platform_device *pdev)
+ 	if (IS_ERR(data->sram_base))
+ 		return PTR_ERR(data->sram_base);
+ 
+-	data->iommu_domain = get_domain_from_dev(dev);
++	abox_pmu = syscon_regmap_lookup_by_phandle(np, "samsung,pmu-syscon");
++	if (IS_ERR(abox_pmu)) {
++		dev_err(dev, "Unable to get the PMU regmap\n");
++		return PTR_ERR(abox_pmu);
++	}
++
++	/*
++	 * 6.18: ABOX addresses its memory at fixed IOVAs, so it owns an
++	 * unmanaged paging domain (not the DMA API default domain), and its
++	 * firmware DRAM and private areas come from a dedicated no-map
++	 * reserved region (physical addresses, write-combined CPU mapping)
++	 * instead of dma_alloc_coherent() on this device.
++	 */
++	data->iommu_domain = iommu_paging_domain_alloc(dev);
+ 	if (IS_ERR(data->iommu_domain)) {
+-		dev_err(dev, "Unable to get iommu domain\n");
++		dev_err(dev, "Unable to allocate iommu domain\n");
+ 		return PTR_ERR(data->iommu_domain);
+ 	}
+ 
+ 	ret = iommu_attach_device(data->iommu_domain, dev);
+ 	if (ret < 0) {
+ 		dev_err(dev, "Unable to attach device to iommu (%d)\n", ret);
++		iommu_domain_free(data->iommu_domain);
+ 		return ret;
+ 	}
++	iommu_set_fault_handler(data->iommu_domain, abox_iommu_fault_handler,
++			data);
+ 
+-	data->dram_base = dmam_alloc_coherent(dev, DRAM_FIRMWARE_SIZE,
+-			&data->dram_base_phys, GFP_KERNEL);
+-	if (IS_ERR_OR_NULL(data->dram_base)) {
+-		dev_err(dev, "Failed to allocate coherent memory: %ld\n",
+-				PTR_ERR(data->dram_base));
+-		return PTR_ERR(data->dram_base);
+-	}
+-	dev_info(&pdev->dev, "%s(%pa) is mapped on %p with size of %d\n",
++	{
++		struct device_node *np_mem = of_parse_phandle(np,
++				"memory-region", 0);
++		struct reserved_mem *rmem = np_mem ?
++				of_reserved_mem_lookup(np_mem) : NULL;
++		void *area;
++
++		of_node_put(np_mem);
++		if (!rmem || rmem->size < DRAM_FIRMWARE_SIZE + PRIVATE_SIZE) {
++			dev_err(dev, "memory-region missing or too small\n");
++			return -EINVAL;
++		}
++		area = devm_memremap(dev, rmem->base,
++				DRAM_FIRMWARE_SIZE + PRIVATE_SIZE, MEMREMAP_WC);
++		if (IS_ERR(area))
++			return PTR_ERR(area);
++		data->dram_base = area;
++		data->dram_base_phys = rmem->base;
++		data->priv_base = area + DRAM_FIRMWARE_SIZE;
++		data->priv_base_phys = rmem->base + DRAM_FIRMWARE_SIZE;
++	}
++	memset(data->dram_base, 0, DRAM_FIRMWARE_SIZE + PRIVATE_SIZE);
++	dev_info(dev, "%s(%pa) is mapped on %p with size of %d\n",
+ 			"dram firmware", &data->dram_base_phys, data->dram_base,
+ 			DRAM_FIRMWARE_SIZE);
+ 	abox_iommu_map(dev, IOVA_DRAM_FIRMWARE, data->dram_base_phys,
+ 			DRAM_FIRMWARE_SIZE, data->dram_base);
+-
+-	data->priv_base = dmam_alloc_coherent(dev, PRIVATE_SIZE,
+-			&data->priv_base_phys, GFP_KERNEL);
+-	if (!data->priv_base) {
+-		dev_err(dev, "%s: no memory\n", "private");
+-		return -ENOMEM;
+-	}
+ 	dev_info(dev, "%s: %pa(%#x) => %p\n", "private",
+ 			&data->priv_base_phys, PRIVATE_SIZE, data->priv_base);
+ 	iommu_map(data->iommu_domain, IOVA_PRIVATE, data->priv_base_phys,
+-			PRIVATE_SIZE, 0);
++			PRIVATE_SIZE, IOMMU_READ | IOMMU_WRITE, GFP_KERNEL);
+ 
++#if IS_ENABLED(CONFIG_SND_SOC_SAMSUNG_ABOX_VSS)
+ 	paddr = shm_get_vss_base();
+ 	dev_info(&pdev->dev, "%s(%pa) is mapped on %p with size of %d\n",
+ 			"vss firmware", &paddr, phys_to_virt(paddr),
+@@ -6227,9 +6027,9 @@ static int samsung_abox_probe(struct platform_device *pdev)
+ 	dev_info(dev, "%s(%#x) alloc\n", "vss parameter",
+ 			shm_get_vparam_size());
+ 	abox_iommu_map(dev, IOVA_VSS_PARAMETER, paddr, shm_get_vparam_size(), 0);
++#endif
+ 
+ 	abox_iommu_map(dev, 0x10000000, 0x10000000, PAGE_SIZE, 0);
+-	iovmm_set_fault_handler(&pdev->dev, abox_iommu_fault_handler, data);
+ 
+ 	data->clk_pll = devm_clk_get_and_prepare(pdev, "pll");
+ 	if (IS_ERR(data->clk_pll))
+@@ -6327,29 +6127,18 @@ static int samsung_abox_probe(struct platform_device *pdev)
+ #ifdef EMULATOR
+ 	pmu_alive = ioremap(0x16480000, 0x10000);
+ #endif
+-	pm_qos_add_request(&abox_pm_qos_aud, PM_QOS_AUD_THROUGHPUT, 0);
+-	pm_qos_add_request(&abox_pm_qos_int, PM_QOS_DEVICE_THROUGHPUT, 0);
+-	pm_qos_add_request(&abox_pm_qos_mif, PM_QOS_BUS_THROUGHPUT, 0);
+-	pm_qos_add_request(&abox_pm_qos_lit, PM_QOS_CLUSTER0_FREQ_MIN, 0);
+-	pm_qos_add_request(&abox_pm_qos_big, PM_QOS_CLUSTER1_FREQ_MIN, 0);
++	abox_qos_add(&abox_pm_qos_aud, ABOX_QOS_AUD, 0);
++	abox_qos_add(&abox_pm_qos_int, ABOX_QOS_INT, 0);
++	abox_qos_add(&abox_pm_qos_mif, ABOX_QOS_MIF, 0);
++	abox_qos_add(&abox_pm_qos_lit, ABOX_QOS_LIT, 0);
++	abox_qos_add(&abox_pm_qos_big, ABOX_QOS_BIG, 0);
+ 
+ 	for (i = 0; i < ABOX_GIC_IRQ_COUNT; i++)
+ 		abox_gic_register_irq_handler(data->dev_gic, i,
+ 				abox_irq_handler, pdev);
+ 
+-	if (IS_ENABLED(CONFIG_SOC_EXYNOS8895)) {
+-		abox_regmap_config.reg_defaults = abox_reg_defaults_8895;
+-		abox_regmap_config.num_reg_defaults =
+-				ARRAY_SIZE(abox_reg_defaults_8895);
+-	} else if (IS_ENABLED(CONFIG_SOC_EXYNOS9810)) {
+-		abox_regmap_config.reg_defaults = abox_reg_defaults_9810;
+-		abox_regmap_config.num_reg_defaults =
+-				ARRAY_SIZE(abox_reg_defaults_9810);
+-	} else if (IS_ENABLED(CONFIG_SOC_EXYNOS9610)) {
+-		abox_regmap_config.reg_defaults = abox_reg_defaults_9610;
+-		abox_regmap_config.num_reg_defaults =
+-				ARRAY_SIZE(abox_reg_defaults_9610);
+-	}
++	abox_regmap_config.reg_defaults = abox_reg_defaults_9610;
++	abox_regmap_config.num_reg_defaults = ARRAY_SIZE(abox_reg_defaults_9610);
+ 	data->regmap = devm_regmap_init_mmio(dev,
+ 			data->sfr_base,
+ 			&abox_regmap_config);
+@@ -6359,14 +6148,14 @@ static int samsung_abox_probe(struct platform_device *pdev)
+ 	pm_runtime_use_autosuspend(dev);
+ 	pm_runtime_get(dev);
+ 
+-	data->qos_nb.notifier_call = abox_qos_notifier;
+-	pm_qos_add_notifier(PM_QOS_AUD_THROUGHPUT, &data->qos_nb);
+ 
+ 	data->pm_nb.notifier_call = abox_pm_notifier;
+ 	register_pm_notifier(&data->pm_nb);
+ 
++#if IS_ENABLED(CONFIG_SND_SOC_SAMSUNG_ABOX_VSS)
+ 	data->modem_nb.notifier_call = abox_modem_notifier;
+ 	register_modem_event_notifier(&data->modem_nb);
++#endif
+ 
+ #ifdef CONFIG_EXYNOS_ITMON
+ 	data->itmon_nb.notifier_call = abox_itmon_notifier;
+@@ -6375,8 +6164,8 @@ static int samsung_abox_probe(struct platform_device *pdev)
+ 
+ 	abox_failsafe_init(dev);
+ 
+-	wakeup_source_init(&data->ws, "abox");
+-	wakeup_source_init(&data->ws_boot, "abox_boot");
++	data->ws = wakeup_source_register(dev, "abox");
++	data->ws_boot = wakeup_source_register(dev, "abox_boot");
+ 
+ 	ret = device_create_file(dev, &dev_attr_calliope_version);
+ 	if (ret < 0)
+@@ -6405,7 +6194,7 @@ static int samsung_abox_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int samsung_abox_remove(struct platform_device *pdev)
++static void samsung_abox_remove(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct abox_data *data = platform_get_drvdata(pdev);
+@@ -6418,20 +6207,18 @@ static int samsung_abox_remove(struct platform_device *pdev)
+ #endif
+ 	device_init_wakeup(dev, false);
+ 	destroy_workqueue(data->ipc_workqueue);
+-	pm_qos_remove_request(&abox_pm_qos_aud);
+-	pm_qos_remove_request(&abox_pm_qos_int);
+-	pm_qos_remove_request(&abox_pm_qos_mif);
+-	pm_qos_remove_request(&abox_pm_qos_lit);
+-	pm_qos_remove_request(&abox_pm_qos_big);
++	abox_qos_remove(&abox_pm_qos_aud);
++	abox_qos_remove(&abox_pm_qos_int);
++	abox_qos_remove(&abox_pm_qos_mif);
++	abox_qos_remove(&abox_pm_qos_lit);
++	abox_qos_remove(&abox_pm_qos_big);
+ 	snd_soc_unregister_component(dev);
+ 	abox_iommu_unmap(dev, IOVA_DRAM_FIRMWARE);
+ #ifdef EMULATOR
+ 	iounmap(pmu_alive);
+ #endif
+-	wakeup_source_trash(&data->ws);
+-	wakeup_source_trash(&data->ws_boot);
+-
+-	return 0;
++	wakeup_source_unregister(data->ws);
++	wakeup_source_unregister(data->ws_boot);
+ }
+ 
+ static void samsung_abox_shutdown(struct platform_device *pdev)
+diff --git a/sound/soc/samsung/abox/abox.h b/sound/soc/samsung/abox/abox.h
+index 11b157baf..e89b713a2 100644
+--- a/sound/soc/samsung/abox/abox.h
++++ b/sound/soc/samsung/abox/abox.h
+@@ -14,7 +14,6 @@
+ 
+ #include <linux/pm_wakeup.h>
+ #include <linux/dma-buf.h>
+-#include <linux/dma-buf-container.h>
+ #include <sound/samsung/abox.h>
+ 
+ #define ABOX_MASK(name) (GENMASK(ABOX_##name##_H, ABOX_##name##_L))
+@@ -687,10 +686,9 @@ struct abox_data {
+ 	unsigned long long audio_mode_time;
+ 	enum audio_mode audio_mode;
+ 	enum sound_type sound_type;
+-	struct ion_client *client;
+ 	atomic_t suspend_state;
+-	struct wakeup_source ws;
+-	struct wakeup_source ws_boot;
++	struct wakeup_source *ws;
++	struct wakeup_source *ws_boot;
+ };
+ 
+ struct abox_compr_data {
+diff --git a/sound/soc/samsung/abox/abox_bt.c b/sound/soc/samsung/abox/abox_bt.c
+index d5638976a..e52365431 100644
+--- a/sound/soc/samsung/abox/abox_bt.c
++++ b/sound/soc/samsung/abox/abox_bt.c
+@@ -193,15 +193,13 @@ static int samsung_abox_bt_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static int samsung_abox_bt_remove(struct platform_device *pdev)
++static void samsung_abox_bt_remove(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 
+ 	dev_dbg(dev, "%s\n", __func__);
+ 
+ 	scsc_bt_audio_unregister(dev);
+-
+-	return 0;
+ }
+ 
+ static const struct of_device_id samsung_abox_bt_match[] = {
+diff --git a/sound/soc/samsung/abox/abox_bt.h b/sound/soc/samsung/abox/abox_bt.h
+index 573c95c5f..e29beea8f 100644
+--- a/sound/soc/samsung/abox/abox_bt.h
++++ b/sound/soc/samsung/abox/abox_bt.h
+@@ -28,6 +28,7 @@ struct abox_bt_data {
+ 	bool active[BT_SCO_COUNT];
+ };
+ 
++#if IS_ENABLED(CONFIG_SND_SOC_SAMSUNG_ABOX_BT)
+ /**
+  * Get rate of bluetooth audio interface
+  * @param[in]	dev	pointer to abox_bt device
+@@ -50,5 +51,10 @@ extern unsigned int abox_bt_get_buf_iova(struct device *dev, int stream);
+  * @return	true or false
+  */
+ extern bool abox_bt_active(struct device *dev, int stream);
++#else
++static inline unsigned int abox_bt_get_rate(struct device *dev) { return 0; }
++static inline unsigned int abox_bt_get_buf_iova(struct device *dev, int stream) { return 0; }
++static inline bool abox_bt_active(struct device *dev, int stream) { return false; }
++#endif
+ 
+ #endif /* __SND_SOC_ABOX_BT_H */
+diff --git a/sound/soc/samsung/abox/abox_dbg.c b/sound/soc/samsung/abox/abox_dbg.c
+index d6de145b1..56f432938 100644
+--- a/sound/soc/samsung/abox/abox_dbg.c
++++ b/sound/soc/samsung/abox/abox_dbg.c
+@@ -118,11 +118,11 @@ static int __init abox_rmem_setup(struct reserved_mem *rmem)
+ {
+ 	pr_info("%s: base=%pa, size=%pa\n", __func__, &rmem->base, &rmem->size);
+ 
++	/*
++	 * 6.18: the region is no-map, so it is not in the linear map;
++	 * it is memremap()ed at probe time instead of phys_to_virt().
++	 */
+ 	abox_rmem = rmem;
+-	if (sizeof(*p_abox_dbg_dump) <= abox_rmem->size)
+-		p_abox_dbg_dump = phys_to_virt(abox_rmem->base);
+-	else if (sizeof(*p_abox_dbg_dump_min) <= abox_rmem->size)
+-		p_abox_dbg_dump_min = phys_to_virt(abox_rmem->base);
+ 
+ 	return 0;
+ }
+@@ -303,17 +303,8 @@ void abox_dbg_report_status(struct device *dev, bool ok)
+ 	kobject_uevent_env(&dev->kobj, KOBJ_CHANGE, envp);
+ }
+ 
+-int abox_dbg_get_error_count(struct device *dev)
+-{
+-	int count = atomic_read(&abox_error_count);
+-
+-	dev_dbg(dev, "%s: %d\n", __func__, count);
+-
+-	return count;
+-}
+-
+ static ssize_t calliope_sram_read(struct file *file, struct kobject *kobj,
+-		struct bin_attribute *battr, char *buf,
++		const struct bin_attribute *battr, char *buf,
+ 		loff_t off, size_t size)
+ {
+ 	struct device *dev = kobj_to_dev(kobj);
+@@ -332,7 +323,7 @@ static ssize_t calliope_sram_read(struct file *file, struct kobject *kobj,
+ }
+ 
+ static ssize_t calliope_dram_read(struct file *file, struct kobject *kobj,
+-		struct bin_attribute *battr, char *buf,
++		const struct bin_attribute *battr, char *buf,
+ 		loff_t off, size_t size)
+ {
+ 	struct device *dev = kobj_to_dev(kobj);
+@@ -344,7 +335,7 @@ static ssize_t calliope_dram_read(struct file *file, struct kobject *kobj,
+ }
+ 
+ static ssize_t calliope_priv_read(struct file *file, struct kobject *kobj,
+-		struct bin_attribute *battr, char *buf,
++		const struct bin_attribute *battr, char *buf,
+ 		loff_t off, size_t size)
+ {
+ 	return calliope_dram_read(file, kobj, battr, buf, off, size);
+@@ -406,13 +397,20 @@ static int samsung_abox_debug_probe(struct platform_device *pdev)
+ 	if (abox_rmem == NULL)
+ 		return -ENOMEM;
+ 
++	data->dump_base = devm_memremap(dev, abox_rmem->base, abox_rmem->size,
++			MEMREMAP_WC);
++	if (IS_ERR(data->dump_base))
++		return PTR_ERR(data->dump_base);
++	data->dump_base_phys = abox_rmem->base;
++	if (sizeof(*p_abox_dbg_dump) <= abox_rmem->size)
++		p_abox_dbg_dump = data->dump_base;
++	else if (sizeof(*p_abox_dbg_dump_min) <= abox_rmem->size)
++		p_abox_dbg_dump_min = data->dump_base;
+ 	dev_info(dev, "%s(%pa) is mapped on %p with size of %pa\n",
+-			"dump buffer", &abox_rmem->base,
+-			phys_to_virt(abox_rmem->base), &abox_rmem->size);
++			"dump buffer", &abox_rmem->base, data->dump_base,
++			&abox_rmem->size);
+ 	iommu_map(data->iommu_domain, IOVA_DUMP_BUFFER, abox_rmem->base,
+-			abox_rmem->size, 0);
+-	data->dump_base = phys_to_virt(abox_rmem->base);
+-	data->dump_base_phys = abox_rmem->base;
++			abox_rmem->size, IOMMU_READ | IOMMU_WRITE, GFP_KERNEL);
+ 	ret = device_create_file(dev, &dev_attr_gpr);
+ 	bin_attr_calliope_sram.size = data->sram_size;
+ 	bin_attr_calliope_sram.private = data->sram_base;
+@@ -430,13 +428,11 @@ static int samsung_abox_debug_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static int samsung_abox_debug_remove(struct platform_device *pdev)
++static void samsung_abox_debug_remove(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 
+ 	dev_dbg(dev, "%s\n", __func__);
+-
+-	return 0;
+ }
+ 
+ static const struct of_device_id samsung_abox_debug_match[] = {
+diff --git a/sound/soc/samsung/abox/abox_dump.c b/sound/soc/samsung/abox/abox_dump.c
+index 3f813c129..e3e6edb70 100644
+--- a/sound/soc/samsung/abox/abox_dump.c
++++ b/sound/soc/samsung/abox/abox_dump.c
+@@ -635,14 +635,12 @@ static int samsung_abox_dump_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int samsung_abox_dump_remove(struct platform_device *pdev)
++static void samsung_abox_dump_remove(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	int id = to_platform_device(dev)->id;
+ 
+ 	dev_dbg(dev, "%s[%d]\n", __func__, id);
+-
+-	return 0;
+ }
+ 
+ static const struct platform_device_id samsung_abox_dump_driver_ids[] = {
+diff --git a/sound/soc/samsung/abox/abox_dump.h b/sound/soc/samsung/abox/abox_dump.h
+index 08346b51e..f8d02d683 100644
+--- a/sound/soc/samsung/abox/abox_dump.h
++++ b/sound/soc/samsung/abox/abox_dump.h
+@@ -15,6 +15,7 @@
+ #include <linux/device.h>
+ #include <sound/samsung/abox.h>
+ 
++#if IS_ENABLED(CONFIG_SND_SOC_SAMSUNG_ABOX_DUMP)
+ /**
+  * Report dump data written
+  * @param[in]	id		unique buffer id
+@@ -34,5 +35,13 @@ extern void abox_dump_period_elapsed(int id, size_t pointer);
+  */
+ extern int abox_dump_register_buffer(struct device *dev, int id,
+ 		const char *name, void *area, phys_addr_t addr, size_t bytes);
++#else
++static inline void abox_dump_period_elapsed(int id, size_t pointer) {}
++static inline int abox_dump_register_buffer(struct device *dev, int id,
++		const char *name, void *area, phys_addr_t addr, size_t bytes)
++{
++	return 0;
++}
++#endif
+ 
+ #endif /* __SND_SOC_ABOX_DUMP_H */
+diff --git a/sound/soc/samsung/abox/abox_effect.c b/sound/soc/samsung/abox/abox_effect.c
+index 09c08269d..444026f64 100644
+--- a/sound/soc/samsung/abox/abox_effect.c
++++ b/sound/soc/samsung/abox/abox_effect.c
+@@ -65,7 +65,7 @@ static int abox_ctl_get(struct snd_kcontrol *kcontrol,
+ 
+ 		reg = (unsigned int)(params->base + PARAM_OFFSET +
+ 				(i * sizeof(u32)));
+-		ret = snd_soc_component_read(cmpnt, reg, &val);
++		ret = abox_cmpnt_read(cmpnt, reg, &val);
+ 		if (ret < 0) {
+ 			dev_err(dev, "reading fail at 0x%08X\n", reg);
+ 			break;
+@@ -283,15 +283,13 @@ static int samsung_abox_effect_probe(struct platform_device *pdev)
+ 			0);
+ }
+ 
+-static int samsung_abox_effect_remove(struct platform_device *pdev)
++static void samsung_abox_effect_remove(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 
+ 	dev_dbg(dev, "%s\n", __func__);
+ 
+ 	pm_runtime_disable(dev);
+-
+-	return 0;
+ }
+ 
+ static const struct of_device_id samsung_abox_effect_match[] = {
+diff --git a/sound/soc/samsung/abox/abox_failsafe.c b/sound/soc/samsung/abox/abox_failsafe.c
+index 3abebe59c..09b3b5efd 100644
+--- a/sound/soc/samsung/abox/abox_failsafe.c
++++ b/sound/soc/samsung/abox/abox_failsafe.c
+@@ -20,6 +20,7 @@
+ #include "abox_util.h"
+ #include "abox.h"
+ #include "abox_log.h"
++#include "abox_failsafe.h"
+ 
+ #define SMART_FAILSAFE
+ #define WAKE_LOCK_TIMEOUT_MS (4000)
+diff --git a/sound/soc/samsung/abox/abox_gic.c b/sound/soc/samsung/abox/abox_gic.c
+index d8e1aba0d..eda0f2947 100644
+--- a/sound/soc/samsung/abox/abox_gic.c
++++ b/sound/soc/samsung/abox/abox_gic.c
+@@ -36,8 +36,8 @@ void abox_gic_generate_interrupt(struct device *dev, unsigned int irq)
+ 			data->gicd_base + GIC_DIST_SOFTINT);
+ #else
+ 	dev_dbg(dev, "exynos_smc() is called\n");
+-	exynos_smc(SMC_CMD_REG,
+-			SMC_REG_ID_SFR_W(0x13EF1000 + GIC_DIST_SOFTINT),
++	abox_smc(ABOX_SMC_CMD_REG,
++			ABOX_SMC_REG_ID_SFR_W(0x13EF1000 + GIC_DIST_SOFTINT),
+ 			(0x1 << 16) | (hw_irq & 0xF), 0);
+ #endif
+ }
+@@ -162,26 +162,26 @@ void abox_gic_init_gic(struct device *dev)
+ 	writel(0x000000FF, data->gicc_base + GIC_CPU_PRIMASK);
+ 	writel(0x3, data->gicd_base + GIC_DIST_CTRL);
+ #else
+-	arg = SMC_REG_ID_SFR_W(data->gicc_base_phys + GIC_CPU_PRIMASK);
+-	ret = exynos_smc(SMC_CMD_REG, arg, 0x000000FF, 0);
++	arg = ABOX_SMC_REG_ID_SFR_W(data->gicc_base_phys + GIC_CPU_PRIMASK);
++	ret = abox_smc(ABOX_SMC_CMD_REG, arg, 0x000000FF, 0);
+ 
+-	arg = SMC_REG_ID_SFR_W(data->gicd_base_phys + GIC_DIST_CTRL);
+-	ret = exynos_smc(SMC_CMD_REG, arg, 0x3, 0);
++	arg = ABOX_SMC_REG_ID_SFR_W(data->gicd_base_phys + GIC_DIST_CTRL);
++	ret = abox_smc(ABOX_SMC_CMD_REG, arg, 0x3, 0);
+ #endif
+ 	if (is_secure_gic()) {
+ 		for (i = 0; i < 1; i++) {
+-			arg = SMC_REG_ID_SFR_W(data->gicd_base_phys +
++			arg = ABOX_SMC_REG_ID_SFR_W(data->gicd_base_phys +
+ 					GIC_DIST_IGROUP + (i * 4));
+-			ret = exynos_smc(SMC_CMD_REG, arg, 0xFFFFFFFF, 0);
++			ret = abox_smc(ABOX_SMC_CMD_REG, arg, 0xFFFFFFFF, 0);
+ 		}
+ 	}
+ 	for (i = 0; i < 40; i++) {
+ #ifdef GIC_IS_SECURE_FREE
+ 		writel(0x10101010, data->gicd_base + GIC_DIST_PRI + (i * 4));
+ #else
+-		arg = SMC_REG_ID_SFR_W(data->gicd_base_phys +
++		arg = ABOX_SMC_REG_ID_SFR_W(data->gicd_base_phys +
+ 				GIC_DIST_PRI + (i * 4));
+-		ret = exynos_smc(SMC_CMD_REG, arg, 0x10101010, 0);
++		ret = abox_smc(ABOX_SMC_CMD_REG, arg, 0x10101010, 0);
+ #endif
+ 	}
+ 
+@@ -265,11 +265,9 @@ static int samsung_abox_gic_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int samsung_abox_gic_remove(struct platform_device *pdev)
++static void samsung_abox_gic_remove(struct platform_device *pdev)
+ {
+ 	dev_info(&pdev->dev, "%s\n", __func__);
+-
+-	return 0;
+ }
+ 
+ static const struct of_device_id samsung_abox_gic_of_match[] = {
+diff --git a/sound/soc/samsung/abox/abox_if.c b/sound/soc/samsung/abox/abox_if.c
+index 3cd4e40be..bbd0668f6 100644
+--- a/sound/soc/samsung/abox/abox_if.c
++++ b/sound/soc/samsung/abox/abox_if.c
+@@ -125,7 +125,7 @@ static int abox_dsif_set_bclk_ratio(struct snd_soc_dai *dai, unsigned int ratio)
+ 
+ 	dev_info(dev, "%s\n", __func__);
+ 
+-	rate = dai->rate;
++	rate = dai->symmetric_rate;
+ 
+ 	ret = abox_register_bclk_usage(dev, abox_data, dai->id, rate, 1, ratio);
+ 	if (ret < 0)
+@@ -154,7 +154,7 @@ static int abox_dsif_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+ 
+ 	pm_runtime_get_sync(dev);
+ 
+-	snd_soc_component_read(cmpnt, ABOX_DSIF_CTRL, &ctrl);
++	abox_cmpnt_read(cmpnt, ABOX_DSIF_CTRL, &ctrl);
+ 
+ 	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
+ 	case SND_SOC_DAIFMT_PDM:
+@@ -176,8 +176,8 @@ static int abox_dsif_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+ 		ret = -EINVAL;
+ 	}
+ 
+-	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
+-	case SND_SOC_DAIFMT_CBS_CFS:
++	switch (fmt & SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK) {
++	case SND_SOC_DAIFMT_CBC_CFC:
+ 		break;
+ 	default:
+ 		ret = -EINVAL;
+@@ -192,8 +192,8 @@ static int abox_dsif_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+ }
+ 
+ static int abox_dsif_set_channel_map(struct snd_soc_dai *dai,
+-		unsigned int tx_num, unsigned int *tx_slot,
+-		unsigned int rx_num, unsigned int *rx_slot)
++		unsigned int tx_num, const unsigned int *tx_slot,
++		unsigned int rx_num, const unsigned int *rx_slot)
+ {
+ 	struct device *dev = dai->dev;
+ 	struct abox_if_data *data = snd_soc_dai_get_drvdata(dai);
+@@ -289,8 +289,8 @@ static int abox_uaif_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+ 
+ 	pm_runtime_get_sync(dev);
+ 
+-	snd_soc_component_read(cmpnt, ABOX_UAIF_CTRL0(id), &ctrl0);
+-	snd_soc_component_read(cmpnt, ABOX_UAIF_CTRL1(id), &ctrl1);
++	abox_cmpnt_read(cmpnt, ABOX_UAIF_CTRL0(id), &ctrl0);
++	abox_cmpnt_read(cmpnt, ABOX_UAIF_CTRL1(id), &ctrl1);
+ 
+ 	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
+ 	case SND_SOC_DAIFMT_I2S:
+@@ -324,11 +324,11 @@ static int abox_uaif_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+ 		ret = -EINVAL;
+ 	}
+ 
+-	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
+-	case SND_SOC_DAIFMT_CBM_CFM:
++	switch (fmt & SND_SOC_DAIFMT_CLOCK_PROVIDER_MASK) {
++	case SND_SOC_DAIFMT_CBP_CFP:
+ 		set_value_by_name(ctrl0, ABOX_MODE, 0);
+ 		break;
+-	case SND_SOC_DAIFMT_CBS_CFS:
++	case SND_SOC_DAIFMT_CBC_CFC:
+ 		set_value_by_name(ctrl0, ABOX_MODE, 1);
+ 		break;
+ 	default:
+@@ -433,7 +433,7 @@ static int abox_uaif_hw_params(struct snd_pcm_substream *substream,
+ 	dev_info(dev, "rate=%u, width=%d, channel=%u, bclk=%lu\n",
+ 			rate, width, channels, clk_get_rate(data->clk_bclk));
+ 
+-	ret = snd_soc_component_read(cmpnt, ABOX_UAIF_CTRL1(id), &ctrl1);
++	ret = abox_cmpnt_read(cmpnt, ABOX_UAIF_CTRL1(id), &ctrl1);
+ 	if (ret < 0)
+ 		dev_err(dev, "sfr access failed: %d\n", ret);
+ 
+@@ -622,9 +622,9 @@ static struct snd_soc_dai_driver abox_uaif_dai_drv = {
+ 		.formats = ABOX_SAMPLE_FORMATS,
+ 	},
+ 	.ops = &abox_uaif_dai_ops,
+-	.symmetric_rates = 1,
++	.symmetric_rate = 1,
+ 	.symmetric_channels = 1,
+-	.symmetric_samplebits = 1,
++	.symmetric_sample_bits = 1,
+ };
+ 
+ static int abox_if_config_get(struct snd_kcontrol *kcontrol,
+@@ -717,44 +717,44 @@ static const struct snd_soc_component_driver abox_if_cmpnt = {
+ 	.remove			= abox_if_cmpnt_remove,
+ };
+ 
+-enum abox_dai abox_spdy_get_dai_id(int id)
++static enum abox_dai abox_spdy_get_dai_id(int id)
+ {
+ 	return ABOX_SPDY;
+ }
+ 
+-const char *abox_spdy_get_dai_name(int id)
++static const char *abox_spdy_get_dai_name(int id)
+ {
+ 	return "SPDY";
+ }
+ 
+-const char *abox_spdy_get_str_name(int id, int stream)
++static const char *abox_spdy_get_str_name(int id, int stream)
+ {
+ 	return (stream == SNDRV_PCM_STREAM_PLAYBACK) ?
+ 			"SPDY Playback" : "SPDY Capture";
+ }
+ 
+-enum abox_dai abox_dsif_get_dai_id(int id)
++static enum abox_dai abox_dsif_get_dai_id(int id)
+ {
+ 	return ABOX_DSIF;
+ }
+ 
+-const char *abox_dsif_get_dai_name(int id)
++static const char *abox_dsif_get_dai_name(int id)
+ {
+ 	return "DSIF";
+ }
+ 
+-const char *abox_dsif_get_str_name(int id, int stream)
++static const char *abox_dsif_get_str_name(int id, int stream)
+ {
+ 	return (stream == SNDRV_PCM_STREAM_PLAYBACK) ?
+ 			"DSIF Playback" : "DSIF Capture";
+ }
+ 
+-enum abox_dai abox_uaif_get_dai_id(int id)
++static enum abox_dai abox_uaif_get_dai_id(int id)
+ {
+ 	return ABOX_UAIF0 + id;
+ }
+ 
+-const char *abox_uaif_get_dai_name(int id)
++static const char *abox_uaif_get_dai_name(int id)
+ {
+ 	static const char * const names[] = {
+ 		"UAIF0", "UAIF1", "UAIF2", "UAIF3", "UAIF4",
+@@ -764,7 +764,7 @@ const char *abox_uaif_get_dai_name(int id)
+ 	return (id < ARRAY_SIZE(names)) ? names[id] : ERR_PTR(-EINVAL);
+ }
+ 
+-const char *abox_uaif_get_str_name(int id, int stream)
++static const char *abox_uaif_get_str_name(int id, int stream)
+ {
+ 	static const char * const names_pla[] = {
+ 		"UAIF0 Playback", "UAIF1 Playback", "UAIF2 Playback",
+@@ -887,13 +887,11 @@ static int samsung_abox_if_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static int samsung_abox_if_remove(struct platform_device *pdev)
++static void samsung_abox_if_remove(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 
+ 	dev_dbg(dev, "%s\n", __func__);
+-
+-	return 0;
+ }
+ 
+ static struct platform_driver samsung_abox_if_driver = {
+@@ -981,7 +979,7 @@ int abox_if_hw_params_fixup_by_dai(struct snd_soc_dai *dai,
+ int abox_if_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
+ 		struct snd_pcm_hw_params *params, int stream)
+ {
+-	struct snd_soc_dai *dai = rtd->cpu_dai;
++	struct snd_soc_dai *dai = snd_soc_rtd_to_cpu(rtd, 0);
+ 
+ 	return abox_if_hw_params_fixup_by_dai(dai, params, stream);
+ }
+diff --git a/sound/soc/samsung/abox/abox_log.c b/sound/soc/samsung/abox/abox_log.c
+index 612bc7d4f..2ee322c7d 100644
+--- a/sound/soc/samsung/abox/abox_log.c
++++ b/sound/soc/samsung/abox/abox_log.c
+@@ -79,56 +79,14 @@ static void abox_log_memcpy(struct device *dev,
+ 	kernel_buffer->index += (unsigned int)size;
+ }
+ 
+-static void abox_log_file_name(struct device *dev,
+-		struct abox_log_buffer_info *info, char *name, size_t size)
+-{
+-	snprintf(name, size, "/data/calliope-%02d.log", info->id);
+-}
+-
++/*
++ * 6.18: the 4.14 driver also copied the DSP log to /data/calliope-NN.log
++ * from the kernel (set_fs/filp_open). Kernel file writes are gone; the log
++ * stays readable through debugfs (abox/log-NN).
++ */
+ static void abox_log_file_save(struct device *dev,
+ 		struct abox_log_buffer_info *info)
+ {
+-	struct ABOX_LOG_BUFFER *log_buffer = info->log_buffer;
+-	unsigned int index_writer = log_buffer->index_writer;
+-	char name[32];
+-	struct file *filp;
+-	mm_segment_t old_fs;
+-
+-	dev_dbg(dev, "%s(%d)\n", __func__, info->id);
+-
+-	abox_log_file_name(dev, info, name, sizeof(name));
+-
+-	old_fs = get_fs();
+-	set_fs(KERNEL_DS);
+-	if (likely(info->file_created)) {
+-		filp = filp_open(name, O_RDWR | O_APPEND | O_CREAT, S_IRWUG);
+-		dev_dbg(dev, "appended\n");
+-	} else {
+-		filp = filp_open(name, O_RDWR | O_TRUNC | O_CREAT, S_IRWUG);
+-		info->file_created = true;
+-		dev_dbg(dev, "created\n");
+-	}
+-	if (IS_ERR(filp)) {
+-		dev_warn(dev, "%s: saving log fail\n", __func__);
+-		goto out;
+-	}
+-
+-
+-	if (log_buffer->index_reader > index_writer) {
+-		vfs_write(filp, log_buffer->buffer + log_buffer->index_reader,
+-			log_buffer->size - log_buffer->index_reader,
+-			&filp->f_pos);
+-		vfs_write(filp, log_buffer->buffer, index_writer, &filp->f_pos);
+-	} else {
+-		vfs_write(filp, log_buffer->buffer + log_buffer->index_reader,
+-			index_writer - log_buffer->index_reader, &filp->f_pos);
+-	}
+-
+-	vfs_fsync(filp, 0);
+-	filp_close(filp, NULL);
+-out:
+-	set_fs(old_fs);
+-
+ }
+ 
+ static void abox_log_flush(struct device *dev,
+@@ -324,7 +282,7 @@ static const struct file_operations abox_log_fops = {
+ 
+ static struct abox_log_buffer_info abox_log_buffer_info_new;
+ 
+-void abox_log_register_buffer_work_func(struct work_struct *work)
++static void abox_log_register_buffer_work_func(struct work_struct *work)
+ {
+ 	struct device *dev;
+ 	int id;
+diff --git a/sound/soc/samsung/abox/abox_mmapfd.h b/sound/soc/samsung/abox/abox_mmapfd.h
+index c665612b2..01b4abed3 100644
+--- a/sound/soc/samsung/abox/abox_mmapfd.h
++++ b/sound/soc/samsung/abox/abox_mmapfd.h
+@@ -16,6 +16,9 @@
+ 
+ #define BUFFER_ION_BYTES_MAX		(SZ_512K)
+ 
++struct snd_pcm_mmap_fd;
++
++#if IS_ENABLED(CONFIG_SND_SOC_SAMSUNG_ABOX_MMAPFD)
+ extern int abox_mmap_fd(struct abox_platform_data *data,
+ 		struct snd_pcm_mmap_fd *mmap_fd);
+ 
+@@ -26,4 +29,22 @@ extern int abox_ion_alloc(struct abox_platform_data *data,
+ 		size_t align);
+ 
+ extern int abox_ion_free(struct abox_platform_data *data);
++#else
++static inline int abox_mmap_fd(struct abox_platform_data *data,
++		struct snd_pcm_mmap_fd *mmap_fd)
++{
++	return -ENOTTY;
++}
++static inline int abox_ion_alloc(struct abox_platform_data *data,
++		struct abox_ion_buf *buf, unsigned long iova, size_t size,
++		size_t align)
++{
++	return -ENODEV;
++}
++static inline int abox_ion_free(struct abox_platform_data *data)
++{
++	return 0;
++}
++#endif
++
+ #endif
+diff --git a/sound/soc/samsung/abox/abox_rdma.c b/sound/soc/samsung/abox/abox_rdma.c
+index 382b53fb4..9f8c5038a 100644
+--- a/sound/soc/samsung/abox/abox_rdma.c
++++ b/sound/soc/samsung/abox/abox_rdma.c
+@@ -15,6 +15,7 @@
+ #include <linux/of.h>
+ #include <linux/of_gpio.h>
+ #include <linux/of_platform.h>
++#include <linux/compat.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/firmware.h>
+@@ -30,7 +31,6 @@
+ #include <sound/tlv.h>
+ #include <sound/sounddev_abox.h>
+ 
+-#include "../../../../drivers/iommu/exynos-iommu.h"
+ #include <sound/samsung/abox.h>
+ #include "abox_util.h"
+ #include "abox_gic.h"
+@@ -245,7 +245,7 @@ static int abox_rdma_mailbox_send_cmd(struct device *dev, unsigned int cmd)
+ 	struct abox_platform_data *platform_data = dev_get_drvdata(dev);
+ 	struct device *dev_abox = &platform_data->pdev_abox->dev;
+ 	struct abox_compr_data *data = &platform_data->compr_data;
+-	ABOX_IPC_MSG ipc;
++	ABOX_IPC_MSG ipc = {};
+ 	int ret, n, ack;
+ 
+ 	dev_dbg(dev, "%s(%x)\n", __func__, cmd);
+@@ -562,11 +562,11 @@ static int abox_rdma_compr_set_param(struct platform_device *pdev,
+ 	return ret;
+ }
+ 
+-static int abox_rdma_compr_open(struct snd_compr_stream *stream)
++static int abox_rdma_compr_open(struct snd_soc_component *cmpnt,
++		struct snd_compr_stream *stream)
+ {
+ 	struct snd_soc_pcm_runtime *rtd = stream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *platform_data = dev_get_drvdata(dev);
+ 	struct abox_compr_data *data = &platform_data->compr_data;
+ 	struct abox_data *abox_data = platform_data->abox_data;
+@@ -587,17 +587,17 @@ static int abox_rdma_compr_open(struct snd_compr_stream *stream)
+ 	data->created = false;
+ 
+ 	pm_runtime_get_sync(dev);
+-	abox_request_cpu_gear_dai(dev, abox_data, rtd->cpu_dai,
++	abox_request_cpu_gear_dai(dev, abox_data, snd_soc_rtd_to_cpu(rtd, 0),
+ 			abox_data->cpu_gear_min);
+ 
+ 	return 0;
+ }
+ 
+-static int abox_rdma_compr_free(struct snd_compr_stream *stream)
++static int abox_rdma_compr_free(struct snd_soc_component *cmpnt,
++		struct snd_compr_stream *stream)
+ {
+ 	struct snd_soc_pcm_runtime *rtd = stream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *platform_data = dev_get_drvdata(dev);
+ 	struct abox_compr_data *data = &platform_data->compr_data;
+ 	struct abox_data *abox_data = platform_data->abox_data;
+@@ -650,7 +650,7 @@ static int abox_rdma_compr_free(struct snd_compr_stream *stream)
+ }
+ #endif
+ 
+-	abox_request_cpu_gear_dai(dev, abox_data, rtd->cpu_dai,
++	abox_request_cpu_gear_dai(dev, abox_data, snd_soc_rtd_to_cpu(rtd, 0),
+ 			ABOX_CPU_GEAR_MIN);
+ 	pm_runtime_mark_last_busy(dev);
+ 	pm_runtime_put(dev);
+@@ -658,13 +658,12 @@ static int abox_rdma_compr_free(struct snd_compr_stream *stream)
+ 	return ret;
+ }
+ 
+-static int abox_rdma_compr_set_params(struct snd_compr_stream *stream,
++static int abox_rdma_compr_set_params(struct snd_soc_component *cmpnt,
++		struct snd_compr_stream *stream,
+ 			    struct snd_compr_params *params)
+ {
+ 	struct snd_compr_runtime *runtime = stream->runtime;
+-	struct snd_soc_pcm_runtime *rtd = stream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct abox_platform_data *platform_data = dev_get_drvdata(dev);
+ 	struct abox_compr_data *data = &platform_data->compr_data;
+@@ -716,12 +715,11 @@ static int abox_rdma_compr_set_params(struct snd_compr_stream *stream,
+ 	return 0;
+ }
+ 
+-static int abox_rdma_compr_set_metadata(struct snd_compr_stream *stream,
++static int abox_rdma_compr_set_metadata(struct snd_soc_component *cmpnt,
++		struct snd_compr_stream *stream,
+ 			      struct snd_compr_metadata *metadata)
+ {
+-	struct snd_soc_pcm_runtime *rtd = stream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *platform_data = dev_get_drvdata(dev);
+ 	int id = platform_data->id;
+ 
+@@ -740,11 +738,10 @@ static int abox_rdma_compr_set_metadata(struct snd_compr_stream *stream,
+ 	return 0;
+ }
+ 
+-static int abox_rdma_compr_trigger(struct snd_compr_stream *stream, int cmd)
++static int abox_rdma_compr_trigger(struct snd_soc_component *cmpnt,
++		struct snd_compr_stream *stream, int cmd)
+ {
+-	struct snd_soc_pcm_runtime *rtd = stream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *platform_data = dev_get_drvdata(dev);
+ 	struct abox_compr_data *data = &platform_data->compr_data;
+ 	int id = platform_data->id;
+@@ -842,12 +839,11 @@ static int abox_rdma_compr_trigger(struct snd_compr_stream *stream, int cmd)
+ 	return 0;
+ }
+ 
+-static int abox_rdma_compr_pointer(struct snd_compr_stream *stream,
+-			 struct snd_compr_tstamp *tstamp)
++static int abox_rdma_compr_pointer(struct snd_soc_component *cmpnt,
++		struct snd_compr_stream *stream,
++			 struct snd_compr_tstamp64 *tstamp)
+ {
+-	struct snd_soc_pcm_runtime *rtd = stream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *platform_data = dev_get_drvdata(dev);
+ 	struct abox_compr_data *data = &platform_data->compr_data;
+ 	int id = platform_data->id;
+@@ -870,7 +866,7 @@ static int abox_rdma_compr_pointer(struct snd_compr_stream *stream,
+ 
+ 	if (pcm_size) {
+ 		tstamp->pcm_io_frames = pcm_size / (2 * num_channel);
+-		dev_dbg(dev, "%s: pcm_size(%u), frame_count(%u), copied_total(%u)\n",
++		dev_dbg(dev, "%s: pcm_size(%u), frame_count(%llu), copied_total(%llu)\n",
+ 				__func__, pcm_size, tstamp->pcm_io_frames,
+ 				tstamp->copied_total);
+ 
+@@ -879,29 +875,27 @@ static int abox_rdma_compr_pointer(struct snd_compr_stream *stream,
+ 	return 0;
+ }
+ 
+-static int abox_rdma_compr_mmap(struct snd_compr_stream *stream,
++static int abox_rdma_compr_mmap(struct snd_soc_component *cmpnt,
++		struct snd_compr_stream *stream,
+ 		struct vm_area_struct *vma)
+ {
+-	struct snd_soc_pcm_runtime *rtd = stream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *platform_data = dev_get_drvdata(dev);
+ 	int id = platform_data->id;
+ 	struct snd_compr_runtime *runtime = stream->runtime;
+ 
+ 	dev_info(dev, "%s[%d]\n", __func__, id);
+ 
+-	return dma_mmap_writecombine(dev, vma,
++	return dma_mmap_wc(dev, vma,
+ 			runtime->buffer,
+ 			virt_to_phys(runtime->buffer),
+ 			runtime->buffer_size);
+ }
+ 
+-static int abox_rdma_compr_ack(struct snd_compr_stream *stream, size_t bytes)
++static int abox_rdma_compr_ack(struct snd_soc_component *cmpnt,
++		struct snd_compr_stream *stream, size_t bytes)
+ {
+-	struct snd_soc_pcm_runtime *rtd = stream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *platform_data = dev_get_drvdata(dev);
+ 	struct abox_compr_data *data = &platform_data->compr_data;
+ 	int id = platform_data->id;
+@@ -918,7 +912,8 @@ static int abox_rdma_compr_ack(struct snd_compr_stream *stream, size_t bytes)
+ }
+ 
+ #ifdef COMPR_USE_COPY
+-static int abox_compr_write_data(struct snd_compr_stream *stream,
++static int abox_compr_write_data(struct snd_soc_component *cmpnt,
++		struct snd_compr_stream *stream,
+ 	       const char __user *buf, size_t count)
+ {
+ 	void *dstn;
+@@ -944,32 +939,30 @@ static int abox_compr_write_data(struct snd_compr_stream *stream,
+ 		if (copy_from_user(runtime->buffer, buf + copy, count - copy))
+ 			return -EFAULT;
+ 	}
+-	abox_rdma_compr_ack(stream, count);
++	abox_rdma_compr_ack(cmpnt, stream, count);
+ 
+ 	return count;
+ }
+ 
+-static int abox_rdma_compr_copy(struct snd_compr_stream *stream,
++static int abox_rdma_compr_copy(struct snd_soc_component *cmpnt,
++		struct snd_compr_stream *stream,
+ 		char __user *buf, size_t count)
+ {
+-	struct snd_soc_pcm_runtime *rtd = stream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *platform_data = dev_get_drvdata(dev);
+ 	int id = platform_data->id;
+ 
+ 	dev_dbg(dev, "%s[%d]\n", __func__, id);
+ 
+-	return abox_compr_write_data(stream, buf, count);
++	return abox_compr_write_data(cmpnt, stream, buf, count);
+ }
+ #endif
+ 
+-static int abox_rdma_compr_get_caps(struct snd_compr_stream *stream,
++static int abox_rdma_compr_get_caps(struct snd_soc_component *cmpnt,
++		struct snd_compr_stream *stream,
+ 		struct snd_compr_caps *caps)
+ {
+-	struct snd_soc_pcm_runtime *rtd = stream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *platform_data = dev_get_drvdata(dev);
+ 	int id = platform_data->id;
+ 
+@@ -980,12 +973,11 @@ static int abox_rdma_compr_get_caps(struct snd_compr_stream *stream,
+ 	return 0;
+ }
+ 
+-static int abox_rdma_compr_get_codec_caps(struct snd_compr_stream *stream,
++static int abox_rdma_compr_get_codec_caps(struct snd_soc_component *cmpnt,
++		struct snd_compr_stream *stream,
+ 		struct snd_compr_codec_caps *codec)
+ {
+-	struct snd_soc_pcm_runtime *rtd = stream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *platform_data = dev_get_drvdata(dev);
+ 	int id = platform_data->id;
+ 
+@@ -994,99 +986,7 @@ static int abox_rdma_compr_get_codec_caps(struct snd_compr_stream *stream,
+ 	return 0;
+ }
+ 
+-static void __abox_rdma_compr_get_hw_params_legacy(struct device *dev,
+-		struct snd_pcm_hw_params *params, unsigned int upscale)
+-{
+-	struct snd_mask *format_mask;
+-	struct snd_interval *rate_interval;
+-
+-	rate_interval = hw_param_interval(params, SNDRV_PCM_HW_PARAM_RATE);
+-	format_mask = hw_param_mask(params, SNDRV_PCM_HW_PARAM_FORMAT);
+-	switch (upscale) {
+-	default:
+-		/* fallback */
+-	case 0:
+-		/* 48kHz 16bit */
+-		rate_interval->min = 48000;
+-		snd_mask_set(format_mask, SNDRV_PCM_FORMAT_S16);
+-		dev_info(dev, "%s: 48kHz 16bit\n", __func__);
+-		break;
+-	case 1:
+-		/* 192kHz 24bit */
+-		rate_interval->min = 192000;
+-		snd_mask_set(format_mask, SNDRV_PCM_FORMAT_S24);
+-		dev_info(dev, "%s: 192kHz 24bit\n", __func__);
+-		break;
+-	case 2:
+-		/* 48kHz 24bit */
+-		rate_interval->min = 48000;
+-		snd_mask_set(format_mask, SNDRV_PCM_FORMAT_S24);
+-		dev_info(dev, "%s: 48kHz 24bit\n", __func__);
+-		break;
+-	case 3:
+-		/* 384kHz 32bit */
+-		rate_interval->min = 384000;
+-		snd_mask_set(format_mask, SNDRV_PCM_FORMAT_S32);
+-		dev_info(dev, "%s: 384kHz 32bit\n", __func__);
+-		break;
+-	}
+-}
+-
+-static void __abox_rdma_compr_get_hw_params(struct device *dev,
+-		struct snd_pcm_hw_params *params, unsigned int upscale)
+-{
+-	unsigned int bit, ch, rate;
+-	struct snd_mask *format_mask;
+-	struct snd_interval *rate_interval, *ch_interval;
+-
+-	format_mask = hw_param_mask(params, SNDRV_PCM_HW_PARAM_FORMAT);
+-	ch_interval = hw_param_interval(params, SNDRV_PCM_HW_PARAM_CHANNELS);
+-	rate_interval = hw_param_interval(params, SNDRV_PCM_HW_PARAM_RATE);
+-	bit = (upscale >> COMPR_BIT_SHIFT) & COMPR_BIT_MASK;
+-	ch = (upscale >> COMPR_CH_SHIFT) & COMPR_CH_MASK;
+-	rate = (upscale >> COMPR_RATE_SHIFT) & COMPR_RATE_MASK;
+-
+-	switch (bit) {
+-	default:
+-		/* fallback */
+-	case 16:
+-		snd_mask_set(format_mask, SNDRV_PCM_FORMAT_S16);
+-		break;
+-	case 24:
+-		snd_mask_set(format_mask, SNDRV_PCM_FORMAT_S24);
+-		break;
+-	case 32:
+-		snd_mask_set(format_mask, SNDRV_PCM_FORMAT_S32);
+-		break;
+-	}
+-	ch_interval->min = ch ? ch : 2;
+-	rate_interval->min = rate ? rate : 48000;
+-
+-	dev_info(dev, "%s: %ubit %uch %uHz\n", __func__, bit, ch, rate);
+-}
+-
+-static int abox_rdma_compr_get_hw_params(struct snd_compr_stream *stream,
+-		struct snd_pcm_hw_params *params)
+-{
+-	struct snd_soc_pcm_runtime *rtd = stream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
+-	struct abox_platform_data *platform_data = dev_get_drvdata(dev);
+-	int id = platform_data->id;
+-	unsigned int upscale;
+-
+-	dev_dbg(dev, "%s[%d]\n", __func__, id);
+-
+-	upscale = abox_rdma_mailbox_read(dev, COMPR_UPSCALE);
+-	if (upscale <= 0xF)
+-		__abox_rdma_compr_get_hw_params_legacy(dev, params, upscale);
+-	else
+-		__abox_rdma_compr_get_hw_params(dev, params, upscale);
+-
+-	return 0;
+-}
+-
+-static struct snd_compr_ops abox_rdma_compr_ops = {
++static const struct snd_compress_ops abox_rdma_compr_ops = {
+ 	.open		= abox_rdma_compr_open,
+ 	.free		= abox_rdma_compr_free,
+ 	.set_params	= abox_rdma_compr_set_params,
+@@ -1100,14 +1000,13 @@ static struct snd_compr_ops abox_rdma_compr_ops = {
+ 	.ack		= abox_rdma_compr_ack,
+ 	.get_caps	= abox_rdma_compr_get_caps,
+ 	.get_codec_caps	= abox_rdma_compr_get_codec_caps,
+-	.get_hw_params	= abox_rdma_compr_get_hw_params,
+ };
+ 
+ static int abox_rdma_compr_vol_put(struct snd_kcontrol *kcontrol,
+ 		struct snd_ctl_elem_value *ucontrol)
+ {
+-	struct snd_soc_platform *platform = snd_soc_kcontrol_platform(kcontrol);
+-	struct device *dev = platform->dev;
++	struct snd_soc_component *cmpnt = snd_soc_kcontrol_component(kcontrol);
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *platform_data = dev_get_drvdata(dev);
+ 	struct soc_mixer_control *mc =
+ 			(struct soc_mixer_control *)kcontrol->private_value;
+@@ -1128,8 +1027,8 @@ static int abox_rdma_compr_vol_put(struct snd_kcontrol *kcontrol,
+ static int abox_rdma_compr_vol_get(struct snd_kcontrol *kcontrol,
+ 		struct snd_ctl_elem_value *ucontrol)
+ {
+-	struct snd_soc_platform *platform = snd_soc_kcontrol_platform(kcontrol);
+-	struct device *dev = platform->dev;
++	struct snd_soc_component *cmpnt = snd_soc_kcontrol_component(kcontrol);
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *platform_data = dev_get_drvdata(dev);
+ 	struct soc_mixer_control *mc =
+ 			(struct soc_mixer_control *)kcontrol->private_value;
+@@ -1153,8 +1052,8 @@ static const DECLARE_TLV_DB_LINEAR(abox_rdma_compr_vol_gain, 0,
+ static int abox_rdma_compr_format_put(struct snd_kcontrol *kcontrol,
+ 		struct snd_ctl_elem_value *ucontrol)
+ {
+-	struct snd_soc_platform *platform = snd_soc_kcontrol_platform(kcontrol);
+-	struct device *dev = platform->dev;
++	struct snd_soc_component *cmpnt = snd_soc_kcontrol_component(kcontrol);
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *platform_data = dev_get_drvdata(dev);
+ 	struct soc_enum *e = (struct soc_enum *)kcontrol->private_value;
+ 	int id = platform_data->id;
+@@ -1173,8 +1072,8 @@ static int abox_rdma_compr_format_put(struct snd_kcontrol *kcontrol,
+ static int abox_rdma_compr_format_get(struct snd_kcontrol *kcontrol,
+ 		struct snd_ctl_elem_value *ucontrol)
+ {
+-	struct snd_soc_platform *platform = snd_soc_kcontrol_platform(kcontrol);
+-	struct device *dev = platform->dev;
++	struct snd_soc_component *cmpnt = snd_soc_kcontrol_component(kcontrol);
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *platform_data = dev_get_drvdata(dev);
+ 	struct soc_enum *e = (struct soc_enum *)kcontrol->private_value;
+ 	int id = platform_data->id;
+@@ -1302,12 +1201,12 @@ static void abox_rdma_disable_barrier(struct device *dev,
+ 	}
+ }
+ 
+-static int abox_rdma_hw_params(struct snd_pcm_substream *substream,
++static int abox_rdma_hw_params(struct snd_soc_component *cmpnt,
++		struct snd_pcm_substream *substream,
+ 	struct snd_pcm_hw_params *params)
+ {
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *data = dev_get_drvdata(dev);
+ 	struct abox_data *abox_data = data->abox_data;
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+@@ -1392,15 +1291,15 @@ static int abox_rdma_hw_params(struct snd_pcm_substream *substream,
+ 		return ret;
+ 
+ 	if (params_rate(params) > 48000)
+-		abox_request_cpu_gear_dai(dev, abox_data, rtd->cpu_dai,
++		abox_request_cpu_gear_dai(dev, abox_data, snd_soc_rtd_to_cpu(rtd, 0),
+ 				abox_data->cpu_gear_min - 1);
+ 
+ 	lit = data->pm_qos_lit[abox_get_rate_type(params_rate(params))];
+ 	big = data->pm_qos_big[abox_get_rate_type(params_rate(params))];
+ 	hmp = data->pm_qos_hmp[abox_get_rate_type(params_rate(params))];
+-	abox_request_lit_freq_dai(dev, data->abox_data, rtd->cpu_dai, lit);
+-	abox_request_big_freq_dai(dev, data->abox_data, rtd->cpu_dai, big);
+-	abox_request_hmp_boost_dai(dev, data->abox_data, rtd->cpu_dai, hmp);
++	abox_request_lit_freq_dai(dev, data->abox_data, snd_soc_rtd_to_cpu(rtd, 0), lit);
++	abox_request_big_freq_dai(dev, data->abox_data, snd_soc_rtd_to_cpu(rtd, 0), big);
++	abox_request_hmp_boost_dai(dev, data->abox_data, snd_soc_rtd_to_cpu(rtd, 0), hmp);
+ 
+ 	dev_info(dev, "%s:Total=%zu PrdSz=%u(%u) #Prds=%u rate=%u, width=%d, channels=%u\n",
+ 			snd_pcm_stream_str(substream), runtime->dma_bytes,
+@@ -1411,11 +1310,11 @@ static int abox_rdma_hw_params(struct snd_pcm_substream *substream,
+ 	return 0;
+ }
+ 
+-static int abox_rdma_hw_free(struct snd_pcm_substream *substream)
++static int abox_rdma_hw_free(struct snd_soc_component *cmpnt,
++		struct snd_pcm_substream *substream)
+ {
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *data = dev_get_drvdata(dev);
+ 	int id = data->id;
+ 	ABOX_IPC_MSG msg;
+@@ -1431,9 +1330,9 @@ static int abox_rdma_hw_free(struct snd_pcm_substream *substream)
+ 	if (data->buf_type == BUFFER_TYPE_DMA)
+ 		abox_iommu_unmap(&data->abox_data->pdev->dev, IOVA_RDMA_BUFFER(id));
+ #endif
+-	abox_request_lit_freq_dai(dev, data->abox_data, rtd->cpu_dai, 0);
+-	abox_request_big_freq_dai(dev, data->abox_data, rtd->cpu_dai, 0);
+-	abox_request_hmp_boost_dai(dev, data->abox_data, rtd->cpu_dai, 0);
++	abox_request_lit_freq_dai(dev, data->abox_data, snd_soc_rtd_to_cpu(rtd, 0), 0);
++	abox_request_big_freq_dai(dev, data->abox_data, snd_soc_rtd_to_cpu(rtd, 0), 0);
++	abox_request_hmp_boost_dai(dev, data->abox_data, snd_soc_rtd_to_cpu(rtd, 0), 0);
+ 
+ 	if (data->buf_type == BUFFER_TYPE_DMA) {
+ 		return snd_pcm_lib_free_pages(substream);
+@@ -1445,11 +1344,11 @@ static int abox_rdma_hw_free(struct snd_pcm_substream *substream)
+ 	return 0;
+ }
+ 
+-static int abox_rdma_prepare(struct snd_pcm_substream *substream)
++static int abox_rdma_prepare(struct snd_soc_component *cmpnt,
++		struct snd_pcm_substream *substream)
+ {
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *data = dev_get_drvdata(dev);
+ 	int id = data->id;
+ 	int ret;
+@@ -1479,11 +1378,10 @@ static int abox_rdma_prepare(struct snd_pcm_substream *substream)
+ 	return ret;
+ }
+ 
+-static int abox_rdma_trigger(struct snd_pcm_substream *substream, int cmd)
++static int abox_rdma_trigger(struct snd_soc_component *cmpnt,
++		struct snd_pcm_substream *substream, int cmd)
+ {
+-	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *data = dev_get_drvdata(dev);
+ 	int id = data->id;
+ 	int ret;
+@@ -1528,11 +1426,10 @@ static int abox_rdma_trigger(struct snd_pcm_substream *substream, int cmd)
+ 	return ret;
+ }
+ 
+-static snd_pcm_uframes_t abox_rdma_pointer(struct snd_pcm_substream *substream)
++static snd_pcm_uframes_t abox_rdma_pointer(struct snd_soc_component *cmpnt,
++		struct snd_pcm_substream *substream)
+ {
+-	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *data = dev_get_drvdata(dev);
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+ 	int id = data->id;
+@@ -1570,11 +1467,11 @@ static snd_pcm_uframes_t abox_rdma_pointer(struct snd_pcm_substream *substream)
+ 	return bytes_to_frames(runtime, pointer);
+ }
+ 
+-static int abox_rdma_open(struct snd_pcm_substream *substream)
++static int abox_rdma_open(struct snd_soc_component *cmpnt,
++		struct snd_pcm_substream *substream)
+ {
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *data = dev_get_drvdata(dev);
+ 	struct abox_data *abox_data = data->abox_data;
+ 	int id = data->id;
+@@ -1593,7 +1490,7 @@ static int abox_rdma_open(struct snd_pcm_substream *substream)
+ 		if (ret < 0)
+ 			return ret;
+ 	}
+-	abox_request_cpu_gear_dai(dev, abox_data, rtd->cpu_dai,
++	abox_request_cpu_gear_dai(dev, abox_data, snd_soc_rtd_to_cpu(rtd, 0),
+ 			abox_data->cpu_gear_min);
+ 
+ 	snd_soc_set_runtime_hwparams(substream, &abox_rdma_hardware);
+@@ -1608,11 +1505,11 @@ static int abox_rdma_open(struct snd_pcm_substream *substream)
+ 	return ret;
+ }
+ 
+-static int abox_rdma_close(struct snd_pcm_substream *substream)
++static int abox_rdma_close(struct snd_soc_component *cmpnt,
++		struct snd_pcm_substream *substream)
+ {
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *data = dev_get_drvdata(dev);
+ 	struct abox_data *abox_data = data->abox_data;
+ 	int id = data->id;
+@@ -1629,7 +1526,7 @@ static int abox_rdma_close(struct snd_pcm_substream *substream)
+ 	msg.task_id = pcmtask_msg->channel_id = id;
+ 	ret = abox_rdma_request_ipc(data, &msg, 0, 1);
+ 
+-	abox_request_cpu_gear_dai(dev, abox_data, rtd->cpu_dai,
++	abox_request_cpu_gear_dai(dev, abox_data, snd_soc_rtd_to_cpu(rtd, 0),
+ 			ABOX_CPU_GEAR_MIN);
+ 	if (data->type == PLATFORM_CALL) {
+ 		abox_request_cpu_gear(dev, abox_data, ABOX_CPU_GEAR_CALL_KERNEL,
+@@ -1642,12 +1539,11 @@ static int abox_rdma_close(struct snd_pcm_substream *substream)
+ 	return ret;
+ }
+ 
+-static int abox_rdma_mmap(struct snd_pcm_substream *substream,
++static int abox_rdma_mmap(struct snd_soc_component *cmpnt,
++		struct snd_pcm_substream *substream,
+ 		struct vm_area_struct *vma)
+ {
+-	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *data = dev_get_drvdata(dev);
+ 	int id = data->id;
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+@@ -1657,17 +1553,16 @@ static int abox_rdma_mmap(struct snd_pcm_substream *substream,
+ 	if (data->buf_type == BUFFER_TYPE_ION)
+ 		return dma_buf_mmap(data->ion_buf.dma_buf, vma, 0);
+ 	else
+-		return dma_mmap_writecombine(dev, vma,
++		return dma_mmap_wc(dev, vma,
+ 				runtime->dma_area,
+ 				runtime->dma_addr,
+ 				runtime->dma_bytes);
+ }
+ 
+-static int abox_rdma_ack(struct snd_pcm_substream *substream)
++static int abox_rdma_ack(struct snd_soc_component *cmpnt,
++		struct snd_pcm_substream *substream)
+ {
+-	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *data = dev_get_drvdata(dev);
+ 	int id = data->id;
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+@@ -1690,19 +1585,6 @@ static int abox_rdma_ack(struct snd_pcm_substream *substream)
+ 	return abox_rdma_request_ipc(data, &msg, 0, 0);
+ }
+ 
+-static struct snd_pcm_ops abox_rdma_ops = {
+-	.open		= abox_rdma_open,
+-	.close		= abox_rdma_close,
+-	.ioctl		= snd_pcm_lib_ioctl,
+-	.hw_params	= abox_rdma_hw_params,
+-	.hw_free	= abox_rdma_hw_free,
+-	.prepare	= abox_rdma_prepare,
+-	.trigger	= abox_rdma_trigger,
+-	.pointer	= abox_rdma_pointer,
+-	.mmap		= abox_rdma_mmap,
+-	.ack		= abox_rdma_ack,
+-};
+-
+ static int abox_rdma_fio_ioctl(struct snd_hwdep *hw, struct file *file,
+ 		unsigned int cmd, unsigned long _arg);
+ 
+@@ -1740,18 +1622,18 @@ static int abox_pcm_add_hwdep_dev(struct snd_soc_pcm_runtime *runtime,
+ 	return 0;
+ }
+ 
+-static int abox_rdma_new(struct snd_soc_pcm_runtime *runtime)
++static int abox_rdma_new(struct snd_soc_component *cmpnt,
++		struct snd_soc_pcm_runtime *runtime)
+ {
+ 	struct snd_pcm *pcm = runtime->pcm;
+ 	struct snd_pcm_str *stream = &pcm->streams[SNDRV_PCM_STREAM_PLAYBACK];
+ 	struct snd_pcm_substream *substream = stream->substream;
+-	struct snd_soc_platform *platform = runtime->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *data = dev_get_drvdata(dev);
+ 	struct device *dev_abox = &data->abox_data->pdev->dev;
+ 	int id = data->id;
+ 	size_t buffer_bytes;
+-	int ret;
++	int ret = 0;
+ 
+ 	if (data->buf_type == BUFFER_TYPE_ION) {
+ 		buffer_bytes = BUFFER_ION_BYTES_MAX;
+@@ -1783,10 +1665,8 @@ static int abox_rdma_new(struct snd_soc_pcm_runtime *runtime)
+ 			break;
+ 		}
+ 
+-		ret = snd_pcm_lib_preallocate_pages(substream, SNDRV_DMA_TYPE_DEV,
+-				runtime->cpu_dai->dev, buffer_bytes, buffer_bytes);
+-		if (ret < 0)
+-			return ret;
++		snd_pcm_lib_preallocate_pages(substream, SNDRV_DMA_TYPE_DEV,
++				snd_soc_rtd_to_cpu(runtime, 0)->dev, buffer_bytes, buffer_bytes);
+ 
+ #ifdef USE_FIXED_MEMORY
+ 		abox_iommu_map(dev_abox, IOVA_RDMA_BUFFER(id),
+@@ -1798,13 +1678,13 @@ static int abox_rdma_new(struct snd_soc_pcm_runtime *runtime)
+ 	return ret;
+ }
+ 
+-static void abox_rdma_free(struct snd_pcm *pcm)
++static void abox_rdma_free(struct snd_soc_component *cmpnt,
++		struct snd_pcm *pcm)
+ {
+ 	struct snd_pcm_str *stream = &pcm->streams[SNDRV_PCM_STREAM_PLAYBACK];
+ 	struct snd_pcm_substream *substream = stream->substream;
+ 	struct snd_soc_pcm_runtime *runtime = substream->private_data;
+-	struct snd_soc_platform *platform = runtime->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *data = dev_get_drvdata(dev);
+ 	struct device *dev_abox = &data->abox_data->pdev->dev;
+ 	int id = data->id;
+@@ -1828,18 +1708,18 @@ static void abox_rdma_free(struct snd_pcm *pcm)
+ 	}
+ }
+ 
+-static int abox_rdma_probe(struct snd_soc_platform *platform)
++static int abox_rdma_probe(struct snd_soc_component *cmpnt)
+ {
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *data =
+-			snd_soc_platform_get_drvdata(platform);
++			snd_soc_component_get_drvdata(cmpnt);
+ 	int ret;
+ 
+ 	if (data->type == PLATFORM_COMPRESS) {
+ 		struct abox_compr_data *compr_data = &data->compr_data;
+ 		struct device *dev_abox = &data->abox_data->pdev->dev;
+ 
+-		ret = snd_soc_add_platform_controls(platform,
++		ret = snd_soc_add_component_controls(cmpnt,
+ 				abox_rdma_compr_controls,
+ 				ARRAY_SIZE(abox_rdma_compr_controls));
+ 		if (ret < 0) {
+@@ -1871,27 +1751,33 @@ static int abox_rdma_probe(struct snd_soc_platform *platform)
+ 	return 0;
+ }
+ 
+-static int abox_rdma_remove(struct snd_soc_platform *platform)
++static void abox_rdma_remove(struct snd_soc_component *cmpnt)
+ {
+ 	struct abox_platform_data *data =
+-			snd_soc_platform_get_drvdata(platform);
++			snd_soc_component_get_drvdata(cmpnt);
+ 
+ 	if (data->type == PLATFORM_COMPRESS) {
+ 		struct device *dev_abox = &data->abox_data->pdev->dev;
+ 
+ 		abox_iommu_unmap(dev_abox, IOVA_COMPR_BUFFER(data->id));
+ 	}
+-
+-	return 0;
+ }
+ 
+-struct snd_soc_platform_driver abox_rdma = {
++static const struct snd_soc_component_driver abox_rdma = {
+ 	.probe		= abox_rdma_probe,
+ 	.remove		= abox_rdma_remove,
+-	.compr_ops	= &abox_rdma_compr_ops,
+-	.ops		= &abox_rdma_ops,
+-	.pcm_new	= abox_rdma_new,
+-	.pcm_free	= abox_rdma_free,
++	.compress_ops	= &abox_rdma_compr_ops,
++	.pcm_construct	= abox_rdma_new,
++	.pcm_destruct	= abox_rdma_free,
++	.open		= abox_rdma_open,
++	.close		= abox_rdma_close,
++	.hw_params	= abox_rdma_hw_params,
++	.hw_free	= abox_rdma_hw_free,
++	.prepare	= abox_rdma_prepare,
++	.trigger	= abox_rdma_trigger,
++	.pointer	= abox_rdma_pointer,
++	.mmap		= abox_rdma_mmap,
++	.ack		= abox_rdma_ack,
+ };
+ 
+ static int abox_rdma_runtime_suspend(struct device *dev)
+@@ -2034,8 +1920,12 @@ static int samsung_abox_rdma_probe(struct platform_device *pdev)
+ 	ret = of_property_read_string(np, "buffer_type", &type);
+ 	if (ret < 0)
+ 		type = "";
+-	if (!strncmp(type, "ion", sizeof("ion")))
++	if (!strncmp(type, "ion", sizeof("ion")) &&
++			IS_ENABLED(CONFIG_SND_SOC_SAMSUNG_ABOX_MMAPFD))
+ 		data->buf_type = BUFFER_TYPE_ION;
++	else if (!strncmp(type, "ion", sizeof("ion")))
++		/* 6.18: no ION; plain DMA buffers (regular ALSA mmap) */
++		data->buf_type = BUFFER_TYPE_DMA;
+ 	else if (!strncmp(type, "dma", sizeof("dma")))
+ 		data->buf_type = BUFFER_TYPE_DMA;
+ 	else
+@@ -2077,7 +1967,7 @@ static int samsung_abox_rdma_probe(struct platform_device *pdev)
+ 	}
+ 	pm_runtime_enable(dev);
+ 
+-	ret = snd_soc_register_platform(&pdev->dev, &abox_rdma);
++	ret = snd_soc_register_component(&pdev->dev, &abox_rdma, NULL, 0);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -2086,10 +1976,9 @@ static int samsung_abox_rdma_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int samsung_abox_rdma_remove(struct platform_device *pdev)
++static void samsung_abox_rdma_remove(struct platform_device *pdev)
+ {
+-	snd_soc_unregister_platform(&pdev->dev);
+-	return 0;
++	snd_soc_unregister_component(&pdev->dev);
+ }
+ 
+ static const struct of_device_id samsung_abox_rdma_match[] = {
+diff --git a/sound/soc/samsung/abox/abox_synchronized_ipc.c b/sound/soc/samsung/abox/abox_synchronized_ipc.c
+index 923fa86cb..a3360693f 100644
+--- a/sound/soc/samsung/abox/abox_synchronized_ipc.c
++++ b/sound/soc/samsung/abox/abox_synchronized_ipc.c
+@@ -292,10 +292,9 @@ static int samsung_abox_synchronized_ipc_probe(struct platform_device *pdev)
+ 	return snd_soc_register_platform(&pdev->dev, &abox_synchronized_ipc);
+ }
+ 
+-static int samsung_abox_synchronized_ipc_remove(struct platform_device *pdev)
++static void samsung_abox_synchronized_ipc_remove(struct platform_device *pdev)
+ {
+ 	snd_soc_unregister_platform(&pdev->dev);
+-	return 0;
+ }
+ 
+ static const struct of_device_id samsung_abox_synchronized_ipc_match[] = {
+diff --git a/sound/soc/samsung/abox/abox_util.c b/sound/soc/samsung/abox/abox_util.c
+index 0971b1a7e..5033eeff5 100644
+--- a/sound/soc/samsung/abox/abox_util.c
++++ b/sound/soc/samsung/abox/abox_util.c
+@@ -1,6 +1,8 @@
+ #include <linux/platform_device.h>
+ #include <linux/clk.h>
+ #include <linux/io.h>
++#include <linux/arm-smccc.h>
++#include <linux/regmap.h>
+ #include <sound/pcm.h>
+ 
+ #include "abox_util.h"
+@@ -174,4 +176,57 @@ u64 width_range_to_bits(unsigned int width_min, unsigned int width_max)
+ char substream_to_char(struct snd_pcm_substream *substream)
+ {
+ 	return (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) ? 'p' : 'c';
+-}
+\ No newline at end of file
++}
++
++unsigned long abox_smc(unsigned long cmd, unsigned long arg0,
++		unsigned long arg1, unsigned long arg2)
++{
++	struct arm_smccc_res res;
++
++	arm_smccc_smc(cmd, arg0, arg1, arg2, 0, 0, 0, 0, &res);
++	return res.a0;
++}
++
++int abox_cmpnt_read(struct snd_soc_component *cmpnt, unsigned int reg,
++		unsigned int *val)
++{
++	if (cmpnt->regmap)
++		return regmap_read(cmpnt->regmap, reg, val);
++	*val = snd_soc_component_read(cmpnt, reg);
++	return 0;
++}
++
++int abox_dapm_connected_ep(struct snd_soc_dapm_widget *w,
++		enum snd_soc_dapm_direction dir, struct list_head *list)
++{
++	enum snd_soc_dapm_direction rdir = (dir == SND_SOC_DAPM_DIR_IN) ?
++			SND_SOC_DAPM_DIR_OUT : SND_SOC_DAPM_DIR_IN;
++	struct snd_soc_dapm_path *path;
++	int con = 0;
++
++	if (w->endpoints[dir] >= 0)
++		return w->endpoints[dir];
++
++	if (list)
++		list_add_tail(&w->work_list, list);
++
++	if ((w->is_ep & SND_SOC_DAPM_DIR_TO_EP(dir)) && w->connected) {
++		w->endpoints[dir] = 1;
++		return 1;
++	}
++
++	snd_soc_dapm_widget_for_each_path(w, rdir, path) {
++		if (path->is_supply)
++			continue;
++		if (path->walking)
++			return 1;
++		if (path->connect) {
++			path->walking = 1;
++			con += abox_dapm_connected_ep(path->node[dir], dir, list);
++			path->walking = 0;
++		}
++	}
++
++	w->endpoints[dir] = con;
++	return con;
++}
+diff --git a/sound/soc/samsung/abox/abox_util.h b/sound/soc/samsung/abox/abox_util.h
+index 2b513110c..4991e73d7 100644
+--- a/sound/soc/samsung/abox/abox_util.h
++++ b/sound/soc/samsung/abox/abox_util.h
+@@ -12,6 +12,8 @@
+ #ifndef __SND_SOC_ABOX_UTIL_H
+ #define __SND_SOC_ABOX_UTIL_H
+ 
++#include <sound/soc.h>
++
+ #include <sound/pcm.h>
+ 
+ /**
+@@ -118,6 +120,31 @@ static inline int atomic_dec_unless_in_range(atomic_t *v, int r)
+  */
+ extern bool is_secure_gic(void);
+ 
++/*
++ * 6.18 forward-port helpers shared by the ABOX components.
++ *
++ * Samsung's exynos_smc() and the SMC_CMD_REG secure-register write
++ * (include/linux/smc.h in the 4.14 tree) map to a plain SMCCC call.
++ */
++#define ABOX_SMC_CMD_REG		((unsigned long)-101)
++#define ABOX_SMC_REG_CLASS_SFR_W	(0x1 << 30)
++#define ABOX_SMC_REG_ID_SFR_W(addr)	(ABOX_SMC_REG_CLASS_SFR_W | ((addr) >> 2))
++
++extern unsigned long abox_smc(unsigned long cmd, unsigned long arg0,
++		unsigned long arg1, unsigned long arg2);
++
++/* 4.14 snd_soc_component_read(cmpnt, reg, &val) returned an error code */
++extern int abox_cmpnt_read(struct snd_soc_component *cmpnt, unsigned int reg,
++		unsigned int *val);
++
++/*
++ * Samsung added snd_soc_dapm_connected_{input,output}_ep() to the 4.14
++ * ASoC core; same walk as the 6.18 core's is_connected_ep() (endpoint
++ * cache, optional widget list), kept local to ABOX.
++ */
++extern int abox_dapm_connected_ep(struct snd_soc_dapm_widget *w,
++		enum snd_soc_dapm_direction dir, struct list_head *list);
++
+ /**
+  * Get SNDRV_PCM_FMTBIT_* within width_min and width_max.
+  * @param[in]	width_min	minimum bit width
+diff --git a/sound/soc/samsung/abox/abox_vdma.c b/sound/soc/samsung/abox/abox_vdma.c
+index d60f3c0ac..eab865fdc 100644
+--- a/sound/soc/samsung/abox/abox_vdma.c
++++ b/sound/soc/samsung/abox/abox_vdma.c
+@@ -648,14 +648,12 @@ static int samsung_abox_vdma_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static int samsung_abox_vdma_remove(struct platform_device *pdev)
++static void samsung_abox_vdma_remove(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	int id = to_platform_device(dev)->id;
+ 
+ 	dev_dbg(dev, "%s[%d]\n", __func__, id);
+-
+-	return 0;
+ }
+ 
+ static const struct platform_device_id samsung_abox_vdma_driver_ids[] = {
+diff --git a/sound/soc/samsung/abox/abox_vss.c b/sound/soc/samsung/abox/abox_vss.c
+index c56dad517..8e4e9b1e8 100644
+--- a/sound/soc/samsung/abox/abox_vss.c
++++ b/sound/soc/samsung/abox/abox_vss.c
+@@ -34,12 +34,11 @@ static int samsung_abox_vss_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int samsung_abox_vss_remove(struct platform_device *pdev)
++static void samsung_abox_vss_remove(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 
+ 	dev_dbg(dev, "%s\n", __func__);
+-	return 0;
+ }
+ 
+ static const struct of_device_id samsung_abox_vss_match[] = {
+diff --git a/sound/soc/samsung/abox/abox_wdma.c b/sound/soc/samsung/abox/abox_wdma.c
+index 3597ab5ba..1121b09fe 100644
+--- a/sound/soc/samsung/abox/abox_wdma.c
++++ b/sound/soc/samsung/abox/abox_wdma.c
+@@ -15,6 +15,7 @@
+ #include <linux/of.h>
+ #include <linux/of_gpio.h>
+ #include <linux/of_platform.h>
++#include <linux/compat.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/firmware.h>
+@@ -29,7 +30,6 @@
+ #include <sound/pcm_params.h>
+ #include <sound/sounddev_abox.h>
+ 
+-#include "../../../../drivers/iommu/exynos-iommu.h"
+ #include <sound/samsung/abox.h>
+ #include "abox_util.h"
+ #include "abox_gic.h"
+@@ -117,12 +117,12 @@ static void abox_wdma_disable_barrier(struct device *dev,
+ 	}
+ }
+ 
+-static int abox_wdma_hw_params(struct snd_pcm_substream *substream,
++static int abox_wdma_hw_params(struct snd_soc_component *cmpnt,
++		struct snd_pcm_substream *substream,
+ 	struct snd_pcm_hw_params *params)
+ {
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *data = dev_get_drvdata(dev);
+ 	struct abox_data *abox_data = data->abox_data;
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+@@ -207,7 +207,7 @@ static int abox_wdma_hw_params(struct snd_pcm_substream *substream,
+ 		return ret;
+ 
+ 	if (params_rate(params) > 48000)
+-		abox_request_cpu_gear_dai(dev, abox_data, rtd->cpu_dai,
++		abox_request_cpu_gear_dai(dev, abox_data, snd_soc_rtd_to_cpu(rtd, 0),
+ 				abox_data->cpu_gear_min - 1);
+ 
+ 	dev_info(dev, "%s:Total=%zu PrdSz=%u(%u) #Prds=%u rate=%u, width=%d, channels=%u\n",
+@@ -219,11 +219,10 @@ static int abox_wdma_hw_params(struct snd_pcm_substream *substream,
+ 	return 0;
+ }
+ 
+-static int abox_wdma_hw_free(struct snd_pcm_substream *substream)
++static int abox_wdma_hw_free(struct snd_soc_component *cmpnt,
++		struct snd_pcm_substream *substream)
+ {
+-	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *data = dev_get_drvdata(dev);
+ 	int id = data->id;
+ 	ABOX_IPC_MSG msg;
+@@ -257,11 +256,11 @@ static int abox_wdma_hw_free(struct snd_pcm_substream *substream)
+ 	return 0;
+ }
+ 
+-static int abox_wdma_prepare(struct snd_pcm_substream *substream)
++static int abox_wdma_prepare(struct snd_soc_component *cmpnt,
++		struct snd_pcm_substream *substream)
+ {
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *data = dev_get_drvdata(dev);
+ 	int id = data->id;
+ 	int ret;
+@@ -295,11 +294,10 @@ static int abox_wdma_prepare(struct snd_pcm_substream *substream)
+ 	return ret;
+ }
+ 
+-static int abox_wdma_trigger(struct snd_pcm_substream *substream, int cmd)
++static int abox_wdma_trigger(struct snd_soc_component *cmpnt,
++		struct snd_pcm_substream *substream, int cmd)
+ {
+-	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *data = dev_get_drvdata(dev);
+ 	int id = data->id;
+ 	int ret;
+@@ -351,11 +349,10 @@ static int abox_wdma_trigger(struct snd_pcm_substream *substream, int cmd)
+ 	return ret;
+ }
+ 
+-static snd_pcm_uframes_t abox_wdma_pointer(struct snd_pcm_substream *substream)
++static snd_pcm_uframes_t abox_wdma_pointer(struct snd_soc_component *cmpnt,
++		struct snd_pcm_substream *substream)
+ {
+-	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *data = dev_get_drvdata(dev);
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+ 	int id = data->id;
+@@ -393,11 +390,11 @@ static snd_pcm_uframes_t abox_wdma_pointer(struct snd_pcm_substream *substream)
+ 	return bytes_to_frames(runtime, pointer);
+ }
+ 
+-static int abox_wdma_open(struct snd_pcm_substream *substream)
++static int abox_wdma_open(struct snd_soc_component *cmpnt,
++		struct snd_pcm_substream *substream)
+ {
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *data = dev_get_drvdata(dev);
+ 	struct abox_data *abox_data = data->abox_data;
+ 	int id = data->id;
+@@ -416,7 +413,7 @@ static int abox_wdma_open(struct snd_pcm_substream *substream)
+ 		if (ret < 0)
+ 			return ret;
+ 	}
+-	abox_request_cpu_gear_dai(dev, abox_data, rtd->cpu_dai,
++	abox_request_cpu_gear_dai(dev, abox_data, snd_soc_rtd_to_cpu(rtd, 0),
+ 			abox_data->cpu_gear_min);
+ 
+ 	snd_soc_set_runtime_hwparams(substream, &abox_wdma_hardware);
+@@ -431,11 +428,11 @@ static int abox_wdma_open(struct snd_pcm_substream *substream)
+ 	return ret;
+ }
+ 
+-static int abox_wdma_close(struct snd_pcm_substream *substream)
++static int abox_wdma_close(struct snd_soc_component *cmpnt,
++		struct snd_pcm_substream *substream)
+ {
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *data = dev_get_drvdata(dev);
+ 	struct abox_data *abox_data = data->abox_data;
+ 	int id = data->id;
+@@ -452,7 +449,7 @@ static int abox_wdma_close(struct snd_pcm_substream *substream)
+ 	msg.task_id = pcmtask_msg->channel_id = id;
+ 	ret = abox_wdma_request_ipc(data, &msg, 0, 1);
+ 
+-	abox_request_cpu_gear_dai(dev, abox_data, rtd->cpu_dai,
++	abox_request_cpu_gear_dai(dev, abox_data, snd_soc_rtd_to_cpu(rtd, 0),
+ 			ABOX_CPU_GEAR_MIN);
+ 	if (data->type == PLATFORM_CALL) {
+ 		abox_request_cpu_gear(dev, abox_data, ABOX_CPU_GEAR_CALL_KERNEL,
+@@ -465,12 +462,11 @@ static int abox_wdma_close(struct snd_pcm_substream *substream)
+ 	return ret;
+ }
+ 
+-static int abox_wdma_mmap(struct snd_pcm_substream *substream,
++static int abox_wdma_mmap(struct snd_soc_component *cmpnt,
++		struct snd_pcm_substream *substream,
+ 		struct vm_area_struct *vma)
+ {
+-	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *data = dev_get_drvdata(dev);
+ 	int id = data->id;
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+@@ -480,17 +476,16 @@ static int abox_wdma_mmap(struct snd_pcm_substream *substream,
+ 	if (data->buf_type == BUFFER_TYPE_ION)
+ 		return dma_buf_mmap(data->ion_buf.dma_buf, vma, 0);
+ 	else
+-		return dma_mmap_writecombine(dev, vma,
++		return dma_mmap_wc(dev, vma,
+ 				runtime->dma_area,
+ 				runtime->dma_addr,
+ 				runtime->dma_bytes);
+ }
+ 
+-static int abox_wdma_ack(struct snd_pcm_substream *substream)
++static int abox_wdma_ack(struct snd_soc_component *cmpnt,
++		struct snd_pcm_substream *substream)
+ {
+-	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+-	struct snd_soc_platform *platform = rtd->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *data = dev_get_drvdata(dev);
+ 	int id = data->id;
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+@@ -513,19 +508,6 @@ static int abox_wdma_ack(struct snd_pcm_substream *substream)
+ 	return abox_wdma_request_ipc(data, &msg, 0, 0);
+ }
+ 
+-static struct snd_pcm_ops abox_wdma_ops = {
+-	.open		= abox_wdma_open,
+-	.close		= abox_wdma_close,
+-	.ioctl		= snd_pcm_lib_ioctl,
+-	.hw_params	= abox_wdma_hw_params,
+-	.hw_free	= abox_wdma_hw_free,
+-	.prepare	= abox_wdma_prepare,
+-	.trigger	= abox_wdma_trigger,
+-	.pointer	= abox_wdma_pointer,
+-	.mmap		= abox_wdma_mmap,
+-	.ack		= abox_wdma_ack,
+-};
+-
+ static int abox_wdma_fio_ioctl(struct snd_hwdep *hw, struct file *file,
+ 		unsigned int cmd, unsigned long _arg);
+ 
+@@ -563,17 +545,17 @@ static int abox_pcm_add_hwdep_dev(struct snd_soc_pcm_runtime *runtime,
+ 	return 0;
+ }
+ 
+-static int abox_wdma_new(struct snd_soc_pcm_runtime *runtime)
++static int abox_wdma_new(struct snd_soc_component *cmpnt,
++		struct snd_soc_pcm_runtime *runtime)
+ {
+ 	struct snd_pcm *pcm = runtime->pcm;
+ 	struct snd_pcm_str *stream = &pcm->streams[SNDRV_PCM_STREAM_CAPTURE];
+ 	struct snd_pcm_substream *substream = stream->substream;
+-	struct snd_soc_platform *platform = runtime->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *data = dev_get_drvdata(dev);
+ 	int id = data->id;
+ 	size_t buffer_bytes;
+-	int ret;
++	int ret = 0;
+ 
+ 	if (data->buf_type == BUFFER_TYPE_ION) {
+ 		buffer_bytes = BUFFER_ION_BYTES_MAX;
+@@ -605,10 +587,8 @@ static int abox_wdma_new(struct snd_soc_pcm_runtime *runtime)
+ 			break;
+ 		}
+ 
+-		ret = snd_pcm_lib_preallocate_pages(substream, SNDRV_DMA_TYPE_DEV,
+-				runtime->cpu_dai->dev, buffer_bytes, buffer_bytes);
+-		if (ret < 0)
+-			return ret;
++		snd_pcm_lib_preallocate_pages(substream, SNDRV_DMA_TYPE_DEV,
++				snd_soc_rtd_to_cpu(runtime, 0)->dev, buffer_bytes, buffer_bytes);
+ 
+ #ifdef USE_FIXED_MEMORY
+ 		ret = abox_iommu_map(&data->abox_data->pdev->dev, IOVA_WDMA_BUFFER(id),
+@@ -620,13 +600,13 @@ static int abox_wdma_new(struct snd_soc_pcm_runtime *runtime)
+ 	return ret;
+ }
+ 
+-static void abox_wdma_free(struct snd_pcm *pcm)
++static void abox_wdma_free(struct snd_soc_component *cmpnt,
++		struct snd_pcm *pcm)
+ {
+ 	struct snd_pcm_substream *substream =
+ 			pcm->streams[SNDRV_PCM_STREAM_CAPTURE].substream;
+ 	struct snd_soc_pcm_runtime *runtime = substream->private_data;
+-	struct snd_soc_platform *platform = runtime->platform;
+-	struct device *dev = platform->dev;
++	struct device *dev = cmpnt->dev;
+ 	struct abox_platform_data *data = dev_get_drvdata(dev);
+ 	int id = data->id;
+ 
+@@ -649,10 +629,18 @@ static void abox_wdma_free(struct snd_pcm *pcm)
+ 	}
+ }
+ 
+-static struct snd_soc_platform_driver abox_wdma = {
+-	.ops		= &abox_wdma_ops,
+-	.pcm_new	= abox_wdma_new,
+-	.pcm_free	= abox_wdma_free,
++static const struct snd_soc_component_driver abox_wdma = {
++	.pcm_construct	= abox_wdma_new,
++	.pcm_destruct	= abox_wdma_free,
++	.open		= abox_wdma_open,
++	.close		= abox_wdma_close,
++	.hw_params	= abox_wdma_hw_params,
++	.hw_free	= abox_wdma_hw_free,
++	.prepare	= abox_wdma_prepare,
++	.trigger	= abox_wdma_trigger,
++	.pointer	= abox_wdma_pointer,
++	.mmap		= abox_wdma_mmap,
++	.ack		= abox_wdma_ack,
+ };
+ 
+ static int abox_wdma_fio_common_ioctl(struct snd_hwdep *hw, struct file *filp,
+@@ -779,7 +767,7 @@ static int samsung_abox_wdma_probe(struct platform_device *pdev)
+ 	pm_runtime_no_callbacks(dev);
+ 	pm_runtime_enable(dev);
+ 
+-	ret = snd_soc_register_platform(&pdev->dev, &abox_wdma);
++	ret = snd_soc_register_component(&pdev->dev, &abox_wdma, NULL, 0);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -788,10 +776,9 @@ static int samsung_abox_wdma_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int samsung_abox_wdma_remove(struct platform_device *pdev)
++static void samsung_abox_wdma_remove(struct platform_device *pdev)
+ {
+-	snd_soc_unregister_platform(&pdev->dev);
+-	return 0;
++	snd_soc_unregister_component(&pdev->dev);
+ }
+ 
+ static const struct of_device_id samsung_abox_wdma_match[] = {

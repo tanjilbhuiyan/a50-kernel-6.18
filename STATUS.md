@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-20 (M10.1 audio contract done; next M10.2 ABOX core)
+Updated: 2026-11-20 (M10.2 A1 normal boot fixed; clean restore and public build passed)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -8,7 +8,48 @@ Read this file, then the active ticket and its log. Before trusting anything her
 branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and on the phone. At the end of a session, update
 **RESUME HERE** with commits, branch, image hashes, last test and rollback result, and the next action.
 
-## RESUME HERE (2026-11-20, M9 done; next M10)
+## RESUME HERE (2026-11-20, M10.2 A1 fixed; next A2)
+- **Active ticket:** `tasks/M10.2-abox-core.md`, in progress. **A1 normal DSP boot passes. Next A2:** DMA/interface
+  children plus a test card matching stock seven playback/five capture PCMs. No A2 build/flash yet; codec/amp and
+  PulseAudio remain M10.3/M10.4. Read the latest result in `log/2026-11-20-M10.2-abox-core.md` before older summaries.
+- **Root fix:** DISPAUD CMU lacked its register-bus parent reference. The early DPU SysMMU probe could enable/release
+  that shared parent before ABOX access; late DECON binding held it on. One `.clk_name = "dout_cmu_dispaud_disp"` line
+  uses the standard upstream helper. A1i stalled at the post-version checkpoint; A1k reaches it with only that line
+  changed. Normal A1l's tree equals failed A1b plus the same line. No delay, PLL rate/DVFS, config, DTB or runtime change.
+- **A1l result:** ABOX probe complete **0.389565 s**, DSP rSK1 ready **21.939198 s**, readable version/reset count
+  rSK1/0, runtime active. At 150 s: ABOX SysMMU faults 0, IPC IRQs 38, 1214 direct-DMA frames with no copy/fallback/
+  acquire-timeout increments, input nodes present, userdata rw. Owner sees recognizable Ubuntu Touch UI. Multi-user
+  reached **166.823078 s**, systemd running at 201 s. Timed work at **431.072694 s** (configured 420), sync completes;
+  recovered log has no kernel/IOMMU fault signatures. `reference/m10-audio/a1l-results.json`.
+- **Phone last verified:** stock DTB/DTBO/baseline BOOT restored **2026-11-20 22:10:22**; **4.14.194** booted
+  **22:10:35**, home **192.168.0.171**, **100% Charging**. All three live partition hashes pass; fsck clean
+  **7145/3440640 files, 1991708/13745152 blocks**. No test or root operation active. No button action needed.
+  Owner was present/USB connected/Claude idle for each run. Fresh presence/pre-flight required for future phone work.
+- **USB limitation:** extra re-enumeration **22:07:16**, descriptor timeouts -110, returns **22:07:38** on 7-1.
+  SSH stream ends around 270 s; 390 s snapshot lost. Kernel still completes dump/reset at 431 s. Existing M12 USB
+  issue remains; do not claim the port move fixed it. WLAN/hci0 present, but Wi-Fi association/BT traffic not retested.
+- **Clean kernel:** `src/m10/clean-kernel` **a50-audio/c371ef348fb2a2c4f8a1131a2ab12afeb32c662e** (seven audio/clock
+  commits after M9 e7a5bee84), clean. Fix cherry-picked from test 19572bce5. Test workspace `src/m10/a1i-kernel` now
+  **a50-m10-a1l-test/7412efd15a6ece3b618783090f95a554d96c57ef**, clean. Common remains a50-usb/4fbb731f5, clean.
+  A1g/A1h worktrees retain their diagnostic branches. A1j was built but not flashed; A1i0 was a host-only control.
+- **Frozen A1l inputs:** 27 hashes verified; `src/m10/boot-a1l.img`
+  **e999612e0aced2706d4d7559b00fbedcde8aa1290e8ceac77893a25271ea72b7**; DT `src/m10/dt-a1l.img`
+  **9c04b0e045d5fe86274f56c13634922659201dd00ba01879260cd7221bf1fe65**. Immutable Image/config/DTB/cpio/System.map
+  under `src/m10/a1l-as-built/`; raw/session `src/m10/a1l-raw/`, `src/m10/a1l-session-codex.txt`. Reused output
+  `src/m10/a1i-out` can change; use frozen copies/source commits. Incremental helper validated byte-identical at
+  unchanged A1i source. `reference/m10-audio/incremental-builder-control.json`.
+- **Public build passed:** separate experimental **77-patch** profile `reproduce/m10-a1/`, **103** pinned inputs,
+  clean tree **d3cf6e2ee82c5bc0e10c700112f41dff7eed8c70**. `python3 -I tools/reproduce_m10_a1.py --jobs 16` needs no
+  private inputs. Full build/guard/sense/config checks pass; DTB/I5 cpio match A1l. Exact clean Image not phone-flashed.
+  Validation `reference/m10-audio/publication-a1-validation.json`; workspace `src/m10/publication-a1/`. Seven clean
+  patches in `reference/m10-audio/a1-clean-patches/`; stable 70-patch M9 lock/build remains unchanged.
+- **Before ticket closure:** A2 PCM/card acceptance and explicit remaining regressions; GIC supplier-readiness guard
+  and fault worker's GPR MMIO reads still need review. The clock fix resolves the boot stall, not all recovery paths.
+  ADR-0005 audio-HAL deferral remains; no phone speaker/microphone test or calibration change performed.
+- **Outer Git:** parent **1bdebd875cab7670a9637e58a1df86e145c89f02**; current M10.2 tools/logs/evidence/public A1 build
+  pending final publication commit/push. Earlier Claude work preserved, source/test branches not merged into common.
+
+## Earlier handoff (M9 done; M10.1 done; superseded by M10.2 review)
 - **M9 done** (`docs/05-plan.md` M9 DoD evaluation). Wi-Fi S4 (M9.3) and Bluetooth S8 (M9.4: native BlueZ, ADR-0008;
   owner's speaker paired, A2DP tones heard) proven together on one boot (M9E2) with factory Wi-Fi/Bluetooth addresses
   from a transient read-only EFS mount (ADR-0009, runtime I5).

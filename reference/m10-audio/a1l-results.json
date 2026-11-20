@@ -1,0 +1,70 @@
+{
+  "test": "A1l normal boot",
+  "source_commit": "7412efd15a6ece3b618783090f95a554d96c57ef",
+  "source_change_from_failed_A1b": "one DISPAUD CMU clk_name line; no checkpoint, firmware hold, breadcrumbs or delay",
+  "flashed_at": "2026-11-20 22:02:26",
+  "USB_SSH_at": "2026-11-20 22:03:23",
+  "ABOX_probe_completed_uptime_s": 0.389565,
+  "DSP_ready_uptime_s": 21.939198,
+  "firmware_version": "rSK1",
+  "sysfs_version_and_reset_count": [
+    "rSK1",
+    0
+  ],
+  "ABOX_runtime_status": "active",
+  "ABOX_SysMMU_fault_IRQ_count_at_150s": 0,
+  "ABOX_GIC_IPC_IRQ_count_at_150s": 38,
+  "CMU_parent_clock_consumer": "14980000.clock-controller dout_cmu_dispaud_disp",
+  "CMU_parent_enable_prepare_counts_at_150s": [
+    2,
+    2
+  ],
+  "display_at_150s": {
+    "scanned": 1214,
+    "copied": 0,
+    "dma_fallbacks": 0,
+    "acq_timeouts": 0
+  },
+  "input_nodes": [
+    "MELFAS MIP4 Touchscreen",
+    "gpio-keys",
+    "Hall sensors"
+  ],
+  "userdata": "rw",
+  "owner_screen": "Recognizable Ubuntu Touch greeter or UI.",
+  "systemd_multi_user_reached_uptime_s": 166.823078,
+  "systemd_state_at_201s": "running",
+  "failed_units_at_150s": 0,
+  "kernel_fault_signatures": [],
+  "wifi": "wlan0 exists, disconnected; association/traffic not tested in this run",
+  "bluetooth": "hci0 exists; pairing/traffic not tested in this run",
+  "ALSA_card": "no soundcards (expected for A1; A2 pending)",
+  "USB_interruption": {
+    "disconnect_at": "2026-11-20 22:07:16",
+    "descriptor_timeouts": "-110",
+    "reenumerated_at": "2026-11-20 22:07:38",
+    "effect": "SSH stream and 390s snapshot lost; timed kernel dump still succeeds",
+    "scope": "existing M12 USB issue, not claimed fixed"
+  },
+  "timed_dump_work_uptime_s": 431.072694,
+  "sync_done_uptime_s": 431.074334,
+  "automatic_Download_detected_at": "2026-11-20 22:10:05",
+  "stock_restored_at": "2026-11-20 22:10:22",
+  "baseline_booted_at": "2026-11-20 22:10:35",
+  "baseline_kernel": "4.14.194",
+  "battery": "100% Charging",
+  "postflight": "all three live hashes passed",
+  "fsck": "e2fsck 1.43.4 (31-Jan-2017)\n/dev/sda32: clean, 7145/3440640 files, 1991708/13745152 blocks",
+  "runner_rc": 0,
+  "collector_rc": 0,
+  "late_SSH_rc": 255,
+  "kernel_stream_rc": 255,
+  "inputs_reverified": 27,
+  "public_text_NUL_bytes_removed": {
+    "a1l-live.txt": 1
+  },
+  "raw_evidence_preserved": true,
+  "result": "A1 normal boot/DSP/IPC pass; early-boot freeze fixed; M10.2 remains open for A2",
+  "clean_fix_commit": "c371ef348fb2a2c4f8a1131a2ab12afeb32c662e",
+  "next": "M10.2 A2: DMA/interface components and test card, matching 7 playback/5 capture PCMs"
+}

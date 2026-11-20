@@ -1,0 +1,30 @@
+diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+index ce9e935cb..7bdcd90a5 100644
+--- a/drivers/iommu/exynos-iommu.c
++++ b/drivers/iommu/exynos-iommu.c
+@@ -731,6 +731,11 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
+ 	struct sysmmu_drvdata *data;
+ 	struct resource *res;
+ 
++	/* TEST ONLY M10.2 A1h: move A1g's checkpoint before ABOX SysMMU hardware access. */
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (res && res->start == 0x14920000)
++		panic("A1h: ABOX SysMMU probe entered before IRQ/clock/MMIO setup");
++
+ 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+ 		return -ENOMEM;
+diff --git a/sound/soc/samsung/abox/abox.c b/sound/soc/samsung/abox/abox.c
+index 60490c70e..2a4de0058 100644
+--- a/sound/soc/samsung/abox/abox.c
++++ b/sound/soc/samsung/abox/abox.c
+@@ -5936,9 +5936,6 @@ static int samsung_abox_probe(struct platform_device *pdev)
+ 	phys_addr_t paddr __maybe_unused;
+ 	int ret, i;
+ 
+-	/* TEST ONLY M10.2 A1g: everything before the ABOX probe at boot completed */
+-	panic("A1g: ABOX probe entered (uptime %llu ms)", ktime_to_ms(ktime_get_boottime()));
+-
+ 	dev_info(dev, "%s\n", __func__);
+ 
+ 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);

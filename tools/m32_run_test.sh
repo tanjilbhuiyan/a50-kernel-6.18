@@ -27,7 +27,7 @@ if ! heimdall flash --DTB "$DT" --DTBO "$DTBO" --BOOT "$IMG" 2>&1 | grep -E "upl
   echo "  while updating the device software' screen: that is a Download-type mode. Re-enter Download mode if needed and run:"
   echo "  heimdall flash --DTB $SDT --DTBO $SDTBO --BOOT $BASE --no-reboot   (then restart, run the pre-flight)"; exit 3; fi
 sleep 8
-if waitdl "$WAIT"; then echo "[$(date +%T)] 6.18 sent the phone back to Download mode by itself"; else
+if waitdl "$WAIT"; then echo "[$(date +%T)] Download mode detected after test boot (automatic or owner recovery)"; else
   echo "[$(date +%T)] NO Download mode within ${WAIT}s: 6.18 did not dump. Manual recovery: Vol Down+Power until black, then"
   echo "  Vol Up+Vol Down while plugging in, Vol Up; then run: heimdall flash --DTB $SDT --DTBO $SDTBO --BOOT $BASE"; exit 2; fi
 settle 60 || { echo "[$(date +%T)] USB connection did not settle within 60s; NOT starting the rollback. Run: $RB"; exit 3; }
@@ -38,5 +38,17 @@ RBLOG=$(mktemp); if ! heimdall flash --DTB "$SDT" --DTBO "$SDTBO" --BOOT "$BASE"
 tr '\r' '\n' <"$RBLOG" | grep -E "upload successful|ERROR|failed"
 echo "[$(date +%T)] rolled back (stock DT, baseline BOOT); waiting for UT"
 for i in $(seq 1 60); do ssh -o BatchMode=yes -o ConnectTimeout=5 root@"$IP" true 2>/dev/null && break; sleep 4; done
-tools/m32_read_618.sh "$IP" "$OUTF"
-tools/m24_preflight.sh "$IP" 2>&1 | sed -n '/live phone/,$p'
+# A manual recovery can erase the dump. That must not skip verification of
+# the stock restore; keep evidence failure separate from restore failure.
+dump_rc=0
+tools/m32_read_618.sh "$IP" "$OUTF" || dump_rc=$?
+postflight_rc=0
+tools/m24_preflight.sh "$IP" 2>&1 | sed -n '/live phone/,$p' || postflight_rc=$?
+if [ "$postflight_rc" -ne 0 ]; then
+  echo "post-flight FAILED after stock restore (dump readout rc=$dump_rc)"
+  exit "$postflight_rc"
+fi
+if [ "$dump_rc" -ne 0 ]; then
+  echo "dump readout failed (rc=$dump_rc); stock restore post-flight passed"
+  exit "$dump_rc"
+fi

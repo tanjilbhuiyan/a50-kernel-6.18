@@ -1,0 +1,82 @@
+{
+  "review": "M10.2 host-only review, 2026-11-20",
+  "outer_parent": "1bdebd875cab7670a9637e58a1df86e145c89f02",
+  "owner_confirmed_claude_idle": true,
+  "phone_accessed": false,
+  "phone_flashed": false,
+  "kernel_source_changed": false,
+  "artifact_verification": [
+    {
+      "test": "a1d3",
+      "source_commit": "69490352f2b019ea4d6ceb5e22a86277169b26cf",
+      "artifacts_verified": 6,
+      "full_build_warning_lines": 210,
+      "abox_warning_lines": 0,
+      "compiler_error_lines": 0
+    },
+    {
+      "test": "a1b",
+      "source_commit": "1d65ac5036961a208793a8d61dd42094031c840b",
+      "artifacts_verified": 6,
+      "full_build_warning_lines": 210,
+      "abox_warning_lines": 0,
+      "compiler_error_lines": 0
+    },
+    {
+      "test": "a1e",
+      "source_commit": "e52fd65f5a6ae93ebe007daf59cb5fb2a19b6c00",
+      "artifacts_verified": 6,
+      "full_build_warning_lines": 210,
+      "abox_warning_lines": 0,
+      "compiler_error_lines": 0
+    },
+    {
+      "test": "a1f",
+      "source_commit": "fe31dca7a74713725c8d851050e18df354ccb252",
+      "artifacts_verified": 6,
+      "full_build_warning_lines": 209,
+      "abox_warning_lines": 0,
+      "compiler_error_lines": 0
+    },
+    {
+      "test": "a1g",
+      "source_commit": "72c0fb92f021fb005341ad12383efcf11aeeb7bc",
+      "artifacts_verified": 6,
+      "full_build_warning_lines": 210,
+      "abox_warning_lines": 0,
+      "compiler_error_lines": 0
+    }
+  ],
+  "A1g_config_matches_A1e_A1f": true,
+  "A1g_dtb_matches_A1e_A1f": true,
+  "A1g_run_evidence_present": false,
+  "original_A1g_input_count": 2,
+  "expanded_A1g_input_count": 19,
+  "runner_regression": {
+    "before_fix": {
+      "tests": 4,
+      "failed": 2
+    },
+    "after_fix": {
+      "tests": 4,
+      "failed": 0
+    },
+    "phone_flash_ssh_commands": "mocked; no device/network access"
+  },
+  "last_restore_reported": {
+    "test": "A1f",
+    "time": "2026-11-20 20:40:39",
+    "stock_uploads": "all three successful",
+    "fsck_files_from_claude_note": 7122,
+    "automated_postflight_in_saved_A1f_output": false
+  },
+  "current_phone_state": "not rechecked during this host-only review",
+  "findings": [
+    "GIC IRQ auto-enabled before ABOX core initializes clocks/registers; boot-hang hypothesis, not proven cause",
+    "fault worker still reads the same GPR MMIO path where A1d2 ended",
+    "GIC supplier existence is checked, bound/ready state is not; actual built-in GIC initcall precedes core",
+    "missing dump skipped post-flight in runner (fixed and host-tested)",
+    "A1g input manifest contained only BOOT/DT; expanded before test"
+  ],
+  "next": "Owner-present A1g probe-entry diagnostic after fresh preflight; no promise about number of further boots"
+}

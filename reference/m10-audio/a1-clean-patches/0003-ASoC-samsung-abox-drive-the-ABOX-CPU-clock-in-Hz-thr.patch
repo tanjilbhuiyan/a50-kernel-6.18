@@ -1,0 +1,94 @@
+From d15826b1c2c373e3ec55c836985885c4d7285ab7 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Fri, 20 Nov 2026 18:22:36 +0600
+Subject: [PATCH 3/7] ASoC: samsung: abox: drive the ABOX CPU clock in Hz
+ through the CMU
+
+The legacy CPU gear path (used on 6.18, which has no AUD DVFS) came from
+a clock framework that took kHz and treated PLL rate 0 as a bypass. With
+the common clock framework it would have set the ABOX CPU to ~1.18 MHz.
+Active gears now run the AUD PLL at its 48 kHz-family rate (present in
+the mainline exynos9610 rate table) and set the CPU divider in Hz; idle
+gears leave the clocks unchanged. The firmware is told the rate in Hz,
+as the 9610 path did.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I2d84270e9fa6a65332293d243d19d53400b54900
+---
+ sound/soc/samsung/abox/abox.c | 41 +++++++++++++++--------------------
+ 1 file changed, 18 insertions(+), 23 deletions(-)
+
+diff --git a/sound/soc/samsung/abox/abox.c b/sound/soc/samsung/abox/abox.c
+index d85fad009..afab77ae5 100644
+--- a/sound/soc/samsung/abox/abox.c
++++ b/sound/soc/samsung/abox/abox.c
+@@ -154,8 +154,6 @@ static void update_mask_value(void __iomem *sfr,
+ #define DEFAULT_HMP_BOOST_ID		DEFAULT_CPU_GEAR_ID
+ #define DEFAULT_INT_FREQ_ID		DEFAULT_CPU_GEAR_ID
+ #define DEFAULT_MIF_FREQ_ID		DEFAULT_CPU_GEAR_ID
+-#define AUD_PLL_RATE_KHZ		(1179648)
+-#define AUD_PLL_RATE_HZ_BYPASS		(26000000)
+ #define AUDIF_RATE_HZ			(24576000)
+ #define CALLIOPE_ENABLE_TIMEOUT_MS	(1000)
+ #define IPC_TIMEOUT_US			(10000)
+@@ -3466,34 +3464,31 @@ static void abox_change_cpu_gear_legacy(struct device *dev,
+ 			abox_qos_update(&abox_pm_qos_int, 0);
+ 	}
+ 
+-	if (gear >= ABOX_CPU_GEAR_MIN) {
+-		ret = clk_set_rate(data->clk_pll, 0);
+-		if (ret < 0)
+-			dev_warn(dev, "setting pll clock to 0 is failed: %d\n",
+-					ret);
+-		dev_info(dev, "pll clock: %lu\n", clk_get_rate(data->clk_pll));
+-
+-		ret = clk_set_rate(data->clk_cpu, AUD_PLL_RATE_KHZ);
+-		if (ret < 0)
+-			dev_warn(dev, "setting cpu clock gear to %d is failed: %d\n",
+-					gear, ret);
+-	} else {
+-		ret = clk_set_rate(data->clk_cpu, AUD_PLL_RATE_KHZ / gear);
+-		if (ret < 0)
+-			dev_warn(dev, "setting cpu clock gear to %d is failed: %d\n",
+-					gear, ret);
+-
+-		if (clk_get_rate(data->clk_pll) <= AUD_PLL_RATE_HZ_BYPASS) {
++	/*
++	 * 6.18: the common clock framework works in Hz (the 4.14 legacy path
++	 * passed kHz and asked for PLL rate 0 as a bypass, which the mainline
++	 * PLL cannot do). Idle gears leave the clocks as they are; active
++	 * gears run the AUD PLL at its 48 kHz-family rate and divide the ABOX
++	 * CPU clock from it.
++	 */
++	if (gear < ABOX_CPU_GEAR_MIN) {
++		if (clk_get_rate(data->clk_pll) != AUD_PLL_RATE_HZ_FOR_48000) {
+ 			ret = clk_set_rate(data->clk_pll,
+ 					AUD_PLL_RATE_HZ_FOR_48000);
+ 			if (ret < 0)
+-				dev_warn(dev, "setting pll clock to 0 is failed: %d\n",
++				dev_warn(dev, "setting pll clock failed: %d\n",
+ 						ret);
+ 			dev_info(dev, "pll clock: %lu\n",
+ 					clk_get_rate(data->clk_pll));
+ 		}
++		ret = clk_set_rate(data->clk_cpu,
++				clk_get_rate(data->clk_pll) / gear);
++		if (ret < 0)
++			dev_warn(dev, "setting cpu clock gear to %d is failed: %d\n",
++					gear, ret);
+ 	}
+-	dev_info(dev, "cpu clock: %lukHz\n", clk_get_rate(data->clk_cpu));
++	dev_info(dev, "cpu clock: %luHz (gear %u)\n",
++			clk_get_rate(data->clk_cpu), gear);
+ 
+ 	if (!increasing) {
+ 		if (gear <= ARRAY_SIZE(data->pm_qos_int))
+@@ -3503,7 +3498,7 @@ static void abox_change_cpu_gear_legacy(struct device *dev,
+ 			abox_qos_update(&abox_pm_qos_int, 0);
+ 	}
+ skip:
+-	abox_notify_cpu_gear(data, clk_get_rate(data->clk_cpu) * 1000, 0);
++	abox_notify_cpu_gear(data, clk_get_rate(data->clk_cpu), 0);
+ }
+ 
+ static void abox_change_cpu_gear_work_func(struct work_struct *work)
