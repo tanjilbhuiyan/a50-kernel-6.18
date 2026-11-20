@@ -67,7 +67,7 @@ later milestones get tickets when we reach them (evidence first, Rule 1).
 | M9.2 | SCSC core and transport bring-up | build no / test yes | M9.1 | done (log/2026-11-19-M9.2-scsc-core.md; device-node criterion → M9.3/M9.4) |
 | M9.3 | Wi-Fi association and SSH (S4) | yes | M9.2 | done (log/2026-11-19-M9.3-wifi.md; S4 reached, swlan0 profile handling open) |
 | M9.4 | Bluetooth, bluebinder and M9 integration (S8) | yes | M9.2, M9.3 | done (log/2026-11-20-M9.4-bluetooth.md; S8 via native BlueZ, ADR-0008/0009) |
-| M10.1 | Audio source, firmware and consumer contract | yes (read-only) | M9 | in-progress |
-| M10.2 | ABOX audio DSP core on 6.18 | build no / test yes | M10.1 | todo |
+| M10.1 | Audio source, firmware and consumer contract | yes (read-only) | M9 | done (log/2026-11-20-M10.1-audio-contract.md) |
+| M10.2 | ABOX audio DSP core on 6.18 | build no / test yes | M10.1 | next |
 | M10.3 | RT5665 codec, TFA9872 amplifier and the A50 machine driver | yes | M10.2 | todo |
 | M10.4 | Audio integration and M10 DoD (S6) | yes | M10.3 | todo |
