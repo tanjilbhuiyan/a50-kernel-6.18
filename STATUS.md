@@ -20,7 +20,9 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
   pairing; the owner re-pairs once on stock if so.
 - **Open beyond M9:** Wi-Fi power-save/latency tuning; stock profiles bound to `swlan0` (one-time reconnect on 6.18);
   masked router BSSIDs remain in pushed history of earlier M9.3/B1 copies (owner decision on history rewrite).
-- **Next:** M10 audio (ABOX + TFA9872, S6). Write the M10 tickets (M10.1 audio contract first) when the owner starts it.
+- **Next:** M10 audio (S6). Tickets M10.1-M10.4 written; **M10.1 (audio contract) in progress**: stock audio = ABOX DSP
+  (~16.7k lines, port), RT5665 codec (mainline `rt5665.c` exists), TFA9872 amp (Samsung driver; mainline `tfa989x`
+  lacks 9872), A50 machine driver (port). HAL uses standard ALSA ioctls only (M1.3), 32-bit compat needed.
 
 ## Earlier handoff (superseded by M9 closure)
 - **M9.3 done** (`log/2026-11-19-M9.3-wifi.md`): S4 on 6.18 (WPA2, DHCP, SSH over Wi-Fi, reconnect, rfkill off/on
