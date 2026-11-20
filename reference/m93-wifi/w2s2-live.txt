@@ -189,7 +189,7 @@ M93_W2_PROBE_LOG
 [   32.203339] scsc_wlbt 119c0000.wlbt: Direct firmware load for conf/wlan/mac.txt failed with error -2
 [   32.203363] wlbt: [MX_FILE]: __mx140_release_firmware: firmp=0000000000000000
 [   32.203377] ieee80211 phy0: wlbt: I: slsi_get_hw_mac_address: No MAC address provided (modparam/sysfs/mac.txt), using random local address
-[   32.203390] ieee80211 phy0: wlbt: wlan0: I: slsi_net_open: ifnum:1 r:0 MAC:9a:**:**:**:dd:14
+[   32.203390] ieee80211 phy0: wlbt: wlan0: I: slsi_net_open: ifnum:1 r:0 MAC:<mac>
 [   32.414292] NetworkManager[1565]: <warn>  [1795097331.6713] device (p2p-dev-wlan0): error setting IPv4 forwarding to '0': Success
 [   32.426704] ieee80211 phy0: wlbt: I: slsi_mlme_add_scan: scan started for id:0x100, n_channels:38, n_ssids:1, scan_type:1
 [   34.964155] ieee80211 phy0: wlbt: I: slsi_scan_complete: Scan count:13 APs
@@ -267,7 +267,7 @@ M93_W2_JOIN_LOG
 [   32.203339] scsc_wlbt 119c0000.wlbt: Direct firmware load for conf/wlan/mac.txt failed with error -2
 [   32.203363] wlbt: [MX_FILE]: __mx140_release_firmware: firmp=0000000000000000
 [   32.203377] ieee80211 phy0: wlbt: I: slsi_get_hw_mac_address: No MAC address provided (modparam/sysfs/mac.txt), using random local address
-[   32.203390] ieee80211 phy0: wlbt: wlan0: I: slsi_net_open: ifnum:1 r:0 MAC:9a:**:**:**:dd:14
+[   32.203390] ieee80211 phy0: wlbt: wlan0: I: slsi_net_open: ifnum:1 r:0 MAC:<mac>
 [   32.414292] NetworkManager[1565]: <warn>  [1795097331.6713] device (p2p-dev-wlan0): error setting IPv4 forwarding to '0': Success
 [   32.426704] ieee80211 phy0: wlbt: I: slsi_mlme_add_scan: scan started for id:0x100, n_channels:38, n_ssids:1, scan_type:1
 [   34.964155] ieee80211 phy0: wlbt: I: slsi_scan_complete: Scan count:13 APs
@@ -285,7 +285,7 @@ M93_W2_JOIN_LOG
 [   70.009597] ieee80211 phy0: wlbt: I: slsi_mlme_add_scan: scan started for id:0x100, n_channels:38, n_ssids:1, scan_type:2
 [   74.005069] ieee80211 phy0: wlbt: I: slsi_scan_complete: Scan count:25 APs
 [   75.651006] wpa_supplicant[1523]: wlan0: Trying to associate with SSID '<ssid>'
-[   75.651085] ieee80211 phy0: wlbt: wlan0: I: slsi_connect: <ssid> Freq=2442 vifStatus=0 CurrBssid:00:**:**:**:00:00 NewBssid:40:**:**:**:eb:5a Qinfo:-1 ieLen:58
+[   75.651085] ieee80211 phy0: wlbt: wlan0: I: slsi_connect: <ssid> Freq=2442 vifStatus=0 CurrBssid:<mac> NewBssid:<mac> Qinfo:-1 ieLen:58
 [   75.689167] ieee80211 phy0: wlbt: wlan0: E: slsi_rx_netdev_mlme: Unhandled Ind/Cfm: 0x2316
 [   75.692185] ieee80211 phy0: wlbt: wlan0: E: slsi_rx_netdev_mlme: Unhandled Ind/Cfm: 0x2316
 [   75.692203] ieee80211 phy0: wlbt: I: slsi_rx_procedure_started_ind: Send Association Request
@@ -405,7 +405,7 @@ M93_W2_FINAL_LOG
 [  255.637074] ieee80211 phy0: wlbt: I: slsi_mlme_add_scan: scan started for id:0x100, n_channels:38, n_ssids:1, scan_type:2
 [  259.898744] ieee80211 phy0: wlbt: I: slsi_scan_complete: Scan count:32 APs
 [  259.901222] wpa_supplicant[1523]: wlan0: Trying to associate with SSID '<ssid>'
-[  259.902102] ieee80211 phy0: wlbt: wlan0: I: slsi_connect: <ssid> Freq=2442 vifStatus=0 CurrBssid:00:**:**:**:00:00 NewBssid:ac:**:**:**:7d:2f Qinfo:-1 ieLen:59
+[  259.902102] ieee80211 phy0: wlbt: wlan0: I: slsi_connect: <ssid> Freq=2442 vifStatus=0 CurrBssid:<mac> NewBssid:<mac> Qinfo:-1 ieLen:59
 [  259.920736] ieee80211 phy0: wlbt: wlan0: E: slsi_rx_netdev_mlme: Unhandled Ind/Cfm: 0x2316
 [  259.925803] ieee80211 phy0: wlbt: wlan0: E: slsi_rx_netdev_mlme: Unhandled Ind/Cfm: 0x2316
 [  259.925824] ieee80211 phy0: wlbt: I: slsi_rx_procedure_started_ind: Send Association Request
@@ -422,7 +422,7 @@ M93_W2_FINAL_LOG
 [  259.960816] ieee80211 phy.: wlbt: I: slsi_set_multicast_filter_work: user_suspend_mode = 0
 [  259.961180] wpa_supplicant[1523]: wlan0: CTRL-EVENT-CONNECTED - Connection to <mac> completed [id=0 id_str=]
 [  259.961688] ieee80211 phy0: wlbt: wlan0: I: slsi_mlme_connect_resp: mlme_connect_resp(vif:1)
-[  259.967456] ieee80211 phy0: wlbt: wlan0: W: slsi_tx_data: no fcq for ff:**:**:**:ff:ff, drop Tx frame
+[  259.967456] ieee80211 phy0: wlbt: wlan0: W: slsi_tx_data: no fcq for <mac>, drop Tx frame
 [  259.967682] ieee80211 phy0: wlbt: wlan0: E: slsi_rx_netdev_mlme: Unhandled Ind/Cfm: 0x2316
 [  259.967689] ieee80211 phy0: wlbt: wlan0: E: slsi_rx_netdev_mlme: Unhandled Ind/Cfm: 0x2316
 [  259.970106] ieee80211 phy0: wlbt: wlan0: E: slsi_rx_netdev_mlme: Unhandled Ind/Cfm: 0x2316

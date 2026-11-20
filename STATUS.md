@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-20 (M9.3 done: Wi-Fi S4 on 6.18; next M9.4 Bluetooth)
+Updated: 2026-11-20 (M9 done: Wi-Fi S4 + Bluetooth S8 on 6.18; next M10 audio)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -8,7 +8,21 @@ Read this file, then the active ticket and its log. Before trusting anything her
 branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and on the phone. At the end of a session, update
 **RESUME HERE** with commits, branch, image hashes, last test and rollback result, and the next action.
 
-## RESUME HERE (2026-11-20, M9.3 done; next M9.4)
+## RESUME HERE (2026-11-20, M9 done; next M10)
+- **M9 done** (`docs/05-plan.md` M9 DoD evaluation). Wi-Fi S4 (M9.3) and Bluetooth S8 (M9.4: native BlueZ, ADR-0008;
+  owner's speaker paired, A2DP tones heard) proven together on one boot (M9E2) with factory Wi-Fi/Bluetooth addresses
+  from a transient read-only EFS mount (ADR-0009, runtime I5).
+- **Source:** clean `a50-wlbt` (worktree `src/m92/clean-kernel`) head `e7a5bee84`; `patches/` 70, tree `4d65d4a5`;
+  `reproduce/m8` builds the I5 runtime (public build byte-identical to M9E2). Test branch `a50-m92-w1-test`
+  (`src/m92/test-kernel`); M9E2 BOOT `d41aa7f5f6a6bd6480dab133f3f5f2f48c3e3d80e820b511369759f617e0ade4`.
+- **Phone:** stock 4.14.194 restored 2026-11-20 15:32:38, post-flight passed, fsck clean 7126 files, home
+  **192.168.0.171**. Stock Bluetooth switched back off (urfkill). The M9E2 cleanup may have removed the shared JBL
+  pairing; the owner re-pairs once on stock if so.
+- **Open beyond M9:** Wi-Fi power-save/latency tuning; stock profiles bound to `swlan0` (one-time reconnect on 6.18);
+  masked router BSSIDs remain in pushed history of earlier M9.3/B1 copies (owner decision on history rewrite).
+- **Next:** M10 audio (ABOX + TFA9872, S6). Write the M10 tickets (M10.1 audio contract first) when the owner starts it.
+
+## Earlier handoff (superseded by M9 closure)
 - **M9.3 done** (`log/2026-11-19-M9.3-wifi.md`): S4 on 6.18 (WPA2, DHCP, SSH over Wi-Fi, reconnect, rfkill off/on
   power-cycles the chip and reconnects in 3 s, private ioctls rejected, regression snapshot clean). Publication 66
   patches (tree 7574d5e9), public build passed. Open: `swlan0`-bound stock profiles (owner decision; recommend

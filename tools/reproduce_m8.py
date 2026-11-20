@@ -50,8 +50,8 @@ def prepare_kernel(work, cache):
 def prepare_runtime(work, assets):
     listing = bootstrap.prepare_ramdisk(work, assets)
     init = work / 'payload/halium-init-runtime'
-    for name in ('reference/m75-integration/i2-init-delta.patch',
-                 'reference/m75-integration/i4-init-delta.patch'):
+    for name in LOCK.get('init_deltas', ['reference/m75-integration/i2-init-delta.patch',
+                                         'reference/m75-integration/i4-init-delta.patch']):
         run('patch', '--batch', '--fuzz=0', init, REPO / name)
     verify(init, LOCK['expected']['halium-init-runtime'])
     run('sh', '-n', init)
@@ -61,6 +61,14 @@ def prepare_runtime(work, assets):
         if source.endswith('.sh'):
             run('sh', '-n', REPO / source)
         entries.append(f'file /a50/m75/{target} {REPO / source} 0644 0 0')
+    # Later runtimes (M9.4 I5, ADR-0009) add files under their own directories.
+    for target, source in LOCK.get('runtime_files_extra', {}).items():
+        if source.endswith('.sh'):
+            run('sh', '-n', REPO / source)
+        directory = target.rsplit('/', 1)[0]
+        if f'dir {directory} 0755 0 0' not in entries:
+            entries.append(f'dir {directory} 0755 0 0')
+        entries.append(f'file {target} {REPO / source} 0644 0 0')
     listing.write_text('\n'.join(entries) + '\n')
     return listing
 

@@ -4,7 +4,7 @@ The Galaxy A50 changes as one ordered series on top of the Android Common Kernel
 
 For a **new-clone build of this current M8 stack**, use
 [reproduce/m8/](../reproduce/m8/README.md):
-`python3 -I tools/reproduce_m8.py --jobs 16`. It verifies the 69-patch tree,
+`python3 -I tools/reproduce_m8.py --jobs 16`. It verifies the 70-patch tree,
 uses a locked full config and reconstructs the current runtime from public
 inputs. No existing local kernel checkout or private image is needed.
 
@@ -15,7 +15,7 @@ continues to hold the separate clean driver series.
 
 - **Base:** https://android.googlesource.com/kernel/common, branch `android17-6.18`,
   commit `d9a614feddce2e8e68767df1d3421305d26a965b` (2026-10-31, Linux 6.18.33).
-- **Series:** `0001` to `0069`. It is the project's clean driver stack:
+- **Series:** `0001` to `0070`. It is the project's clean driver stack:
   - `0001`-`0035` (M2-M5): device tree and defconfig, Exynos 9610 clocks, pinctrl, UFS with the `A50_UFS_SAFE` write
     guard, USB PHY, ACPM, S2MPU09 regulators (read-only), thermal (read-only), and the userdata write allow-list;
   - `0036`-`0040` (M6): tracepoint and Rust build fixes, and the Exynos ION system-heap ABI on native DMA-BUF heaps;
@@ -42,6 +42,8 @@ continues to hold the separate clean driver series.
     verbatim, `0068` builds them on 6.18 (H4 core on kernel buffers, mainline `h4_recv_buf()` pattern, send-path
     use-after-free fix), `0069` serialises hci0 registration (fixes a workqueue race). M9.4 B2t paired the owner's
     speaker and played audio over A2DP.
+  - `0070` (M9): the Wi-Fi driver always creates `/sys/wifi/mac_addr`, so the runtime can pass the factory MAC
+    (ADR-0009; the 4.14 driver tied it to Samsung's One UI version macro).
 - **Not included:** diagnostic patches and one-off test patches. They stay with their test evidence under `reference/`.
   The Halium/Ubuntu Touch config flags are in `tools/m51/halium.flags`.
 

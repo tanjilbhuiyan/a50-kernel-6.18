@@ -23,7 +23,9 @@ unchanged. Full definition: `docs/00-goal.md`.
 | `docs/05-plan.md` | milestones M0–M13 with tasks and Definition of Done |
 | `docs/06-workflow.md` | build / flash / test / recover loop and rules |
 | `docs/07-risks.md` | known risks and mitigations |
-| `docs/decisions/` | ADRs (0001 base kernel, 0002 keep stock vendor, 0003 newer Halium — deferred, 0004 TEEGRIS runtime deferral, 0005 Android audio HAL deferral in PulseAudio, 0006 GStreamer hybris codec plugin deferral, 0007 CMU_PERI left to the bootloader with fixed PERI clocks); a decision changes only through a new ADR |
+| `docs/09-ut-blockers.md` | Ubuntu Touch side blockers/defects outside the kernel milestones (upstream port, cohort, device defects, independence, UT 26.04 status) |
+| `docs/10-after-kernel-plan.md` | plan after the kernel: our own UT build on 6.18 (P0 now, P1–P6 after "Project done") |
+| `docs/decisions/` | ADRs (0001 base kernel, 0002 keep stock vendor, 0003 newer Halium — deferred, 0004 TEEGRIS runtime deferral, 0005 Android audio HAL deferral in PulseAudio, 0006 GStreamer hybris codec plugin deferral, 0007 CMU_PERI left to the bootloader with fixed PERI clocks, 0008 Bluetooth through a native BlueZ device instead of bluebinder, 0009 factory Wi-Fi/Bluetooth addresses from a transient read-only EFS mount); a decision changes only through a new ADR |
 | `tasks/` | tickets (one file per task) for the current + next milestone; index in `tasks/README.md` |
 | `log/` | one file per test session (what changed, what was flashed, result) |
 | `reference/` | evidence: live DT dump, gap matrix TSV, stock vendor extracts, measurements |

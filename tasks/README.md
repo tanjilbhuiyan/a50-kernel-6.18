@@ -66,4 +66,4 @@ later milestones get tickets when we reach them (evidence first, Rule 1).
 | M9.1 | SCSC source, firmware and consumer contract | yes | M8.5 disposition | done (log/2026-11-19-M9.1-scsc-contract.md) |
 | M9.2 | SCSC core and transport bring-up | build no / test yes | M9.1 | done (log/2026-11-19-M9.2-scsc-core.md; device-node criterion → M9.3/M9.4) |
 | M9.3 | Wi-Fi association and SSH (S4) | yes | M9.2 | done (log/2026-11-19-M9.3-wifi.md; S4 reached, swlan0 profile handling open) |
-| M9.4 | Bluetooth, bluebinder and M9 integration (S8) | yes | M9.2, M9.3 | todo |
+| M9.4 | Bluetooth, bluebinder and M9 integration (S8) | yes | M9.2, M9.3 | done (log/2026-11-20-M9.4-bluetooth.md; S8 via native BlueZ, ADR-0008/0009) |

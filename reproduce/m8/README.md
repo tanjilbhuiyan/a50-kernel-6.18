@@ -2,9 +2,10 @@
 
 This profile builds the clean driver stack through **M9.2**: display/GPU,
 real I2C, the Melfas touchscreen, volume/power GPIO keys, hall switches,
-vibrator and the SCSC core, Wi-Fi and Bluetooth drivers. It applies all 69 numbered patches and verifies the resulting Git tree. The embedded
+vibrator and the SCSC core, Wi-Fi and Bluetooth drivers. It applies all 70 numbered patches and verifies the resulting Git tree. The embedded
 Halium runtime includes the accepted TEEGRIS, audio-HAL and GStreamer codec
-deferrals (ADR-0004/0005/0006).
+deferrals (ADR-0004/0005/0006) and the factory Wi-Fi/Bluetooth address hook
+(ADR-0009: transient read-only EFS mount).
 
 ## From a new clone
 
@@ -25,7 +26,7 @@ boot donor and arm64 BusyBox are pinned by revision and SHA-256 in
 `sources.lock.json`. Downloads retain their upstream licenses.
 
 The build checks tracked inputs, replays the patches to tree
-`a988910934091744cbc3d7f14499e8518bd8ef0f`, reconstructs the runtime, verifies
+`4d65d4a5e0c7aca0f016b2ccf7121ee1d803b844`, reconstructs the runtime, verifies
 the resolved config, runs the storage-guard/sense tests, then compiles and
 links the kernel. The raw DTB and embedded cpio must match locked hashes.
 It never flashes or contacts the phone.

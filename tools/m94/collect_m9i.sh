@@ -43,6 +43,19 @@ if [ -n "$ip4" ]; then echo "$ip4" > $D/ip; else
 fi
 
 printf '\nM9I_WIFI_JOINED\n'; nmstate
+printf '\nM9E_BANDS\n'
+iw reg get 2>/dev/null | grep -E '^(global|country|phy)' | head -4
+iw phy phy0 channels 2>/dev/null | awk '/MHz/{f=$2+0; d=($0 ~ /disabled/); if (f>5000) {n5++; if (d) x5++} else {n2++; if (d) x2++}} END{printf "channels_2g=%d disabled_2g=%d channels_5g=%d disabled_5g=%d\n", n2, x2, n5, x5}'
+iw dev wlan0 scan 2>/dev/null | awk '/^BSS /{b++} /freq:/{f=$2+0; if (f>5000) c5++; else c2++} END{printf "scan_bss=%d bss_2g=%d bss_5g=%d\n", b, c2, c5}'
+iw dev wlan0 link 2>/dev/null | grep -E 'freq' | sed 's/^\s*/connected_/'
+printf '\nM9E_ADDRESSES\n'
+journalctl -b --no-pager -o cat -u a50-efs-addresses.service 2>/dev/null | grep -E 'a50-efs-addresses:' | tail -n 8
+systemctl show a50-efs-addresses.service -p ActiveState -p Result -p ExecMainStatus | paste -sd' '
+dmesg | grep -E 'MAC address from sysfs|using random local address|stack supplied Bluetooth address' | sed -E 's/([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}/<mac>/g' | tail -n 4
+# locally administered (random) vs universal (factory) bit only; the address itself is not printed
+m=$(cat /sys/class/net/wlan0/address 2>/dev/null); b=$(printf '%d' "0x${m%%:*}" 2>/dev/null)
+printf 'wlan0_mac_locally_administered=%s\n' "$([ $((b & 2)) -ne 0 ] && echo yes || echo no)"
+grep -c ' /dev/sda3 ' /proc/mounts | sed 's/^/efs_mounted_now=/'
 printf '\nM93_W3_REGRESSION uptime=%s\n' "$(cut -d' ' -f1 /proc/uptime)"
 capture sh -c 'grep -E "^N:" /proc/bus/input/devices'
 capture sh -c 'findmnt -no TARGET,OPTIONS /userdata | cut -c1-80'
@@ -58,9 +71,12 @@ pa() { timeout 15 runuser -u phablet -- env $UENV "$@" 2>&1; }
 btlog() { dmesg | grep -i -E 'scsc_bt|bluez|hci0|Bluetooth|Unable to handle|SError|Internal error|BUG:' | grep -v -i -E 'bluebinder|wlbtd' | sed -E "$R" | tail -n "${1:-60}"; }
 wait_up 100
 printf '\nM94_B2_ON uptime=%s\n' "$(cut -d' ' -f1 /proc/uptime)"
-rfkill block bluetooth; sleep 3   # urfkill may have restored 'on' already: start from a fresh hci0
+# Bluetooth on/off through urfkill (as the Settings indicator): raw rfkill is overridden by urfkill's saved state
+# (M9E: 'Setting device 3 (BLUETOOTH) to blocked' 1 ms after a raw unblock).
+urf() { gdbus call --system --dest org.freedesktop.URfkill --object-path /org/freedesktop/URfkill --method org.freedesktop.URfkill.Block 2 "$1" 2>&1; }
+printf 'urfkill_block=%s\n' "$(urf true)"; sleep 3   # start from a fresh hci0
 mkdir -p /run/a50-b2; btmon -w /run/a50-b2/hci.btsnoop >/dev/null 2>&1 & BTMON=$!; sleep 1
-capture rfkill unblock bluetooth
+printf 'urfkill_unblock=%s\n' "$(urf false)"
 i=0; while [ $i -lt 20 ]; do [ -e /sys/class/bluetooth/hci0 ] && break; sleep 1; i=$((i + 1)); done
 printf 'hci0_after_s=%s\n' "$i"; sleep 3
 bluetoothctl power on 2>&1 | status
@@ -106,6 +122,8 @@ if [ -n "$pick" ]; then
         m=$(pa pactl load-module module-sine sink="$sink" frequency=660); echo "sine_module=$m"; sleep 3
         pa pactl unload-module "$m"; echo "tone2_done"
     fi
+    a=$(btmgmt info 2>/dev/null | awk '/addr/{print $2; exit}'); c=$(printf '%d' "0x${a%%:*}" 2>/dev/null)
+    printf 'bt_addr_random_static_bits=%s\n' "$([ $((c & 192)) -eq 192 ] && echo yes || echo no)"
     printf '\nM94_B2_CLEANUP uptime=%s\n' "$(cut -d' ' -f1 /proc/uptime)"
     kill $BTMON 2>/dev/null; sleep 1
     printf 'btsnoop_bytes=%s\n' "$(wc -c < /run/a50-b2/hci.btsnoop 2>/dev/null)"
@@ -116,6 +134,7 @@ if [ -n "$pick" ]; then
     timeout 20 bluetoothctl disconnect "$pick" 2>&1 | status
     timeout 20 bluetoothctl remove "$pick" 2>&1 | status
 fi
+printf 'urfkill_block_at_end=%s (keep the saved state off, as the owner had it)\n' "$(urf true)"
 printf '\nM9I_WIFI_AFTER_BT\n'; nmstate; ip -4 -o addr show dev wlan0 | grep -q inet && echo wifi_address_present=yes || echo wifi_address_present=no
 printf '\nM94_B2_FINAL uptime=%s\n' "$(cut -d' ' -f1 /proc/uptime)"
 capture systemctl show bluetooth.service bluebinder.service -p Id -p LoadState -p ActiveState -p SubState -p NRestarts

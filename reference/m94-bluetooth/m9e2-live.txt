@@ -1,0 +1,811 @@
+
+CMD: uname -r
+6.18.33-a50-diag+
+RC=0
+
+CMD: cat /proc/uptime
+37.49 218.48
+RC=0
+profile 5c42efd5 interface-name=swlan0 -> temporary unbind rc=0
+profile 91da68dc interface-name=swlan0 -> temporary unbind rc=0
+profile 1d935e14 interface-name=swlan0 -> temporary unbind rc=0
+profile 9bb212c7 interface-name=swlan0 -> temporary unbind rc=0
+
+M93_W2_JOIN uptime=79.39 dev=wlan0 state=connected ip_present=yes waited=34s unbound=yes
+nm: wlan0:wifi:connected p2p-dev-wlan0:wifi-p2p:disconnected
+
+M9I_WIFI_JOINED
+nm: wlan0:wifi:connected p2p-dev-wlan0:wifi-p2p:disconnected
+
+M9E_BANDS
+global
+country 00: DFS-UNSET
+phy#0
+country 00: DFS-UNSET
+channels_2g=52 disabled_2g=1 channels_5g=25 disabled_5g=0
+scan_bss=23 bss_2g=16 bss_5g=7
+connected_freq: 2442.0
+
+M9E_ADDRESSES
+Result=success ExecMainStatus=0 ActiveState=active
+[   31.417789] wlbt: [BT_COMMON]: get_bluetooth_address: using stack supplied Bluetooth address
+[   31.781655] ieee80211 phy0: wlbt: I: slsi_get_hw_mac_address: MAC address from sysfs: <mac>
+wlan0_mac_locally_administered=no
+efs_mounted_now=0
+
+M93_W3_REGRESSION uptime=84.62
+
+CMD: sh -c grep -E "^N:" /proc/bus/input/devices
+N: Name="MELFAS MIP4 Touchscreen"
+N: Name="gpio-keys"
+N: Name="Hall sensors"
+RC=0
+
+CMD: sh -c findmnt -no TARGET,OPTIONS /userdata | cut -c1-80
+/userdata rw,relatime,nodioread_nolock,discard,nodelalloc,data=journal
+RC=0
+
+CMD: sh -c head -n 1 /sys/devices/platform/148b0000.decon_f/g2b_stats; pgrep -c -x lomiri; systemctl show -p SystemState -p NFailedUnits
+fence_ctx=1 fence_seq=1186 pending=0 win_configs=1186 scanned=1186 copied=0 dma_fallbacks=0 skipped=0 acq_timeouts=0 completed=1186 stage=idle worker_seq=1186 worker_layers=1 padded_scanned=1186 scan_full_w=1088 scan_full_h=2352
+1
+NFailedUnits=0
+SystemState=starting
+RC=0
+
+M94_B2_ON uptime=101.02
+urfkill_block=(true,)
+urfkill_unblock=(true,)
+hci0_after_s=0
+Changing power on succeeded
+
+M94_B2_SCAN uptime=108.17 (owner: speaker in pairing mode)
+devices_seen=6 audio_sink_found=yes rssi=4294967263 after_s=12
+
+M94_B2_PAIR uptime=118.56
+Attempting to pair with <mac>
+Failed to pair: org.bluez.Error.AlreadyExists
+Changing <mac> trust succeeded
+
+M94_B2_CONNECT uptime=118.66
+Attempting to connect to <mac>
+[[0;93mCHG[0m] Device <mac>
+Connection successful
+	Paired: yes
+	Bonded: yes
+	Trusted: yes
+	Connected: yes
+	LegacyPairing: no
+	CablePairing: no
+bluez_sink_present=yes
+card: bluez_card.<mac> module-bluez5-device.c
+
+M94_B2_TONE1 uptime=125.11
+sine_module=20
+tone1_done
+	Sample Specification: s16le 2ch 44100Hz
+
+M94_B2_RECONNECT uptime=128.40
+Attempting to disconnect from <mac>
+[[0;93mCHG[0m] Device <mac>
+Disconnection successful
+Attempting to connect to <mac>
+[[0;93mCHG[0m] Device <mac>
+Connection successful
+bluez_sink_after_reconnect=yes
+
+M94_B2_TONE2 uptime=141.38
+sine_module=22
+tone2_done
+bt_addr_random_static_bits=no
+
+M94_B2_CLEANUP uptime=144.66
+btsnoop_bytes=780297
+
+M94_B2_HCI_SUMMARY
+= Note: Linux version 6.18.33-a50-diag+ (aarch64)                      0.631204
+= Note: Bluetooth subsystem version 2.22                               0.631212
+= New Index: <mac> (Primary,Virtual,hci0)           [hci0] 0.631215
+= Open Index: <mac>                                 [hci0] 0.631216
+= Index Info: <mac> (Samsung Electronics Co. Ltd.)  [hci0] 0.631217
+@ MGMT Open: bluetoothd (privileged) version 1.23             {0x0001} 0.631221
+> HCI Event: Inquiry Complete (0x01) plen 1                  #1 [hci0] 0.968746
+        Status: Success (0x00)
+@ MGMT Event: Discovering (0x0013) plen 2              {0x0001} [hci0] 0.968799
+@ MGMT Command: Start Discovery (0x0023) plen 1        {0x0001} [hci0] 6.537899
+< HCI Command: LE Set Random Address (0x08|0x0005) plen 6    #2 [hci0] 6.537968
+> HCI Event: Command Complete (0x0e) plen 4                  #3 [hci0] 6.540667
+        Status: Success (0x00)
+< HCI Command: LE Set Scan Parameters (0x08|0x000b) plen 7   #4 [hci0] 6.540719
+> HCI Event: Command Complete (0x0e) plen 4                  #5 [hci0] 6.540782
+        Status: Success (0x00)
+< HCI Command: LE Set Scan Enable (0x08|0x000c) plen 2       #6 [hci0] 6.540817
+> HCI Event: Command Complete (0x0e) plen 4                  #7 [hci0] 6.541671
+        Status: Success (0x00)
+@ MGMT Event: Discovering (0x0013) plen 2              {0x0001} [hci0] 6.541686
+@ MGMT Event: Command Complete (0x0001) plen 4         {0x0001} [hci0] 6.541719
+        Status: Success (0x00)
+> HCI Event: LE Meta Event (0x3e) plen 43                    #8 [hci0] 6.546396
+> HCI Event: LE Meta Event (0x3e) plen 34                    #9 [hci0] 6.547189
+@ MGMT Event: Device Found (0x0012) plen 67            {0x0001} [hci0] 6.547211
+> HCI Event: LE Meta Event (0x3e) plen 29                   #10 [hci0] 6.548842
+> HCI Event: LE Meta Event (0x3e) plen 29                   #11 [hci0] 6.825821
+> HCI Event: LE Meta Event (0x3e) plen 43                   #12 [hci0] 7.052439
+@ MGMT Event: Device Found (0x0012) plen 31            {0x0001} [hci0] 7.052491
+> HCI Event: LE Meta Event (0x3e) plen 34                   #13 [hci0] 7.053198
+@ MGMT Event: Device Found (0x0012) plen 67            {0x0001} [hci0] 7.053221
+> HCI Event: LE Meta Event (0x3e) plen 20                   #14 [hci0] 7.856700
+@ MGMT Event: Device Found (0x0012) plen 22            {0x0001} [hci0] 7.856777
+> HCI Event: LE Meta Event (0x3e) plen 43                   #15 [hci0] 8.061981
+> HCI Event: LE Meta Event (0x3e) plen 34                   #16 [hci0] 8.062761
+@ MGMT Event: Device Found (0x0012) plen 67            {0x0001} [hci0] 8.062798
+> HCI Event: LE Meta Event (0x3e) plen 29                   #17 [hci0] 8.497953
+> HCI Event: LE Meta Event (0x3e) plen 12                   #18 [hci0] 8.498557
+@ MGMT Event: Device Found (0x0012) plen 31            {0x0001} [hci0] 8.498580
+> HCI Event: LE Meta Event (0x3e) plen 43                   #19 [hci0] 8.569271
+> HCI Event: LE Meta Event (0x3e) plen 34                   #20 [hci0] 8.570051
+@ MGMT Event: Device Found (0x0012) plen 67            {0x0001} [hci0] 8.570073
+> HCI Event: LE Meta Event (0x3e) plen 29                   #21 [hci0] 8.772994
+> HCI Event: LE Meta Event (0x3e) plen 12                   #22 [hci0] 8.773600
+@ MGMT Event: Device Found (0x0012) plen 31            {0x0001} [hci0] 8.773622
+> HCI Event: LE Meta Event (0x3e) plen 43                   #23 [hci0] 9.579094
+> HCI Event: LE Meta Event (0x3e) plen 34                   #24 [hci0] 9.579955
+@ MGMT Event: Device Found (0x0012) plen 67            {0x0001} [hci0] 9.579985
+> HCI Event: LE Meta Event (0x3e) plen 43                  #25 [hci0] 10.081402
+> HCI Event: LE Meta Event (0x3e) plen 34                  #26 [hci0] 10.082179
+@ MGMT Event: Device Found (0x0012) plen 67           {0x0001} [hci0] 10.082204
+> HCI Event: LE Meta Event (0x3e) plen 29                  #27 [hci0] 10.431198
+> HCI Event: LE Meta Event (0x3e) plen 12                  #28 [hci0] 10.431805
+@ MGMT Event: Device Found (0x0012) plen 31           {0x0001} [hci0] 10.431829
+> HCI Event: LE Meta Event (0x3e) plen 43                  #29 [hci0] 10.586171
+> HCI Event: LE Meta Event (0x3e) plen 34                  #30 [hci0] 10.586938
+@ MGMT Event: Device Found (0x0012) plen 67           {0x0001} [hci0] 10.586965
+> HCI Event: LE Meta Event (0x3e) plen 29                  #31 [hci0] 11.263902
+> HCI Event: LE Meta Event (0x3e) plen 12                  #32 [hci0] 11.264505
+@ MGMT Event: Device Found (0x0012) plen 31           {0x0001} [hci0] 11.264527
+> HCI Event: LE Meta Event (0x3e) plen 29                  #33 [hci0] 11.538951
+> HCI Event: LE Meta Event (0x3e) plen 12                  #34 [hci0] 11.539551
+@ MGMT Event: Device Found (0x0012) plen 31           {0x0001} [hci0] 11.539576
+> HCI Event: LE Meta Event (0x3e) plen 38                  #35 [hci0] 11.581272
+< HCI Command: LE Set Scan Enable (0x08|0x000c) plen 2     #36 [hci0] 11.705797
+> HCI Event: Command Complete (0x0e) plen 4                #37 [hci0] 11.718732
+        Status: Success (0x00)
+@ MGMT Event: Device Found (0x0012) plen 40           {0x0001} [hci0] 11.718777
+< HCI Command: Inquiry (0x01|0x0001) plen 5                #38 [hci0] 11.718829
+> HCI Event: Command Status (0x0f) plen 4                  #39 [hci0] 11.718893
+        Status: Success (0x00)
+> HCI Event: Extended Inquiry Result (0x2f) plen 255       #40 [hci0] 11.790024
+@ MGMT Event: Device Found (0x0012) plen 19           {0x0001} [hci0] 11.790091
+> HCI Event: Extended Inquiry Result (0x2f) plen 255       #41 [hci0] 12.270621
+@ MGMT Event: Device Found (0x0012) plen 44           {0x0001} [hci0] 12.270671
+> HCI Event: Extended Inquiry Result (0x2f) plen 255       #42 [hci0] 15.065802
+@ MGMT Event: Device Found (0x0012) plen 59           {0x0001} [hci0] 15.065857
+< HCI Command: Inquiry Cancel (0x01|0x0002) plen 0         #43 [hci0] 15.234765
+> HCI Event: Command Complete (0x0e) plen 4                #44 [hci0] 15.238743
+        Status: Success (0x00)
+@ MGMT Event: Discovering (0x0013) plen 2             {0x0001} [hci0] 15.238766
+< HCI Command: Create Connection (0x01|0x0005) plen 13     #45 [hci0] 15.238800
+> HCI Event: Command Status (0x0f) plen 4                  #46 [hci0] 15.238863
+        Status: Success (0x00)
+> HCI Event: Connect Complete (0x03) plen 11               #47 [hci0] 15.342200
+        Status: Success (0x00)
+        Handle: 2
+< HCI Command: Read Remote Support.. (0x01|0x001b) plen 2  #48 [hci0] 15.342360
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+> HCI Event: Command Status (0x0f) plen 4                  #49 [hci0] 15.342419
+        Status: Success (0x00)
+@ RAW Open: btmon (privileged) version 2.22                  {0x0002} 15.342501
+@ RAW Close: btmon                                           {0x0002} 15.342510
+> HCI Event: Max Slots Change (0x1b) plen 3                #50 [hci0] 15.365484
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+> HCI Event: Read Remote Supported Featu.. (0x0b) plen 11  #51 [hci0] 15.365543
+        Status: Success (0x00)
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+> HCI Event: Command Status (0x0f) plen 4                  #52 [hci0] 15.365548
+        Status: Success (0x00)
+< HCI Command: Read Remote Extende.. (0x01|0x001c) plen 3  #53 [hci0] 15.365573
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+> HCI Event: Command Status (0x0f) plen 4                  #54 [hci0] 15.365620
+        Status: Success (0x00)
+> HCI Event: Read Remote Extended Features (0x23) plen 13  #55 [hci0] 15.365624
+        Status: Success (0x00)
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+< ACL Data TX: Handle 2 flags 0x00 dlen 10                 #57 [hci0] 15.365674
+      L2CAP: Information Request (0x0a) ident 1 len 2
+> HCI Event: Command Status (0x0f) plen 4                  #58 [hci0] 15.365732
+        Status: Success (0x00)
+> HCI Event: Number of Completed Packets (0x13) plen 5     #59 [hci0] 15.377881
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+        Status: Success (0x00)
+@ MGMT Event: Device Connected (0x000b) plen 28       {0x0001} [hci0] 15.381934
+> ACL Data RX: Handle 2 flags 0x02 dlen 16                 #61 [hci0] 15.384240
+      L2CAP: Information Response (0x0b) ident 1 len 8
+        Result: Success (0x0000)
+< ACL Data TX: Handle 2 flags 0x00 dlen 12                 #62 [hci0] 15.384281
+      L2CAP: Connection Request (0x02) ident 2 len 4
+> HCI Event: Number of Completed Packets (0x13) plen 5     #63 [hci0] 15.387867
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> ACL Data RX: Handle 2 flags 0x02 dlen 16                 #64 [hci0] 15.389195
+      L2CAP: Connection Response (0x03) ident 2 len 8
+        Result: Connection successful (0x0000)
+        Status: No further information available (0x0000)
+< ACL Data TX: Handle 2 flags 0x00 dlen 12                 #65 [hci0] 15.389223
+      L2CAP: Configure Request (0x04) ident 3 len 4
+> ACL Data RX: Handle 2 flags 0x02 dlen 16                 #66 [hci0] 15.391765
+      L2CAP: Configure Request (0x04) ident 1 len 8
+          MTU: 672
+> HCI Event: Number of Completed Packets (0x13) plen 5     #67 [hci0] 15.391781
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x00 dlen 18                 #68 [hci0] 15.392694
+      L2CAP: Configure Response (0x05) ident 1 len 10
+        Result: Success (0x0000)
+          MTU: 672
+> ACL Data RX: Handle 2 flags 0x02 dlen 14                 #69 [hci0] 15.392973
+      L2CAP: Configure Response (0x05) ident 3 len 6
+        Result: Success (0x0000)
+< ACL Data TX: Handle 2 flags 0x00 dlen 24                 #70 [hci0] 15.393191
+      SDP: Service Search Attribute Request (0x06) tid 0 len 15
+> HCI Event: Number of Completed Packets (0x13) plen 5     #71 [hci0] 15.395371
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> HCI Event: Number of Completed Packets (0x13) plen 5     #72 [hci0] 15.396615
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> ACL Data RX: Handle 2 flags 0x02 dlen 14                 #73 [hci0] 15.397934
+      SDP: Service Search Attribute Response (0x07) tid 0 len 5
+= bluetoothd: src/profile.c:record_cb() No SDP records found for...   15.399538
+< HCI Command: Authentication Requ.. (0x01|0x0011) plen 2  #74 [hci0] 15.399353
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+> HCI Event: Command Status (0x0f) plen 4                  #75 [hci0] 15.399434
+        Status: Success (0x00)
+> HCI Event: Link Key Request (0x17) plen 6                #76 [hci0] 15.399443
+< HCI Command: Link Key Request R.. (0x01|0x000b) plen 22  #77 [hci0] 15.399476
+> HCI Event: Command Complete (0x0e) plen 10               #78 [hci0] 15.399529
+        Status: Success (0x00)
+> HCI Event: Auth Complete (0x06) plen 3                   #79 [hci0] 15.405557
+        Status: Success (0x00)
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+< HCI Command: Set Connection Encr.. (0x01|0x0013) plen 3  #80 [hci0] 15.405616
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+> HCI Event: Command Status (0x0f) plen 4                  #81 [hci0] 15.405670
+        Status: Success (0x00)
+> HCI Event: Encryption Change (0x08) plen 4               #82 [hci0] 15.416717
+        Status: Success (0x00)
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+< HCI Command: Read Encryption Key.. (0x05|0x0008) plen 2  #83 [hci0] 15.416765
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+> HCI Event: Command Complete (0x0e) plen 7                #84 [hci0] 15.416816
+        Status: Success (0x00)
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+< ACL Data TX: Handle 2 flags 0x00 dlen 12                 #85 [hci0] 15.416850
+      L2CAP: Connection Request (0x02) ident 4 len 4
+> HCI Event: Number of Completed Packets (0x13) plen 5     #86 [hci0] 15.419121
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> ACL Data RX: Handle 2 flags 0x02 dlen 16                 #87 [hci0] 15.420444
+      L2CAP: Connection Response (0x03) ident 4 len 8
+        Result: Connection successful (0x0000)
+        Status: No further information available (0x0000)
+< ACL Data TX: Handle 2 flags 0x00 dlen 12                 #88 [hci0] 15.420468
+      L2CAP: Configure Request (0x04) ident 5 len 4
+> ACL Data RX: Handle 2 flags 0x02 dlen 16                 #89 [hci0] 15.423024
+      L2CAP: Configure Request (0x04) ident 2 len 8
+          MTU: 672
+> HCI Event: Number of Completed Packets (0x13) plen 5     #90 [hci0] 15.423036
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x00 dlen 18                 #91 [hci0] 15.423050
+      L2CAP: Configure Response (0x05) ident 2 len 10
+        Result: Success (0x0000)
+          MTU: 672
+> ACL Data RX: Handle 2 flags 0x02 dlen 14                 #92 [hci0] 15.424225
+      L2CAP: Configure Response (0x05) ident 5 len 6
+        Result: Success (0x0000)
+< ACL Data TX: Handle 2 flags 0x00 dlen 6                  #93 [hci0] 15.424568
+> HCI Event: Number of Completed Packets (0x13) plen 5     #94 [hci0] 15.426627
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> HCI Event: Number of Completed Packets (0x13) plen 5     #95 [hci0] 15.427872
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> ACL Data RX: Handle 2 flags 0x02 dlen 8                  #96 [hci0] 15.429190
+< ACL Data TX: Handle 2 flags 0x00 dlen 18                 #97 [hci0] 15.437373
+> HCI Event: Number of Completed Packets (0x13) plen 5     #98 [hci0] 15.439134
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> ACL Data RX: Handle 2 flags 0x02 dlen 6                  #99 [hci0] 15.440515
+< ACL Data TX: Handle 2 flags 0x00 dlen 7                 #100 [hci0] 15.443671
+> HCI Event: Number of Completed Packets (0x13) plen 5    #101 [hci0] 15.447874
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> ACL Data RX: Handle 2 flags 0x02 dlen 6                 #102 [hci0] 15.449133
+< ACL Data TX: Handle 2 flags 0x00 dlen 12                #103 [hci0] 15.449343
+      L2CAP: Connection Request (0x02) ident 6 len 4
+> HCI Event: Number of Completed Packets (0x13) plen 5    #104 [hci0] 15.451614
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> ACL Data RX: Handle 2 flags 0x02 dlen 16                #105 [hci0] 15.452921
+      L2CAP: Connection Response (0x03) ident 6 len 8
+        Result: Connection successful (0x0000)
+        Status: No further information available (0x0000)
+< ACL Data TX: Handle 2 flags 0x00 dlen 16                #106 [hci0] 15.452950
+      L2CAP: Configure Request (0x04) ident 7 len 8
+          MTU: 1021
+> ACL Data RX: Handle 2 flags 0x02 dlen 16                #107 [hci0] 15.455473
+      L2CAP: Configure Request (0x04) ident 3 len 8
+          MTU: 672
+> HCI Event: Number of Completed Packets (0x13) plen 5    #108 [hci0] 15.455479
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x00 dlen 18                #109 [hci0] 15.455494
+      L2CAP: Configure Response (0x05) ident 3 len 10
+        Result: Success (0x0000)
+          MTU: 672
+> ACL Data RX: Handle 2 flags 0x02 dlen 18                #110 [hci0] 15.456723
+      L2CAP: Configure Response (0x05) ident 7 len 10
+        Result: Success (0x0000)
+          MTU: 1021
+< ACL Data TX: Handle 2 flags 0x00 dlen 7                 #111 [hci0] 15.456859
+< ACL Data TX: Handle 2 flags 0x00 dlen 12                #112 [hci0] 15.457350
+      L2CAP: Connection Request (0x02) ident 8 len 4
+< ACL Data TX: Handle 2 flags 0x00 dlen 24                #113 [hci0] 15.457546
+      SDP: Service Search Attribute Request (0x06) tid 1 len 15
+> HCI Event: Number of Completed Packets (0x13) plen 5    #114 [hci0] 15.459123
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> HCI Event: Number of Completed Packets (0x13) plen 5    #115 [hci0] 15.460365
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> HCI Event: Number of Completed Packets (0x13) plen 5    #116 [hci0] 15.461782
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> HCI Event: Number of Completed Packets (0x13) plen 5    #117 [hci0] 15.462863
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> ACL Data RX: Handle 2 flags 0x02 dlen 6                 #118 [hci0] 15.529213
+= bluetoothd: /org/bluez/hci0/dev_<mac>/sep1/fd0: fd(..   15.530318
+> ACL Data RX: Handle 2 flags 0x02 dlen 316               #119 [hci0] 15.531673
+      SDP: Service Search Attribute Response (0x07) tid 1 len 307
+> ACL Data RX: Handle 2 flags 0x02 dlen 16                #120 [hci0] 15.532965
+      L2CAP: Connection Response (0x03) ident 8 len 8
+        Result: Connection successful (0x0000)
+        Status: No further information available (0x0000)
+< ACL Data TX: Handle 2 flags 0x00 dlen 12                #121 [hci0] 15.533012
+      L2CAP: Configure Request (0x04) ident 9 len 4
+> ACL Data RX: Handle 2 flags 0x02 dlen 16                #122 [hci0] 15.534289
+      L2CAP: Configure Request (0x04) ident 4 len 8
+          MTU: 672
+< ACL Data TX: Handle 2 flags 0x00 dlen 18                #123 [hci0] 15.534318
+      L2CAP: Configure Response (0x05) ident 4 len 10
+        Result: Success (0x0000)
+          MTU: 672
+> HCI Event: Number of Completed Packets (0x13) plen 5    #124 [hci0] 15.536629
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x00 dlen 24                #125 [hci0] 15.537566
+      SDP: Service Search Attribute Request (0x06) tid 2 len 15
+> HCI Event: Number of Completed Packets (0x13) plen 5    #126 [hci0] 15.537864
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> HCI Event: Number of Completed Packets (0x13) plen 5    #127 [hci0] 15.540363
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #128 [hci0] 15.546602
+> ACL Data RX: Handle 2 flags 0x02 dlen 14                #129 [hci0] 15.551744
+      L2CAP: Configure Response (0x05) ident 9 len 6
+        Result: Success (0x0000)
+> HCI Event: Number of Completed Packets (0x13) plen 5    #130 [hci0] 15.551759
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> ACL Data RX: Handle 2 flags 0x02 dlen 14                #131 [hci0] 15.552967
+      SDP: Service Search Attribute Response (0x07) tid 2 len 5
+> ACL Data RX: Handle 2 flags 0x02 dlen 22                #132 [hci0] 15.554246
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #133 [hci0] 15.561892
+< ACL Data TX: Handle 2 flags 0x00 dlen 19                #134 [hci0] 15.562824
+            PlayStatus: 0x00 (STOPPED)
+< ACL Data TX: Handle 2 flags 0x00 dlen 18                #135 [hci0] 15.562904
+        AV/C: Status: address 0x48 opcode 0x00
+> HCI Event: Number of Completed Packets (0x13) plen 5    #136 [hci0] 15.566633
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> HCI Event: Number of Completed Packets (0x13) plen 5    #137 [hci0] 15.567868
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> HCI Event: Number of Completed Packets (0x13) plen 5    #138 [hci0] 15.569130
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> ACL Data RX: Handle 2 flags 0x02 dlen 21                #139 [hci0] 15.570481
+            CapabilityCount: 0x01
+< ACL Data TX: Handle 2 flags 0x00 dlen 22                #140 [hci0] 15.570760
+> HCI Event: Number of Completed Packets (0x13) plen 5    #141 [hci0] 15.572887
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> ACL Data RX: Handle 2 flags 0x02 dlen 19                #142 [hci0] 15.574218
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #143 [hci0] 15.576019
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #144 [hci0] 15.593844
+> HCI Event: Number of Completed Packets (0x13) plen 5    #145 [hci0] 15.599174
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> HCI Event: Number of Completed Packets (0x13) plen 5    #146 [hci0] 15.602875
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #147 [hci0] 15.605821
+> HCI Event: Number of Completed Packets (0x13) plen 5    #148 [hci0] 15.611616
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #149 [hci0] 15.621812
+> HCI Event: Number of Completed Packets (0x13) plen 5    #150 [hci0] 15.626676
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #151 [hci0] 15.633905
+> HCI Event: Number of Completed Packets (0x13) plen 5    #152 [hci0] 15.639174
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #153 [hci0] 15.649865
+> HCI Event: Number of Completed Packets (0x13) plen 5    #154 [hci0] 15.655430
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #155 [hci0] 15.665847
+> HCI Event: Number of Completed Packets (0x13) plen 5    #156 [hci0] 15.671984
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #157 [hci0] 15.677817
+> HCI Event: Number of Completed Packets (0x13) plen 5    #158 [hci0] 15.683530
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #159 [hci0] 15.693814
+> HCI Event: Number of Completed Packets (0x13) plen 5    #160 [hci0] 15.699197
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #161 [hci0] 15.709814
+> HCI Event: Number of Completed Packets (0x13) plen 5    #162 [hci0] 15.715845
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #163 [hci0] 15.721816
+> HCI Event: Number of Completed Packets (0x13) plen 5    #164 [hci0] 15.726619
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #165 [hci0] 15.737815
+> HCI Event: Number of Completed Packets (0x13) plen 5    #166 [hci0] 15.742882
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #167 [hci0] 15.749814
+> HCI Event: Number of Completed Packets (0x13) plen 5    #168 [hci0] 15.755655
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #169 [hci0] 15.765831
+> HCI Event: Number of Completed Packets (0x13) plen 5    #170 [hci0] 15.771680
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #171 [hci0] 15.781816
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #172 [hci0] 15.793810
+> HCI Event: Number of Completed Packets (0x13) plen 5    #173 [hci0] 15.797885
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> HCI Event: Number of Completed Packets (0x13) plen 5    #174 [hci0] 15.801665
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #175 [hci0] 15.809819
+> HCI Event: Number of Completed Packets (0x13) plen 5    #176 [hci0] 15.815425
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #177 [hci0] 15.825817
+> HCI Event: Number of Completed Packets (0x13) plen 5    #178 [hci0] 15.831979
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #179 [hci0] 15.837813
+> HCI Event: Number of Completed Packets (0x13) plen 5    #180 [hci0] 15.842936
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #181 [hci0] 15.853820
+> HCI Event: Number of Completed Packets (0x13) plen 5    #182 [hci0] 15.859187
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #183 [hci0] 15.865823
+> HCI Event: Number of Completed Packets (0x13) plen 5    #184 [hci0] 15.871974
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #185 [hci0] 15.881817
+> HCI Event: Number of Completed Packets (0x13) plen 5    #186 [hci0] 15.886815
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #187 [hci0] 15.897831
+> HCI Event: Number of Completed Packets (0x13) plen 5    #188 [hci0] 15.902904
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #189 [hci0] 15.909815
+> HCI Event: Number of Completed Packets (0x13) plen 5    #190 [hci0] 15.915386
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #191 [hci0] 15.925833
+> HCI Event: Number of Completed Packets (0x13) plen 5    #192 [hci0] 15.930382
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #193 [hci0] 15.941833
+> HCI Event: Number of Completed Packets (0x13) plen 5    #194 [hci0] 15.946977
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #195 [hci0] 15.953819
+> HCI Event: Number of Completed Packets (0x13) plen 5    #196 [hci0] 15.959197
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #197 [hci0] 15.969817
+> HCI Event: Number of Completed Packets (0x13) plen 5    #198 [hci0] 15.975728
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #199 [hci0] 15.985815
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #200 [hci0] 15.997807
+> HCI Event: Number of Completed Packets (0x13) plen 5    #201 [hci0] 16.000418
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> HCI Event: Number of Completed Packets (0x13) plen 5    #202 [hci0] 16.004182
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #203 [hci0] 16.013848
+> HCI Event: Number of Completed Packets (0x13) plen 5    #204 [hci0] 16.019495
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #205 [hci0] 16.025832
+> HCI Event: Number of Completed Packets (0x13) plen 5    #206 [hci0] 16.031683
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #207 [hci0] 16.041838
+> HCI Event: Number of Completed Packets (0x13) plen 5    #208 [hci0] 16.046688
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #209 [hci0] 16.057823
+> HCI Event: Number of Completed Packets (0x13) plen 5    #210 [hci0] 16.063228
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #211 [hci0] 16.069822
+> HCI Event: Number of Completed Packets (0x13) plen 5    #212 [hci0] 16.075431
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #213 [hci0] 16.085821
+> HCI Event: Number of Completed Packets (0x13) plen 5    #214 [hci0] 16.091684
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #215 [hci0] 16.101820
+> HCI Event: Number of Completed Packets (0x13) plen 5    #216 [hci0] 16.106990
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #217 [hci0] 16.113818
+> HCI Event: Number of Completed Packets (0x13) plen 5    #218 [hci0] 16.119965
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #219 [hci0] 16.129912
+> HCI Event: Number of Completed Packets (0x13) plen 5    #220 [hci0] 16.135448
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #221 [hci0] 16.141907
+> HCI Event: Number of Completed Packets (0x13) plen 5    #222 [hci0] 16.146685
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #223 [hci0] 16.157888
+> HCI Event: Number of Completed Packets (0x13) plen 5    #224 [hci0] 16.162956
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #225 [hci0] 16.173838
+> HCI Event: Number of Completed Packets (0x13) plen 5    #226 [hci0] 16.179192
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #227 [hci0] 16.185903
+> HCI Event: Number of Completed Packets (0x13) plen 5    #228 [hci0] 16.194181
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #229 [hci0] 16.202310
+> HCI Event: Number of Completed Packets (0x13) plen 5    #230 [hci0] 16.208232
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #231 [hci0] 16.217906
+> HCI Event: Number of Completed Packets (0x13) plen 5    #232 [hci0] 16.222934
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #233 [hci0] 16.229874
+> HCI Event: Number of Completed Packets (0x13) plen 5    #234 [hci0] 16.235437
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #235 [hci0] 16.245941
+> HCI Event: Number of Completed Packets (0x13) plen 5    #236 [hci0] 16.251702
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #237 [hci0] 16.257825
+> HCI Event: Number of Completed Packets (0x13) plen 5    #238 [hci0] 16.263205
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #239 [hci0] 16.273876
+> HCI Event: Number of Completed Packets (0x13) plen 5    #240 [hci0] 16.279184
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #241 [hci0] 16.289901
+> HCI Event: Number of Completed Packets (0x13) plen 5    #242 [hci0] 16.295444
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #243 [hci0] 16.301855
+> HCI Event: Number of Completed Packets (0x13) plen 5    #244 [hci0] 16.311689
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #245 [hci0] 16.317867
+> HCI Event: Number of Completed Packets (0x13) plen 5    #246 [hci0] 16.323277
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #247 [hci0] 16.333832
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #248 [hci0] 16.347505
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #249 [hci0] 16.361829
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #250 [hci0] 16.373813
+> HCI Event: Number of Completed Packets (0x13) plen 5    #251 [hci0] 16.376721
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> HCI Event: Number of Completed Packets (0x13) plen 5    #252 [hci0] 16.380381
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> HCI Event: Number of Completed Packets (0x13) plen 5    #253 [hci0] 16.384118
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> HCI Event: Number of Completed Packets (0x13) plen 5    #254 [hci0] 16.387852
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #255 [hci0] 16.389909
+> HCI Event: Number of Completed Packets (0x13) plen 5    #256 [hci0] 16.395363
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #257 [hci0] 16.405846
+> HCI Event: Number of Completed Packets (0x13) plen 5    #258 [hci0] 16.411632
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #259 [hci0] 16.417823
+> HCI Event: Number of Completed Packets (0x13) plen 5    #260 [hci0] 16.422918
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #261 [hci0] 16.433816
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #262 [hci0] 16.449823
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #263 [hci0] 16.461818
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #264 [hci0] 16.477812
+> HCI Event: Number of Completed Packets (0x13) plen 5    #265 [hci0] 16.479146
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> HCI Event: Number of Completed Packets (0x13) plen 5    #266 [hci0] 16.482874
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> HCI Event: Number of Completed Packets (0x13) plen 5    #267 [hci0] 16.486650
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> HCI Event: Number of Completed Packets (0x13) plen 5    #268 [hci0] 16.490768
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #269 [hci0] 16.493822
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #270 [hci0] 16.505812
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #271 [hci0] 16.521810
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #272 [hci0] 16.533807
+> HCI Event: Number of Completed Packets (0x13) plen 5    #273 [hci0] 16.536669
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> HCI Event: Number of Completed Packets (0x13) plen 5    #274 [hci0] 16.540389
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> HCI Event: Number of Completed Packets (0x13) plen 5    #275 [hci0] 16.544121
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> HCI Event: Number of Completed Packets (0x13) plen 5    #276 [hci0] 16.548336
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #277 [hci0] 16.549821
+> HCI Event: Number of Completed Packets (0x13) plen 5    #278 [hci0] 16.556681
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #279 [hci0] 16.565815
+< ACL Data TX: Handle 2 flags 0x02 dlen 612               #280 [hci0] 16.577812
+> HCI Event: Number of Completed Packets (0x13) plen 5    #281 [hci0] 16.580394
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+        Count: 1
+> HCI Event: Number of Completed Packets (0x13) plen 5    #282 [hci0] 16.584180
+        Handle: 2 Address: <mac> (Shenzhen Jingxun Software Telecommunication Technology Co.,Ltd)
+Attempting to disconnect from <mac>
+[[0;93mCHG[0m] Device <mac>
+Disconnection successful
+urfkill_block_at_end=(true,) (keep the saved state off, as the owner had it)
+
+M9I_WIFI_AFTER_BT
+nm: wlan0:wifi:connected p2p-dev-wlan0:wifi-p2p:disconnected
+wifi_address_present=yes
+
+M94_B2_FINAL uptime=148.09
+
+CMD: systemctl show bluetooth.service bluebinder.service -p Id -p LoadState -p ActiveState -p SubState -p NRestarts
+NRestarts=0
+Id=bluetooth.service
+LoadState=loaded
+ActiveState=active
+SubState=running
+
+NRestarts=0
+Id=bluebinder.service
+LoadState=masked
+ActiveState=inactive
+SubState=dead
+RC=0
+
+CMD: sh -c grep -E "wlbt|scsc" /proc/interrupts | tr -s " "
+ 70: 5180 0 0 0 0 0 0 0 GIC-0 74 Level scsc_wlbt
+ 72: 0 0 0 0 0 0 0 0 GIC-0 104 Level scsc_wlbt
+ 73: 1 0 0 0 0 0 0 0 GIC-0 105 Level scsc_wlbt
+RC=0
+faults=0
+
+M94_B2_LOG
+[    0.000000] printk: debug: ignoring loglevel setting.
+[    0.054052] Bluetooth: Core ver 2.22
+[    0.054099] NET: Registered PF_BLUETOOTH protocol family
+[    0.054112] Bluetooth: HCI device and connection manager initialized
+[    0.054132] Bluetooth: HCI socket layer initialized
+[    0.054146] Bluetooth: L2CAP socket layer initialized
+[    0.054166] Bluetooth: SCO socket layer initialized
+[    0.113950] wlbt: [BT_COMMON]: scsc_bt_module_init: SCSC MX BT Driver -devel (C) Samsung Electronics Co., Ltd
+[    0.114069] wlbt: [BT_COMMON]: slsi_bt_notify_probe: SLSI BT BlueZ probe
+[    0.328177] Bluetooth: HCI UART driver ver 2.3
+[    0.328185] Bluetooth: HCI UART protocol H4 registered
+[    0.381855] Bluetooth: RFCOMM TTY layer initialized
+[    0.381865] Bluetooth: RFCOMM socket layer initialized
+[    0.381879] Bluetooth: RFCOMM ver 1.11
+[    0.381888] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
+[    0.381893] Bluetooth: BNEP filters: protocol multicast
+[    0.381909] Bluetooth: BNEP socket layer initialized
+[    0.381914] Bluetooth: HIDP (Human Interface Emulation) ver 1.2
+[    0.381920] Bluetooth: HIDP socket layer initialized
+[   21.097123] systemd[1]: Mounting var-lib-bluetooth.mount - /var/lib/bluetooth...
+[   21.365135] systemd[1]: Mounted var-lib-bluetooth.mount - /var/lib/bluetooth.
+[   23.093693] init: Parsing file /vendor/etc/init/android.hardware.bluetooth@1.0-service.rc...
+[   29.221530] systemd[1]: Starting a50-efs-addresses.service - A50 6.18: factory Wi-Fi/Bluetooth addresses from read-only EFS (ADR-0009)...
+[   29.374892] a50-efs-addresses: bluetooth: factory address passed to driver
+[   29.479483] systemd[1]: Finished a50-efs-addresses.service - A50 6.18: factory Wi-Fi/Bluetooth addresses from read-only EFS (ADR-0009).
+[   29.673685] systemd[1]: Starting bluetooth-touch.service - Bluetooth init for Touch devices...
+[   30.057056] init: starting service 'vendor.bluetooth-1-0'...
+[   30.059032] init: createProcessGroup(1002, 136) failed for service 'vendor.bluetooth-1-0': Read-only file system
+[   30.390534] systemd[1]: bluetooth-touch.service: Deactivated successfully.
+[   30.392240] systemd[1]: Started bluetooth-touch.service - Bluetooth init for Touch devices.
+[   31.362274] URfkill[1325]: Setting device 0 (BLUETOOTH) to unblocked
+[   31.362519] URfkill[1325]: set_soft: Setting BLUETOOTH to unblocked
+[   31.369704] wlbt: [BT_COMMON]: scsc_bt_h4_open: (h4_users=0)
+[   31.393940] URfkill[1325]: Setting device 2 (BLUETOOTH) to unblocked
+[   31.394225] URfkill[1325]: set_soft: Setting BLUETOOTH to unblocked
+[   31.395272] URfkill[1325]: Setting BLUETOOTH devices to unblocked
+[   31.395367] URfkill[1325]: set_soft: Setting BLUETOOTH to unblocked
+[   31.396254] URfkill[1325]: set_soft: Setting BLUETOOTH to unblocked
+[   31.407815] systemd[1]: Starting bluetooth.service - Bluetooth service...
+[   31.412542] (uetoothd)[1712]: bluetooth.service: ConfigurationDirectory 'bluetooth' already exists but the mode is different. (File system: 755 ConfigurationDirectoryMode: 555)
+[   31.416878] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/bluetooth/bt.hcf
+[   31.416962] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/bluetooth/bt.hcf failed with error -2
+[   31.416980] wlbt: [MX_FILE]: __mx140_file_request_conf: try mx140/conf/leman_s620_univ/bluetooth/bt.hcf
+[   31.417009] scsc_wlbt 119c0000.wlbt: Direct firmware load for mx140/conf/leman_s620_univ/bluetooth/bt.hcf failed with error -2
+[   31.417789] wlbt: [BT_COMMON]: get_bluetooth_address: using stack supplied Bluetooth address
+[   31.512313] Bluetooth: hci0: unexpected event for opcode 0x0000
+[   31.689958] systemd[1]: Started bluetooth.service - Bluetooth service.
+[   31.690995] systemd[1]: Reached target bluetooth.target - Bluetooth Support.
+[   31.710661] Bluetooth: MGMT ver 1.23
+[   36.548400] systemd[2204]: mpris-proxy.service - Bluetooth mpris proxy was skipped because of an unmet condition check (ConditionUser=!@system).
+[   37.024302] binder_debug: 4 callbacks suppressed
+[   88.966176] ieee80211 phy0: wlbt: W: slsi_rx_debug: WF_FW_INFO: |cpu PHY|id 0x203C|arg 0x0000000E|count 1|timestamp   57549357|
+[   88.966198] ieee80211 phy0: wlbt: W: slsi_rx_debug: WF_FW_INFO: |cpu PHY|id 0x203C|arg 0x00000003|count 1|timestamp   57549482|
+[   94.891239] ieee80211 phy0: wlbt: W: slsi_rx_debug: WF_FW_INFO: |cpu PHY|id 0x203C|arg 0x0000000E|count 1|timestamp   63391599|
+[   94.891264] ieee80211 phy0: wlbt: W: slsi_rx_debug: WF_FW_INFO: |cpu PHY|id 0x203C|arg 0x00000003|count 1|timestamp   63391826|
+[   95.716271] ieee80211 phy0: wlbt: W: slsi_rx_debug: WF_FW_INFO: |cpu PHY|id 0x203C|arg 0x0000000E|count 1|timestamp   64313619|
+[   95.716292] ieee80211 phy0: wlbt: W: slsi_rx_debug: WF_FW_INFO: |cpu PHY|id 0x203C|arg 0x00000003|count 1|timestamp   64314166|
+[   95.915206] ieee80211 phy0: wlbt: W: slsi_rx_debug: WF_FW_INFO: |cpu PHY|id 0x203C|arg 0x0000000E|count 1|timestamp   64415596|
+[   95.915234] ieee80211 phy0: wlbt: W: slsi_rx_debug: WF_FW_INFO: |cpu PHY|id 0x203C|arg 0x00000003|count 1|timestamp   64415820|
+[   97.047604] ieee80211 phy0: wlbt: W: slsi_rx_debug: WF_FW_INFO: |cpu PHY|id 0x203C|arg 0x0000000E|count 1|timestamp   65644676|
+[   97.047626] ieee80211 phy0: wlbt: W: slsi_rx_debug: WF_FW_INFO: |cpu PHY|id 0x203C|arg 0x00000003|count 1|timestamp   65645389|
+[   99.383912] ieee80211 phy0: wlbt: W: slsi_rx_debug: WF_FW_INFO: |cpu PHY|id 0x203C|arg 0x0000000E|count 1|timestamp   67982597|
+[   99.383934] ieee80211 phy0: wlbt: W: slsi_rx_debug: WF_FW_INFO: |cpu PHY|id 0x203C|arg 0x00000003|count 1|timestamp   67982755|
+[  105.115246] URfkill[1325]: Setting BLUETOOTH devices to unblocked
+[  105.115559] URfkill[1325]: set_soft: Setting BLUETOOTH to unblocked
+[  105.115802] URfkill[1325]: set_soft: Setting BLUETOOTH to unblocked
+[  118.820717] systemd[2204]: Reached target bluetooth.target - Bluetooth.
+[  118.864165] bluetoothd[1712]: src/profile.c:record_cb() No SDP records found for Headset Voice gateway
+[  119.016470] pulseaudio[2108]: org.freedesktop.DBus.Properties.Get /org/bluez/hci0/dev_<mac>/sep1/fd0 Volume property not (yet) available
+[  121.021729] bluetoothd[1712]: src/profile.c:record_cb() No SDP records found for Headset Voice gateway
+[  135.149142] bluetoothd[1712]: src/profile.c:record_cb() No SDP records found for Headset Voice gateway
+[  135.516666] bluetoothd[1712]: profiles/audio/avctp.c:avctp_control_confirm() Control: Refusing unexpected connect
+[  137.046776] bluetoothd[1712]: profiles/audio/avctp.c:avctp_connect_cb() connect to <mac>: Connection refused (111)
+[  138.060514] bluetoothd[1712]: src/profile.c:record_cb() No SDP records found for Headset Voice gateway

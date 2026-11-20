@@ -180,6 +180,17 @@ open/close memory-retention review (M8.5 S1 saw DMA-BUF 40 -> 92 -> 86 objects w
 
 ## M9 — Wi-Fi + Bluetooth (SCSC)
 DoD: S4 + S8. The M5 runtime mask of `bluebinder` is removed and multi-user is still reached.
+Plan change (2026-11-20, owner chose native BlueZ; ADR-0008): Bluetooth reaches BlueZ through the SCSC `hci_dev`, not
+the Android HAL + bluebinder. The bluebinder item becomes "Bluetooth works through BlueZ without bluebinder;
+bluebinder disabled cleanly" (owner chose a built-in `systemd.mask=bluebinder.service`).
+Plan change (2026-11-20, owner approved; ADR-0009): a per-boot runtime hook reads the factory Wi-Fi MAC and Bluetooth
+address from a transient read-only EFS mount; the only exception to "never touch EFS", read-only.
+DoD evaluation (2026-11-20): **met**. S4 (M9.3 W2s2/W3; M9.4 M9E2): WPA2 association, DHCP, SSH over Wi-Fi,
+reconnect, rfkill off/on. S8 (M9.4 B2t, M9E2): owner's speaker paired, connected, A2DP tones heard by the owner,
+reconnect. M9E2 ran Wi-Fi + Bluetooth + regression snapshot (input, display, userdata, 0 failed units) on one boot
+with factory addresses; bluebinder masked and inactive. Limits: Wi-Fi tuning (power save, latency) open; stock
+profiles bound to `swlan0` need a one-time reconnect on 6.18; regulatory domain stays world (`00`) as on stock.
+Evidence: `log/2026-11-19-M9.3-wifi.md`, `log/2026-11-20-M9.4-bluetooth.md`.
 
 ## M10 — Audio (ABOX + TFA9872)
 DoD: S6. The M5 runtime mask of `a50-audio-route` is removed and multi-user is still reached. The ADR-0005
@@ -212,3 +223,9 @@ DoD per item, optional.
 ## Project done
 S1–S10 in `00-goal.md` met and logged; baseline vs. new checklist diff
 shows no regression.
+
+## After project done
+Continue with `10-after-kernel-plan.md` (owner decision 2026-11-19: our own
+Ubuntu Touch build on 6.18). Its P0 (make the image fork self-contained) is
+host-only and runs now in the UT-image session; it never touches the kernel
+checkout or the phone. Blockers it works from: `09-ut-blockers.md`.

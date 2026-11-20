@@ -2071,7 +2071,7 @@
 [   32.203339] scsc_wlbt 119c0000.wlbt: Direct firmware load for conf/wlan/mac.txt failed with error -2
 [   32.203363] wlbt: [MX_FILE]: __mx140_release_firmware: firmp=0000000000000000
 [   32.203377] ieee80211 phy0: wlbt: I: slsi_get_hw_mac_address: No MAC address provided (modparam/sysfs/mac.txt), using random local address
-[   32.203390] ieee80211 phy0: wlbt: wlan0: I: slsi_net_open: ifnum:1 r:0 MAC:9a:**:**:**:dd:14
+[   32.203390] ieee80211 phy0: wlbt: wlan0: I: slsi_net_open: ifnum:1 r:0 MAC:<mac>
 [   32.228020] systemd[1]: Started NetworkManager.service - Network Manager.
 [   32.229200] systemd[1]: Reached target network.target - Network.
 [   32.243329] root[1784]: 02default_route_workaround: (): connectivity-change: flushing routing table (proto boot)
@@ -3955,7 +3955,7 @@
 [   75.618427] init: Sending signal 9 to service 'vendor.drm-widevine-hal-1-3' (pid 729) process group...
 [   75.618512] libprocessgroup: Successfully killed process cgroup uid 1013 pid 729 in 0ms
 [   75.651006] wpa_supplicant[1523]: wlan0: Trying to associate with SSID '<ssid>'
-[   75.651085] ieee80211 phy0: wlbt: wlan0: I: slsi_connect: <ssid> Freq=2442 vifStatus=0 CurrBssid:00:**:**:**:00:00 NewBssid:40:**:**:**:eb:5a Qinfo:-1 ieLen:58
+[   75.651085] ieee80211 phy0: wlbt: wlan0: I: slsi_connect: <ssid> Freq=2442 vifStatus=0 CurrBssid:<mac> NewBssid:<mac> Qinfo:-1 ieLen:58
 [   75.689167] ieee80211 phy0: wlbt: wlan0: E: slsi_rx_netdev_mlme: Unhandled Ind/Cfm: 0x2316
 [   75.692185] ieee80211 phy0: wlbt: wlan0: E: slsi_rx_netdev_mlme: Unhandled Ind/Cfm: 0x2316
 [   75.692203] ieee80211 phy0: wlbt: I: slsi_rx_procedure_started_ind: Send Association Request
@@ -10238,7 +10238,7 @@
 [  259.507683] init: Control message: Processed ctl.interface_start for 'android.hardware.keymaster@4.0::IKeymasterDevice/default' from pid: 42 (/system/bin/hwservicemanager)
 [  259.898744] ieee80211 phy0: wlbt: I: slsi_scan_complete: Scan count:32 APs
 [  259.901222] wpa_supplicant[1523]: wlan0: Trying to associate with SSID '<ssid>'
-[  259.902102] ieee80211 phy0: wlbt: wlan0: I: slsi_connect: <ssid> Freq=2442 vifStatus=0 CurrBssid:00:**:**:**:00:00 NewBssid:ac:**:**:**:7d:2f Qinfo:-1 ieLen:59
+[  259.902102] ieee80211 phy0: wlbt: wlan0: I: slsi_connect: <ssid> Freq=2442 vifStatus=0 CurrBssid:<mac> NewBssid:<mac> Qinfo:-1 ieLen:59
 [  259.920736] ieee80211 phy0: wlbt: wlan0: E: slsi_rx_netdev_mlme: Unhandled Ind/Cfm: 0x2316
 [  259.925803] ieee80211 phy0: wlbt: wlan0: E: slsi_rx_netdev_mlme: Unhandled Ind/Cfm: 0x2316
 [  259.925824] ieee80211 phy0: wlbt: I: slsi_rx_procedure_started_ind: Send Association Request
@@ -10255,7 +10255,7 @@
 [  259.960816] ieee80211 phy.: wlbt: I: slsi_set_multicast_filter_work: user_suspend_mode = 0
 [  259.961180] wpa_supplicant[1523]: wlan0: CTRL-EVENT-CONNECTED - Connection to <mac> completed [id=0 id_str=]
 [  259.961688] ieee80211 phy0: wlbt: wlan0: I: slsi_mlme_connect_resp: mlme_connect_resp(vif:1)
-[  259.967456] ieee80211 phy0: wlbt: wlan0: W: slsi_tx_data: no fcq for ff:**:**:**:ff:ff, drop Tx frame
+[  259.967456] ieee80211 phy0: wlbt: wlan0: W: slsi_tx_data: no fcq for <mac>, drop Tx frame
 [  259.967682] ieee80211 phy0: wlbt: wlan0: E: slsi_rx_netdev_mlme: Unhandled Ind/Cfm: 0x2316
 [  259.967689] ieee80211 phy0: wlbt: wlan0: E: slsi_rx_netdev_mlme: Unhandled Ind/Cfm: 0x2316
 [  259.970106] ieee80211 phy0: wlbt: wlan0: E: slsi_rx_netdev_mlme: Unhandled Ind/Cfm: 0x2316

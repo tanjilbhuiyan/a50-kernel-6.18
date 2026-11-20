@@ -1,0 +1,48 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Fri, 20 Nov 2026 15:06:01 +0600
+Subject: [PATCH 70/70] net: wireless: samsung: scsc: always create
+ /sys/wifi/mac_addr
+
+The MAC-override sysfs file was only created when Samsung's SEP (One UI)
+version macro is >= 9, which only the vendor build defines, so it never
+existed on 6.18 (M9.4 M9E: the ADR-0009 runtime hook found no
+/sys/wifi/mac_addr and the driver fell back to a random address). Create
+and remove it unconditionally; it is the driver's address-override
+interface.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I13a2a841cb289c89799ca01629b97badaddb0cfe
+---
+ drivers/net/wireless/samsung/scsc/dev.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/wireless/samsung/scsc/dev.c b/drivers/net/wireless/samsung/scsc/dev.c
+index 7f6482f52..ab0bac334 100644
+--- a/drivers/net/wireless/samsung/scsc/dev.c
++++ b/drivers/net/wireless/samsung/scsc/dev.c
+@@ -665,10 +665,11 @@ int __init slsi_dev_load(void)
+ 	sap_dbg_init();
+ 	sap_test_init();
+ 
+-/* Always create devnode if TW Android P on */
+-#if defined(SCSC_SEP_VERSION) && SCSC_SEP_VERSION >= 9
++/*
++ * 6.18 port: always create /sys/wifi/mac_addr. 4.14 tied it to Samsung's SEP (One UI) version macro, which only
++ * the vendor build defines; the 6.18 runtime passes the factory MAC through it (ADR-0009).
++ */
+ 	slsi_create_sysfs_macaddr();
+-#endif
+ 	SLSI_INFO_NODEV("--- Maxwell Wi-Fi driver loaded successfully ---\n");
+ 	return 0;
+ }
+@@ -677,9 +678,7 @@ void __exit slsi_dev_unload(void)
+ {
+ 	SLSI_INFO_NODEV("Unloading Maxwell Wi-Fi driver\n");
+ 
+-#if defined(SCSC_SEP_VERSION) && SCSC_SEP_VERSION >= 9
+ 	slsi_destroy_sysfs_macaddr();
+-#endif
+ 	/* Unregister SAPs */
+ 	sap_mlme_deinit();
+ 	sap_ma_deinit();

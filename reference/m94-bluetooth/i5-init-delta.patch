@@ -1,0 +1,31 @@
+--- halium-init-runtime (I4)
++++ halium-init-runtime (I5)
+@@ -435,6 +435,28 @@
+ Wants=a50-defer-gsthybris.service
+ After=a50-defer-gsthybris.service
+ A50M75_UNIT
++# M9.4 I5 (ADR-0009): factory Wi-Fi/Bluetooth addresses from a transient read-only EFS mount, before the radios start.
++mkdir -p "${rootmnt}/run/a50-m94"
++busybox cp /a50/m94/efs_addresses.sh "${rootmnt}/run/a50-m94/"
++cat > "${rootmnt}/run/systemd/system/a50-efs-addresses.service" <<'A50M94_UNIT'
++[Unit]
++Description=A50 6.18: factory Wi-Fi/Bluetooth addresses from read-only EFS (ADR-0009)
++DefaultDependencies=no
++After=local-fs.target systemd-udev-settle.service
++Before=urfkill.service bluetooth.service NetworkManager.service
++[Service]
++Type=oneshot
++RemainAfterExit=yes
++ExecStart=/bin/sh /run/a50-m94/efs_addresses.sh
++A50M94_UNIT
++for u in urfkill.service bluetooth.service NetworkManager.service; do
++    mkdir -p "${rootmnt}/run/systemd/system/${u}.d"
++    cat > "${rootmnt}/run/systemd/system/${u}.d/92-a50-efs-addresses.conf" <<'A50M94_UNIT'
++[Unit]
++Wants=a50-efs-addresses.service
++After=a50-efs-addresses.service
++A50M94_UNIT
++done
+ exec busybox switch_root ${rootmnt} ${init} "$@" </dev/null >/dev/kmsg 2>&1
+ echo "Something went badly wrong in the initramfs."
+ panic "Please file a bug on initramfs-tools."
