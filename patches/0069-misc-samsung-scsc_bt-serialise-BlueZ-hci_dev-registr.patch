@@ -1,0 +1,138 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Fri, 20 Nov 2026 12:21:00 +0600
+Subject: [PATCH 69/69] misc: samsung: scsc_bt: serialise BlueZ hci_dev
+ registration through one work item
+
+The 4.14 BlueZ shim called INIT_WORK() on its open/close work items on
+every rfkill or power_control change and then queued them. At boot urfkill
+restores both Bluetooth switches (scsc-bluez-rfkill and hci0) within
+microseconds; re-initialising a still-queued work item corrupted the
+workqueue and oopsed in process_scheduled_works() (M9.4 B2r, 32.8 s).
+
+Initialise a single power work once at module init. Requests only record
+the wanted state and queue the work (queueing a pending work is a no-op);
+the work registers or unregisters hci0 under a mutex according to the
+latest state. Exit cancels the work and unregisters the device.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I6a2b12948cc679fd12cd36844b65386f591ffec3
+---
+ drivers/misc/samsung/scsc_bt/scsc_bluez.c | 55 +++++++++++++++--------
+ 1 file changed, 37 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/misc/samsung/scsc_bt/scsc_bluez.c b/drivers/misc/samsung/scsc_bt/scsc_bluez.c
+index 7c3656775..498b52bf6 100644
+--- a/drivers/misc/samsung/scsc_bt/scsc_bluez.c
++++ b/drivers/misc/samsung/scsc_bt/scsc_bluez.c
+@@ -39,8 +39,15 @@ static struct hci_uart			scsc_hu;
+ static struct device 			*dev_ref;
+ static const struct file_operations 	*bt_fs;
+ static struct workqueue_struct          *wq;
+-static struct work_struct		open_worker;
+-static struct work_struct		close_worker;
++/*
++ * 6.18 port: one power work item, initialised once. The 4.14 code called INIT_WORK() on open/close work items on
++ * every rfkill/parameter change; two quick unblocks (urfkill restores both the scsc-bluez and the hci0 switch at
++ * boot) re-initialised a queued work and corrupted the workqueue (M9.4 B2r oops in process_scheduled_works).
++ * Requests now only record the wanted state; the work applies the latest one under a mutex.
++ */
++static struct work_struct		btz_power_work;
++static DEFINE_MUTEX(btz_power_lock);
++static bool				btz_want_on;
+ static struct work_struct		read_work;
+ static u8				receive_buffer[1024];
+ static bool	                 	terminate_read;
+@@ -171,7 +178,7 @@ static int slsi_bt_send_frame(struct hci_dev *hdev, struct sk_buff *skb)
+ 	return ret;
+ }
+ 
+-static void slsi_bt_open_worker(struct work_struct *work)
++static void slsi_bt_register_hdev(void)
+ {
+ 	int err;
+ 
+@@ -201,7 +208,7 @@ static void slsi_bt_open_worker(struct work_struct *work)
+ 	}
+ }
+ 
+-static void slsi_bt_close_worker(struct work_struct *work)
++static void slsi_bt_unregister_hdev(void)
+ {
+ 	if (hdev) {
+ 		hci_unregister_dev(hdev);
+@@ -210,6 +217,24 @@ static void slsi_bt_close_worker(struct work_struct *work)
+ 	}
+ }
+ 
++static void btz_power_work_fn(struct work_struct *work)
++{
++	mutex_lock(&btz_power_lock);
++	if (READ_ONCE(btz_want_on)) {
++		if (dev_ref)
++			slsi_bt_register_hdev();
++	} else {
++		slsi_bt_unregister_hdev();
++	}
++	mutex_unlock(&btz_power_lock);
++}
++
++static void slsi_bt_request_power(bool on)
++{
++	WRITE_ONCE(btz_want_on, on);
++	schedule_work(&btz_power_work);
++}
++
+ void slsi_bt_notify_probe(struct device *dev,
+ 			  const struct file_operations *fs,
+ 			  atomic_t *error_count,
+@@ -238,13 +263,7 @@ static int slsi_bt_power_control_set_param_cb(const char *buffer,
+ 
+ 	ret = kstrtou32(buffer, 0, &value);
+ 	if (!ret) {
+-		if (value && dev_ref) {
+-			INIT_WORK(&open_worker, slsi_bt_open_worker);
+-			schedule_work(&open_worker);
+-		} else if (0 == value) {
+-			INIT_WORK(&close_worker, slsi_bt_close_worker);
+-			schedule_work(&close_worker);
+-		}
++		slsi_bt_request_power(value != 0);
+ 	}
+ 
+ 	return ret;
+@@ -267,13 +286,7 @@ MODULE_PARM_DESC(power_control,
+ 
+ static int btz_rfkill_set(void *data, bool blocked)
+ {
+-	if (!blocked && dev_ref) {
+-		INIT_WORK(&open_worker, slsi_bt_open_worker);
+-		schedule_work(&open_worker);
+-	} else if (blocked) {
+-		INIT_WORK(&close_worker, slsi_bt_close_worker);
+-		schedule_work(&close_worker);
+-	}
++	slsi_bt_request_power(!blocked);
+ 
+ 	return 0;
+ }
+@@ -286,6 +299,8 @@ static int __init slsi_bluez_init(void)
+ {
+ 	int ret;
+ 
++	INIT_WORK(&btz_power_work, btz_power_work_fn);
++
+ 	slsi_btz_pdev = platform_device_alloc("scsc-bluez", -1);
+ 	if (!slsi_btz_pdev) {
+ 		return -ENOMEM;
+@@ -325,6 +340,10 @@ static int __init slsi_bluez_init(void)
+ 
+ static void __exit slsi_bluez_exit(void)
+ {
++	cancel_work_sync(&btz_power_work);
++	mutex_lock(&btz_power_lock);
++	slsi_bt_unregister_hdev();
++	mutex_unlock(&btz_power_lock);
+ 	platform_device_unregister(slsi_btz_pdev);
+ 	rfkill_unregister(btz_rfkill);
+ 	rfkill_destroy(btz_rfkill);

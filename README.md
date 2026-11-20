@@ -37,7 +37,7 @@ Current state and next action: [STATUS.md](STATUS.md).
 | M6 | Android container: binder, ashmem, ION and real allocator startup | done, with runtime limits below |
 | M7 | Display/GPU: Lomiri UI on the Mali GPU | done with limits (G2D omitted, fixed GPU clock, light-load soak) |
 | M8 | Input: I2C, touch, keys, hall sensor and vibrator | done with limits (hall events, USB resets, memory review → M12) |
-| M9 | Wi-Fi/Bluetooth (SCSC) | in progress; Wi-Fi joins WPA2 networks with SSH over Wi-Fi (M9.3), Bluetooth next |
+| M9 | Wi-Fi/Bluetooth (SCSC) | in progress; Wi-Fi (S4) and Bluetooth pairing + A2DP audio (S8) work; final integration check next |
 | M10-M12 | Audio, modem, power/charging | planned |
 
 Current bring-up limits (details in [the M6.4 log](log/2026-11-14-M6.4-runtime.md)):
@@ -78,7 +78,7 @@ Full plan with each milestone's Definition of Done: [docs/05-plan.md](docs/05-pl
 
 - **Build the current M8 driver stack:** [reproduce/m8/](reproduce/m8/README.md).
   After cloning, run `python3 -I tools/reproduce_m8.py --jobs 16`. This fetches pinned public inputs, applies all
-  66 patches, reconstructs the current Halium runtime and builds Image, raw DTB and BOOT without private backups.
+  69 patches, reconstructs the current Halium runtime and builds Image, raw DTB and BOOT without private backups.
   This clean image excludes timed-test code and has not itself been flashed; the individual drivers have phone evidence.
 - **Build the historical phone-tested M6 snapshot:** [reproduce/m6/](reproduce/m6/README.md).
   After cloning, run `python3 -I tools/reproduce_m6.py --jobs 16`. This fetches pinned public
@@ -87,9 +87,9 @@ Full plan with each milestone's Definition of Done: [docs/05-plan.md](docs/05-pl
   remaining runtime limits are documented there.
 - **Base:** [ACK](https://android.googlesource.com/kernel/common) branch `android17-6.18`, commit `d9a614fed`
   (2026-10-31), Linux 6.18.33. Built with ACK's clang prebuilt (`clang-r584948c`) via `tools/m22_build.sh`.
-- **A50 changes:** [patches/](patches/README.md), 66 patches that apply to that base with `git am`: device tree and
+- **A50 changes:** [patches/](patches/README.md), 69 patches that apply to that base with `git am`: device tree and
   defconfig, Exynos 9610 clocks, pinctrl, UFS, USB PHY, ACPM, S2MPU09 regulators, thermal, the UFS guard, the ION ABI,
-  the `a50-decon` display driver, the Mali kbase, I2C, touchscreen, GPIO keys, hall switches, vibrator, the SCSC Wi-Fi/Bluetooth core and Wi-Fi driver. Where possible they extend the mainline Samsung drivers. Build steps are in [patches/README.md](patches/README.md).
+  the `a50-decon` display driver, the Mali kbase, I2C, touchscreen, GPIO keys, hall switches, vibrator and the SCSC Wi-Fi/Bluetooth drivers. Where possible they extend the mainline Samsung drivers. Build steps are in [patches/README.md](patches/README.md).
 - **Config:** the `a50_firstlight_defconfig` from the series, plus the Halium/Ubuntu Touch flags in
   [tools/m51/halium.flags](tools/m51/halium.flags).
 - The working kernel tree is a local checkout (`src/`, not in this repository). `tools/export_patches.sh` regenerates

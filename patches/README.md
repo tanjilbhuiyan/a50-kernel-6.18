@@ -4,7 +4,7 @@ The Galaxy A50 changes as one ordered series on top of the Android Common Kernel
 
 For a **new-clone build of this current M8 stack**, use
 [reproduce/m8/](../reproduce/m8/README.md):
-`python3 -I tools/reproduce_m8.py --jobs 16`. It verifies the 66-patch tree,
+`python3 -I tools/reproduce_m8.py --jobs 16`. It verifies the 69-patch tree,
 uses a locked full config and reconstructs the current runtime from public
 inputs. No existing local kernel checkout or private image is needed.
 
@@ -15,7 +15,7 @@ continues to hold the separate clean driver series.
 
 - **Base:** https://android.googlesource.com/kernel/common, branch `android17-6.18`,
   commit `d9a614feddce2e8e68767df1d3421305d26a965b` (2026-10-31, Linux 6.18.33).
-- **Series:** `0001` to `0066`. It is the project's clean driver stack:
+- **Series:** `0001` to `0069`. It is the project's clean driver stack:
   - `0001`-`0035` (M2-M5): device tree and defconfig, Exynos 9610 clocks, pinctrl, UFS with the `A50_UFS_SAFE` write
     guard, USB PHY, ACPM, S2MPU09 regulators (read-only), thermal (read-only), and the userdata write allow-list;
   - `0036`-`0040` (M6): tracepoint and Rust build fixes, and the Exynos ION system-heap ABI on native DMA-BUF heaps;
@@ -37,7 +37,11 @@ continues to hold the separate clean driver series.
   - `0064`-`0066` (M9): the SCSC Wi-Fi driver, station mode on mainline cfg80211/nl80211: `0064` imports the 4.14
     sources verbatim, `0065` adapts them to 6.18 (cfg80211 op adapters, firmware loader, const addresses, timers),
     `0066` applies the custom regulatory domain outside RTNL (fixes a deadlock on first interface up). M9.3 W2s2
-    joined a WPA2 network with DHCP, SSH and transfer over Wi-Fi. Bluetooth is not included yet.
+    joined a WPA2 network with DHCP, SSH and transfer over Wi-Fi.
+  - `0067`-`0069` (M9): SCSC Bluetooth as a native BlueZ device (ADR-0008): `0067` imports the 4.14 sources
+    verbatim, `0068` builds them on 6.18 (H4 core on kernel buffers, mainline `h4_recv_buf()` pattern, send-path
+    use-after-free fix), `0069` serialises hci0 registration (fixes a workqueue race). M9.4 B2t paired the owner's
+    speaker and played audio over A2DP.
 - **Not included:** diagnostic patches and one-off test patches. They stay with their test evidence under `reference/`.
   The Halium/Ubuntu Touch config flags are in `tools/m51/halium.flags`.
 
@@ -57,7 +61,8 @@ configuration. The current full M8 config is
 [reproduce/m8/config](../reproduce/m8/config), with a relocatable initramfs
 path populated by the public build command above. GPIO LEDs and the transient trigger are enabled for the vibrator;
 the SCSC core and Wi-Fi driver (with cfg80211 and rfkill) are built and the firmware search path includes
-`/vendor/etc/wifi`. The small defconfig has networking disabled, so Wi-Fi is enabled only in the full config.
+`/vendor/etc/wifi`. The small defconfig has networking disabled, so Wi-Fi and Bluetooth are enabled only in the
+full config, which also builds `hci_uart` H4 and `uinput` and masks `bluebinder` on the command line (ADR-0008).
 
 The historical full config of the M7 stack is
 [reference/m75-integration/clean.config](../reference/m75-integration/clean.config) (it covers `0001`-`0045`; for

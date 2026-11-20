@@ -1,0 +1,608 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Fri, 20 Nov 2026 01:07:10 +0600
+Subject: [PATCH 68/69] misc: samsung: scsc_bt: build the Bluetooth driver on
+ 6.18 as a native BlueZ device
+
+Build the SCSC Bluetooth service, its shared-memory H4 transport and the
+native hci_dev (scsc_bluez.c) on 6.18 (ADR-0008):
+
+- the H4 read/write core works on kernel buffers; /dev/scsc_h4_0 read and
+  write bounce through it (kmalloc/copy_to_user, memdup_user). The 4.14
+  shim called the char-device fops with kernel buffers and NULL files,
+  which user-copy rejects on arm64; it now calls the kernel core directly
+  (blocking mode explicit instead of file->f_flags).
+- h4_recv_buf() now takes a struct hci_uart: embed one, as the mainline
+  non-UART drivers do (bpa10x, btmtkuart); depends on BT_HCIUART_H4.
+- hdev->dev_type is gone; send_frame no longer reads the skb after
+  kfree_skb (4.14 use-after-free) and frees it only on success.
+- no Bluetooth address file and no SoC-UID default (no exynos_soc_info):
+  random address unless userspace sets the bluetooth_address parameter
+  before the service starts; the SoC unique ID is no longer logged.
+- proc_ops, class_create without owner, no <linux/wakelock.h>.
+- Exynos PM QoS hooks (legacy pm_qos classes) become no-ops; scsc_bt_qos.c
+  is not built. ANT is not built.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: Ic43624bf814a0c620f94fd8953d6835803205431
+---
+ drivers/misc/samsung/Kconfig                  |  1 +
+ drivers/misc/samsung/Makefile                 |  1 +
+ drivers/misc/samsung/scsc_bt/Kconfig          | 12 +++
+ drivers/misc/samsung/scsc_bt/Makefile         |  5 +
+ drivers/misc/samsung/scsc_bt/scsc_bluez.c     | 21 +++--
+ drivers/misc/samsung/scsc_bt/scsc_bt_module.c | 41 ++++----
+ drivers/misc/samsung/scsc_bt/scsc_bt_priv.h   | 28 +++---
+ drivers/misc/samsung/scsc_bt/scsc_bt_qos.c    |  1 -
+ drivers/misc/samsung/scsc_bt/scsc_shm.c       | 93 +++++++++++++------
+ drivers/misc/samsung/scsc_bt/scsc_shm.h       |  2 +
+ 10 files changed, 127 insertions(+), 78 deletions(-)
+ create mode 100644 drivers/misc/samsung/scsc_bt/Kconfig
+ create mode 100644 drivers/misc/samsung/scsc_bt/Makefile
+
+diff --git a/drivers/misc/samsung/Kconfig b/drivers/misc/samsung/Kconfig
+index 8faa1eb16..90ce688c0 100644
+--- a/drivers/misc/samsung/Kconfig
++++ b/drivers/misc/samsung/Kconfig
+@@ -1,2 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0
+ source "drivers/misc/samsung/scsc/Kconfig"
++source "drivers/misc/samsung/scsc_bt/Kconfig"
+diff --git a/drivers/misc/samsung/Makefile b/drivers/misc/samsung/Makefile
+index 76beec2b1..af3f4623c 100644
+--- a/drivers/misc/samsung/Makefile
++++ b/drivers/misc/samsung/Makefile
+@@ -1,2 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0
+ obj-$(CONFIG_SCSC_CORE) += scsc/
++obj-$(CONFIG_SCSC_BT) += scsc_bt/
+diff --git a/drivers/misc/samsung/scsc_bt/Kconfig b/drivers/misc/samsung/scsc_bt/Kconfig
+new file mode 100644
+index 000000000..a5a635a65
+--- /dev/null
++++ b/drivers/misc/samsung/scsc_bt/Kconfig
+@@ -0,0 +1,12 @@
++# SPDX-License-Identifier: GPL-2.0
++#
++# Samsung SCSC Bluetooth, reduced for the 6.18 A50 port (ADR-0008): the SCSC Bluetooth service and its shared-memory
++# H4 transport, exposed to BlueZ as a native hci_dev (scsc_bluez.c). ANT and the EFS address file are not ported.
++
++config SCSC_BT
++	tristate "Samsung SCSC Bluetooth"
++	depends on SCSC_CORE && BT && BT_HCIUART_H4
++	help
++	  Bluetooth for the Samsung SCSC (Maxwell) chip of Exynos 9610,
++	  registered with BlueZ as a native HCI device. Uses the stock
++	  firmware through the SCSC core.
+diff --git a/drivers/misc/samsung/scsc_bt/Makefile b/drivers/misc/samsung/scsc_bt/Makefile
+new file mode 100644
+index 000000000..92b0ccab3
+--- /dev/null
++++ b/drivers/misc/samsung/scsc_bt/Makefile
+@@ -0,0 +1,5 @@
++# SPDX-License-Identifier: GPL-2.0
++ccflags-y += -I$(srctree)/include/scsc -I$(srctree)/drivers/misc/samsung/scsc -I$(srctree)/drivers/bluetooth
++
++obj-$(CONFIG_SCSC_BT) += scsc_bt.o
++scsc_bt-y := scsc_bt_module.o scsc_shm.o scsc_avdtp_detect.o scsc_bluez.o
+diff --git a/drivers/misc/samsung/scsc_bt/scsc_bluez.c b/drivers/misc/samsung/scsc_bt/scsc_bluez.c
+index 1c58f95c1..7c3656775 100644
+--- a/drivers/misc/samsung/scsc_bt/scsc_bluez.c
++++ b/drivers/misc/samsung/scsc_bt/scsc_bluez.c
+@@ -21,7 +21,6 @@
+ #include <linux/proc_fs.h>
+ #include <asm/io.h>
+ #include <asm/termios.h>
+-#include <linux/wakelock.h>
+ #include <linux/delay.h>
+ #include <linux/skbuff.h>
+ #include <linux/rfkill.h>
+@@ -29,11 +28,14 @@
+ 
+ #include <net/bluetooth/bluetooth.h>
+ #include <net/bluetooth/hci_core.h>
+-#include "../../../bluetooth/h4_recv.h"
++#include "hci_uart.h"
++#include "scsc_shm.h"
+ 
+ #include <scsc/scsc_logring.h>
+ 
+ static struct hci_dev      		*hdev;
++/* 6.18: h4_recv_buf() takes a struct hci_uart; embed one as the mainline non-UART drivers do (bpa10x, btmtkuart). */
++static struct hci_uart			scsc_hu;
+ static struct device 			*dev_ref;
+ static const struct file_operations 	*bt_fs;
+ static struct workqueue_struct          *wq;
+@@ -44,7 +46,6 @@ static u8				receive_buffer[1024];
+ static bool	                 	terminate_read;
+ static atomic_t 			*error_count_ref;
+ static wait_queue_head_t       		*read_wait_ref;
+-static struct file			s_file;
+ 
+ static struct platform_device *slsi_btz_pdev;
+ static struct rfkill *btz_rfkill;
+@@ -59,12 +60,12 @@ static void slsi_bt_fs_read_func(struct work_struct *work)
+ 	int ret;
+ 	struct sk_buff *skb = NULL;
+ 
+-	while ((ret = bt_fs->read(&s_file, receive_buffer, sizeof(receive_buffer), NULL)) >= 0) {
++	while ((ret = scsc_bt_shm_h4_read_kernel(false, receive_buffer, sizeof(receive_buffer))) >= 0) {
+ 		if (terminate_read)
+ 			break;
+ 
+ 		if (ret > 0) {
+-			skb = h4_recv_buf(hdev, skb, receive_buffer,
++			skb = h4_recv_buf(&scsc_hu, skb, receive_buffer,
+ 					ret, scsc_recv_pkts,
+ 					ARRAY_SIZE(scsc_recv_pkts));
+ 
+@@ -145,11 +146,9 @@ static int slsi_bt_send_frame(struct hci_dev *hdev, struct sk_buff *skb)
+ 
+ 	memcpy(skb_push(skb, 1), &bt_cb(skb)->pkt_type, 1);
+ 
+-	ret = bt_fs->write(NULL, skb->data, skb->len, NULL);
++	ret = scsc_bt_shm_h4_write_kernel(skb->data, skb->len);
+ 	if (ret >= 0) {
+-		kfree_skb(skb);
+-
+-		/* Update HCI stat counters */
++		/* Update HCI stat counters (6.18 port: before freeing; 4.14 read the skb after kfree_skb) */
+ 		hdev->stat.byte_tx += skb->len;
+ 
+ 		switch (hci_skb_pkt_type(skb)) {
+@@ -165,6 +164,8 @@ static int slsi_bt_send_frame(struct hci_dev *hdev, struct sk_buff *skb)
+ 				hdev->stat.sco_tx++;
+ 				break;
+ 		}
++		kfree_skb(skb);
++		ret = 0;
+ 	}
+ 
+ 	return ret;
+@@ -176,13 +177,13 @@ static void slsi_bt_open_worker(struct work_struct *work)
+ 
+ 	if (!hdev) {
+ 		hdev = hci_alloc_dev();
++		scsc_hu.hdev = hdev;
+ 		if (!hdev) {
+ 			SCSC_TAG_ERR(BT_COMMON, "failed to allocate hci device\n");
+ 			return;
+ 		}
+ 
+ 		hdev->bus = HCI_VIRTUAL;
+-		hdev->dev_type = HCI_BREDR;
+ 
+ 		SET_HCIDEV_DEV(hdev, dev_ref);
+ 
+diff --git a/drivers/misc/samsung/scsc_bt/scsc_bt_module.c b/drivers/misc/samsung/scsc_bt/scsc_bt_module.c
+index e82074289..8776b6f75 100644
+--- a/drivers/misc/samsung/scsc_bt/scsc_bt_module.c
++++ b/drivers/misc/samsung/scsc_bt/scsc_bt_module.c
+@@ -31,9 +31,7 @@
+ #include <linux/seq_file.h>
+ #include <linux/ctype.h>
+ 
+-#if defined(CONFIG_ARCH_EXYNOS) || defined(CONFIG_ARCH_EXYNOS9)
+-#include <linux/soc/samsung/exynos-soc.h>
+-#endif
++#include <linux/random.h>
+ 
+ #include <scsc/scsc_logring.h>
+ #include <scsc/kic/slsi_kic_lib.h>
+@@ -701,11 +699,16 @@ static void get_bluetooth_address(uint32_t *lap, uint8_t *uap, uint16_t *nap)
+ #ifdef SCSC_BT_ADDR
+ 	struct firmware *firm;
+ #endif
+-#if defined(CONFIG_ARCH_EXYNOS) || defined(CONFIG_ARCH_EXYNOS9)
+-	*nap = (exynos_soc_info.unique_id & 0x000000FFFF00) >> 8;
+-	*uap = (exynos_soc_info.unique_id & 0x0000000000FF);
+-	*lap = (exynos_soc_info.unique_id & 0xFFFFFF000000) >> 24;
+-#endif
++	/*
++	 * 6.18 port: the 4.14 default came from the SoC unique ID (exynos_soc_info, not on 6.18). Use a random
++	 * address unless userspace sets the bluetooth_address module parameter before the service starts.
++	 */
++	u8 rnd[6];
++
++	get_random_bytes(rnd, sizeof(rnd));
++	*nap = (rnd[0] << 8) | rnd[1];
++	*uap = rnd[2];
++	*lap = (rnd[3] << 16) | (rnd[4] << 8) | rnd[5];
+ 
+ 	if (bluetooth_address) {
+ 		SCSC_TAG_INFO(BT_COMMON, "using stack supplied Bluetooth address\n");
+@@ -2054,12 +2057,11 @@ static int slsi_bt_service_proc_open(struct inode *inode, struct file *file)
+ 	return single_open(file, slsi_bt_service_proc_show, NULL);
+ }
+ 
+-static const struct file_operations scsc_bt_procfs_fops = {
+-	.owner   = THIS_MODULE,
+-	.open    = slsi_bt_service_proc_open,
+-	.read    = seq_read,
+-	.llseek  = seq_lseek,
+-	.release = single_release,
++static const struct proc_ops scsc_bt_procfs_fops = {
++	.proc_open    = slsi_bt_service_proc_open,
++	.proc_read    = seq_read,
++	.proc_lseek   = seq_lseek,
++	.proc_release = single_release,
+ };
+ 
+ static void scsc_update_btlog_params(void)
+@@ -2474,7 +2476,7 @@ static int __init scsc_bt_module_init(void)
+ 		return ret;
+ 	}
+ 
+-	common_service.class = class_create(THIS_MODULE, "scsc_char");
++	common_service.class = class_create("scsc_char");
+ 	if (IS_ERR(common_service.class)) {
+ 		ret = PTR_ERR(common_service.class);
+ 		goto error;
+@@ -2562,15 +2564,6 @@ static int __init scsc_bt_module_init(void)
+ 	spin_lock_init(&bt_service.avdtp_detect.lock);
+ 	spin_lock_init(&bt_service.avdtp_detect.fw_write_lock);
+ 
+-#if defined(CONFIG_ARCH_EXYNOS) || defined(CONFIG_ARCH_EXYNOS9)
+-	sprintf(bluetooth_address_fallback, "%02X:%02X:%02X:%02X:%02X:%02X",
+-	       (exynos_soc_info.unique_id & 0x000000FF0000) >> 16,
+-	       (exynos_soc_info.unique_id & 0x00000000FF00) >> 8,
+-	       (exynos_soc_info.unique_id & 0x0000000000FF) >> 0,
+-	       (exynos_soc_info.unique_id & 0xFF0000000000) >> 40,
+-	       (exynos_soc_info.unique_id & 0x00FF00000000) >> 32,
+-	       (exynos_soc_info.unique_id & 0x0000FF000000) >> 24);
+-#endif
+ 
+ #ifdef CONFIG_SCSC_ANT
+ 	SCSC_TAG_DEBUG(BT_COMMON, "dev=%u class=%p\n",
+diff --git a/drivers/misc/samsung/scsc_bt/scsc_bt_priv.h b/drivers/misc/samsung/scsc_bt/scsc_bt_priv.h
+index 0310869b1..84705b8a6 100644
+--- a/drivers/misc/samsung/scsc_bt/scsc_bt_priv.h
++++ b/drivers/misc/samsung/scsc_bt/scsc_bt_priv.h
+@@ -58,13 +58,7 @@
+ #define HCI_EVENT_HARDWARE_ERROR_EVENT                  (0x10)
+ 
+ #define SCSC_BT_CONF      "bt.hcf"
+-#ifdef CONFIG_SCSC_BT_BLUEZ
+-#define SCSC_BT_ADDR      "/csa/bluetooth/.bd_addr"
+-#define SCSC_BT_ADDR_LEN  (3)
+-#elif defined CONFIG_SCSC_BT_ADDRESS_IN_FILE
+-#define SCSC_BT_ADDR      CONFIG_SCSC_BT_ADDRESS_FILENAME
+-#define SCSC_BT_ADDR_LEN  (6)
+-#endif
++/* 6.18 port: no Bluetooth address file (no EFS read); see get_bluetooth_address(). */
+ 
+ #define SCSC_H4_DEVICE_NAME             "scsc_h4_0"
+ #define SCSC_ANT_DEVICE_NAME            "scsc_ant_0"
+@@ -481,21 +475,21 @@ bool scsc_bt_shm_h4_avdtp_detect_write(uint32_t flags,
+ 									   uint16_t hci_connection_handle);
+ void scsc_avdtp_detect_exit(void);
+ 
+-void scsc_bt_qos_init(void);
+-void scsc_bt_qos_deinit(void);
+-void scsc_bt_qos_service_stop(void);
+-void scsc_bt_qos_update(uint32_t number_of_outstanding_hci_events,
+-			uint32_t number_of_outstanding_acl_packets);
++/*
++ * 6.18 port: scsc_bt_qos.c requested Exynos PM QoS minimum CPU/bus frequencies (legacy pm_qos classes, not on 6.18;
++ * CPU/bus DVFS is not ported). Not built; the hooks do nothing.
++ */
++static inline void scsc_bt_qos_init(void) { }
++static inline void scsc_bt_qos_deinit(void) { }
++static inline void scsc_bt_qos_service_stop(void) { }
++static inline void scsc_bt_qos_update(uint32_t number_of_outstanding_hci_events,
++				      uint32_t number_of_outstanding_acl_packets) { }
+ 
+-#ifdef CONFIG_SCSC_BT_BLUEZ
++/* Native BlueZ hci_dev (scsc_bluez.c, ADR-0008) */
+ void slsi_bt_notify_probe(struct device *dev,
+ 			  const struct file_operations *fs,
+ 			  atomic_t *error_count,
+ 			  wait_queue_head_t *read_wait);
+ void slsi_bt_notify_remove(void);
+-#else
+-#define slsi_bt_notify_probe(dev, fs, error_count, read_wait)
+-#define slsi_bt_notify_remove()
+-#endif
+ 
+ #endif /* __SCSC_BT_PRIV_H */
+diff --git a/drivers/misc/samsung/scsc_bt/scsc_bt_qos.c b/drivers/misc/samsung/scsc_bt/scsc_bt_qos.c
+index 6eda55e6c..857948b2d 100644
+--- a/drivers/misc/samsung/scsc_bt/scsc_bt_qos.c
++++ b/drivers/misc/samsung/scsc_bt/scsc_bt_qos.c
+@@ -19,7 +19,6 @@
+ #include <linux/moduleparam.h>
+ #include <asm/io.h>
+ #include <asm/termios.h>
+-#include <linux/wakelock.h>
+ #include <linux/delay.h>
+ #include <linux/seq_file.h>
+ #include <linux/platform_device.h>
+diff --git a/drivers/misc/samsung/scsc_bt/scsc_shm.c b/drivers/misc/samsung/scsc_bt/scsc_shm.c
+index b6ecf4e22..193e5414d 100644
+--- a/drivers/misc/samsung/scsc_bt/scsc_shm.c
++++ b/drivers/misc/samsung/scsc_bt/scsc_shm.c
+@@ -40,6 +40,16 @@
+ #include "scsc_shm.h"
+ #include "scsc_bt_hci.h"
+ 
++/*
++ * 6.18 port: the H4 read/write core works on kernel buffers so the native BlueZ hci_dev (scsc_bluez.c) can use it
++ * directly; /dev/scsc_h4_0 read/write bounce through a kernel buffer (wrappers at the end of this file).
++ */
++static inline unsigned long bt_kcopy(void *dst, const void *src, unsigned long n)
++{
++	memcpy(dst, src, n);
++	return 0;
++}
++
+ struct hci_credit_entry {
+ 	u16 hci_connection_handle;
+ 	u16 credits;
+@@ -572,7 +582,7 @@ static const char *scsc_hci_evt_decode_event_code(u8 hci_event_code, u8 hci_ulp_
+ }
+ #endif
+ 
+-static ssize_t scsc_iq_report_evt_read(char __user *buf, size_t len)
++static ssize_t scsc_iq_report_evt_read(char *buf, size_t len)
+ {
+ 	ssize_t consumed = 0;
+ 	ssize_t ret = 0;
+@@ -585,7 +595,7 @@ static ssize_t scsc_iq_report_evt_read(char __user *buf, size_t len)
+ 								bt_service.read_offset);
+ 
+ 	/* Copy the data to the user buffer */
+-	ret = copy_to_user(buf, &h4_iq_report_evt[bt_service.read_offset], len);
++	ret = bt_kcopy(buf, &h4_iq_report_evt[bt_service.read_offset], len);
+ 	if (ret == 0) {
+ 		/* All good - Update our consumed information */
+ 		bt_service.read_offset += len;
+@@ -609,7 +619,7 @@ static ssize_t scsc_iq_report_evt_read(char __user *buf, size_t len)
+ 	return ret == 0 ? consumed : ret;
+ }
+ 
+-static ssize_t scsc_hci_evt_read(char __user *buf, size_t len)
++static ssize_t scsc_hci_evt_read(char *buf, size_t len)
+ {
+ 	struct BSMHCP_TD_HCI_EVT *td = &bt_service.bsmhcp_protocol->hci_evt_transfer_ring[bt_service.read_index];
+ 	u8                       h4_hci_event_header = HCI_EVENT_PKT;
+@@ -631,7 +641,7 @@ static ssize_t scsc_hci_evt_read(char __user *buf, size_t len)
+ 		}
+ 
+ 		/* Store the H4 header in the user buffer */
+-		ret = copy_to_user(buf, &h4_hci_event_header, sizeof(h4_hci_event_header));
++		ret = bt_kcopy(buf, &h4_hci_event_header, sizeof(h4_hci_event_header));
+ 		if (0 == ret) {
+ 			/* All good - Update our consumed information */
+ 			consumed = sizeof(h4_hci_event_header);
+@@ -648,7 +658,7 @@ static ssize_t scsc_hci_evt_read(char __user *buf, size_t len)
+ 		len = min((td->length - (bt_service.read_offset - sizeof(h4_hci_event_header))), (len - consumed));
+ 
+ 		/* Copy the data to the user buffer */
+-		ret = copy_to_user(&buf[consumed], &td->data[bt_service.read_offset - sizeof(h4_hci_event_header)], len);
++		ret = bt_kcopy(&buf[consumed], &td->data[bt_service.read_offset - sizeof(h4_hci_event_header)], len);
+ 		if (0 == ret) {
+ 			/* All good - Update our consumed information */
+ 			bt_service.read_offset += len;
+@@ -669,7 +679,7 @@ static ssize_t scsc_hci_evt_read(char __user *buf, size_t len)
+ 	return 0 == ret ? consumed : ret;
+ }
+ 
+-static ssize_t scsc_hci_evt_error_read(char __user *buf, size_t len)
++static ssize_t scsc_hci_evt_error_read(char *buf, size_t len)
+ {
+ 	ssize_t ret;
+ 	ssize_t consumed = 0;
+@@ -678,7 +688,7 @@ static ssize_t scsc_hci_evt_error_read(char __user *buf, size_t len)
+ 	len = min(sizeof(h4_hci_event_hardware_error) - bt_service.read_offset, len);
+ 
+ 	/* Copy the data to the user buffer */
+-	ret = copy_to_user(buf, &h4_hci_event_hardware_error[bt_service.read_offset], len);
++	ret = bt_kcopy(buf, &h4_hci_event_hardware_error[bt_service.read_offset], len);
+ 	if (0 == ret) {
+ 		/* All good - Update our consumed information */
+ 		bt_service.read_offset += len;
+@@ -704,7 +714,7 @@ static ssize_t scsc_hci_evt_error_read(char __user *buf, size_t len)
+ 	return 0 == ret ? consumed : ret;
+ }
+ 
+-static ssize_t scsc_acl_read(char __user *buf, size_t len)
++static ssize_t scsc_acl_read(char *buf, size_t len)
+ {
+ 	struct BSMHCP_TD_ACL_RX *td = &bt_service.bsmhcp_protocol->acl_rx_transfer_ring[bt_service.read_index];
+ 	ssize_t                 consumed = 0;
+@@ -727,7 +737,7 @@ static ssize_t scsc_acl_read(char __user *buf, size_t len)
+ 		h4_acl_header[4] = (td->length & 0xff00) >> 8;
+ 
+ 		/* Copy the H4 header + ACL data header to the userspace buffer */
+-		ret = copy_to_user(buf, &h4_acl_header[bt_service.read_offset], copy_len);
++		ret = bt_kcopy(buf, &h4_acl_header[bt_service.read_offset], copy_len);
+ 		if (0 == ret) {
+ 			/* All good - Update our consumed information */
+ 			consumed = copy_len;
+@@ -744,7 +754,7 @@ static ssize_t scsc_acl_read(char __user *buf, size_t len)
+ 		copy_len = min((td->length - (bt_service.read_offset - sizeof(h4_acl_header))), (len - consumed));
+ 
+ 		/* Copy the data to the user buffer */
+-		ret = copy_to_user(&buf[consumed], &td->data[bt_service.read_offset - sizeof(h4_acl_header)], copy_len);
++		ret = bt_kcopy(&buf[consumed], &td->data[bt_service.read_offset - sizeof(h4_acl_header)], copy_len);
+ 		if (0 == ret) {
+ 			/* All good - Update our consumed information */
+ 			bt_service.read_offset += copy_len;
+@@ -773,7 +783,7 @@ static ssize_t scsc_acl_read(char __user *buf, size_t len)
+ 	return 0 == ret ? consumed : ret;
+ }
+ 
+-static ssize_t scsc_acl_credit(char __user *buf, size_t len)
++static ssize_t scsc_acl_credit(char *buf, size_t len)
+ {
+ 	ssize_t                      consumed = 0;
+ 	ssize_t                      ret = 0;
+@@ -784,7 +794,7 @@ static ssize_t scsc_acl_credit(char __user *buf, size_t len)
+ 	len = min(h4_hci_event_ncp_header_len - bt_service.read_offset, len);
+ 
+ 	/* Copy the data to the user buffer */
+-	ret = copy_to_user(buf, &h4_hci_event_ncp_header[bt_service.read_offset], len);
++	ret = bt_kcopy(buf, &h4_hci_event_ncp_header[bt_service.read_offset], len);
+ 	if (0 == ret) {
+ 		/* All good - Update our consumed information */
+ 		bt_service.read_offset += len;
+@@ -804,7 +814,7 @@ static ssize_t scsc_acl_credit(char __user *buf, size_t len)
+ 	return 0 == ret ? consumed : ret;
+ }
+ 
+-static ssize_t scsc_bt_shm_h4_read_continue(char __user *buf, size_t len)
++static ssize_t scsc_bt_shm_h4_read_continue(char *buf, size_t len)
+ {
+ 	ssize_t ret = 0;
+ 
+@@ -857,7 +867,7 @@ static ssize_t scsc_bt_shm_h4_read_continue(char __user *buf, size_t len)
+ 	return ret;
+ }
+ 
+-static ssize_t scsc_bt_shm_h4_read_iq_report_evt(char __user *buf, size_t len)
++static ssize_t scsc_bt_shm_h4_read_iq_report_evt(char *buf, size_t len)
+ {
+ 	ssize_t ret = 0;
+ 	ssize_t consumed = 0;
+@@ -941,7 +951,7 @@ static ssize_t scsc_bt_shm_h4_read_iq_report_evt(char __user *buf, size_t len)
+ 	return ret == 0 ? consumed : ret;
+ }
+ 
+-static ssize_t scsc_bt_shm_h4_read_hci_evt(char __user *buf, size_t len)
++static ssize_t scsc_bt_shm_h4_read_hci_evt(char *buf, size_t len)
+ {
+ 	ssize_t ret = 0;
+ 	ssize_t consumed = 0;
+@@ -1031,7 +1041,7 @@ static ssize_t scsc_bt_shm_h4_read_hci_evt(char __user *buf, size_t len)
+  *
+  * @return true if ACL data processing should stop
+  */
+-static bool scsc_bt_shm_h4_acl_start_copy(char __user *buf,
++static bool scsc_bt_shm_h4_acl_start_copy(char *buf,
+ 	size_t len,
+ 	ssize_t *ret,
+ 	ssize_t *consumed)
+@@ -1055,7 +1065,7 @@ static bool scsc_bt_shm_h4_acl_start_copy(char __user *buf,
+ 	return false;
+ }
+ 
+-static ssize_t scsc_bt_shm_h4_read_acl_data(char __user *buf, size_t len)
++static ssize_t scsc_bt_shm_h4_read_acl_data(char *buf, size_t len)
+ {
+ 	ssize_t ret = 0;
+ 	ssize_t consumed = 0;
+@@ -1114,7 +1124,7 @@ static ssize_t scsc_bt_shm_h4_read_acl_data(char __user *buf, size_t len)
+ 	return 0 == ret ? consumed : ret;
+ }
+ 
+-static ssize_t scsc_bt_shm_h4_read_acl_credit(char __user *buf, size_t len)
++static ssize_t scsc_bt_shm_h4_read_acl_credit(char *buf, size_t len)
+ {
+ 	ssize_t ret = 0;
+ 	ssize_t consumed = 0;
+@@ -1181,7 +1191,7 @@ static ssize_t scsc_bt_shm_h4_read_acl_credit(char __user *buf, size_t len)
+ 	return 0 == ret ? consumed : ret;
+ }
+ 
+-ssize_t scsc_bt_shm_h4_queue_sync_helper(char __user *buf, size_t len)
++ssize_t scsc_bt_shm_h4_queue_sync_helper(char *buf, size_t len)
+ {
+ 	ssize_t ret = 0;
+ 	bool    found = false;
+@@ -1240,7 +1250,7 @@ ssize_t scsc_bt_shm_h4_queue_sync_helper(char __user *buf, size_t len)
+ 	return ret;
+ }
+ 
+-ssize_t scsc_bt_shm_h4_read(struct file *file, char __user *buf, size_t len, loff_t *offset)
++ssize_t scsc_bt_shm_h4_read_kernel(bool nonblock, char *buf, size_t len)
+ {
+ 	ssize_t consumed = 0;
+ 	ssize_t ret = 0;
+@@ -1304,7 +1314,7 @@ ssize_t scsc_bt_shm_h4_read(struct file *file, char __user *buf, size_t len, lof
+ 		    0 == atomic_read(&bt_service.error_count) &&
+ 		    0 == bt_service.bsmhcp_protocol->header.panic_deathbed_confession) {
+ 			/* Don't wait if in NONBLOCK mode */
+-			if (file->f_flags & O_NONBLOCK) {
++			if (nonblock) {
+ 				ret = -EAGAIN;
+ 				break;
+ 			}
+@@ -1483,7 +1493,7 @@ ssize_t scsc_bt_shm_h4_read(struct file *file, char __user *buf, size_t len, lof
+ 	return 0 == ret ? consumed : ret;
+ }
+ 
+-ssize_t scsc_bt_shm_h4_write(struct file *file, const char __user *buf, size_t count, loff_t *offset)
++ssize_t scsc_bt_shm_h4_write_kernel(const char *buf, size_t count)
+ {
+ 	size_t  length;
+ 	size_t  hci_pkt_len;
+@@ -1492,9 +1502,6 @@ ssize_t scsc_bt_shm_h4_write(struct file *file, const char __user *buf, size_t c
+ 
+ 	SCSC_TAG_DEBUG(BT_H4, "enter\n");
+ 
+-	UNUSED(file);
+-	UNUSED(offset);
+-
+ 	/* Don't allow any writes after service has been closed */
+ 	if (!bt_service.service_started)
+ 		return -EIO;
+@@ -1526,7 +1533,7 @@ ssize_t scsc_bt_shm_h4_write(struct file *file, const char __user *buf, size_t c
+ 		}
+ 
+ 		/* Copy the userspace data to the target buffer */
+-		ret = copy_from_user(&h4_write_buffer[bt_service.h4_write_offset], &buf[written], length);
++		ret = bt_kcopy(&h4_write_buffer[bt_service.h4_write_offset], &buf[written], length);
+ 		if (0 == ret) {
+ 			/* Is there enough data to include a HCI command header and is the type a HCI_COMMAND_PKT */
+ 			if ((length + bt_service.h4_write_offset) >= H4DMUX_HEADER_HCI && HCI_COMMAND_PKT == h4_write_buffer[0]) {
+@@ -1704,3 +1711,37 @@ void scsc_bt_shm_exit(void)
+ 	memset(bt_service.connection_handle_list, 0, sizeof(bt_service.connection_handle_list));
+ }
+ 
++
++/* /dev/scsc_h4_0 (char device, fallback path of ADR-0008): bounce userspace buffers through the kernel core. */
++#define SCSC_BT_H4_BOUNCE_MAX	(64 * 1024)
++
++ssize_t scsc_bt_shm_h4_read(struct file *file, char __user *buf, size_t len, loff_t *offset)
++{
++	size_t n = min_t(size_t, len, SCSC_BT_H4_BOUNCE_MAX);
++	char *kbuf;
++	ssize_t ret;
++
++	kbuf = kmalloc(n, GFP_KERNEL);
++	if (!kbuf)
++		return -ENOMEM;
++	ret = scsc_bt_shm_h4_read_kernel(file->f_flags & O_NONBLOCK, kbuf, n);
++	if (ret > 0 && copy_to_user(buf, kbuf, ret))
++		ret = -EFAULT;
++	kfree(kbuf);
++	return ret;
++}
++
++ssize_t scsc_bt_shm_h4_write(struct file *file, const char __user *buf, size_t count, loff_t *offset)
++{
++	char *kbuf;
++	ssize_t ret;
++
++	if (count > SCSC_BT_H4_BOUNCE_MAX)
++		count = SCSC_BT_H4_BOUNCE_MAX;
++	kbuf = memdup_user(buf, count);
++	if (IS_ERR(kbuf))
++		return PTR_ERR(kbuf);
++	ret = scsc_bt_shm_h4_write_kernel(kbuf, count);
++	kfree(kbuf);
++	return ret;
++}
+diff --git a/drivers/misc/samsung/scsc_bt/scsc_shm.h b/drivers/misc/samsung/scsc_bt/scsc_shm.h
+index 6b98e7d8f..ded7ec852 100644
+--- a/drivers/misc/samsung/scsc_bt/scsc_shm.h
++++ b/drivers/misc/samsung/scsc_bt/scsc_shm.h
+@@ -22,6 +22,8 @@ ssize_t scsc_bt_shm_h4_write(struct file *file,
+ 			     const char __user *buf,
+ 			     size_t len, loff_t *offset);
+ unsigned scsc_bt_shm_h4_poll(struct file *file, poll_table *wait);
++ssize_t scsc_bt_shm_h4_read_kernel(bool nonblock, char *buf, size_t len);
++ssize_t scsc_bt_shm_h4_write_kernel(const char *buf, size_t count);
+ 
+ /* ANT specific functions */
+ int scsc_ant_shm_init(void);

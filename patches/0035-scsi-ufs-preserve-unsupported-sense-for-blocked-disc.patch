@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
 Date: Tue, 10 Nov 2026 18:43:30 +0600
-Subject: [PATCH 35/66] scsi: ufs: preserve unsupported sense for blocked
+Subject: [PATCH 35/69] scsi: ufs: preserve unsupported sense for blocked
  discard operations
 
 Keep DATA_PROTECT for denied WRITE(10/16) ranges so SCSI does not downgrade the entire LUN. Report ILLEGAL_REQUEST for other denied commands so sd disables unsupported UNMAP and WRITE SAME operations. The write allow-list is unchanged.
