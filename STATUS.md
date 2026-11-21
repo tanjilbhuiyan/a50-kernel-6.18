@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-22 (B2C clocks measured; stock verified; B2a probe-only test build in progress)
+Updated: 2026-11-22 (B2a amplifier probe passes; calibration preserved; stock verified, speaker untested)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -8,31 +8,45 @@ Read this file, then the active ticket and its log. Before trusting anything her
 branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and on the phone. At the end of a session, update
 **RESUME HERE** with commits, branch, image hashes, last test and rollback result, and the next action.
 
-## RESUME HERE (2026-11-22, M10.3 B2a owner-authorized, starting after clock observation)
-- **Read latest:** `log/2026-11-22-M10.3-tfa9872.md`. B1 passed; B2C clock observation passed on unchanged B1
-  image. B2a amplifier probe-only image built/frozen; owner explicitly confirmed present/USB connected/Claude idle.
-  Run starting, session `src/m10/b2a-session-codex.txt`, raw `src/m10/b2a-raw/`. Owner selected preserve existing amplifier
-  calibration and stop if invalid. No EFS access or recalibration; first B2a has speaker output disabled.
-- **Phone:** B2C automatic stock restore **01:17:19**, 4.14.194 boot **01:17:34** (2026-11-22 +06:00),
-  live DTB/DTBO/BOOT hashes pass; fsck clean **7176/3440640 files, 1979083/13745152 blocks**, 99% Charging.
-  No test active. Baseline TFA control read reported nonzero stored calibration; value stays private.
-- **Clock result:** `b2c-results.json`: 80/150/390 s register states identical. CCF APM parent 199875000 Hz,
-  APM divider 1, CMGP I2C divider 2 -> **IPCLK 99937500 / PCLK 199875000 Hz**, gates already enabled.
-  Late snapshot succeeded with corrected timeout. B2C did not probe the new bus or amplifier driver.
-- **Source:** `src/m10/b2-kernel` **a50-m10-b2-wip/2ba9b7efa**, clean (five commits after a0a748616).
-  Export `reference/m10-audio/b2-wip-patches/`. Driver/bridge objects and full host Image/DTB link passed;
-  host dev image lacks timed diagnostic and must not be flashed. New audio/bus code builds with -Werror.
-  Native production IPC tests 15 pass + length-check mutant rejected; MTP write functions return unsupported.
-  Temporary measured CMGP clocks remain a prototype, need integration/disposition before final port acceptance.
-- **Test checkout:** `src/m10/a2-kernel` now **a50-m10-b2a-test/95299e7f027a4c9b37523e1b4a804b978c9cdfb8**, clean:
-  B1 a3f5bd537 diagnostic base + five WIP commits. `tools/m10/build_b2.py b2a` passed; `src/m10/b2a-out/`, frozen `b2a-as-built/`.
-  B1 branch retained. Clean `src/m10/clean-kernel` remains a50-audio/a0a748616, common a50-usb/4fbb731f5.
-- **B2a inputs:** BOOT 1383b47f2368ee9f… (33337344 B), DT 4a3aadafc2eccca3…; 26 hashes `b2a-inputs.json`.
-  Exact config delta vs B1 = TFA9872/SEC_SND_SYNCHRONIZED_IPC/I2C_EXYNOS5; cpio unchanged; binary probe_only=1,
-  MTP setters return unsupported; diagnostic dump after 420 s retained.
-- **Now:** owner authorized B2a; standard runner pre-flight and test/restore cycle starting via
-  `run_b2a.sh`. Check actual amplifier ID/container/status, card controls and regressions with **no sound**.
-  Do not confuse clock-only B2C approval with B2a flash approval. Outer source parent f889166; prep/evidence uncommitted.
+## RESUME HERE (2026-11-22, M10.3 B2a probe passes; stock restored)
+- **Active ticket:** `tasks/M10.3-codec-amplifier.md`, in progress. Read latest log
+  `log/2026-11-22-M10.3-tfa9872.md`. B1 codec and **B2a amplifier probes pass**. No speaker output or hardware
+  DSP RPC exercised; M10.3 remains open. Owner policy: preserve existing amplifier calibration, stop if invalid;
+  no EFS/recalibration. Stock pre/post calibration reading matched privately (`b2a-calibration-preserved.json`).
+- **B2a:** TFA9872 recognized at **0.440721 s**, 5-0034 on 11d10000.hsi2c; transport provider registers 0.465260 s;
+  Tfa9872.cnt loads 23.401212 s (vendor-mount retry). At 150/390 s: probe_only=Y, firmware_ready=1, MTPEX=1,
+  RDC nonzero/non-FFFF, raw reg/rw interfaces absent. **352 controls**, four added TFA names exactly as stock,
+  none removed vs B1; stock-matching card0 PCMs. Control semantics/routing/playback still untested.
+- **Regression:** owner sees recognizable Ubuntu Touch UI; multi-user 168.846668 s, running/0 failed units at
+  200 and 390 s, userdata rw, input/wlan0/hci0 present (Wi-Fi not joined, BT traffic untested), direct DMA
+  1139/1488 frames, no copy/fallback/acquire-timeout increments. Stream and complete dump through sync
+  **431.081767 s**, no oops/panic/SError/BUG/IOMMU faults. Existing boot-protocol + two iommu.c:612 WARNs remain.
+- **Phone last verified:** automatic stock restore **2026-11-22 01:42:39 +06:00**, 4.14.194 boot **01:42:54**,
+  live DTB/DTBO/BOOT hashes pass, fsck clean **7189/3440640 files, 1979154/13745152 blocks**, 100% Charging;
+  home Wi-Fi SSH verified; post-restore calibration read matches. **No test active; no action needed.**
+- **Next B2b:** enforce existing-calibration validation at startup, review/exercise DSP transport and select stock
+  routes for a supervised low-volume tone. Do not merely disable probe_only before that review/gate. Fresh owner
+  presence and pre-flight required for the next flash. Temporary CMGP fixed providers are prototype only;
+  native clock integration or explicit disposition needed before final acceptance. M10.4 PulseAudio not started.
+- **Clock prerequisite B2C passed:** unchanged B1 image measured identical CMGP registers at 80/150/390 s;
+  IPCLK **99937500 Hz**, PCLK **199875000 Hz**, gates enabled. Corrected late capture timeout works.
+  `b2c-results.json`. Same cable used successfully; no evidence establishes it is faulty.
+- **Source candidate:** `src/m10/b2-kernel` **a50-m10-b2-wip/bedf87ffc**, clean. First five patches through
+  **2ba9b7efa** are the B2a-tested changes. Sixth patch retains probe ID for status (B2a reports an unset field
+  as 0x0000); **compiled, unflashed**. `reference/m10-audio/b2-wip-patches/`, 39 affected files replay exactly;
+  first five source changes equal B2a. Native production handler ASan/UBSan tests 15 pass, size-check mutant rejected.
+- **Test checkout:** `src/m10/a2-kernel` **a50-m10-b2a-test/95299e7f027a4c9b37523e1b4a804b978c9cdfb8**, clean.
+  Clean `src/m10/clean-kernel` stays **a50-audio/a0a748616**, common **a50-usb/4fbb731f5**, clean. B1 branch retained.
+  Dev `b2-dev-out` has no timed diagnostic and must not be flashed. Latest dev object includes unflashed patch 6.
+- **Frozen B2a inputs:** BOOT `src/m10/boot-b2a.img` **1383b47f2368ee9f60717d1901b05b448eed7475cc21741cf0b700f91e156feb**
+  (33337344 B), DT `dt-b2a.img` **4a3aadafc2eccca395f4efa92029cea6f45ceec6d690b8e669cb91802f4d0cb7**.
+  26 hashes `b2a-inputs.json`, immutable `b2a-as-built/`, raw/session `b2a-raw/`, `b2a-session-codex.txt` under
+  src/m10. Exact config delta vs B1: TFA9872/SEC_SND_SYNCHRONIZED_IPC/I2C_EXYNOS5=y; same cpio, DUMP_AFTER=420.
+  Linked binary probe_only=1 and NVM setters return unsupported; guard tests pass. Do not overwrite old manifests.
+- **Publication:** `reproduce/m10-a1/` remains A1 only; stable M9 unchanged. B2 source is exported, not promoted to
+  final clean branch or a validated public profile. Full profile refresh still pending M10.4.
+- **Outer Git:** prep **8386bcf** pushed before B2a, parent f889166. Follow-up saves B2a evidence and patch-6
+  metadata correction; destination origin/main. Owner present, USB connected, Claude idle through tests.
 
 ## B1 completed handoff (2026-11-22)
 - **Active ticket:** `tasks/M10.3-codec-amplifier.md`, in progress. **B1r2 completed on the same cable** with the

@@ -1,0 +1,24 @@
+From bedf87ffcfadd28a56cc76b08ae4e2be84e511cb Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Sun, 22 Nov 2026 01:40:01 +0600
+Subject: [PATCH] ASoC: tfa9872: retain the detected revision for bring-up
+ status
+
+Change-Id: I2679e6d065708ba3a67cf39841ebffced65140fa
+---
+ sound/soc/codecs/tfa9872/tfa98xx.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/sound/soc/codecs/tfa9872/tfa98xx.c b/sound/soc/codecs/tfa9872/tfa98xx.c
+index 72ac9b6b2..dce272eda 100644
+--- a/sound/soc/codecs/tfa9872/tfa98xx.c
++++ b/sound/soc/codecs/tfa9872/tfa98xx.c
+@@ -4339,6 +4339,8 @@ static int tfa98xx_i2c_probe(struct i2c_client *i2c)
+ 		tfa98xx_log_revision = reg & 0xff;
+ 		tfa98xx_log_subrevision = (reg >> 8) & 0xff;
+ 
++		tfa98xx->rev = reg; /* retain the ID already validated above */
++
+ 		switch (reg & 0xff) {
+ 		case 0x72: /* tfa9872 */
+ 			pr_info("TFA9872 detected\n");

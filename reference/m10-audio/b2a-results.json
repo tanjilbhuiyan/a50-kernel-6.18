@@ -1,0 +1,96 @@
+{
+  "test": "M10.3 B2a: first TFA9872 probe/status boot",
+  "outcome": "Probe/firmware/card/status/regression checks pass; playback and DSP RPC not exercised. M10.3 remains in progress.",
+  "test_source": "a50-m10-b2a-test/95299e7f027a4c9b37523e1b4a804b978c9cdfb8",
+  "candidate_source_as_tested": "a50-m10-b2-wip/2ba9b7efa (first five exported patches)",
+  "outer_prep": "8386bcf (pushed before boot)",
+  "boot_sha256": "1383b47f2368ee9f60717d1901b05b448eed7475cc21741cf0b700f91e156feb",
+  "dt_sha256": "4a3aadafc2eccca395f4efa92029cea6f45ceec6d690b8e669cb91802f4d0cb7",
+  "owner_presence": "Present, USB connected, Claude idle; run B2a.",
+  "flash": {
+    "start": "2026-11-22 01:34:44 +06:00",
+    "uploads": "DTB/DTBO/BOOT successful; normal session completion",
+    "USB_SSH": "01:35:41, 6.18.33-a50-diag+",
+    "runner_watch_collector_late_rc": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "kernel_stream_rc": 255,
+    "stream_note": "SSH ends at planned reset; stream reaches final sync."
+  },
+  "amplifier": {
+    "physical_bus": "11d10000.hsi2c, CMGP I2C00 / stock HSI2C3",
+    "Linux_device": "5-0034",
+    "driver": "tfa98xx",
+    "chip_ID": "Probe recognizes TFA9872 (revision register low byte 0x72). Full revision not retained in B2a status.",
+    "probe_detect_s": 0.440721,
+    "firmware": "Tfa9872.cnt, loaded at 23.401212 s after 22 direct-load retries waiting for vendor mount",
+    "probe_only": true,
+    "firmware_ready": true,
+    "MTPEX": true,
+    "RDC_present_nonzero_nonFFFF": true,
+    "raw_reg_rw_interfaces": "absent",
+    "factory_calibration_readback": "Stock TFA Calibration before/after values match privately; see b2a-calibration-preserved.json",
+    "revision_diagnostic_bug": "status prints 0x0000 because field was never set. Future candidate bedf87ffc retains the ID read during probe; compiled, not phone-tested."
+  },
+  "ABOX": {
+    "DSP_version": "rSK1",
+    "transport": "IPC_ERAP handler/provider registered at 0.465260 s; no round-trip requested in probe-only mode",
+    "NVM_programming": "Both programming entry points return NOT_SUPPORTED; no calibration trigger or EFS access.",
+    "ready_s": 24.15442,
+    "sysmmu_IRQ_count_150s": 0,
+    "IPC_IRQ_count_150s": 38,
+    "startup_order_limit": "TFA container loads at 23.401212 s, before ABOX ready 24.154420 s. Future output must require DSP readiness; current probe-only test requests no DSP round-trip."
+  },
+  "card": {
+    "controls": 352,
+    "added_vs_B1": [
+      "TFA Calibration",
+      "TFA Profile",
+      "TFA SaaM",
+      "TFA music Playback Volume"
+    ],
+    "removed_vs_B1": [],
+    "all_stock_TFA_control_names_present": true,
+    "card0_PCM_equal_stock": true,
+    "card0_PCM_equal_B1": true,
+    "limits": "Names only; mixer values/control semantics and routes not exercised. B1 control gaps remain."
+  },
+  "regressions": {
+    "owner_screen": "Recognizable Ubuntu Touch greeter/UI",
+    "multi_user_s": 168.846668,
+    "systemd_200s": "running, NFailedUnits=0",
+    "late_390s": "running, NFailedUnits=0, NJobs=0",
+    "userdata": "rw",
+    "display_frames_150s": 1139,
+    "display_frames_390s": 1488,
+    "copied_fallback_acquire_timeouts": 0,
+    "input_wlan_hci": "present; Wi-Fi not joined, BT traffic not exercised"
+  },
+  "dump": {
+    "stream_range_s": [
+      0,
+      431.081767
+    ],
+    "recovered_range_s": [
+      31.524043,
+      431.081767
+    ],
+    "sync_start_s": 431.076383,
+    "sync_done_s": 431.081767,
+    "oops_panic_SError_BUG_IOMMU_faults": 0,
+    "warnings": "Existing boot-protocol warning and two iommu.c:612 WARNs, as B1/A2c. Not warning-free."
+  },
+  "restore": {
+    "automatic_Download_detected": "2026-11-22 01:42:22 +06:00",
+    "stock_upload_complete": "01:42:39",
+    "baseline_boot": "01:42:54",
+    "live_partition_hashes": "DTB/DTBO/BOOT all pass",
+    "fsck": "clean, 7189/3440640 files, 1979154/13745152 blocks",
+    "battery": "100% Charging",
+    "state": "Stock verified, no test active"
+  },
+  "next": "Prepare B2b: enforce validated existing calibration in startup, review/exercise DSP transport and route a supervised low-volume tone. No EFS/recalibration. Temporary CMGP fixed clock providers still need integration or explicit disposition before final acceptance."
+}
