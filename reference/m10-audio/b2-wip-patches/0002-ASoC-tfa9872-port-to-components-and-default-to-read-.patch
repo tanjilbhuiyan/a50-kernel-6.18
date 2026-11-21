@@ -1,0 +1,891 @@
+From 2d522b79dd6e8419710e4bcef4da995ffa07c9df Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Sun, 22 Nov 2026 01:23:30 +0600
+Subject: [PATCH 2/5] ASoC: tfa9872: port to components and default to
+ read-only probe bring-up
+
+Change-Id: I8efc5c8ed274598e3a021aefa2123f6fbc5b52b1
+---
+ sound/soc/codecs/Kconfig                    |   7 +
+ sound/soc/codecs/Makefile                   |   2 +
+ sound/soc/codecs/tfa9872/Makefile           |   8 +-
+ sound/soc/codecs/tfa9872/inc/config.h       |   4 +-
+ sound/soc/codecs/tfa9872/inc/tfa_internal.h |  31 +++
+ sound/soc/codecs/tfa9872/tfa98xx.c          | 209 ++++++++++++--------
+ sound/soc/codecs/tfa9872/tfa_container.c    |   2 +-
+ sound/soc/codecs/tfa9872/tfa_dsp.c          | 105 ++++------
+ 8 files changed, 214 insertions(+), 154 deletions(-)
+
+diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+index e63b98d46..1e80e932c 100644
+--- a/sound/soc/codecs/Kconfig
++++ b/sound/soc/codecs/Kconfig
+@@ -2184,6 +2184,13 @@ config SND_SOC_TDA7419
+ 	depends on I2C
+ 	select REGMAP_I2C
+ 
++config SND_SOC_TFA9872
++	tristate "NXP TFA9872 (Samsung A50) amplifier"
++	depends on I2C
++	select REGMAP_I2C
++	help
++	  Samsung/NXP TFA9872 with external ABOX DSP. No EFS file I/O.
++
+ config SND_SOC_TFA9879
+ 	tristate "NXP Semiconductors TFA9879 amplifier"
+ 	depends on I2C
+diff --git a/sound/soc/codecs/Makefile b/sound/soc/codecs/Makefile
+index da4077463..fc5df8e22 100644
+--- a/sound/soc/codecs/Makefile
++++ b/sound/soc/codecs/Makefile
+@@ -874,3 +874,5 @@ obj-$(CONFIG_SND_SOC_LPASS_TX_MACRO)	+= snd-soc-lpass-tx-macro.o
+ 
+ # Mux
+ obj-$(CONFIG_SND_SOC_SIMPLE_MUX)	+= snd-soc-simple-mux.o
++
++obj-$(CONFIG_SND_SOC_TFA9872) += tfa9872/
+diff --git a/sound/soc/codecs/tfa9872/Makefile b/sound/soc/codecs/tfa9872/Makefile
+index 08e0904de..149c8d93a 100644
+--- a/sound/soc/codecs/tfa9872/Makefile
++++ b/sound/soc/codecs/tfa9872/Makefile
+@@ -4,7 +4,7 @@ TFA_VERSION              =tfa9872
+ TFADSP_32BITS            =1
+ #TFADSP_DSP_MSG_APR_PACKET_STRATEGY=0
+ TFADSP_DSP_BUFFER_POOL   =1
+-TFA_BLACKBOX_LOGGING     =1
++# TFA_BLACKBOX_LOGGING disabled: Samsung sysfs diagnostics not ported
+ #TFA_WRITE_CAL_TO_FILE   =0
+ TFA_NO_SND_FORMAT_CHECK  =1
+ TFA_USE_DEVICE_SPECIFIC_CONTROL=1
+@@ -15,7 +15,7 @@ TFA98XX_FLAGS           := -DUSE_TFA9872
+ # cc flags
+ #ccflags-y               := -DDEBUG
+ #ccflags-y               += -I$(TFA_SRC_DIR)/inc
+-ccflags-y               := -I$(TFA_SRC_DIR)/inc
++ccflags-y               := -I$(src)/inc
+ ccflags-y               += -Werror
+ ifdef TFADSP_32BITS
+ ccflags-y               += -DTFADSP_32BITS
+@@ -48,8 +48,8 @@ snd-soc-tfa98xx-objs    += tfa_container.o
+ snd-soc-tfa98xx-objs    += tfa_dsp.o
+ snd-soc-tfa98xx-objs    += tfa_init.o
+ snd-soc-tfa98xx-objs    += tfa_debug.o
+-snd-soc-tfa98xx-objs    += tfa_cal.o
+-snd-soc-tfa98xx-objs    += tfa_log.o
++# tfa_cal.o excluded: no EFS file I/O or calibration trigger on 6.18.
++# tfa_log.o excluded with TFA_BLACKBOX_LOGGING.
+ 
+ # CFLAGS
+ CFLAGS_tfa98xx.o       += $(TFA98XX_FLAGS)
+diff --git a/sound/soc/codecs/tfa9872/inc/config.h b/sound/soc/codecs/tfa9872/inc/config.h
+index 3696b01c9..c654fd87c 100644
+--- a/sound/soc/codecs/tfa9872/inc/config.h
++++ b/sound/soc/codecs/tfa9872/inc/config.h
+@@ -2,6 +2,7 @@
+ #define __CONFIG_LINUX_KERNEL_INC__
+ 
+ #include <linux/kernel.h>
++#include <linux/completion.h>
+ #include <linux/types.h>
+ #include <linux/ctype.h>
+ #include <linux/delay.h>
+@@ -82,7 +83,8 @@ struct tfa98xx {
+ 	struct regmap *regmap;
+ 	struct i2c_client *i2c;
+ 	struct regulator *vdd;
+-	struct snd_soc_codec *codec;
++	struct snd_soc_component *codec;
++	struct completion firmware_done;
+ 	struct workqueue_struct *tfa98xx_wq;
+ 	struct delayed_work init_work;
+ 	struct delayed_work monitor_work;
+diff --git a/sound/soc/codecs/tfa9872/inc/tfa_internal.h b/sound/soc/codecs/tfa9872/inc/tfa_internal.h
+index b11f2c807..59da35c59 100644
+--- a/sound/soc/codecs/tfa9872/inc/tfa_internal.h
++++ b/sound/soc/codecs/tfa9872/inc/tfa_internal.h
+@@ -6,6 +6,7 @@
+ #define __TFA_INTERNAL_H__
+ 
+ #include "tfa_dsp_fw.h"
++#include "tfa_container.h"
+ #include <sound/tfa_ext.h>
+ #include "tfa_service.h"
+ #include "config.h"
+@@ -213,4 +214,34 @@ TFA_INTERNAL int print_calibration
+ TFA_INTERNAL int tfa98xx_buffer_pool_access
+ (tfa98xx_handle_t handle, int r_index, size_t g_size, int control);
+ #endif
++/* Internal vendor-library entry points. */
++extern bool tfa98xx_probe_only;
++void get_all_features_from_cnt(tfa98xx_handle_t dev_idx,
++	int *hw_feature_register, int sw_feature_register[2]);
++int get_manager_state(tfa98xx_handle_t handle);
++enum tfa98xx_error
++get_sample_rate_info(int dev_idx, struct tfa_profile_list *prof,
++	struct tfa_profile_list *previous_prof, int fs_previous_profile);
++int set_manager_state(tfa98xx_handle_t handle, int state_nr);
++enum tfa98xx_error tfa9896_dsp_write_cvfracdelay_table(tfa98xx_handle_t handle);
++enum tfa98xx_error
++tfa9897_dsp_write_cvfracdelay_table(tfa98xx_handle_t handle);
++struct tfa_desc_ptr *
++tfa_cnt_get_dsc(struct tfa_container *cnt,
++	enum tfa_descriptor_type type, int dev_idx);
++struct tfa_bitfield tfa_cont_dsc2bf(struct tfa_desc_ptr dsc);
++enum tfa98xx_error
++tfa_cont_write_item(int dev_idx, struct tfa_desc_ptr *dsc);
++void tfa_dsp_mem_register(int dev_idx,
++	mem_read_t read_func, mem_write_t write_func);
++void tfa_dsp_msg_read_register(int dev_idx, dsp_msg_read_t func);
++void tfa_dsp_msg_register(int dev_idx, dsp_msg_t func);
++void tfa_dsp_reg_register(int dev_idx,
++	reg_read_t read_func, reg_write_t write_func);
++enum tfa98xx_error
++tfa_run_write_dsp_mem(tfa98xx_handle_t dev, struct tfa_dsp_mem *cfmem);
++enum tfa98xx_error
++tfa_run_write_filter(tfa98xx_handle_t dev, union tfa_cont_biquad *bq);
++enum tfa98xx_error
++tfa_run_write_register(tfa98xx_handle_t handle, struct tfa_reg_patch *reg);
+ #endif /* __TFA_INTERNAL_H__ */
+diff --git a/sound/soc/codecs/tfa9872/tfa98xx.c b/sound/soc/codecs/tfa9872/tfa98xx.c
+index 7cf66935f..72ac9b6b2 100644
+--- a/sound/soc/codecs/tfa9872/tfa98xx.c
++++ b/sound/soc/codecs/tfa9872/tfa98xx.c
+@@ -131,6 +131,11 @@ static DEFINE_MUTEX(probe_lock);
+ static char *dflt_prof_name = "";
+ module_param(dflt_prof_name, charp, 0444);
+ 
++/* Enumeration only until playback/calibration policy is verified. */
++bool tfa98xx_probe_only = true;
++module_param_named(probe_only, tfa98xx_probe_only, bool, 0444);
++MODULE_PARM_DESC(probe_only, "Only probe/parse firmware; no speaker playback");
++
+ static int no_start;
+ module_param(no_start, int, 0444);
+ MODULE_PARM_DESC(no_start, "do not start the work queue; for debugging via user\n");
+@@ -1771,8 +1776,8 @@ static void tfa98xx_debug_remove(struct tfa98xx *tfa98xx)
+ static int tfa98xx_get_vstep(struct snd_kcontrol *kcontrol,
+ 	struct snd_ctl_elem_value *ucontrol)
+ {
+-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
+-	struct tfa98xx *tfa98xx = snd_soc_codec_get_drvdata(codec);
++	struct snd_soc_component *codec = snd_soc_kcontrol_component(kcontrol);
++	struct tfa98xx *tfa98xx = snd_soc_component_get_drvdata(codec);
+ 	int mixer_profile = kcontrol->private_value;
+ 	int profile, vstep;
+ 
+@@ -1793,8 +1798,8 @@ static int tfa98xx_get_vstep(struct snd_kcontrol *kcontrol,
+ static int tfa98xx_set_vstep(struct snd_kcontrol *kcontrol,
+ 	struct snd_ctl_elem_value *ucontrol)
+ {
+-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
+-	struct tfa98xx *tfa98xx = snd_soc_codec_get_drvdata(codec);
++	struct snd_soc_component *codec = snd_soc_kcontrol_component(kcontrol);
++	struct tfa98xx *tfa98xx = snd_soc_component_get_drvdata(codec);
+ 	int mixer_profile = kcontrol->private_value;
+ 	int value = ucontrol->value.integer.value[0];
+ 	int profile, vstep, vsteps;
+@@ -1859,8 +1864,8 @@ static int tfa98xx_set_vstep(struct snd_kcontrol *kcontrol,
+ static int tfa98xx_info_vstep(struct snd_kcontrol *kcontrol,
+ 	struct snd_ctl_elem_info *uinfo)
+ {
+-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
+-	struct tfa98xx *tfa98xx = snd_soc_codec_get_drvdata(codec);
++	struct snd_soc_component *codec = snd_soc_kcontrol_component(kcontrol);
++	struct tfa98xx *tfa98xx = snd_soc_component_get_drvdata(codec);
+ 	int mixer_profile = kcontrol->private_value;
+ 	int profile = get_profile_id_for_sr(mixer_profile, tfa98xx->rate);
+ 
+@@ -1891,8 +1896,8 @@ static int tfa98xx_get_profile(struct snd_kcontrol *kcontrol,
+ static int tfa98xx_set_profile(struct snd_kcontrol *kcontrol,
+ 	struct snd_ctl_elem_value *ucontrol)
+ {
+-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
+-	struct tfa98xx *tfa98xx = snd_soc_codec_get_drvdata(codec);
++	struct snd_soc_component *codec = snd_soc_kcontrol_component(kcontrol);
++	struct tfa98xx *tfa98xx = snd_soc_component_get_drvdata(codec);
+ 
+ 	int profile_count = tfa98xx_mixer_profiles;
+ 	int profile = tfa98xx_mixer_profile;
+@@ -1984,7 +1989,7 @@ static int get_profile_from_list(char *buf, int id)
+ 
+ 	list_for_each_entry(bprof, &profile_list, list) {
+ 		if (bprof->item_id == id) {
+-			strlcpy(buf, bprof->basename, MAX_CONTROL_NAME);
++			strscpy(buf, bprof->basename, MAX_CONTROL_NAME);
+ 			return 0;
+ 		}
+ 	}
+@@ -2106,7 +2111,7 @@ static int tfa98xx_info_profile(struct snd_kcontrol *kcontrol,
+ 	if (err != 0)
+ 		return -EINVAL;
+ 
+-	strlcpy(uinfo->value.enumerated.name,
++	strscpy(uinfo->value.enumerated.name,
+ 		profile_name, MAX_CONTROL_NAME);
+ 
+ 	return 0;
+@@ -2122,8 +2127,8 @@ static int tfa98xx_get_stop_ctl(struct snd_kcontrol *kcontrol,
+ static int tfa98xx_set_stop_ctl(struct snd_kcontrol *kcontrol,
+ 	struct snd_ctl_elem_value *ucontrol)
+ {
+-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
+-	struct tfa98xx *tfa98xx = snd_soc_codec_get_drvdata(codec);
++	struct snd_soc_component *codec = snd_soc_kcontrol_component(kcontrol);
++	struct tfa98xx *tfa98xx = snd_soc_component_get_drvdata(codec);
+ 	int ready = 0;
+ 
+ 	pr_debug("%ld\n", ucontrol->value.integer.value[0]);
+@@ -2161,8 +2166,8 @@ static int tfa98xx_info_cal_ctl(struct snd_kcontrol *kcontrol,
+ static int tfa98xx_set_cal_ctl(struct snd_kcontrol *kcontrol,
+ 	struct snd_ctl_elem_value *ucontrol)
+ {
+-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
+-	struct tfa98xx *tfa98xx = snd_soc_codec_get_drvdata(codec);
++	struct snd_soc_component *codec = snd_soc_kcontrol_component(kcontrol);
++	struct tfa98xx *tfa98xx = snd_soc_component_get_drvdata(codec);
+ 	enum tfa98xx_error err;
+ 	int status = 0;
+ 
+@@ -2189,8 +2194,8 @@ static int tfa98xx_set_cal_ctl(struct snd_kcontrol *kcontrol,
+ static int tfa98xx_get_cal_ctl(struct snd_kcontrol *kcontrol,
+ 	struct snd_ctl_elem_value *ucontrol)
+ {
+-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
+-	struct tfa98xx *tfa98xx = snd_soc_codec_get_drvdata(codec);
++	struct snd_soc_component *codec = snd_soc_kcontrol_component(kcontrol);
++	struct tfa98xx *tfa98xx = snd_soc_component_get_drvdata(codec);
+ 	uint16_t cal_data;
+ 
+ 	tfa98xx_open(tfa98xx->handle);
+@@ -2204,8 +2209,8 @@ static int tfa98xx_get_cal_ctl(struct snd_kcontrol *kcontrol,
+ static int tfa98xx_set_saam_ctl(struct snd_kcontrol *kcontrol,
+ 	struct snd_ctl_elem_value *ucontrol)
+ {
+-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
+-	struct tfa98xx *tfa98xx = snd_soc_codec_get_drvdata(codec);
++	struct snd_soc_component *codec = snd_soc_kcontrol_component(kcontrol);
++	struct tfa98xx *tfa98xx = snd_soc_component_get_drvdata(codec);
+ 	int saam_select = ucontrol->value.integer.value[0];
+ 
+ 	dev_dbg(&tfa98xx->i2c->dev, "%s: state: %d\n", __func__, saam_select);
+@@ -2227,8 +2232,8 @@ static int tfa98xx_set_saam_ctl(struct snd_kcontrol *kcontrol,
+ static int tfa98xx_get_saam_ctl(struct snd_kcontrol *kcontrol,
+ 	struct snd_ctl_elem_value *ucontrol)
+ {
+-	struct snd_soc_codec *codec = snd_soc_kcontrol_codec(kcontrol);
+-	struct tfa98xx *tfa98xx = snd_soc_codec_get_drvdata(codec);
++	struct snd_soc_component *codec = snd_soc_kcontrol_component(kcontrol);
++	struct tfa98xx *tfa98xx = snd_soc_component_get_drvdata(codec);
+ 
+ 	ucontrol->value.integer.value[0] = tfa98xx->cstream;
+ 	return 0;
+@@ -2406,7 +2411,7 @@ static int tfa98xx_create_controls(struct tfa98xx *tfa98xx)
+ 		mix_index++;
+ 	}
+ 
+-	return snd_soc_add_codec_controls(tfa98xx->codec,
++	return snd_soc_add_component_controls(tfa98xx->codec,
+ 		tfa98xx_controls, mix_index);
+ }
+ 
+@@ -2533,7 +2538,7 @@ static void tfa98xx_add_widgets(struct tfa98xx *tfa98xx)
+ 		= &tfa98xx->codec->dapm;
+ #else
+ 	struct snd_soc_dapm_context *dapm
+-		= snd_soc_codec_get_dapm(tfa98xx->codec);
++		= snd_soc_component_to_dapm(tfa98xx->codec);
+ #endif
+ 	struct snd_soc_dapm_widget *widgets;
+ 	unsigned int num_dapm_widgets =
+@@ -2931,7 +2936,7 @@ static void tfa98xx_retry_container(struct work_struct *work);
+ static DECLARE_DELAYED_WORK(tfa98xx_fw_retry_work, tfa98xx_retry_container);
+ 
+ static void
+-tfa98xx_container_loaded(const struct firmware *cont,	void *context)
++tfa98xx_container_loaded_body(const struct firmware *cont,	void *context)
+ {
+ 	struct tfa98xx *tfa98xx = context;
+ 	enum tfa_error tfa_err;
+@@ -3043,7 +3048,7 @@ tfa98xx_container_loaded(const struct firmware *cont,	void *context)
+ 	tfa98xx->dsp_fw_state = TFA98XX_DSP_FW_OK;
+ 
+ #if defined(TFA_DBGFS_CHECK_MTPEX)
+-	value = snd_soc_read(tfa98xx->codec, TFA98XX_KEY2_PROTECTED_MTP0);
++	value = snd_soc_component_read(tfa98xx->codec, TFA98XX_KEY2_PROTECTED_MTP0);
+ 
+ 	if (value != -1) {
+ 		tfa98xx->calibrate_done =
+@@ -3081,6 +3086,12 @@ tfa98xx_container_loaded(const struct firmware *cont,	void *context)
+ 
+ 	tfa98xx_inputdev_check_register(tfa98xx);
+ 
++	if (tfa98xx_probe_only) {
++		dev_info(tfa98xx->dev, "probe-only: container ready, no amplifier start\n");
++		mutex_unlock(&probe_lock);
++		return;
++	}
++
+ 	if (tfa_is_cold(tfa98xx->handle) == 0) {
+ 		pr_debug("Warning: device 0x%.2x is still warm\n",
+ 			tfa98xx->i2c->addr);
+@@ -3108,6 +3119,14 @@ tfa98xx_container_loaded(const struct firmware *cont,	void *context)
+ 	mutex_unlock(&probe_lock);
+ }
+ 
++static void tfa98xx_container_loaded(const struct firmware *cont, void *context)
++{
++	struct tfa98xx *tfa = context;
++
++	tfa98xx_container_loaded_body(cont, context);
++	complete_all(&tfa->firmware_done);
++}
++
+ static void tfa98xx_retry_container(struct work_struct *work)
+ {
+ 	struct tfa98xx *tfa98xx = tfa98xx_fw_retry_dev;
+@@ -3120,13 +3139,18 @@ static void tfa98xx_retry_container(struct work_struct *work)
+ 
+ static int tfa98xx_load_container(struct tfa98xx *tfa98xx)
+ {
++	int ret;
++
+ 	mutex_lock(&probe_lock);
+ 	tfa98xx->dsp_fw_state = TFA98XX_DSP_FW_PENDING;
+ 	mutex_unlock(&probe_lock);
+ 
+-	return request_firmware_nowait(THIS_MODULE, FW_ACTION_HOTPLUG,
++	ret = request_firmware_nowait(THIS_MODULE, true,
+ 		fw_name, tfa98xx->dev, GFP_KERNEL,
+ 		tfa98xx, tfa98xx_container_loaded);
++	if (ret)
++		complete_all(&tfa98xx->firmware_done);
++	return ret;
+ }
+ 
+ #if defined(USE_TFA9891)
+@@ -3214,7 +3238,7 @@ static void tfa98xx_monitor(struct work_struct *work)
+ 		 * check IC status bits: cold start
+ 		 * and DSP watch dog bit to re init
+ 		 */
+-		val = snd_soc_read(tfa98xx->codec, TFA98XX_STATUS_FLAGS0);
++		val = snd_soc_component_read(tfa98xx->codec, TFA98XX_STATUS_FLAGS0);
+ 		pr_debug("STATUS_FLAG0: 0x%04x\n", val);
+ 
+ 		if (tfa98xx->pstream != 0) {
+@@ -3233,7 +3257,7 @@ static void tfa98xx_monitor(struct work_struct *work)
+ 					val);
+ 
+ 			if (tfa98xx->flags & TFA98XX_FLAG_TDM_DEVICE) {
+-				val = snd_soc_read
++				val = snd_soc_component_read
+ 					(tfa98xx->codec, TFA98XX_STATUS_FLAGS1);
+ 				pr_debug("STATUS_FLAG1: 0x%04x\n", val);
+ 
+@@ -3248,17 +3272,17 @@ static void tfa98xx_monitor(struct work_struct *work)
+ 		}
+ 
+ 		/* further debugging */
+-		val = snd_soc_read(tfa98xx->codec, TFA98XX_SYS_CONTROL0);
++		val = snd_soc_component_read(tfa98xx->codec, TFA98XX_SYS_CONTROL0);
+ 		pr_debug("SYS_CONTROL0: 0x%04x\n", val);
+-		val = snd_soc_read(tfa98xx->codec, TFA98XX_SYS_CONTROL1);
++		val = snd_soc_component_read(tfa98xx->codec, TFA98XX_SYS_CONTROL1);
+ 		pr_debug("SYS_CONTROL1: 0x%04x\n", val);
+-		val = snd_soc_read(tfa98xx->codec, TFA98XX_SYS_CONTROL2);
++		val = snd_soc_component_read(tfa98xx->codec, TFA98XX_SYS_CONTROL2);
+ 		pr_debug("SYS_CONTROL2: 0x%04x\n", val);
+-		val = snd_soc_read(tfa98xx->codec, TFA98XX_CLOCK_CONTROL);
++		val = snd_soc_component_read(tfa98xx->codec, TFA98XX_CLOCK_CONTROL);
+ 		pr_debug("CLOCK_CONTROL: 0x%04x\n", val);
+-		val = snd_soc_read(tfa98xx->codec, TFA98XX_STATUS_FLAGS4);
++		val = snd_soc_component_read(tfa98xx->codec, TFA98XX_STATUS_FLAGS4);
+ 		pr_debug("STATUS_FLAG4: 0x%04x\n", val);
+-		val = snd_soc_read(tfa98xx->codec, TFA98XX_TDM_CONFIG0);
++		val = snd_soc_component_read(tfa98xx->codec, TFA98XX_TDM_CONFIG0);
+ 		pr_debug("TDM_CONFIG0: 0x%04x\n", val);
+ 	}
+ 
+@@ -3516,8 +3540,8 @@ static void tfa98xx_interrupt(struct work_struct *work)
+ static int tfa98xx_startup(struct snd_pcm_substream *substream,
+ 						struct snd_soc_dai *dai)
+ {
+-	struct snd_soc_codec *codec = dai->codec;
+-	struct tfa98xx *tfa98xx = snd_soc_codec_get_drvdata(codec);
++	struct snd_soc_component *codec = dai->component;
++	struct tfa98xx *tfa98xx = snd_soc_component_get_drvdata(codec);
+ 	int idx = 0;
+ #if !defined(TFA_FULL_RATE_SUPPORT_WITH_POST_CONVERSION)
+ 	unsigned int sr;
+@@ -3628,7 +3652,7 @@ static int tfa98xx_startup(struct snd_pcm_substream *substream,
+ static int tfa98xx_set_dai_sysclk(struct snd_soc_dai *codec_dai,
+ 	int clk_id, unsigned int freq, int dir)
+ {
+-	struct tfa98xx *tfa98xx = snd_soc_codec_get_drvdata(codec_dai->codec);
++	struct tfa98xx *tfa98xx = snd_soc_component_get_drvdata(codec_dai->component);
+ 
+ 	tfa98xx->sysclk = freq;
+ 	return 0;
+@@ -3643,8 +3667,8 @@ static int tfa98xx_set_tdm_slot(struct snd_soc_dai *dai, unsigned int tx_mask,
+ 
+ static int tfa98xx_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+ {
+-	struct tfa98xx *tfa98xx = snd_soc_codec_get_drvdata(dai->codec);
+-	struct snd_soc_codec *codec = dai->codec;
++	struct tfa98xx *tfa98xx = snd_soc_component_get_drvdata(dai->component);
++	struct snd_soc_component *codec = dai->component;
+ 
+ 	pr_debug("fmt=0x%x\n", fmt);
+ 
+@@ -3652,7 +3676,7 @@ static int tfa98xx_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+ 	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
+ 	case SND_SOC_DAIFMT_I2S:
+ 		if ((fmt & SND_SOC_DAIFMT_MASTER_MASK)
+-			!= SND_SOC_DAIFMT_CBS_CFS) {
++			!= SND_SOC_DAIFMT_CBC_CFC) {
+ 			dev_err(codec->dev, "Invalid Codec master mode\n");
+ 			return -EINVAL;
+ 		}
+@@ -3685,8 +3709,8 @@ static int tfa98xx_hw_params(struct snd_pcm_substream *substream,
+ 	struct snd_pcm_hw_params *params,
+ 	struct snd_soc_dai *dai)
+ {
+-	struct snd_soc_codec *codec = dai->codec;
+-	struct tfa98xx *tfa98xx = snd_soc_codec_get_drvdata(codec);
++	struct snd_soc_component *codec = dai->component;
++	struct tfa98xx *tfa98xx = snd_soc_component_get_drvdata(codec);
+ 	unsigned int rate;
+ 	int prof_idx;
+ 
+@@ -3725,8 +3749,8 @@ static int tfa98xx_hw_params(struct snd_pcm_substream *substream,
+ 
+ static int tfa98xx_mute(struct snd_soc_dai *dai, int mute, int stream)
+ {
+-	struct snd_soc_codec *codec = dai->codec;
+-	struct tfa98xx *tfa98xx = snd_soc_codec_get_drvdata(codec);
++	struct snd_soc_component *codec = dai->component;
++	struct tfa98xx *tfa98xx = snd_soc_component_get_drvdata(codec);
+ 
+ 	dev_dbg(&tfa98xx->i2c->dev,
+ 		"%s: state: %d (stream = %d)\n", __func__, mute, stream);
+@@ -3904,15 +3928,15 @@ static struct snd_soc_dai_driver tfa98xx_dai[] = {
+ 			.formats = TFA98XX_FORMATS,
+ 		},
+ 		.ops = &tfa98xx_dai_ops,
+-		.symmetric_rates = 1,
++		.symmetric_rate = 1,
+ 		.symmetric_channels = 1,
+-		.symmetric_samplebits = 1,
++		.symmetric_sample_bits = 1,
+ 	},
+ };
+ 
+-static int tfa98xx_probe(struct snd_soc_codec *codec)
++static int tfa98xx_probe(struct snd_soc_component *codec)
+ {
+-	struct tfa98xx *tfa98xx = snd_soc_codec_get_drvdata(codec);
++	struct tfa98xx *tfa98xx = snd_soc_component_get_drvdata(codec);
+ 	int ret;
+ 
+ 	pr_debug("\n");
+@@ -3930,6 +3954,7 @@ static int tfa98xx_probe(struct snd_soc_codec *codec)
+ #endif
+ 
+ 	tfa98xx->codec = codec;
++	init_completion(&tfa98xx->firmware_done);
+ 
+ 	ret = tfa98xx_load_container(tfa98xx);
+ 	pr_debug("Container loading requested: %d\n", ret);
+@@ -3946,9 +3971,9 @@ static int tfa98xx_probe(struct snd_soc_codec *codec)
+ 	return ret;
+ }
+ 
+-static int tfa98xx_remove(struct snd_soc_codec *codec)
++static void tfa98xx_remove(struct snd_soc_component *codec)
+ {
+-	struct tfa98xx *tfa98xx = snd_soc_codec_get_drvdata(codec);
++	struct tfa98xx *tfa98xx = snd_soc_component_get_drvdata(codec);
+ #if defined(TFADSP_DSP_BUFFER_POOL)
+ 	int index = 0;
+ #endif
+@@ -3958,6 +3983,11 @@ static int tfa98xx_remove(struct snd_soc_codec *codec)
+ 	sec_audio_bootlog(7, "%s\n", __func__);
+ #endif
+ 
++	/* A card setup failure may remove this component while firmware is loading. */
++	wait_for_completion(&tfa98xx->firmware_done);
++	if (tfa98xx_fw_retry_dev == tfa98xx)
++		cancel_delayed_work_sync(&tfa98xx_fw_retry_work);
++	tfa98xx->codec = NULL;
+ 	tfa98xx_interrupt_enable(tfa98xx, false);
+ 
+ 	tfa98xx_inputdev_unregister(tfa98xx);
+@@ -3979,20 +4009,12 @@ static int tfa98xx_remove(struct snd_soc_codec *codec)
+ 		tfa_buffer_pool(index, 0, POOL_FREE);
+ #endif
+ 
+-	return 0;
+ }
+ 
+-struct regmap *tfa98xx_get_regmap(struct device *dev)
+-{
+-	struct tfa98xx *tfa98xx = dev_get_drvdata(dev);
+ 
+-	return tfa98xx->regmap;
+-}
+-
+-static struct snd_soc_codec_driver soc_codec_dev_tfa98xx = {
++static struct snd_soc_component_driver soc_codec_dev_tfa98xx = {
+ 	.probe =	tfa98xx_probe,
+ 	.remove =	tfa98xx_remove,
+-	.get_regmap = tfa98xx_get_regmap,
+ };
+ 
+ static bool tfa98xx_writeable_register(struct device *dev, unsigned int reg)
+@@ -4081,7 +4103,7 @@ static int tfa98xx_parse_dt(struct device *dev,
+ }
+ 
+ static ssize_t tfa98xx_reg_write(struct file *filp, struct kobject *kobj,
+-				struct bin_attribute *bin_attr,
++				const struct bin_attribute *bin_attr,
+ 				char *buf, loff_t off, size_t count)
+ {
+ 	struct device *dev = container_of(kobj, struct device, kobj);
+@@ -4098,7 +4120,7 @@ static ssize_t tfa98xx_reg_write(struct file *filp, struct kobject *kobj,
+ }
+ 
+ static ssize_t tfa98xx_rw_write(struct file *filp, struct kobject *kobj,
+-				struct bin_attribute *bin_attr,
++				const struct bin_attribute *bin_attr,
+ 				char *buf, loff_t off, size_t count)
+ {
+ 	struct device *dev = container_of(kobj, struct device, kobj);
+@@ -4147,7 +4169,7 @@ int tfa_log_register(configure_log_t tfa_log_configure,
+ #endif
+ 
+ static ssize_t tfa98xx_rw_read(struct file *filp, struct kobject *kobj,
+-				struct bin_attribute *bin_attr,
++				const struct bin_attribute *bin_attr,
+ 				char *buf, loff_t off, size_t count)
+ {
+ 	struct device *dev = container_of(kobj, struct device, kobj);
+@@ -4203,8 +4225,29 @@ static struct bin_attribute dev_attr_reg = {
+ 	.write = tfa98xx_reg_write,
+ };
+ 
+-static int tfa98xx_i2c_probe(struct i2c_client *i2c,
+-	const struct i2c_device_id *id)
++/* Read calibration mirrors only; never expose the per-unit value in logs. */
++static ssize_t bringup_status_show(struct device *dev,
++	struct device_attribute *attr, char *buf)
++{
++	struct tfa98xx *tfa = dev_get_drvdata(dev);
++	unsigned int mtp, rdc;
++	int ret;
++
++	mutex_lock(&tfa->dsp_lock);
++	ret = regmap_read(tfa->regmap, 0xf0, &mtp);
++	if (!ret)
++		ret = regmap_read(tfa->regmap, 0xf5, &rdc);
++	mutex_unlock(&tfa->dsp_lock);
++	if (ret)
++		return ret;
++	return sysfs_emit(buf, "probe_only=%u revision=0x%04x firmware_ready=%u mtpex=%u rdc_present=%u\n",
++		tfa98xx_probe_only, tfa->rev,
++		tfa->dsp_fw_state == TFA98XX_DSP_FW_OK, !!(mtp & BIT(1)),
++		rdc != 0 && rdc != 0xffff);
++}
++static DEVICE_ATTR_RO(bringup_status);
++
++static int tfa98xx_i2c_probe(struct i2c_client *i2c)
+ {
+ 	struct snd_soc_dai_driver *dai;
+ 	struct tfa98xx *tfa98xx;
+@@ -4273,7 +4316,7 @@ static int tfa98xx_i2c_probe(struct i2c_client *i2c,
+ 
+ 	if (gpio_is_valid(tfa98xx->irq_gpio)) {
+ 		ret = devm_gpio_request_one(&i2c->dev, tfa98xx->irq_gpio,
+-			GPIOF_DIR_IN, "TFA98XX_INT");
++			GPIOF_IN, "TFA98XX_INT");
+ 		if (ret)
+ 			goto err;
+ 	}
+@@ -4383,7 +4426,7 @@ static int tfa98xx_i2c_probe(struct i2c_client *i2c,
+ 				dai,
+ 				ARRAY_SIZE(tfa98xx_dai));
+ 
+-	ret = snd_soc_register_codec(&i2c->dev,
++	ret = snd_soc_register_component(&i2c->dev,
+ 				&soc_codec_dev_tfa98xx, dai,
+ 				ARRAY_SIZE(tfa98xx_dai));
+ 
+@@ -4415,16 +4458,22 @@ static int tfa98xx_i2c_probe(struct i2c_client *i2c,
+ 		tfa98xx->flags |= TFA98XX_FLAG_SKIP_INTERRUPTS;
+ 	}
+ 
+-#ifdef CONFIG_DEBUG_FS
+-	tfa98xx_debug_init(tfa98xx, i2c);
+-#endif
+-	/* Register the sysfs files for climax backdoor access */
+-	ret = device_create_bin_file(&i2c->dev, &dev_attr_rw);
+-	if (ret)
+-		dev_info(&i2c->dev, "error creating sysfs files\n");
+-	ret = device_create_bin_file(&i2c->dev, &dev_attr_reg);
++	/* Raw register and calibration/debug endpoints stay absent in probe-only mode. */
++	if (!tfa98xx_probe_only) {
++	#ifdef CONFIG_DEBUG_FS
++		tfa98xx_debug_init(tfa98xx, i2c);
++	#endif
++		/* Register the sysfs files for climax backdoor access */
++		ret = device_create_bin_file(&i2c->dev, &dev_attr_rw);
++		if (ret)
++			dev_info(&i2c->dev, "error creating sysfs files\n");
++		ret = device_create_bin_file(&i2c->dev, &dev_attr_reg);
++		if (ret)
++			dev_info(&i2c->dev, "error creating sysfs files\n");
++	}
++	ret = device_create_file(&i2c->dev, &dev_attr_bringup_status);
+ 	if (ret)
+-		dev_info(&i2c->dev, "error creating sysfs files\n");
++		dev_warn(&i2c->dev, "cannot create read-only bringup status: %d\n", ret);
+ 
+ 	tfa98xx_log_i2c_devicenum = i2c->adapter->nr;
+ 	tfa98xx_log_i2c_slaveaddress = i2c->addr;
+@@ -4441,7 +4490,7 @@ static int tfa98xx_i2c_probe(struct i2c_client *i2c,
+ 	return ret;
+ }
+ 
+-static int tfa98xx_i2c_remove(struct i2c_client *i2c)
++static void tfa98xx_i2c_remove(struct i2c_client *i2c)
+ {
+ 	struct tfa98xx *tfa98xx = i2c_get_clientdata(i2c);
+ 
+@@ -4459,22 +4508,17 @@ static int tfa98xx_i2c_remove(struct i2c_client *i2c)
+ 	cancel_delayed_work_sync(&tfa98xx->tapdet_work);
+ #endif
+ 
++	device_remove_file(&i2c->dev, &dev_attr_bringup_status);
+ 	device_remove_bin_file(&i2c->dev, &dev_attr_reg);
+ 	device_remove_bin_file(&i2c->dev, &dev_attr_rw);
+ #ifdef CONFIG_DEBUG_FS
+ 	tfa98xx_debug_remove(tfa98xx);
+ #endif
+ 
++	snd_soc_unregister_component(&i2c->dev);
+ 	tfa98xx_unregister_dsp(tfa98xx);
+ 
+-	snd_soc_unregister_codec(&i2c->dev);
+ 
+-	if (gpio_is_valid(tfa98xx->irq_gpio))
+-		devm_gpio_free(&i2c->dev, tfa98xx->irq_gpio);
+-	if (gpio_is_valid(tfa98xx->reset_gpio))
+-		devm_gpio_free(&i2c->dev, tfa98xx->reset_gpio);
+-
+-	return 0;
+ }
+ 
+ static const struct i2c_device_id tfa98xx_i2c_id[] = {
+@@ -4501,6 +4545,7 @@ static const struct of_device_id tfa98xx_dt_match[] = {
+ static struct i2c_driver tfa98xx_i2c_driver = {
+ 	.driver = {
+ 		.name = "tfa98xx",
++		.suppress_bind_attrs = true,
+ 		.owner = THIS_MODULE,
+ 		.of_match_table = of_match_ptr(tfa98xx_dt_match),
+ 	},
+diff --git a/sound/soc/codecs/tfa9872/tfa_container.c b/sound/soc/codecs/tfa9872/tfa_container.c
+index 77a467a34..0364fae96 100644
+--- a/sound/soc/codecs/tfa9872/tfa_container.c
++++ b/sound/soc/codecs/tfa9872/tfa_container.c
+@@ -1259,7 +1259,7 @@ tfa_run_write_filter(tfa98xx_handle_t dev, union tfa_cont_biquad *bq)
+ 				bq->aa.cut_off_freq, bq->aa.ripple_db,
+ 				bq->aa.rolloff);
+ 		} else {
+-			strlcpy(buf, "unsupported filter index", 50);
++			strscpy(buf, "unsupported filter index", 50);
+ 		}
+ 
+ 		pr_debug("=%s\n", buf);
+diff --git a/sound/soc/codecs/tfa9872/tfa_dsp.c b/sound/soc/codecs/tfa9872/tfa_dsp.c
+index 8f031eda1..1553e3ac8 100644
+--- a/sound/soc/codecs/tfa9872/tfa_dsp.c
++++ b/sound/soc/codecs/tfa9872/tfa_dsp.c
+@@ -1340,40 +1340,10 @@ enum tfa98xx_error
+ tfa98xx_set_mtp(tfa98xx_handle_t handle,
+ 	uint16_t value, uint16_t mask)
+ {
+-	unsigned short mtp_old, mtp_new;
+-	int loop;
+-	enum tfa98xx_error error;
+-
+-	error = tfa98xx_get_mtp(handle, &mtp_old);
+-
+-	if (error != TFA98XX_ERROR_OK)
+-		return error;
+-
+-	mtp_new = (value & mask) | (mtp_old & ~mask);
+-
+-	if (mtp_old == mtp_new) /* no change */ {
+-		if (tfa98xx_runtime_verbose)
+-			pr_info("%s: no change in MTP. no value written!\n",
+-				__func__);
+-		return TFA98XX_ERROR_OK;
+-	}
+-	tfa98xx_key2(handle, 0); /* unlock */
+-	TFA_WRITE_REG(handle, MTP0, mtp_new);	/* write to i2c shadow reg */
+-	/* CIMTP=1 start copying all the data from i2c regs_mtp to mtp */
+-	TFA_SET_BF(handle, CIMTP, 1);
+-	/* no check for MTPBUSY here, i2c delay assumed to be enough */
+-	tfa98xx_key2(handle, 1); /* lock */
+-
+-	/* wait until MTP write is done
+-	 */
+-	for (loop = 0; loop < 100 /*x10ms*/; loop++) {
+-		msleep_interruptible(10); /* wait 10ms to avoid busload */
+-		if (TFA_GET_BF(handle, MTPB) == 0)
+-			return TFA98XX_ERROR_OK;
+-	}
+-
+-	return TFA98XX_ERROR_STATE_TIMED_OUT;
++	/* Factory calibration is read-only during bring-up. */
++	return TFA98XX_ERROR_NOT_SUPPORTED;
+ }
++
+ /*
+  * clear mtpex
+  * set ACS
+@@ -4402,6 +4372,9 @@ enum tfa_error tfa_start(int next_profile, int *vstep)
+ 	uint8_t kernel_sleep_timeout = 0;
+ #endif
+ 
++	if (tfa98xx_probe_only)
++		return tfa_error_device;
++
+ 	tfa98xx_log_start_cnt++;
+ 	tfa98xx_log_tfa_family = tfa98xx_dev_family(0); /* device 0 */
+ 
+@@ -4640,7 +4613,7 @@ enum tfa_error tfa_start(int next_profile, int *vstep)
+ 		tfa_cont_close(dev); /* close all of them */
+ 	}
+ 
+-	return err;
++	return (enum tfa_error)err;
+ 
+ error_exit:
+ 	if (dev < devcount)
+@@ -4650,7 +4623,7 @@ enum tfa_error tfa_start(int next_profile, int *vstep)
+ 	for (dev = 0; dev < devcount; dev++)
+ 		tfa_cont_close(dev); /* close all of them */
+ 
+-	return err;
++	return (enum tfa_error)err;
+ }
+ 
+ enum tfa_error tfa_stop(void)
+@@ -4717,7 +4690,7 @@ enum tfa_error tfa_stop(void)
+ 	for (dev = 0; dev < devcount; dev++)
+ 		tfa_cont_close(dev); /* close all of them */
+ 
+-	return err;
++	return (enum tfa_error)err;
+ }
+ 
+ /*
+@@ -4775,7 +4748,7 @@ enum tfa_error tfa_reset(void)
+ 		tfa_cont_close(dev);
+ 	}
+ 
+-	return err;
++	return (enum tfa_error)err;
+ }
+ 
+ /*
+@@ -4952,33 +4925,11 @@ tfa_mtp_get_calibration(tfa98xx_handle_t handle, uint16_t *cal_data)
+ enum tfa98xx_error
+ tfa_mtp_set_calibration(tfa98xx_handle_t handle, uint16_t cal_data)
+ {
+-	enum tfa98xx_error err = TFA98XX_ERROR_OK;
+-	int loop;
+-
+-	tfa98xx_key2(handle, 0); /* unlock */
+-	/* Write calibration values to MTP shadow register */
+-	err = tfa_write_reg(handle, (uint16_t)TFA_MK_BF(0xF5, 0, 16), cal_data);
+-	if (err != TFA98XX_ERROR_OK)
+-		return err;
+-
+-	/* CIMTP=1 start copying all the data from i2c regs_mtp to mtp*/
+-	err = TFA_SET_BF(handle, CIMTP, 1);
+-	if (err != TFA98XX_ERROR_OK)
+-		return err;
+-
+-	/* no check for MTPBUSY here, i2c delay assumed to be enough */
+-	tfa98xx_key2(handle, 1); /* lock */
+-
+-	/* wait until MTP write is done */
+-	for (loop = 0; loop < 100/*x10ms*/; loop++) {
+-		msleep_interruptible(10); /* wait 10ms to avoid busload */
+-		if (TFA_GET_BF(handle, MTPB) == 0)
+-			return TFA98XX_ERROR_OK;
+-	}
+-
+-	return TFA98XX_ERROR_STATE_TIMED_OUT;
++	/* Factory calibration is read-only during bring-up. */
++	return TFA98XX_ERROR_NOT_SUPPORTED;
+ }
+ 
++
+ /* start count from 1, 0 is invalid */
+ int tfa_get_swprof(tfa98xx_handle_t handle)
+ {
+@@ -5282,6 +5233,25 @@ tfa_dsp_handle_event(tfa98xx_handle_t handle,
+  *		dsp_read_message_t tfa_read_message,
+  *		tfa_event_handler_t *tfa_event_handler)
+  */
++static dsp_send_message_t external_send;
++static dsp_read_message_t external_read;
++
++static enum tfa98xx_error tfa_external_send(int dev, int length, const char *buf)
++{
++	if (!external_send)
++		return TFA98XX_ERROR_NOT_SUPPORTED;
++	return external_send(dev, length, buf) == 0 ?
++		TFA98XX_ERROR_OK : TFA98XX_ERROR_FAIL;
++}
++
++static enum tfa98xx_error tfa_external_read(int dev, int length, unsigned char *buf)
++{
++	if (!external_read)
++		return TFA98XX_ERROR_NOT_SUPPORTED;
++	return external_read(dev, length, (char *)buf) == 0 ?
++		TFA98XX_ERROR_OK : TFA98XX_ERROR_FAIL;
++}
++
+ int tfa_ext_register(dsp_send_message_t tfa_send_message,
+ 	dsp_read_message_t tfa_read_message,
+ 	tfa_event_handler_t *tfa_event_handler)
+@@ -5306,19 +5276,22 @@ int tfa_ext_register(dsp_send_message_t tfa_send_message,
+ 		/* master device only: external is always device 0,
+ 		 * Don't do this for device 1!
+ 		 */
++		external_send = tfa_send_message;
++		external_read = tfa_read_message;
++
+ 		handles_local[0].ext_dsp = 1; /* set cold 1st msg */
+ 		handles_local[0].is_cold = 1;
+ 
+ 		handles_local[0].profile = 0;
+ 		handles_local[1].profile = 0;
+ 
+-		handles_local[0].dev_ops.dsp_msg = (dsp_msg_t)tfa_send_message;
+-		handles_local[1].dev_ops.dsp_msg = (dsp_msg_t)tfa_send_message;
++		handles_local[0].dev_ops.dsp_msg = tfa_external_send;
++		handles_local[1].dev_ops.dsp_msg = tfa_external_send;
+ 
+ 		handles_local[0].dev_ops.dsp_msg_read =
+-			(dsp_msg_read_t)tfa_read_message;
++			tfa_external_read;
+ 		handles_local[1].dev_ops.dsp_msg_read =
+-			(dsp_msg_read_t)tfa_read_message;
++			tfa_external_read;
+ 
+ 		if (tfa_event_handler != NULL)
+ 			*tfa_event_handler = tfa_dsp_handle_event;

@@ -1,0 +1,103 @@
+From 2ba9b7efa8efccce37e5184355ec9a47cec0eb4c Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Sun, 22 Nov 2026 01:23:31 +0600
+Subject: [PATCH 5/5] arm64: dts: a50: wire probe-only TFA9872 on measured boot
+ clocks
+
+Change-Id: I597502591b41a7a2f0229403ac89639c2c6012c2
+---
+ .../boot/dts/exynos/exynos9610-a50-sysmmu.dts | 77 +++++++++++++++++++
+ 1 file changed, 77 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610-a50-sysmmu.dts b/arch/arm64/boot/dts/exynos/exynos9610-a50-sysmmu.dts
+index 736a8fe90..c55b758ca 100644
+--- a/arch/arm64/boot/dts/exynos/exynos9610-a50-sysmmu.dts
++++ b/arch/arm64/boot/dts/exynos/exynos9610-a50-sysmmu.dts
+@@ -469,6 +469,9 @@ uaif2 {
+ 			cpu {
+ 				sound-dai = <&abox_uaif_2>;
+ 			};
++			codec {
++				sound-dai = <&tfa9872 0>;
++			};
+ 		};
+ 
+ 		uaif4 {
+@@ -512,3 +515,77 @@ cpu {
+ 		};
+ 	};
+ };
++
++/* B2 prototype: preserve the clock state measured in B2C, without registering
++ * another shared CMU during audio bring-up. Native CMGP clock control remains
++ * an integration item before these temporary fixed clocks are finalized.
++ */
++/ {
++	cmgp_i2c_bootclk: clock-cmgp-i2c-boot {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <99937500>;
++	};
++
++	cmgp_bus_bootclk: clock-cmgp-bus-boot {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <199875000>;
++	};
++
++	soc@0 {
++		hsi2c_3: i2c@11d10000 {
++			compatible = "samsung,exynos9610-hsi2c";
++			reg = <0x11d10000 0x1000>;
++			interrupts = <GIC_SPI 273 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cmgp_i2c_bootclk>, <&cmgp_bus_bootclk>;
++			clock-names = "hsi2c", "hsi2c_pclk";
++			clock-frequency = <100000>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&hsi2c3_pins>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			tfa9872: amplifier@34 {
++				compatible = "nxp,tfa9872";
++				reg = <0x34>;
++				#sound-dai-cells = <1>;
++			};
++		};
++	};
++};
++
++&pinctrl_cmgp {
++	hsi2c3_pins: hsi2c3-pins {
++		samsung,pins = "gpm2-0", "gpm3-0";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_3>;
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
++		samsung,pin-drv = <0>; /* stock hsi2c3-bus drive level */
++	};
++};
++
++&pinctrl_dispaud {
++	aud_i2s2_bus: aud-i2s2-bus-pins {
++		samsung,pins = "gpb2-0", "gpb2-1", "gpb2-2", "gpb2-3";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
++	};
++	aud_i2s2_idle: aud-i2s2-idle-pins {
++		samsung,pins = "gpb2-0", "gpb2-1", "gpb2-2", "gpb2-3";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
++		samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
++	};
++};
++
++&abox_uaif_2 {
++	pinctrl-names = "default", "sleep";
++	pinctrl-0 = <&aud_i2s2_bus>;
++	pinctrl-1 = <&aud_i2s2_idle>;
++};
++
++&abox {
++	synchronized-ipc {
++		compatible = "samsung,abox-synchronized-ipc";
++		abox = <&abox>;
++	};
++};

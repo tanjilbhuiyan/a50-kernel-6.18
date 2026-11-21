@@ -113,3 +113,15 @@ Evidence `reference/m10-audio/stock-snapshot.txt`, vendor XMLs `reference/m10-au
 - Speaker calibration: stock keeps per-unit TFA calibration in EFS (kernel read/write). 6.18 runs uncalibrated defaults
   until the owner decides (read-only path, new ADR). Volume should stay moderate in tests until then.
 - Whether `abox_vss`'s absence breaks the HAL's call paths: checked in M11.
+
+## Calibration policy correction (B2 preparation, 2026-11-22)
+Stock `TFA Calibration` is readable and nonzero on this phone; its getter reads the amplifier's calibration mirror
+(register F5). EFS reads are in `tfa_cal.c`'s status helper. Its EFS write code is compile-conditional;
+`TFA_WRITE_CAL_TO_FILE` is commented out in the baseline Makefile, so earlier wording that the running stock
+kernel writes calibration to EFS was too broad. Presence of write-capable source is not evidence it executes.
+
+Owner chose **use existing amplifier calibration; stop if invalid**. No additional EFS exception or recalibration
+is authorized/needed for that policy. B2a is probe-only: inspect ID, firmware, MTPEX and resistance-presence flags,
+without output. A nonzero stock value alone does not validate playback protection. Both calibration-programming
+entry points return NOT_SUPPORTED in the port. Raw values remain private; status logs use flags.
+See `log/2026-11-22-M10.3-tfa9872.md`; the earlier defaults-vs-EFS question is superseded by this decision.

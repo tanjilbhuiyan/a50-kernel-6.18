@@ -1,0 +1,117 @@
+From 7806198a6b5386db5de9b2c84778dce90f086bd2 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Sun, 22 Nov 2026 01:23:31 +0600
+Subject: [PATCH 4/5] i2c: exynos5: add Exynos9610 CMGP USIv2 timing and reset
+ variant
+
+Change-Id: I65b50424fd8d0cfd65fd12cde8dc9234c95d1b48
+---
+ drivers/i2c/busses/i2c-exynos5.c | 52 ++++++++++++++++++++++++++++++--
+ 1 file changed, 49 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+index 9c1c5f3c0..d58f1bde6 100644
+--- a/drivers/i2c/busses/i2c-exynos5.c
++++ b/drivers/i2c/busses/i2c-exynos5.c
+@@ -169,6 +169,7 @@ enum i2c_type_exynos {
+ 	I2C_TYPE_EXYNOS7,
+ 	I2C_TYPE_EXYNOSAUTOV9,
+ 	I2C_TYPE_EXYNOS8895,
++	I2C_TYPE_EXYNOS9610,
+ };
+ 
+ struct exynos5_i2c {
+@@ -246,7 +247,15 @@ static const struct exynos_hsi2c_variant exynos8895_hsi2c_data = {
+ 	.hw		= I2C_TYPE_EXYNOS8895,
+ };
+ 
++/* A50 CMGP USIv2: 16-byte FIFO, bit-pattern SCL timing (stock driver). */
++static const struct exynos_hsi2c_variant exynos9610_hsi2c_data = {
++	.fifo_depth = 16,
++	.hw = I2C_TYPE_EXYNOS9610,
++};
++
+ static const struct of_device_id exynos5_i2c_match[] = {
++	{ .compatible = "samsung,exynos9610-hsi2c",
++	  .data = &exynos9610_hsi2c_data },
+ 	{
+ 		.compatible = "samsung,exynos5-hsi2c",
+ 		.data = &exynos5250_hsi2c_data
+@@ -285,6 +294,34 @@ static void exynos5_i2c_clr_pend_irq(struct exynos5_i2c *i2c)
+  * Returns 0 on success, -EINVAL if the cycle length cannot
+  * be calculated.
+  */
++static int exynos9610_i2c_set_timing(struct exynos5_i2c *i2c, bool hs)
++{
++	unsigned int input = clk_get_rate(i2c->clk), rate = i2c->op_clock;
++	unsigned int div, high, hold, pattern, cycles, scale;
++	u32 value;
++
++	if (hs || !rate || rate > I2C_MAX_FAST_MODE_FREQ)
++		return -EINVAL;
++	cycles = rate <= I2C_MAX_STANDARD_MODE_FREQ ? 16 : 15;
++	scale = rate <= I2C_MAX_STANDARD_MODE_FREQ ? 25 : 9;
++	div = input / (rate * cycles);
++	if (div > 0xff)
++		return -EINVAL;
++	high = scale * (input / 1000000) / ((div + 1) * 10);
++	if (!high || high > 7)
++		return -EINVAL;
++	hold = high - 1;
++	value = readl(i2c->regs + HSI2C_TIMING_FS3) & ~GENMASK(23, 16);
++	writel(value | (div << 16), i2c->regs + HSI2C_TIMING_FS3);
++	pattern = (0xffU << high) & 0xff;
++	value = readl(i2c->regs + HSI2C_TIMING_FS2) & ~GENMASK(7, 0);
++	writel(value | pattern, i2c->regs + HSI2C_TIMING_FS2);
++	pattern = (0xffU << hold) & 0xff;
++	value = readl(i2c->regs + HSI2C_TIMING_FS1) & ~GENMASK(23, 16);
++	writel(value | (pattern << 16), i2c->regs + HSI2C_TIMING_FS1);
++	return 0;
++}
++
+ static int exynos5_i2c_set_timing(struct exynos5_i2c *i2c, bool hs_timings)
+ {
+ 	u32 i2c_timing_s1;
+@@ -303,6 +340,9 @@ static int exynos5_i2c_set_timing(struct exynos5_i2c *i2c, bool hs_timings)
+ 		i2c->op_clock;
+ 	int div, clk_cycle, temp;
+ 
++	if (i2c->variant->hw == I2C_TYPE_EXYNOS9610)
++		return exynos9610_i2c_set_timing(i2c, hs_timings);
++
+ 	/*
+ 	 * In case of HSI2C controllers in ExynosAutoV9:
+ 	 *
+@@ -438,7 +478,11 @@ static int exynos5_i2c_set_timing(struct exynos5_i2c *i2c, bool hs_timings)
+ static int exynos5_hsi2c_clock_setup(struct exynos5_i2c *i2c)
+ {
+ 	/* always set Fast Speed timings */
+-	int ret = exynos5_i2c_set_timing(i2c, false);
++	int ret;
++
++	if (i2c->variant->hw == I2C_TYPE_EXYNOS9610)
++		writel(0, i2c->regs + 0xc4); /* USIv2 RESET, as stock */
++	ret = exynos5_i2c_set_timing(i2c, false);
+ 
+ 	if (ret < 0 || i2c->op_clock < I2C_MAX_FAST_MODE_PLUS_FREQ)
+ 		return ret;
+@@ -459,8 +503,8 @@ static void exynos5_i2c_init(struct exynos5_i2c *i2c)
+ 	i2c_timeout &= ~HSI2C_TIMEOUT_EN;
+ 	writel(i2c_timeout, i2c->regs + HSI2C_TIMEOUT);
+ 
+-	writel((HSI2C_FUNC_MODE_I2C | HSI2C_MASTER),
+-					i2c->regs + HSI2C_CTL);
++	writel(HSI2C_MASTER | (i2c->variant->hw == I2C_TYPE_EXYNOS9610 ?
++		0 : HSI2C_FUNC_MODE_I2C), i2c->regs + HSI2C_CTL);
+ 	writel(HSI2C_TRAILING_COUNT, i2c->regs + HSI2C_TRAILIG_CTL);
+ 
+ 	if (i2c->op_clock >= I2C_MAX_FAST_MODE_PLUS_FREQ) {
+@@ -519,6 +563,8 @@ static irqreturn_t exynos5_i2c_irq(int irqno, void *dev_id)
+ 	case I2C_TYPE_EXYNOS8895:
+ 		fallthrough;
+ 	case I2C_TYPE_EXYNOS7:
++		fallthrough;
++	case I2C_TYPE_EXYNOS9610:
+ 		if (int_status & HSI2C_INT_TRANS_DONE) {
+ 			i2c->trans_done = 1;
+ 			i2c->state = 0;

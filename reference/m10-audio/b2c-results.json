@@ -1,0 +1,111 @@
+{
+  "test": "M10.3 B2C: unchanged B1 image, read-only CMGP/APM/TOP registers",
+  "source": "a50-m10-b1-test/a3f5bd537ff9135dcfc0125b3fab02c5bc0529ce",
+  "boot_sha256": "0bc9daa42d77be747fea56ee46dc8b85ae999b6ce3770a5343b633138c76de90",
+  "owner_presence": "Present, USB connected, Claude idle; run B2C.",
+  "runner_rc": 0,
+  "watch_rc": 0,
+  "collector_rc": 0,
+  "late_rc": 0,
+  "stream_rc": 255,
+  "stream_note": "SSH connection ends at planned reboot; recovered timed dump is complete.",
+  "clock_registers": {
+    "TOP_SHARED0_PLL_CON0": {
+      "address": "0x12100120",
+      "value": "0xa0f60410"
+    },
+    "TOP_SHARED1_PLL_CON0": {
+      "address": "0x12100140",
+      "value": "0xa0cd0410"
+    },
+    "TOP_MUX_APM_BUS": {
+      "address": "0x12101000",
+      "value": "0x00000000"
+    },
+    "TOP_DIV_APM_BUS": {
+      "address": "0x12101808",
+      "value": "0x00000001"
+    },
+    "TOP_DIV_SHARED0_DIV4": {
+      "address": "0x121018b0",
+      "value": "0x00000001"
+    },
+    "TOP_DIV_SHARED1_DIV4": {
+      "address": "0x121018bc",
+      "value": "0x00000001"
+    },
+    "APM_MUX_BUS_USER": {
+      "address": "0x11800100",
+      "value": "0x00000010"
+    },
+    "APM_MUX_BUS": {
+      "address": "0x11801004",
+      "value": "0x00000000"
+    },
+    "APM_DIV_BUS": {
+      "address": "0x11801804",
+      "value": "0x00000000"
+    },
+    "APM_GATE_CMGP_BUS": {
+      "address": "0x11802000",
+      "value": "0x00200000"
+    },
+    "CMGP_MUX_I2C": {
+      "address": "0x11c01004",
+      "value": "0x00000001"
+    },
+    "CMGP_DIV_I2C": {
+      "address": "0x11c01804",
+      "value": "0x00000001"
+    },
+    "CMGP_GATE_I2C00_IPCLK": {
+      "address": "0x11c02018",
+      "value": "0x00200000"
+    },
+    "CMGP_GATE_I2C00_PCLK": {
+      "address": "0x11c0201c",
+      "value": "0x00200000"
+    },
+    "CMGP_GATE_I2C_CLK": {
+      "address": "0x11c02044",
+      "value": "0x00200000"
+    },
+    "CMGP_QCH_I2C00": {
+      "address": "0x11c03014",
+      "value": "0x003f0002"
+    }
+  },
+  "snapshots": "80 s, 150 s and 390 s: register values identical",
+  "clock_derivation": {
+    "CCF_dout_cmu_apm_bus_Hz": 199875000,
+    "APM_BUS_USER_mux": "parent 1, dout_cmu_apm_bus",
+    "APM_BUS_mux": "parent 0, mux bus user",
+    "APM_BUS_divisor": 1,
+    "CMGP_I2C_mux": "parent 1, APM/CMGP bus",
+    "CMGP_I2C_divisor": 2,
+    "I2C_IPCLK_Hz": 99937500,
+    "CMGP_PCLK_Hz": 199875000,
+    "gates": "I2C00 IPCLK/PCLK and shared I2C CLK manually enabled (0x00200000)",
+    "QCH_I2C00": "0x003f0002; preserved, not changed"
+  },
+  "regressions_late": {
+    "DMA_frames": 1434,
+    "copied_fallback_acquire_timeouts": 0,
+    "systemd": "running",
+    "failed_units": 0,
+    "userdata": "rw"
+  },
+  "dump": {
+    "complete_BEGIN_END": true,
+    "sync_done_s": 431.074454
+  },
+  "restore": {
+    "stock_upload_complete": "2026-11-22 01:17:19 +06:00",
+    "baseline_boot": "01:17:34",
+    "kernel": "4.14.194",
+    "live_partition_hashes": "DTB/DTBO/BOOT all pass",
+    "fsck": "clean, 7176/3440640 files, 1979083/13745152 blocks",
+    "battery": "99% Charging"
+  },
+  "limits": "No new amplifier driver or I2C controller probe in this image. This measures bootloader clock state only. No controller MMIO, clock writes, EFS/calibration access or PCM stimulus."
+}

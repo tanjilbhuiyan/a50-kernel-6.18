@@ -1,0 +1,131 @@
+{
+  "test": "M10.3 B2a: first TFA9872 probe-only test (new driver, bounded ABOX transport, HSI2C CMGP bus at measured input rate)",
+  "source_branch": "a50-m10-b2a-test",
+  "source_commit": "95299e7f027a4c9b37523e1b4a804b978c9cdfb8",
+  "clean_candidate": "a50-m10-b2-wip/2ba9b7efa (not promoted to a50-audio)",
+  "owner_calibration_policy": "Preserve existing amplifier calibration; stop if invalid. No EFS or recalibration. First B2a no sound.",
+  "owner_presence": "2026-11-22: Present, USB connected, Claude idle; run B2a. Explicit owner confirmation.",
+  "config_delta_vs_B1": {
+    "CONFIG_SND_SOC_TFA9872": [
+      null,
+      "y"
+    ],
+    "CONFIG_SEC_SND_SYNCHRONIZED_IPC": [
+      "n",
+      "y"
+    ],
+    "CONFIG_I2C_EXYNOS5": [
+      "n",
+      "y"
+    ]
+  },
+  "runtime_cpio_same_as_B1": true,
+  "probe_only_default_in_linked_Image": true,
+  "prototype_clock_note": "CMGP clock provider integration/disposition still pending; B2a preserves the measured bootloader clocks with fixed providers.",
+  "files": {
+    "src/m10/boot-b2a.img": {
+      "size": 33337344,
+      "sha256": "1383b47f2368ee9f60717d1901b05b448eed7475cc21741cf0b700f91e156feb"
+    },
+    "src/m10/dt-b2a.img": {
+      "size": 8388608,
+      "sha256": "4a3aadafc2eccca395f4efa92029cea6f45ceec6d690b8e669cb91802f4d0cb7"
+    },
+    "src/m10/b2a-as-built/.config": {
+      "size": 126405,
+      "sha256": "fa9749f04ab9a2eb5be87fd08423a883c234a56e5d1927c9fba4ca8fd8780fd0"
+    },
+    "src/m10/b2a-as-built/Image": {
+      "size": 33331208,
+      "sha256": "bd4f991f796a03f3e9eb99e6423e06ca435b5e328d117bdc3d9f702d52469b65"
+    },
+    "src/m10/b2a-as-built/exynos9610-a50-gpu.dtb": {
+      "size": 31157,
+      "sha256": "2a7ebc2003e1d39575754f0ace5b2482773434713108f7896560d0a067dad2d4"
+    },
+    "src/m10/b2a-as-built/initramfs_data.cpio": {
+      "size": 25968640,
+      "sha256": "aded41aa0cd365dd211ff3971b674698d5bf77cd855711920957124ba7c80718"
+    },
+    "src/m10/b2a-as-built/System.map": {
+      "size": 3494696,
+      "sha256": "4750b56c9521d86261b6b2ec2931f119e54a2368fe50e55c5895f0c745151a7f"
+    },
+    "tools/m10/build_b2.py": {
+      "size": 856,
+      "sha256": "ce275191f71461a036f7820a5c43281be5a9b833f67c6ac1d3e497c3d654ac92"
+    },
+    "tools/m10/build_a1.py": {
+      "size": 5437,
+      "sha256": "4140ec532655656e70ba4d0f7da25ac57452c5e51c1d5eedd19b66f65d594365"
+    },
+    "tools/m10/run_b2a.sh": {
+      "size": 4117,
+      "sha256": "959f60ea0583f8deaf544413443755731683a53d3ae295a32960b29a7e86953b"
+    },
+    "tools/m10/collect_b2a.sh": {
+      "size": 4485,
+      "sha256": "1d650c8d4aa688914650db9232801fcfd0473a53793fa0387a494ae9acbfec42"
+    },
+    "tools/m32_run_test.sh": {
+      "size": 4701,
+      "sha256": "fb03aa8a9411f6d5a4292a23342a18b24a0b597ba568c7c9def703d44bfc7235"
+    },
+    "tools/m32_read_618.sh": {
+      "size": 1238,
+      "sha256": "e750045b3417db5a9f9a6aad25e96cf85f1367aef897c45f039e8e440ac765c7"
+    },
+    "tools/m24_preflight.sh": {
+      "size": 4118,
+      "sha256": "6beca4aa8634c3e1b687e4242d700a311c89f2f18322398ef7a9d08a3fc13d8e"
+    },
+    "tools/m54/watch_ssh.py": {
+      "size": 4321,
+      "sha256": "f656a6f1092266c2214ba0f3afee37ac81b0b62620b7feb57cadf6a71db52bfd"
+    },
+    "tools/m22_pack.sh": {
+      "size": 1098,
+      "sha256": "08212aa1743ed07df3447dc8414d634e775a4bc224e945b570a86be1c3757097"
+    },
+    "tools/dt_table.py": {
+      "size": 7313,
+      "sha256": "f601fa4f6fb98ed558cdad2617ab9c01e9353a6bb59691c5367860358d1fd10d"
+    },
+    "reference/stock-images/dt.img": {
+      "size": 8388608,
+      "sha256": "59209aa52dc3b35e2c7cc025c465ed1cdb48dadaa13cf5d1f50324b3bf503547"
+    },
+    "reference/stock-images/dtbo.img": {
+      "size": 8388608,
+      "sha256": "40e47ed1477a8ffb6cbb34e5cb59a1af786c2552544f3b556373f3c553d40d21"
+    },
+    "reference/dt-6.18/images/dtbo.img": {
+      "size": 8388608,
+      "sha256": "6d81cce87faca914d75f024f36e183ae6592e61adc786bbb6c7c47cdd3a151fe"
+    },
+    "baseline/ut-26.04-2026-10-19-aa17rf2/boot.img": {
+      "size": 53624832,
+      "sha256": "7d5855efd34e01f09659c7d47ecb0773c30f2acc7443ee87181a0536804086c5"
+    },
+    "reference/m10-audio/b2a-build-results.json": {
+      "size": 17912,
+      "sha256": "bc600a18611f8041e7a09345213b4afaaab508c099ec3fa5ec429a929e6255e5"
+    },
+    "reference/m10-audio/b2a-host-checks.json": {
+      "size": 549,
+      "sha256": "267749f15dcd8586019736ce9a010693d568617adf64275b3cf8025b1852a573"
+    },
+    "reference/m10-audio/b2a-calibration-write-block.txt": {
+      "size": 363,
+      "sha256": "38115345d729d7bc8334d0dc1173de820a4f8f2f6011b1ec5bef04ae1af3d43e"
+    },
+    "tools/m10/sync_ipc_unittest.py": {
+      "size": 6125,
+      "sha256": "1cccbcafaa0ca8b2c49be8d99dc5cad50f19fbe79d64aa06cdc5c5cc4485fcdb"
+    },
+    "reference/m10-audio/b2-sync-unittest.txt": {
+      "size": 77,
+      "sha256": "fccfaf0d690c6f23260607517ba1f89b54ee98f479edb1e336950a6a77b5d94b"
+    }
+  }
+}

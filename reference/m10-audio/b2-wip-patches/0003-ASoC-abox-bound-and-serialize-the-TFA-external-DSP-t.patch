@@ -1,0 +1,559 @@
+From 9f898ede8a86b77375ce0e0e8ba071b851780902 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Sun, 22 Nov 2026 01:23:31 +0600
+Subject: [PATCH 3/5] ASoC: abox: bound and serialize the TFA external DSP
+ transport
+
+Change-Id: I382de210732fbc2ff372296f27d03a8531c90806
+---
+ sound/soc/samsung/abox/Kconfig                |   1 +
+ .../soc/samsung/abox/abox_synchronized_ipc.c  | 493 ++++++++----------
+ 2 files changed, 208 insertions(+), 286 deletions(-)
+
+diff --git a/sound/soc/samsung/abox/Kconfig b/sound/soc/samsung/abox/Kconfig
+index 0cdfecad1..e8e8e62c7 100644
+--- a/sound/soc/samsung/abox/Kconfig
++++ b/sound/soc/samsung/abox/Kconfig
+@@ -39,6 +39,7 @@ config SND_SOC_SAMSUNG_ABOX_MMAPFD
+ 
+ config SEC_SND_SYNCHRONIZED_IPC
+ 	bool "Samsung ABOX Synchronized IPC for Audio"
++	depends on SND_SOC_TFA9872=y
+ 	help
+ 	  IPC between ABOX and an external amplifier driver (NXP TFA9872).
+ 
+diff --git a/sound/soc/samsung/abox/abox_synchronized_ipc.c b/sound/soc/samsung/abox/abox_synchronized_ipc.c
+index a3360693f..deb465551 100644
+--- a/sound/soc/samsung/abox/abox_synchronized_ipc.c
++++ b/sound/soc/samsung/abox/abox_synchronized_ipc.c
+@@ -1,323 +1,244 @@
+-/* sound/soc/samsung/abox/abox_synchronized_ipc.c
+- *
+- * ALSA SoC Audio Layer - Samsung Abox synchronized IPC driver
+- *
+- * Copyright (c) 2017 Samsung Electronics Co. Ltd.
+-  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
++// SPDX-License-Identifier: GPL-2.0
++/* Samsung ABOX external TFA DSP protocol, ported for the A50.
++ * Firmware uses one shared request/reply slot and no transaction sequence ID.
++ * Serialize callers, bound both windows, and stop after an ambiguous timeout.
+  */
+-
+-#include <linux/io.h>
++#include <linux/completion.h>
+ #include <linux/module.h>
+-#include <linux/of.h>
++#include <linux/mutex.h>
+ #include <linux/of_platform.h>
+-
+-/*#include <sound/abox_synchronized_ipc.h>*/
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
++#include <linux/sizes.h>
++#include <linux/spinlock.h>
+ #include <sound/tfa_ext.h>
+ #include "abox.h"
+ 
+-#define TFADSP_CMD_WRITE    0x1001
+-#define TFADSP_CMD_READ     0x1002
+-#define TFADSP_CMD_BLACKBOX 0x1003
+-#define TFADSP_RES_WRITE    0x2001
+-#define TFADSP_RES_READ     0x2002
+-#define TFADSP_RES_BLACKBOX 0x2003
+-#define TFADSP_SUCCESS              0
+-#define TFADSP_WRITE_INVALID_STATE  1
+-#define TFADSP_INVALID_PARAM        2
+-#define TFADSP_FAILED               3
+-#define TFADSP_READ_INVALID_STATE   4
+-#define REALTIME_GEAR_ID    0x7007
+-
+-#define SMEM_READ           0x80584000
+-#define SMEM_WRITE          0x80582000
+-/*#define SMEM_READ           0x80840000*/
+-/*#define SMEM_WRITE          0x80842000*/
+-
+-#define TIMEOUT_MS 100
+-#define DEBUG_SYNCHRONIZED_IPC
+-
+-#ifdef DEBUG_SYNCHRONIZED_IPC
+-#define ipc_dbg(format, args...)	\
+-pr_info("[SYNC_IPC] %s: " format "\n", __func__, ## args)
+-#else
+-#define ipc_dbg(format, args...)
+-#endif /* DEBUG_SYNCHRONIZED_IPC */
+-
+-#define ipc_err(format, args...)	\
+-pr_err("[SYNC_IPC] %s: " format "\n", __func__, ## args)
+-
+-
+-static DECLARE_WAIT_QUEUE_HEAD(wq_read);
+-static DECLARE_WAIT_QUEUE_HEAD(wq_write);
+-
+-static struct abox_platform_data *data;
+-char *tfadrv_read_buf = NULL;
+-char *tfadrv_write_buf = NULL;
+-char *smem_write_buf = NULL;
+-char *smem_read_buf = NULL;
+-int abox_ipc_read_error = 0;
+-int abox_ipc_write_error = 0;
+-bool abox_ipc_read_avail = false;
+-bool abox_ipc_write_avail = false;
++#define TFA_CMD_WRITE 0x1001
++#define TFA_CMD_READ 0x1002
++#define TFA_RES_WRITE 0x2001
++#define TFA_RES_READ 0x2002
++#define TFA_WRITE_INVALID 1
++#define TFA_INVALID_PARAM 2
++#define TFA_FAILED 3
++#define TFA_READ_INVALID 4
++#define TFA_SMEM_WRITE 0x80582000
++#define TFA_SMEM_READ 0x80584000
++#define TFA_WINDOW_BYTES SZ_8K
++#define TFA_TIMEOUT_MS 100
++
++struct abox_tfa_sync {
++	struct device *abox_dev;
++	struct abox_data *abox;
++	struct mutex transfer_lock;
++	spinlock_t reply_lock;
++	struct completion reply;
++	bool pending;
++	bool poisoned;
++	u32 expected_reply;
++	size_t expected_bytes;
++	int result;
++	u8 read_buffer[TFA_WINDOW_BYTES];
++};
+ 
+-static bool abox_ipc_timeout_state = false;
++/* Built-in board driver; no hot-unbind (the parent has no IRQ unregister API). */
++static struct abox_tfa_sync *tfa_sync;
+ 
+-int tfadsp_read(int devidx, int size, void *buf)
++static void *abox_tfa_window(struct abox_tfa_sync *sync, u32 addr, size_t bytes)
+ {
+-	ABOX_IPC_MSG msg;
+-	int ret = 0;
+-	struct IPC_ERAP_MSG *erap_msg = &msg.msg.erap;
+-	struct abox_data *aboxdata = abox_get_abox_data();
+-
+-	ipc_dbg("size = %d", size);
+-
+-	if(abox_ipc_timeout_state == true) {
+-		ipc_err("ipc timeout state, skip to tfadsp_read");
+-	}
+-
+-	abox_request_cpu_gear(&data->pdev_abox->dev, aboxdata,
+-					REALTIME_GEAR_ID, 4);
+-
+-	tfadrv_read_buf = (char *)buf;
+-
+-	msg.ipcid = IPC_ERAP;
+-	erap_msg->msgtype = REALTIME_EXTRA;
+-	erap_msg->param.raw.params[0] = TFADSP_CMD_READ;
+-	erap_msg->param.raw.params[1] = size;
+-	abox_ipc_read_avail = false;
+-	abox_ipc_read_error = TFADSP_SUCCESS;
+-	ret = abox_start_ipc_transaction(&data->pdev_abox->dev, IPC_ERAP,
+-					&msg, sizeof(msg), 1, 1);
+-	if (ret < 0) {
+-		ipc_err("abox_start_ipc_transaction is failed, error=%d", ret);
+-		/*return -1;*/
+-	}
+-
+-	ret = wait_event_interruptible_timeout(wq_read,
+-			abox_ipc_read_avail, msecs_to_jiffies(TIMEOUT_MS));
+-
+-	abox_request_cpu_gear(&data->pdev_abox->dev, aboxdata,
+-					REALTIME_GEAR_ID, 12);
+-
+-	if (!ret) {
+-		ipc_err("wait_event timeout");
+-		abox_ipc_timeout_state = true;
+-		return 0;
+-	}
+-	if (abox_ipc_read_error) {
+-		ipc_err("error = %d", abox_ipc_read_error);
+-		return -1;
+-	}
+-	return 0;
++	void *start, *end;
++
++	if (!bytes || bytes > TFA_WINDOW_BYTES)
++		return ERR_PTR(-EMSGSIZE);
++	start = abox_addr_to_kernel_addr(sync->abox, addr);
++	if (IS_ERR_OR_NULL(start))
++		return ERR_PTR(-EFAULT);
++	end = abox_addr_to_kernel_addr(sync->abox, addr + bytes - 1);
++	if (IS_ERR_OR_NULL(end) || end != (u8 *)start + bytes - 1)
++		return ERR_PTR(-EFAULT);
++	return start;
+ }
+-EXPORT_SYMBOL_GPL(tfadsp_read);
+ 
+-int tfadsp_write(int devidx, int size, void *buf)
++static int abox_tfa_transfer(int device, int bytes, const char *write,
++			     char *read)
+ {
+-	ABOX_IPC_MSG msg;
+-	int ret = 0;
+-	struct IPC_ERAP_MSG *erap_msg = &msg.msg.erap;
+-	struct abox_data *aboxdata = abox_get_abox_data();
+-
+-	ipc_dbg("size = %d", size);
+-
+-	if(abox_ipc_timeout_state == true) {
+-		ipc_err("ipc timeout state, skip to tfadsp_write");
++	struct abox_tfa_sync *sync = READ_ONCE(tfa_sync);
++	ABOX_IPC_MSG msg = { .ipcid = IPC_ERAP };
++	unsigned long flags;
++	void *area;
++	bool is_read = read != NULL;
++	int ret;
++
++	if (!sync)
++		return -ENODEV;
++	if (device != 0 || bytes <= 0 || bytes > TFA_WINDOW_BYTES ||
++	    (!read && !write))
++		return -EINVAL;
++	mutex_lock(&sync->transfer_lock);
++	if (sync->poisoned) {
++		ret = -EIO;
++		goto unlock;
+ 	}
+-
+-	abox_request_cpu_gear(&data->pdev_abox->dev, aboxdata,
+-					REALTIME_GEAR_ID, 4);
+-
+-	tfadrv_write_buf = (char *)buf;
+-	smem_write_buf = (char *)abox_addr_to_kernel_addr(aboxdata, SMEM_WRITE);
+-
+-	msg.ipcid = IPC_ERAP;
+-	erap_msg->msgtype = REALTIME_EXTRA;
+-	erap_msg->param.raw.params[0] = TFADSP_CMD_WRITE;
+-	erap_msg->param.raw.params[1] = size;
+-
+-	memcpy(smem_write_buf, tfadrv_write_buf, size);
+-	abox_ipc_write_avail = false;
+-	abox_ipc_write_error = TFADSP_SUCCESS;
+-
+-	ret = abox_start_ipc_transaction(&data->pdev_abox->dev, IPC_ERAP,
+-					&msg, sizeof(msg), 1, 1);
+-	if (ret < 0) {
+-		ipc_err("abox_start_ipc_transaction is failed, error=%d", ret);
+-		/*return -1;*/
++	ret = pm_runtime_resume_and_get(sync->abox_dev);
++	if (ret < 0)
++		goto unlock;
++	if (!READ_ONCE(sync->abox->calliope_version)) {
++		ret = -EAGAIN;
++		goto put_pm;
+ 	}
+-
+-	ret = wait_event_interruptible_timeout(wq_write,
+-		abox_ipc_write_avail, msecs_to_jiffies(TIMEOUT_MS));
+-
+-	abox_request_cpu_gear(&data->pdev_abox->dev, aboxdata,
+-					REALTIME_GEAR_ID, 12);
+-
+-	if (!ret) {
+-		ipc_err("wait_event timeout");
+-		abox_ipc_timeout_state = true;
+-		return 0;
++	area = abox_tfa_window(sync, is_read ? TFA_SMEM_READ : TFA_SMEM_WRITE,
++			       bytes);
++	if (IS_ERR(area)) {
++		ret = PTR_ERR(area);
++		goto put_pm;
+ 	}
+-	if (abox_ipc_write_error) {
+-		ipc_err("abox_ipc_write_error = %d", abox_ipc_write_error);
+-		return -1;
++	if (!is_read) {
++		memcpy(area, write, bytes);
++		wmb();
+ 	}
+-	return 0;
++	reinit_completion(&sync->reply);
++	spin_lock_irqsave(&sync->reply_lock, flags);
++	sync->expected_reply = is_read ? TFA_RES_READ : TFA_RES_WRITE;
++	sync->expected_bytes = bytes;
++	sync->result = -EINPROGRESS;
++	sync->pending = true;
++	spin_unlock_irqrestore(&sync->reply_lock, flags);
++	msg.msg.erap.msgtype = REALTIME_EXTRA;
++	msg.msg.erap.param.raw.params[0] = is_read ? TFA_CMD_READ : TFA_CMD_WRITE;
++	msg.msg.erap.param.raw.params[1] = bytes;
++	ret = abox_start_ipc_transaction(sync->abox_dev, IPC_ERAP, &msg,
++					 sizeof(msg), 0, 1);
++	if (!ret && !wait_for_completion_timeout(&sync->reply,
++					msecs_to_jiffies(TFA_TIMEOUT_MS)))
++		ret = -ETIMEDOUT;
++	spin_lock_irqsave(&sync->reply_lock, flags);
++	if (ret) {
++		/* Sending or waiting may have failed after firmware accepted it. */
++		sync->poisoned = true;
++	} else {
++		ret = sync->result;
++		if (!ret && is_read)
++			memcpy(read, sync->read_buffer, bytes);
++	}
++	sync->pending = false;
++	spin_unlock_irqrestore(&sync->reply_lock, flags);
++put_pm:
++	pm_runtime_mark_last_busy(sync->abox_dev);
++	pm_runtime_put_autosuspend(sync->abox_dev);
++unlock:
++	mutex_unlock(&sync->transfer_lock);
++	return ret;
+ }
+-EXPORT_SYMBOL_GPL(tfadsp_write);
+ 
+-static irqreturn_t abox_synchronized_ipc_handler(int irq,
+-					void *dev_id, ABOX_IPC_MSG *msg)
++static int abox_tfa_read(int device, int bytes, char *buffer)
+ {
+-	struct IPC_ERAP_MSG *erap_msg = &msg->msg.erap;
+-	struct abox_data *aboxdata = abox_get_abox_data();
+-	unsigned int res_id = erap_msg->param.raw.params[0];
+-	unsigned int size = erap_msg->param.raw.params[1];
++	return abox_tfa_transfer(device, bytes, NULL, buffer);
++}
+ 
+-	switch (irq) {
+-	case IPC_ERAP:
+-	switch (erap_msg->msgtype) {
+-	case REALTIME_EXTRA:
+-	switch(res_id) {
+-		case TFADSP_RES_READ:
+-			smem_read_buf =
+-			(char *)abox_addr_to_kernel_addr(aboxdata, SMEM_READ);
+-			memcpy(tfadrv_read_buf, smem_read_buf, size);
+-			abox_ipc_read_avail = true;
+-			abox_ipc_read_error = TFADSP_SUCCESS;
+-			ipc_dbg("TFADSP_CMD_READ DONE size= %d", size);
+-			if (waitqueue_active(&wq_read))
+-				wake_up_interruptible(&wq_read);
+-		break;
+-		case TFADSP_RES_BLACKBOX:
+-			smem_read_buf =
+-			(char *)abox_addr_to_kernel_addr(aboxdata, SMEM_READ);
+-			memcpy(tfadrv_read_buf, smem_read_buf, size);
+-			abox_ipc_read_avail = true;
+-			abox_ipc_read_error = TFADSP_SUCCESS;
+-			ipc_dbg("TFADSP_CMD_BLACKBOX DONE size= %d", size);
+-			if (waitqueue_active(&wq_read))
+-				wake_up_interruptible(&wq_read);
+-		break;
+-		case TFADSP_READ_INVALID_STATE:
+-			abox_ipc_read_avail = true;
+-			abox_ipc_read_error = TFADSP_READ_INVALID_STATE;
+-			ipc_err("tfadsp_read() TFADSP_READ_INVALID_STATE");
+-			if (waitqueue_active(&wq_read))
+-				wake_up_interruptible(&wq_read);
+-		break;
+-		case TFADSP_RES_WRITE:
+-			abox_ipc_write_avail = true;
+-			abox_ipc_write_error = TFADSP_SUCCESS;
+-			ipc_dbg("TFADSP_CMD_WRITE done");
+-			if (waitqueue_active(&wq_write))
+-				wake_up_interruptible(&wq_write);
+-		break;
+-		case TFADSP_WRITE_INVALID_STATE:
+-			abox_ipc_write_avail = true;
+-			abox_ipc_write_error = TFADSP_WRITE_INVALID_STATE;
+-			ipc_err("tfadsp_write() TFADSP_WRITE_INVALID_STATE");
+-			if (waitqueue_active(&wq_write))
+-				wake_up_interruptible(&wq_write);
+-		break;
+-		case TFADSP_INVALID_PARAM:
+-			abox_ipc_write_avail = true;
+-			abox_ipc_write_error = TFADSP_INVALID_PARAM;
+-			ipc_err("tfadsp_write() TFADSP_INVALID_PARAM");
+-			if (waitqueue_active(&wq_write))
+-				wake_up_interruptible(&wq_write);
+-		break;
+-		case TFADSP_FAILED:
+-			abox_ipc_write_avail = true;
+-			abox_ipc_write_error = TFADSP_FAILED;
+-			ipc_err("tfadsp_write() TFADSP_FAILED");
+-			if (waitqueue_active(&wq_write))
+-				wake_up_interruptible(&wq_write);
+-		break;
++static int abox_tfa_write(int device, int bytes, const char *buffer)
++{
++	return abox_tfa_transfer(device, bytes, buffer, NULL);
++}
+ 
+-		default:
+-			ipc_err("unknown response type, RES_ID = %d", res_id);
+-		break;
+-	}
+-	break;
+-	default:
+-		ipc_err("unknown message type, msgtype = %d",
+-						erap_msg->msgtype);
+-	}
+-	break;
+-	default:
+-		ipc_err("unknown command, irq = %d", irq);
+-	break;
++static irqreturn_t abox_tfa_reply(int irq, void *cookie, ABOX_IPC_MSG *msg)
++{
++	struct abox_tfa_sync *sync = cookie;
++	u32 response = msg->msg.erap.param.raw.params[0];
++	u32 bytes = msg->msg.erap.param.raw.params[1];
++	unsigned long flags;
++	void *area;
++
++	if (irq != IPC_ERAP || msg->msg.erap.msgtype != REALTIME_EXTRA)
++		return IRQ_NONE;
++	spin_lock_irqsave(&sync->reply_lock, flags);
++	if (!sync->pending || sync->poisoned)
++		goto out;
++	if (response == TFA_WRITE_INVALID || response == TFA_READ_INVALID ||
++	    response == TFA_INVALID_PARAM || response == TFA_FAILED) {
++		sync->result = -EREMOTEIO;
++	} else if (response != sync->expected_reply) {
++		sync->result = -EPROTO;
++		sync->poisoned = true;
++	} else if (response == TFA_RES_READ) {
++		if (bytes != sync->expected_bytes) {
++			sync->result = -EMSGSIZE;
++		} else {
++			area = abox_tfa_window(sync, TFA_SMEM_READ, bytes);
++			if (IS_ERR(area)) {
++				sync->result = PTR_ERR(area);
++			} else {
++				rmb();
++				memcpy(sync->read_buffer, area, bytes);
++				sync->result = 0;
++			}
++		}
++	} else {
++		sync->result = 0;
+ 	}
++	sync->pending = false;
++	complete(&sync->reply);
++out:
++	spin_unlock_irqrestore(&sync->reply_lock, flags);
+ 	return IRQ_HANDLED;
+ }
+ 
+-static struct snd_soc_platform_driver abox_synchronized_ipc = {
+-};
+-
+-static int samsung_abox_synchronized_ipc_probe(struct platform_device *pdev)
++static int abox_tfa_probe(struct platform_device *pdev)
+ {
+-	struct device *dev = &pdev->dev;
+-	struct device_node *np = dev->of_node;
+-	struct device_node *np_abox;
+-
+-	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+-	if (!data) {
+-		dev_err(dev, "[SYNC_IPC] Failed to allocate memory\n");
+-		return -ENOMEM;
+-	}
+-	platform_set_drvdata(pdev, data);
+-
+-	np_abox = of_parse_phandle(np, "abox", 0);
+-	if (!np_abox) {
+-		dev_err(dev, "[SYNC_IPC] Failed to get abox device node\n");
++	struct device_node *node;
++	struct platform_device *parent;
++	struct abox_tfa_sync *sync;
++	int ret;
++
++	if (READ_ONCE(tfa_sync))
++		return -EBUSY;
++	node = of_parse_phandle(pdev->dev.of_node, "abox", 0);
++	if (!node)
++		return -EINVAL;
++	parent = of_find_device_by_node(node);
++	of_node_put(node);
++	if (!parent)
+ 		return -EPROBE_DEFER;
+-	}
+-	data->pdev_abox = of_find_device_by_node(np_abox);
+-	if (!data->pdev_abox) {
+-		dev_err(dev, "[SYNC_IPC] Failed to get abox platform device\n");
++	if (!device_is_bound(&parent->dev) || !platform_get_drvdata(parent)) {
++		put_device(&parent->dev);
+ 		return -EPROBE_DEFER;
+ 	}
+-	data->abox_data = platform_get_drvdata(data->pdev_abox);
+-
+-	abox_register_irq_handler(&data->pdev_abox->dev, IPC_ERAP,
+-				abox_synchronized_ipc_handler, pdev);
+-
+-	tfa_ext_register((dsp_send_message_t)tfadsp_write,
+-			(dsp_read_message_t)tfadsp_read, NULL);
+-
+-	return snd_soc_register_platform(&pdev->dev, &abox_synchronized_ipc);
+-}
+-
+-static void samsung_abox_synchronized_ipc_remove(struct platform_device *pdev)
+-{
+-	snd_soc_unregister_platform(&pdev->dev);
++	/* IRQ cookie lives as long as ABOX's own handler list. */
++	sync = devm_kzalloc(&parent->dev, sizeof(*sync), GFP_KERNEL);
++	if (!sync) {
++		put_device(&parent->dev);
++		return -ENOMEM;
++	}
++	sync->abox_dev = &parent->dev;
++	sync->abox = platform_get_drvdata(parent);
++	mutex_init(&sync->transfer_lock);
++	spin_lock_init(&sync->reply_lock);
++	init_completion(&sync->reply);
++	ret = abox_register_irq_handler(sync->abox_dev, IPC_ERAP,
++					abox_tfa_reply, sync);
++	if (!ret) {
++		WRITE_ONCE(tfa_sync, sync);
++		ret = tfa_ext_register(abox_tfa_write, abox_tfa_read, NULL);
++	}
++	put_device(&parent->dev);
++	if (ret)
++		return ret;
++	dev_info(&pdev->dev, "TFA external DSP transport ready (8 KiB windows)\n");
++	return 0;
+ }
+ 
+-static const struct of_device_id samsung_abox_synchronized_ipc_match[] = {
+-	{
+-		.compatible = "samsung,abox-synchronized-ipc",
+-	},
+-	{},
++static const struct of_device_id abox_tfa_match[] = {
++	{ .compatible = "samsung,abox-synchronized-ipc" },
++	{ }
+ };
+-MODULE_DEVICE_TABLE(of, samsung_abox_synchronized_ipc_match);
+ 
+-static struct platform_driver samsung_abox_synchronized_ipc_driver = {
+-	.probe  = samsung_abox_synchronized_ipc_probe,
+-	.remove = samsung_abox_synchronized_ipc_remove,
++static struct platform_driver abox_tfa_driver = {
++	.probe = abox_tfa_probe,
+ 	.driver = {
+-	.name = "samsung-abox-synchronized-ipc",
+-	.owner = THIS_MODULE,
+-	.of_match_table = of_match_ptr(samsung_abox_synchronized_ipc_match),
++		.name = "samsung-abox-synchronized-ipc",
++		.of_match_table = abox_tfa_match,
++		.suppress_bind_attrs = true,
+ 	},
+ };
+-module_platform_driver(samsung_abox_synchronized_ipc_driver);
+-
+-/* Module information */
+-MODULE_AUTHOR("SeokYoung Jang, <quartz.jang@samsung.com>");
+-MODULE_DESCRIPTION("Samsung ASoC A-Box Synchronized IPC Driver");
+-MODULE_ALIAS("platform:samsung-abox-synchronized-ipc");
++builtin_platform_driver(abox_tfa_driver);
++MODULE_DESCRIPTION("Samsung ABOX bounded TFA external DSP transport");
+ MODULE_LICENSE("GPL");
