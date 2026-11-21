@@ -1,0 +1,235 @@
+From 1072fa75991ce192f6a8629fbb5d058167c2e886 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Sat, 21 Nov 2026 05:51:17 +0600
+Subject: [PATCH 1/2] ASoC: samsung: exynos9610-a50: add the RT5665 codec on
+ UAIF0
+
+Add what the stock vogue-rt5665 machine driver gives the card for the
+RT5665 codec on UAIF0 and the board:
+
+- UAIF0 hw_params/hw_free: keep the UAIF0 bit clock running (Q-channel
+  disabled through set_tristate) while a stream uses it and lock the
+  codec PLL1 to BCLK1, system clock 512 fs, as stock.
+- The stock board widgets (VOUTPUT, HEADSETMIC, MAINMIC, SUBMIC,
+  RECEIVER, HEADPHONE, SPEAKER, BLUETOOTH, FM IN, call paths) for the
+  DT routing, their pin switches, and the "Sound Wakelock" control on a
+  wakeup source instead of the Android wake_lock.
+
+Left out: the stock headset jack (Samsung-only JD1+JD2 detection and
+SAR buttons), "ABOX VSS State" (voice, M11) and the per-widget log-only
+event handlers. Kconfig selects the mainline RT5665 driver.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: Iae9585b545104c935caba971db7804fb80db8107
+---
+ sound/soc/samsung/Kconfig          |   7 +-
+ sound/soc/samsung/exynos9610-a50.c | 137 ++++++++++++++++++++++++++++-
+ 2 files changed, 140 insertions(+), 4 deletions(-)
+
+diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
+index 79d0cb219..e03903a7c 100644
+--- a/sound/soc/samsung/Kconfig
++++ b/sound/soc/samsung/Kconfig
+@@ -152,10 +152,11 @@ source "sound/soc/samsung/abox/Kconfig"
+ 
+ config SND_SOC_SAMSUNG_EXYNOS9610_A50
+ 	tristate "ABOX sound card for the Galaxy A50 (Exynos9610)"
+-	depends on SND_SOC_SAMSUNG_ABOX
++	depends on SND_SOC_SAMSUNG_ABOX && I2C
++	select SND_SOC_RT5665
+ 	help
+ 	  Say Y to register the ABOX sound card of the Samsung Galaxy A50
+-	  (SM-A505F): the ABOX DMA front ends and its UAIF, DSIF, SPDY and
+-	  SIFS back ends.
++	  (SM-A505F): the ABOX DMA front ends, its UAIF, DSIF, SPDY and
++	  SIFS back ends, and the RT5665 codec on UAIF0.
+ 
+ endif #SND_SOC_SAMSUNG
+diff --git a/sound/soc/samsung/exynos9610-a50.c b/sound/soc/samsung/exynos9610-a50.c
+index 072e475bf..75e6ccff4 100644
+--- a/sound/soc/samsung/exynos9610-a50.c
++++ b/sound/soc/samsung/exynos9610-a50.c
+@@ -7,17 +7,21 @@
+  * devices 0-12, RDMA5 a compress device), UAIF0/1/2/4, DSIF, SPDY and
+  * SIFS0-2 are back ends. Each link's DAIs come from a child of the sound
+  * node named after the link; a link without a "codec" child uses the
+- * dummy codec.
++ * dummy codec. UAIF0 carries the RT5665 codec, clocked from the UAIF0
++ * bit clock through the codec PLL as on stock.
+  */
+ 
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_wakeup.h>
+ #include <sound/pcm_params.h>
+ #include <sound/soc.h>
+ #include <sound/soc-dpcm.h>
+ #include <sound/samsung/abox.h>
+ 
++#include "../codecs/rt5665.h"
++
+ #define A50_MAX_CODEC_CONF	8
+ #define A50_MAX_AUX		2
+ 
+@@ -65,6 +69,9 @@ struct a50_card {
+ 	struct snd_soc_card card;
+ 	struct snd_soc_codec_conf codec_conf[A50_MAX_CODEC_CONF];
+ 	struct snd_soc_aux_dev aux_dev[A50_MAX_AUX];
++	struct wakeup_source *ws;
++	bool wakelock;
++	unsigned int uaif0_streams;	/* BIT(stream) with hw_params done */
+ };
+ 
+ /*
+@@ -107,6 +114,119 @@ static const struct snd_soc_ops a50_dsif_ops = {
+ 	.hw_params = a50_dsif_hw_params,
+ };
+ 
++/*
++ * As stock: keep the UAIF0 bit clock running (Q-channel off) while a
++ * stream uses it, and lock the codec PLL to it (system clock = 512 fs).
++ */
++static int a50_uaif0_hw_params(struct snd_pcm_substream *substream,
++			       struct snd_pcm_hw_params *params)
++{
++	struct snd_soc_pcm_runtime *rtd = snd_soc_substream_to_rtd(substream);
++	struct a50_card *priv = snd_soc_card_get_drvdata(rtd->card);
++	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
++	struct snd_soc_dai *codec_dai = snd_soc_rtd_to_codec(rtd, 0);
++	unsigned int bclk = params_rate(params) * params_channels(params) *
++			    params_width(params);
++	unsigned int sysclk = params_rate(params) * 512;
++	int ret;
++
++	if (!priv->uaif0_streams)
++		snd_soc_dai_set_tristate(cpu_dai, 0);
++	priv->uaif0_streams |= BIT(substream->stream);
++
++	ret = snd_soc_dai_set_pll(codec_dai, 0, RT5665_PLL1_S_BCLK1, bclk,
++				  sysclk);
++	if (ret < 0) {
++		dev_err(rtd->dev, "codec PLL %u -> %u: %d\n", bclk, sysclk,
++			ret);
++		return ret;
++	}
++
++	return snd_soc_dai_set_sysclk(codec_dai, RT5665_SCLK_S_PLL1, sysclk,
++				      SND_SOC_CLOCK_IN);
++}
++
++static int a50_uaif0_hw_free(struct snd_pcm_substream *substream)
++{
++	struct snd_soc_pcm_runtime *rtd = snd_soc_substream_to_rtd(substream);
++	struct a50_card *priv = snd_soc_card_get_drvdata(rtd->card);
++
++	priv->uaif0_streams &= ~BIT(substream->stream);
++	if (!priv->uaif0_streams)
++		snd_soc_dai_set_tristate(snd_soc_rtd_to_cpu(rtd, 0), 1);
++
++	return 0;
++}
++
++static const struct snd_soc_ops a50_uaif0_ops = {
++	.hw_params = a50_uaif0_hw_params,
++	.hw_free = a50_uaif0_hw_free,
++};
++
++/* Stock "Sound Wakelock": the HAL holds the system awake while playing. */
++static int a50_wakelock_get(struct snd_kcontrol *kcontrol,
++			    struct snd_ctl_elem_value *ucontrol)
++{
++	struct snd_soc_card *card = snd_kcontrol_chip(kcontrol);
++	struct a50_card *priv = snd_soc_card_get_drvdata(card);
++
++	ucontrol->value.integer.value[0] = priv->wakelock;
++
++	return 0;
++}
++
++static int a50_wakelock_put(struct snd_kcontrol *kcontrol,
++			    struct snd_ctl_elem_value *ucontrol)
++{
++	struct snd_soc_card *card = snd_kcontrol_chip(kcontrol);
++	struct a50_card *priv = snd_soc_card_get_drvdata(card);
++	bool on = ucontrol->value.integer.value[0];
++
++	if (on == priv->wakelock)
++		return 0;
++	priv->wakelock = on;
++	if (on)
++		__pm_stay_awake(priv->ws);
++	else
++		__pm_relax(priv->ws);
++
++	return 1;
++}
++
++static const struct snd_kcontrol_new a50_controls[] = {
++	SOC_DAPM_PIN_SWITCH("HEADPHONE"),
++	SOC_DAPM_PIN_SWITCH("SPEAKER"),
++	SOC_DAPM_PIN_SWITCH("RECEIVER"),
++	SOC_DAPM_PIN_SWITCH("MAINMIC"),
++	SOC_DAPM_PIN_SWITCH("SUBMIC"),
++	SOC_DAPM_PIN_SWITCH("HEADSETMIC"),
++	SOC_SINGLE_BOOL_EXT("Sound Wakelock", 0, a50_wakelock_get,
++			    a50_wakelock_put),
++};
++
++/* The stock board widgets; the DT routing connects them. */
++static const struct snd_soc_dapm_widget a50_widgets[] = {
++	SND_SOC_DAPM_OUTPUT("VOUTPUT"),
++	SND_SOC_DAPM_INPUT("VINPUT1"),
++	SND_SOC_DAPM_INPUT("VINPUT2"),
++	SND_SOC_DAPM_OUTPUT("VOUTPUTCALL"),
++	SND_SOC_DAPM_INPUT("VINPUTCALL"),
++	SND_SOC_DAPM_MIC("HEADSETMIC", NULL),
++	SND_SOC_DAPM_MIC("MAINMIC", NULL),
++	SND_SOC_DAPM_MIC("SUBMIC", NULL),
++	SND_SOC_DAPM_SPK("RECEIVER", NULL),
++	SND_SOC_DAPM_HP("HEADPHONE", NULL),
++	SND_SOC_DAPM_SPK("SPEAKER", NULL),
++	SND_SOC_DAPM_MIC("BLUETOOTH MIC", NULL),
++	SND_SOC_DAPM_SPK("BLUETOOTH SPK", NULL),
++	SND_SOC_DAPM_MIC("FM IN", NULL),
++};
++
++static void a50_wakeup_source_unregister(void *ws)
++{
++	wakeup_source_unregister(ws);
++}
++
+ static int a50_parse_link(struct device *dev, struct device_node *np,
+ 			  const struct a50_link_desc *desc,
+ 			  struct snd_soc_dai_link *link)
+@@ -189,6 +309,9 @@ static int a50_parse_link(struct device *dev, struct device_node *np,
+ 									    NULL);
+ 		if (!strcmp(desc->name, "DSIF"))
+ 			link->ops = &a50_dsif_ops;
++		else if (!strcmp(desc->name, "UAIF0") &&
++			 link->codecs != &snd_soc_dummy_dlc)
++			link->ops = &a50_uaif0_ops;
+ 		break;
+ 	}
+ 
+@@ -217,8 +340,20 @@ static int a50_audio_probe(struct platform_device *pdev)
+ 	card->dev = dev;
+ 	card->owner = THIS_MODULE;
+ 	card->name = "Exynos9610-Audio";
++	card->controls = a50_controls;
++	card->num_controls = ARRAY_SIZE(a50_controls);
++	card->dapm_widgets = a50_widgets;
++	card->num_dapm_widgets = ARRAY_SIZE(a50_widgets);
+ 	snd_soc_card_set_drvdata(card, priv);
+ 
++	priv->ws = wakeup_source_register(dev, "a50-sound");
++	if (!priv->ws)
++		return -ENOMEM;
++	ret = devm_add_action_or_reset(dev, a50_wakeup_source_unregister,
++				       priv->ws);
++	if (ret)
++		return ret;
++
+ 	for (i = 0, n = 0; i < ARRAY_SIZE(a50_links); i++) {
+ 		struct device_node *child;
+ 

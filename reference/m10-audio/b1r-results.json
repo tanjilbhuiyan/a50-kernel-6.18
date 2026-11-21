@@ -1,0 +1,24 @@
+{
+  "test": "M10.3 B1r: unchanged B1 image on another laptop port",
+  "outcome": "transport failure after all three uploads; session-end confirmation lost",
+  "codec_result": "not tested; no 6.18 USB SSH, collector or dump obtained",
+  "source_commit": "a3f5bd537ff9135dcfc0125b3fab02c5bc0529ce",
+  "boot_sha256": "0bc9daa42d77be747fea56ee46dc8b85ae999b6ce3770a5343b633138c76de90",
+  "dt_sha256": "f73a47e5bb741cfcad601e95e331be7d840980f4c46c3141b57f0631aa52693b",
+  "uploads_reported": [
+    "DTB",
+    "DTBO",
+    "BOOT"
+  ],
+  "runner_exit": 3,
+  "flash_times": "2026-11-22 +06:00; start 00:20:06, failure 00:20:16",
+  "host_usb": "Disconnect/re-enumeration during flash (00:20:12) and later in Download mode, descriptor timeout -110. No evidence identifies cable vs host controller vs device as root cause.",
+  "restore": {
+    "method": "owner entered fresh Download session, stock DTB/DTBO/baseline BOOT uploaded successfully",
+    "baseline_boot_time": "2026-11-22 00:23:36 +06:00",
+    "preflight": "ALL CHECKS PASSED; live DTB/DTBO/BOOT match stock/baseline",
+    "fsck": "clean, 7142/3440640 files, 1983470/13745152 blocks"
+  },
+  "decision": "Owner has no other data cable and requested leaving phone on stock. No further test authorized this session.",
+  "next": "Obtain stable Download-mode connection (prefer known-good replacement data cable), fresh owner presence/pre-flight, retry unchanged B1 image with a new run tag. Codec/amp playback remains unverified."
+}

@@ -1,0 +1,117 @@
+From a0a74861668643df7d5925bf4a161e60ac18ea31 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Sat, 21 Nov 2026 05:51:18 +0600
+Subject: [PATCH 2/2] arm64: dts: exynos9610-a50: add the RT5665 codec to the
+ sound card
+
+Add the RT5665 codec at 0x1b on i2c_6 with its stock supplies (LDO42
+1.8 V as AVDD, LDO40 3.3 V as MICVDD) and differential IN1/3/4 inputs,
+the stock UAIF0 I2S pin states (gpb0-1..4), the RT5665 as UAIF0's codec
+and the stock DTBO routing of the sound node. Jack detection (gpa1-2
+interrupt, Samsung-only JD1+JD2 source) is not wired yet.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I1ad73b6cb88f68da7b1b3bb0a4e9d443308ecd9d
+---
+ .../boot/dts/exynos/exynos9610-a50-sysmmu.dts | 65 ++++++++++++++++++-
+ 1 file changed, 62 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610-a50-sysmmu.dts b/arch/arm64/boot/dts/exynos/exynos9610-a50-sysmmu.dts
+index 9766f8601..736a8fe90 100644
+--- a/arch/arm64/boot/dts/exynos/exynos9610-a50-sysmmu.dts
++++ b/arch/arm64/boot/dts/exynos/exynos9610-a50-sysmmu.dts
+@@ -197,6 +197,9 @@ abox_uaif_0: abox-uaif@14a50500 {
+ 			clocks = <&cmu_dispaud CLK_DOUT_CLK_AUD_UAIF0>,
+ 				 <&cmu_dispaud CLK_GOUT_CLK_DISPAUD_ABOX_BCLK_UAIF0>;
+ 			clock-names = "bclk", "bclk_gate";
++			pinctrl-names = "default", "sleep";
++			pinctrl-0 = <&aud_i2s0_bus>;
++			pinctrl-1 = <&aud_i2s0_idle>;
+ 			#sound-dai-cells = <0>;
+ 		};
+ 
+@@ -260,11 +263,45 @@ abox_effect: abox-effect@14b2c000 {
+ 	};
+ };
+ 
++&pinctrl_dispaud {
++	/* O: aud-i2s0-bus / aud-i2s0-idle (UAIF0 to the RT5665). */
++	aud_i2s0_bus: aud-i2s0-bus-pins {
++		samsung,pins = "gpb0-1", "gpb0-2", "gpb0-3", "gpb0-4";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
++		samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
++	};
++
++	aud_i2s0_idle: aud-i2s0-idle-pins {
++		samsung,pins = "gpb0-1", "gpb0-2", "gpb0-3", "gpb0-4";
++		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
++		samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
++	};
++};
++
++&i2c_6 {
++	/*
++	 * O: rt5665@1b (DTBO 5). Supplies O: regulator_1v8 (LDO42) and
++	 * regulator_3v3 (LDO40). Jack detection (O: gpa1-2 interrupt,
++	 * jd-src JD1+JD2, Samsung-only) is not wired yet.
++	 */
++	rt5665: audio-codec@1b {
++		compatible = "realtek,rt5665";
++		reg = <0x1b>;
++		AVDD-supply = <&ldo42_reg>;
++		MICVDD-supply = <&ldo40_reg>;
++		realtek,in1-differential;
++		realtek,in3-differential;
++		realtek,in4-differential;
++		realtek,dmic2-data-pin = <2>;
++		#sound-dai-cells = <1>;
++	};
++};
++
+ / {
+ 	/*
+-	 * ABOX sound card, link layout of the stock DTBO "sound" node. Every
+-	 * back end uses the dummy codec until the RT5665 codec and TFA9872
+-	 * amplifier are added (M10.3).
++	 * ABOX sound card, link layout and routing of the stock DTBO "sound"
++	 * node. UAIF0 carries the RT5665; the other back ends use the dummy
++	 * codec until the TFA9872 amplifier is added.
+ 	 */
+ 	sound {
+ 		compatible = "samsung,exynos9610-audio";
+@@ -273,6 +310,25 @@ sound {
+ 		samsung,prefix = "ABOX", "ABOX", "ABOX", "ABOX", "ABOX", "ABOX",
+ 				 "ABOX";
+ 		samsung,aux = <&abox_effect>;
++		samsung,routing = "HEADSETMIC", "MICBIAS1",
++				  "MAINMIC", "MICBIAS2",
++				  "SUBMIC", "MICBIAS3",
++				  "IN1P", "HEADSETMIC",
++				  "IN1N", "HEADSETMIC",
++				  "IN3P", "MAINMIC",
++				  "IN3N", "MAINMIC",
++				  "IN4P", "SUBMIC",
++				  "IN4N", "SUBMIC",
++				  "RECEIVER", "MONOOUT",
++				  "HEADPHONE", "HPOL",
++				  "HEADPHONE", "HPOR",
++				  "VOUTPUT", "ABOX UAIF0 Playback",
++				  "SPEAKER", "ABOX UAIF2 Playback",
++				  "VOUTPUTCALL", "ABOX SIFS0 Playback",
++				  "BLUETOOTH SPK", "ABOX SIFS2 Playback",
++				  "ABOX SPDY Capture", "FM IN",
++				  "ABOX SIFS2 Capture", "BLUETOOTH MIC",
++				  "ABOX SIFS0 Capture", "VINPUTCALL";
+ 
+ 		rdma0 {
+ 			cpu {
+@@ -396,6 +452,9 @@ uaif0 {
+ 			cpu {
+ 				sound-dai = <&abox_uaif_0>;
+ 			};
++			codec {
++				sound-dai = <&rt5665 0>;
++			};
+ 		};
+ 
+ 		uaif1 {

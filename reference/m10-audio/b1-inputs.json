@@ -1,0 +1,110 @@
+{
+  "test": "M10.3 B1: A2c plus the RT5665 codec on UAIF0 (card widgets/routing/pin switches, codec node on i2c6 with LDO42/LDO40 supplies, UAIF0 I2S pins); no jack detection, no TFA9872",
+  "source_commit": "a3f5bd537ff9135dcfc0125b3fab02c5bc0529ce",
+  "source_branch": "a50-m10-b1-test",
+  "source_compared_to_A2c": "a50-m10-a2c-test b0d0aa421 + 2 commits (exynos9610-a50.c, samsung Kconfig, exynos9610-a50-sysmmu.dts)",
+  "clean_branch_commits": [
+    "1072fa759 ASoC: samsung: exynos9610-a50: add the RT5665 codec on UAIF0",
+    "a0a748616 arm64: dts: exynos9610-a50: add the RT5665 codec to the sound card"
+  ],
+  "config_delta_vs_A2c": [
+    "CONFIG_SND_SOC_RL6231=y",
+    "CONFIG_SND_SOC_RT5665=y"
+  ],
+  "runtime_cpio_same_as_A2c": true,
+  "owner_presence": "2026-11-22: Present, USB connected, Claude idle; run B1 (explicit owner reply).",
+  "files": {
+    "src/m10/boot-b1.img": {
+      "size": 32940032,
+      "sha256": "0bc9daa42d77be747fea56ee46dc8b85ae999b6ce3770a5343b633138c76de90"
+    },
+    "src/m10/dt-b1.img": {
+      "size": 8388608,
+      "sha256": "f73a47e5bb741cfcad601e95e331be7d840980f4c46c3141b57f0631aa52693b"
+    },
+    "src/m10/b1-as-built/.config": {
+      "size": 126402,
+      "sha256": "420f8ada98d76ad481be599f602f08916f019ef7c693ea7e2d092400476c67d6"
+    },
+    "src/m10/b1-as-built/Image": {
+      "size": 32933896,
+      "sha256": "1952d884a4b76b435e863b4681cca35645976c3fd4a84543e87070506bcf1f4a"
+    },
+    "src/m10/b1-as-built/exynos9610-a50-gpu.dtb": {
+      "size": 30089,
+      "sha256": "0a9b595297644b74289a01d5b304f8c1a99773053cedf26d3305fb00893d411f"
+    },
+    "src/m10/b1-as-built/initramfs_data.cpio": {
+      "size": 25968640,
+      "sha256": "aded41aa0cd365dd211ff3971b674698d5bf77cd855711920957124ba7c80718"
+    },
+    "src/m10/b1-as-built/System.map": {
+      "size": 3471693,
+      "sha256": "3bfe94c1cfe9c26ff6dc6abc23ae5d78e0b49947667dedc57017fd141c637146"
+    },
+    "tools/m10/build_a1.py": {
+      "size": 5437,
+      "sha256": "4140ec532655656e70ba4d0f7da25ac57452c5e51c1d5eedd19b66f65d594365"
+    },
+    "tools/m10/build_b1.py": {
+      "size": 849,
+      "sha256": "ecbbc00cf22fac3013f36f8993faec3115e25c75fb7463996d2c82f77045d3ec"
+    },
+    "tools/m10/run_b1.sh": {
+      "size": 4123,
+      "sha256": "4cd2018d306b249b69e2ea047f2c2ae7bb6fae5393a94e70ea85be81cbb0a22d"
+    },
+    "tools/m10/collect_b1.sh": {
+      "size": 3880,
+      "sha256": "894b005d3edb7bfe7235c614c7691d65b8c58e94a90691e911e7689b4045a34b"
+    },
+    "tools/m32_run_test.sh": {
+      "size": 4701,
+      "sha256": "fb03aa8a9411f6d5a4292a23342a18b24a0b597ba568c7c9def703d44bfc7235"
+    },
+    "tools/m32_read_618.sh": {
+      "size": 1238,
+      "sha256": "e750045b3417db5a9f9a6aad25e96cf85f1367aef897c45f039e8e440ac765c7"
+    },
+    "tools/m24_preflight.sh": {
+      "size": 4118,
+      "sha256": "6beca4aa8634c3e1b687e4242d700a311c89f2f18322398ef7a9d08a3fc13d8e"
+    },
+    "tools/m54/watch_ssh.py": {
+      "size": 4321,
+      "sha256": "f656a6f1092266c2214ba0f3afee37ac81b0b62620b7feb57cadf6a71db52bfd"
+    },
+    "tools/m22_pack.sh": {
+      "size": 1098,
+      "sha256": "08212aa1743ed07df3447dc8414d634e775a4bc224e945b570a86be1c3757097"
+    },
+    "tools/dt_table.py": {
+      "size": 7313,
+      "sha256": "f601fa4f6fb98ed558cdad2617ab9c01e9353a6bb59691c5367860358d1fd10d"
+    },
+    "reference/stock-images/dt.img": {
+      "size": 8388608,
+      "sha256": "59209aa52dc3b35e2c7cc025c465ed1cdb48dadaa13cf5d1f50324b3bf503547"
+    },
+    "reference/stock-images/dtbo.img": {
+      "size": 8388608,
+      "sha256": "40e47ed1477a8ffb6cbb34e5cb59a1af786c2552544f3b556373f3c553d40d21"
+    },
+    "reference/dt-6.18/images/dtbo.img": {
+      "size": 8388608,
+      "sha256": "6d81cce87faca914d75f024f36e183ae6592e61adc786bbb6c7c47cdd3a151fe"
+    },
+    "baseline/ut-26.04-2026-10-19-aa17rf2/boot.img": {
+      "size": 53624832,
+      "sha256": "7d5855efd34e01f09659c7d47ecb0773c30f2acc7443ee87181a0536804086c5"
+    },
+    "reference/m10-audio/b1-build-results.json": {
+      "size": 17789,
+      "sha256": "3f8aae6c59f621017b529ba1e51dc0efbc3e5cde7b58dc2198ca2fb076dcdb77"
+    },
+    "reference/m10-audio/a2c-results.json": {
+      "size": 2172,
+      "sha256": "6448bb998ed2052e51876f828933090e1b292cb864fd8b1017234fac8f1d9f99"
+    }
+  }
+}

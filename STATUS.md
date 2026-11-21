@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-21 (M10.2 done: ABOX sound card matches stock; next M10.3)
+Updated: 2026-11-22 (M10.3 B1/B1r USB transport failures; stock verified, owner requested stop)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -8,31 +8,38 @@ Read this file, then the active ticket and its log. Before trusting anything her
 branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and on the phone. At the end of a session, update
 **RESUME HERE** with commits, branch, image hashes, last test and rollback result, and the next action.
 
-## RESUME HERE (2026-11-21, M10.2 done; M10.3 next)
-- **M10.2 closed by the owner 2026-11-21.** Next ticket `tasks/M10.3-codec-amplifier.md` (RT5665 + TFA9872 +
-  machine widgets on the A2 card), not started. Open owner decision before the amp work: TFA factory calibration
-  (uncalibrated defaults vs read-only EFS + ADR).
-- **A2b (card):** card 0 "Exynos9610-Audio", `/proc/asound/pcm` identical to stock (RDMA0-4/6/7 playback, WDMA0-4
-  capture, comprC0D5); all 136 ABOX control names = stock (only M11 `ABOX VSS State` missing; 213 codec/amp/machine
-  controls for M10.3); DSP rSK1 ~22 s, SysMMU faults 0, IPC IRQs 38. `reference/m10-audio/a2b-results.json`.
-- **A2c (robustness + Wi-Fi):** + fault-worker power gate + GIC supplier check; Wi-Fi joined with ABOX running
-  (stock profiles unbound from swlan0 with nmcli --temporary), 20/20 router pings; BT controller powered; results
-  otherwise identical to A2b; no faults to the 431 s dump. `a2c-results.json`.
-- **Failed attempts:** A2 = heimdall BOOT transfer failure (recovered from Samsung's error screen, kernel never ran);
-  A2r = static ALSA minors -EBUSY -> component remove freed the ABOX regmap -> panic 21.9 s. Fixed (see log).
-- **Phone last verified:** stock restored **2026-11-21 01:57:07**, 4.14.194 booted **01:57:21**, pre-flight passed
-  (live DTB/DTBO/BOOT == stock/baseline), fsck clean **7164/3440640 files, 1989058/13745152 blocks**, stock Wi-Fi
-  back on swlan0. No test active. Fresh presence/pre-flight required for future phone work.
-- **Clean kernel:** `src/m10/clean-kernel` **a50-audio/e548f4301** (14 commits after M9 e7a5bee84), tree
-  **ca8b6631f4bc21df0797cda9de1f3319ad16366f**; exported and replay-verified in `reference/m10-audio/a2-clean-patches/`.
-  Test branches in `src/m10/a2-kernel`: a50-m10-a2-test (A2/A2r), a50-m10-a2b-test (55a8a2eea), a50-m10-a2c-test
-  (**b0d0aa421**, worktree checkout). Config on top of M9: card + `SND_DYNAMIC_MINORS` (`tools/m10/build_a2c.py`).
-- **A2c inputs:** BOOT `src/m10/boot-a2c.img` **caeaac8eba7b337b…**, DT `src/m10/dt-a2c.img` (= A2/A2b DTB); 23 hashes
-  in `reference/m10-audio/a2c-inputs.json`; frozen `src/m10/a2c-as-built/`.
-- **Limits:** the late 390 s snapshot is lost every run (shared USB issue, M12); fault-worker/deferral paths are not
-  exercised by a healthy boot; no PCM opened or mixer touched yet (M10.3). Public reproducible build
-  (`reproduce/m10-a1/`) still covers A1 only; A2 refresh pending (can fold into M10.4's publication refresh).
-- **Outer Git:** M10.2 A2 tools/evidence/log/ticket/STATUS committed and pushed ("M10.2 done" after c0bc839).
+## RESUME HERE (2026-11-22, M10.3 B1 blocked by USB transport)
+- **Active ticket:** `tasks/M10.3-codec-amplifier.md`, in progress. M10.2 remains closed by the owner.
+  B1 codec image is built, but **no codec result yet**. B1 lost Download-mode enumeration before any reported upload;
+  unchanged B1r on another laptop port uploaded DTB/DTBO/BOOT but lost session-end confirmation. Neither attempt
+  produced 6.18 USB SSH, collector output or a dump. Both runner exits were 3. No audio stimulus or mixer writes.
+- **Phone last verified this session:** stock restored after fresh owner-entered Download mode; **4.14.194** boot
+  **2026-11-22 00:23:36 +06:00**, live stock DTB/DTBO/baseline BOOT hashes all pass; fsck clean
+  **7142/3440640 files, 1983470/13745152 blocks**. Home Wi-Fi SSH verified. **No test active.** Owner has no other
+  data cable and requested leaving the phone on stock; no more phone operations this session.
+- **Next:** obtain a stable Download-mode data connection, preferably with a known-good replacement cable. Two
+  laptop ports showed disconnects with the same cable, including during Download mode; root cause is **unverified**,
+  not an RT5665 failure. Retry the unchanged B1 image with a new run tag, fresh owner presence and pre-flight.
+  Do not overwrite B1/B1r evidence. Before B2/TFA9872, owner calibration choice remains open (defaults vs read-only
+  EFS + ADR). No speaker/headset/mic claim yet.
+- **Evidence:** `reference/m10-audio/b1-results.json`, `b1r-results.json`, redacted run/host USB/recovery/pre-flight/fsck
+  text; log `log/2026-11-21-M10.3-codec-amplifier.md`. Private raw/session `src/m10/{b1,b1r}-raw/`,
+  `src/m10/{b1,b1r}-session-codex.txt`. Backup hash rechecked `22cb95a536489c89a738cae3105859c041a15b298c4140c6a1a018883f7bd896`.
+- **Clean kernel:** `src/m10/clean-kernel` **a50-audio/a0a74861668643df7d5925bf4a161e60ac18ea31**, clean,
+  16 commits after M9. B1's two additional clean patches are exported in `reference/m10-audio/b1-clean-patches/`,
+  with exact replay of affected files verified on A2 clean base e548f4301. These are **phone-unverified** codec changes.
+  A2's 14 clean patches remain in `a2-clean-patches/`. Common remains **a50-usb/4fbb731f5**, clean.
+- **Test kernel:** `src/m10/a2-kernel` **a50-m10-b1-test/a3f5bd537ff9135dcfc0125b3fab02c5bc0529ce**, clean.
+  Frozen `src/m10/b1-as-built/`; BOOT `src/m10/boot-b1.img` **0bc9daa42d77be747fea56ee46dc8b85ae999b6ce3770a5343b633138c76de90**;
+  DT `src/m10/dt-b1.img` **f73a47e5bb741cfcad601e95e331be7d840980f4c46c3141b57f0631aa52693b**.
+  Retry paths `boot-b1r.img`/`dt-b1r.img` have identical bytes. Config delta from A2c: RT5665/RL6231 only; same runtime cpio.
+  Input manifests: B1 23 hashes; B1r 25. Do not change frozen manifests after the runs.
+- **M10.2 retained result:** A2b/A2c expose stock-matching card PCMs (7 playback, 5 capture, comprC0D5); DSP rSK1,
+  SysMMU faults 0; A2c joined Wi-Fi, 20/20 router pings; BT controller powered. Recovery paths unexercised by healthy boot.
+  Public reproducible profile `reproduce/m10-a1/` still covers A1 only; stable M9 profile unchanged. A2/B1 publication
+  profile refresh pending M10.4. Exported source patches do not imply a public B1 build/phone validation passed.
+- **Outer Git:** session began at **6cb9c83** on main (M10.2 pushed). B1 preparation, source exports and B1/B1r results
+  are saved in the following M10.3 commit; destination origin/main. No other agent used checkout or phone this session.
 
 ## Earlier handoff (2026-11-20, M10.2 A1 fixed; superseded by A2)
 - **Active ticket:** `tasks/M10.2-abox-core.md`, in progress. **A1 normal DSP boot passes. Next A2:** DMA/interface
