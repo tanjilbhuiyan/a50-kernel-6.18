@@ -1,0 +1,96 @@
+{
+  "test": "M10.3 B1r2: unchanged RT5665 B1 image, same cable, owner-requested retry",
+  "outcome": "Codec probe, supplies, card enumeration and idle regression checks pass with explicit control-name gaps; no playback/capture tested. M10.3 remains in progress.",
+  "source_commit": "a3f5bd537ff9135dcfc0125b3fab02c5bc0529ce",
+  "clean_commit": "a0a74861668643df7d5925bf4a161e60ac18ea31",
+  "outer_parent": "8ddd814",
+  "boot_sha256": "0bc9daa42d77be747fea56ee46dc8b85ae999b6ce3770a5343b633138c76de90",
+  "dt_sha256": "f73a47e5bb741cfcad601e95e331be7d840980f4c46c3141b57f0631aa52693b",
+  "owner_presence": "Owner confirmed present, USB connected and Claude idle during ongoing session; explicitly requested retry using same cable.",
+  "flash": {
+    "start": "2026-11-22 00:31:27 +06:00",
+    "result": "all three uploads successful; no session-end error; runner exit 0",
+    "usb_ssh_verified": "00:32:25",
+    "kernel": "6.18.33-a50-diag+"
+  },
+  "codec": {
+    "device": "4-001b",
+    "controller": "13890000.i2c (DT i2c_6; Linux i2c-4)",
+    "driver": "rt5665",
+    "AVDD": {
+      "regulator": "regulator_1v8 (LDO42)",
+      "microvolts": 1800000,
+      "enabled": true,
+      "users": 2
+    },
+    "MICVDD": {
+      "regulator": "regulator_3v3 (LDO40)",
+      "microvolts": 3300000,
+      "enabled": true,
+      "users": 2
+    },
+    "VBAT": "Dummy regulator warning: no VBAT mapping. Stock DT/driver manage only the two rails; actual VBAT supply wiring unverified.",
+    "DAPM_bias": "Off at idle",
+    "DAPM_directory_entries": 286
+  },
+  "card": {
+    "controls": 348,
+    "A2c_controls": 153,
+    "PCM_equal_stock_and_A2c": true,
+    "machine_switches_and_wakelock_present": true,
+    "control_coverage": "129 of 133 HAL XML names present on stock; four gaps classified in b1r2-control-comparison.json; 13 further XML names absent on stock too."
+  },
+  "dsp": {
+    "ready_s": 22.965843,
+    "version": "rSK1",
+    "reset_count": 0,
+    "runtime_status": "active",
+    "sysmmu_interrupts_150s": 0,
+    "IPC_interrupts_150s": 38
+  },
+  "regressions": {
+    "direct_padded_DMA_frames_150s": 1318,
+    "copied_fallback_acquire_timeout_increments": 0,
+    "lomiri_process_count": 1,
+    "userdata": "rw",
+    "input_devices": "present",
+    "wlan0_hci0": "present; Wi-Fi not joined; BT traffic not exercised",
+    "multi_user_s": 168.30066,
+    "systemd_state_201s": "running",
+    "failed_units_201s": 0,
+    "owner_screen": "Recognizable Ubuntu Touch greeter/UI"
+  },
+  "dump": {
+    "complete_BEGIN_END": true,
+    "retained_kernel_range_s": [
+      30.665991,
+      431.084349
+    ],
+    "initial_stream_range_s": [
+      0,
+      428.046554
+    ],
+    "sync_started_s": 431.073506,
+    "sync_done_s": 431.084349,
+    "oops_panic_SError_BUG_IOMMU_fault_signatures": 0,
+    "existing_early_warnings": "x1-x3 boot protocol warning and two __iommu_probe_device iommu.c:612 WARNs also occur in A2c; no new codec warning except unmapped VBAT."
+  },
+  "collector_limits": {
+    "late_rc": 124,
+    "late_reason": "Outer timeout 200 starts near uptime 150 but command waits for uptime 390 (needs about 240 s plus query); deadline too short.",
+    "kernel_stream_rc": 124,
+    "kernel_stream_reason": "Expected outer timeout 390 after SSH at uptime about 38; captures through 428 before planned dump.",
+    "next_collector_fix": "Increase late timeout to at least 300 s, and stream timeout past timed dump. As-tested script/manifests unchanged.",
+    "USB": "Host timeline shows no extra re-enumeration during runtime: gadget enumerates 00:32:18 and disconnects 00:38:58 for scheduled reset. Cable fault not established."
+  },
+  "restore": {
+    "automatic_Download_detected": "2026-11-22 00:39:07 +06:00",
+    "stock_upload_complete": "00:39:24",
+    "stock_boot": "00:39:38",
+    "live_partition_hashes": "DTB/DTBO/BOOT all pass",
+    "fsck": "clean, 7173/3440640 files, 1978996/13745152 blocks",
+    "battery": "94% Charging",
+    "phone_state": "Stock verified; no test active"
+  },
+  "next": "Before B2 TFA9872, resolve owner calibration decision (defaults vs read-only factory data + ADR). No claim of audio routing, PCM, playback, capture or full M10.3 completion."
+}

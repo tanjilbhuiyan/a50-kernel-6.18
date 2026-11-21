@@ -81,8 +81,12 @@ Evidence `reference/m10-audio/stock-snapshot.txt`, vendor XMLs `reference/m10-au
 - Mixer paths: `mixer_paths.xml` + `mixer_gains.xml` use 146 controls: 78 `ABOX …`, 2 `BT …`, the rest codec/machine.
   Every codec control used exists in **mainline** `rt5665.c` (directly or widget + kcontrol), except `Disable NG2`
   (Samsung-only). Machine pin switches `HEADPHONE`, `HEADSETMIC`, `RECEIVER` come from `vogue-rt5665.c`.
-  `Main Mic Switch`, `Sub Mic Switch`, `Headset Mic Switch`, `Debug Buffer Switch` and 10 ABOX USB/RDMA6/WDMA0
-  controls are referenced but absent on stock too (the HAL tolerates them).
+  `Main Mic Switch`, `Sub Mic Switch`, `Headset Mic Switch` and 10 ABOX USB/RDMA6/WDMA0
+  controls are referenced but absent on stock too (the HAL tolerates them). **Correction 2026-11-22:**
+  `Debug Buffer Switch` is present on stock (numid 134), implemented by Samsung `sec_audio_debug.c`;
+  the earlier claim that it was absent on stock was wrong. B1r2 enumerates 348 controls, covers 129/133
+  HAL names that stock exposes; the four absent names are the two deferred BT SCO controls,
+  `Debug Buffer Switch` and the known `Disable NG2`. See `b1r2-control-comparison.json`.
 
 # Port boundary (modern-first)
 1. **M10.2 ABOX core:** `abox.c` + `abox_gic`, `abox_rdma`, `abox_wdma`, `abox_if` (UAIF/DSIF/SPDY), `abox_effect`,

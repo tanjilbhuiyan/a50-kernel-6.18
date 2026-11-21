@@ -1,0 +1,69 @@
+{
+  "method": "Distinct names from amixer controls (names only), compared with ctl names from both stock HAL XMLs. No mixer values read or written.",
+  "sources_sha256": {
+    "reference/m10-audio/vendor-etc/mixer_paths.xml": "0334e8f540ce4258892453cd12719aaa9f61709c88ebc84f2ff5e995f5e4eabd",
+    "reference/m10-audio/vendor-etc/mixer_gains.xml": "baa3d701e7a6689f1e0f9dd10225fb091f52aed130113e354d7b1d0a597e2c92"
+  },
+  "counts": {
+    "stock_controls": 367,
+    "A2c_controls": 153,
+    "B1_controls": 348,
+    "added_vs_A2c": 195,
+    "HAL_XML_distinct_names": 146,
+    "HAL_names_present_on_stock": 133,
+    "HAL_names_present_on_B1": 129
+  },
+  "HAL_names_absent_on_stock": [
+    "ABOX RDMA6_A",
+    "ABOX RDMA6_EN",
+    "ABOX USBINSTACK_EN",
+    "ABOX USBIN_COM_A",
+    "ABOX USBIN_COM_EN",
+    "ABOX USBOUTSTACK_A",
+    "ABOX USBOUTSTACK_EN",
+    "ABOX USBOUT_COM_A",
+    "ABOX USBOUT_COM_EN",
+    "ABOX WDMA0_EN",
+    "Headset Mic Switch",
+    "Main Mic Switch",
+    "Sub Mic Switch"
+  ],
+  "HAL_names_present_on_stock_but_absent_on_B1": [
+    "BT SCO MIC Enable",
+    "BT SCO SPK Enable",
+    "Debug Buffer Switch",
+    "Disable NG2"
+  ],
+  "classification": {
+    "BT SCO MIC Enable": "abox_bt.c, HFP/SCO deferred in M10.1 port boundary; native BlueZ A2DP is separate",
+    "BT SCO SPK Enable": "abox_bt.c, HFP/SCO deferred in M10.1 port boundary",
+    "Debug Buffer Switch": "Samsung sec_audio_debug.c debug log allocation control; absent in port; prior host-contract claim absent on stock is incorrect",
+    "Disable NG2": "Samsung rt5665.c extension, already known absent in mainline; behavior not exercised here"
+  },
+  "card0_PCM_lines": [
+    "00-00: RDMA0 (*) :  : playback 1",
+    "00-01: RDMA1 (*) :  : playback 1",
+    "00-02: RDMA2 (*) :  : playback 1",
+    "00-03: RDMA3 (*) :  : playback 1",
+    "00-04: RDMA4 (*) :  : playback 1",
+    "00-06: RDMA6 (*) :  : playback 1",
+    "00-07: RDMA7 (*) :  : playback 1",
+    "00-08: WDMA0 (*) :  : capture 1",
+    "00-09: WDMA1 (*) :  : capture 1",
+    "00-10: WDMA2 (*) :  : capture 1",
+    "00-11: WDMA3 (*) :  : capture 1",
+    "00-12: WDMA4 (*) :  : capture 1"
+  ],
+  "card0_PCM_equal_stock": true,
+  "card0_PCM_equal_A2c": true,
+  "machine_controls_present": {
+    "Sound Wakelock": true,
+    "HEADPHONE Switch": true,
+    "HEADSETMIC Switch": true,
+    "RECEIVER Switch": true,
+    "SPEAKER Switch": true,
+    "MAINMIC Switch": true,
+    "SUBMIC Switch": true
+  },
+  "limit": "Name coverage only; no audio routing, control value ABI, clock hw_params, PCM playback or capture test."
+}
