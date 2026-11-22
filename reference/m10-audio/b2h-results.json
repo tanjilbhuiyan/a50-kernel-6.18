@@ -1,0 +1,17 @@
+{
+  "test": "M10.3 B2h: first audio stream, earpiece (unchanged B2a images + stock media-handset mixer + six quiet tones)",
+  "owner": "present; heard nothing at the earpiece",
+  "result": "stream path works up to the codec interface; no sound",
+  "flash": "2026-11-22 14:04:18",
+  "boot_6_18": "~14:04:39 (uptime 37.89 s at 14:05:17)",
+  "gate": "ok (TFA probe_only=Y, rSK1, SysMMU IRQs 0, /dev/snd unused, no kernel fault)",
+  "mixer": "113/113 controls set and read back, 0 failures",
+  "tones": "6/6 aplay rc=0, each ~4.1 s real time (RDMA0 trigger 1->0), 48 kHz S16_LE 2ch",
+  "abox": "UAIF0 hw_params/trigger/tristate as designed; DSP IPC IRQs 38 -> 268; SysMMU IRQs 0; rSK1 after",
+  "dapm_snapshot_tone1": "ABOX RDMA0 -> SPUS ASRC0/OUT0 -> SIFS0 -> UAIF0 SPK -> UAIF0 Playback on; card RECEIVER/VOUTPUT on; codec only AIF1 Playback/AIF1RX listed on (snapshot walked ABOX widgets first, codec read may be after the tone; not conclusive)",
+  "root_cause_candidate": "mainline RT5665 lacks the stock init MX-7D (TDM_CTRL_6) = 0x0101; chip default 0x0123 feeds IF1 DAC2 from I2S slots 2/3, which two-channel UAIF0 does not carry; the stock handset path uses IF1 DAC2",
+  "second_finding": "fout_aud_pll 1179648040 Hz (40 Hz above nominal) makes dividers round down a step: dout_clk_aud_audif /17 = 69391062 Hz (requested 73728000), UAIF0 bclk 1508502 Hz (want 1536000), -1.8%; pitch error, not silence; fix separately (divider rounding)",
+  "regressions": "systemd running / 0 failed units, userdata rw, lomiri 1, wlan0 present (not joined), hci0 present, kernel fault count 0",
+  "restore": "Download 14:11:58, stock DT/baseline BOOT 14:12:15, 4.14.194 up 14:12:30, pre-flight passed, fsck clean 7188/3440640 files 1981331/13745152 blocks",
+  "next": "B2h2: + stock TDM_CTRL_6 init (31e5ef26e clean / 616b18207 test), same tone, 0x7d gate, early codec DAPM + register dump"
+}

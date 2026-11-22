@@ -1,0 +1,62 @@
+From 31e5ef26e117cc7e8e816edf69429f4c61b12e1d Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Sun, 22 Nov 2026 14:13:42 +0600
+Subject: [PATCH] ASoC: samsung: exynos9610-a50: feed RT5665 IF1 DAC2 from
+ slots 0/1
+
+The stock handset path plays through IF1 DAC2 (DAC L2 Mux "IF1 DAC2" ->
+Mono DAC mixer -> MONOOUT -> receiver). The Samsung RT5665 driver's init
+list sets MX-7D (TDM_CTRL_6) to 0x0101 so that DAC2 takes the I2S1 slot
+0/1 data like DAC1; mainline keeps the chip default 0x0123, which feeds
+DAC2 from slots 2/3. UAIF0 carries two-channel I2S, so the stock path
+played silence (B2h: stream ran, earpiece silent).
+
+Write the stock value from the UAIF0 link init. Mainline exposes no
+control for this register; the regmap cache restores it on resume.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: Ib9002be1a2a57bc49a914b20083b96d560b0355a
+---
+ sound/soc/samsung/exynos9610-a50.c | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
+
+diff --git a/sound/soc/samsung/exynos9610-a50.c b/sound/soc/samsung/exynos9610-a50.c
+index 75e6ccff4..20d59b0ce 100644
+--- a/sound/soc/samsung/exynos9610-a50.c
++++ b/sound/soc/samsung/exynos9610-a50.c
+@@ -163,6 +163,20 @@ static const struct snd_soc_ops a50_uaif0_ops = {
+ 	.hw_free = a50_uaif0_hw_free,
+ };
+ 
++/*
++ * The stock RT5665 driver's init list sets MX-7D (TDM_CTRL_6) to 0x0101:
++ * IF1 DAC2 takes the I2S1 slot 0/1 data, like DAC1. The chip default
++ * 0x0123 feeds DAC2 from slots 2/3, which the two-channel UAIF0 link does
++ * not carry, so the stock handset path (IF1 DAC2 -> mono DAC -> MONOOUT)
++ * plays silence. Mainline has no control for this register.
++ */
++static int a50_uaif0_init(struct snd_soc_pcm_runtime *rtd)
++{
++	struct snd_soc_component *codec = snd_soc_rtd_to_codec(rtd, 0)->component;
++
++	return snd_soc_component_write(codec, RT5665_TDM_CTRL_6, 0x0101);
++}
++
+ /* Stock "Sound Wakelock": the HAL holds the system awake while playing. */
+ static int a50_wakelock_get(struct snd_kcontrol *kcontrol,
+ 			    struct snd_ctl_elem_value *ucontrol)
+@@ -310,8 +324,10 @@ static int a50_parse_link(struct device *dev, struct device_node *np,
+ 		if (!strcmp(desc->name, "DSIF"))
+ 			link->ops = &a50_dsif_ops;
+ 		else if (!strcmp(desc->name, "UAIF0") &&
+-			 link->codecs != &snd_soc_dummy_dlc)
++			 link->codecs != &snd_soc_dummy_dlc) {
+ 			link->ops = &a50_uaif0_ops;
++			link->init = a50_uaif0_init;
++		}
+ 		break;
+ 	}
+ 
+-- 
+2.56.1
+

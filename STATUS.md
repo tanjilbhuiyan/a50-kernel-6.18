@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-22 (B2a amplifier probe passes; calibration preserved; stock verified, speaker untested)
+Updated: 2026-11-22 (B2h2: earpiece tone audible on 6.18 after the RT5665 TDM slot fix; stock restored)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -8,7 +8,7 @@ Read this file, then the active ticket and its log. Before trusting anything her
 branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and on the phone. At the end of a session, update
 **RESUME HERE** with commits, branch, image hashes, last test and rollback result, and the next action.
 
-## RESUME HERE (2026-11-22, M10.3 B2a probe passes; stock restored)
+## RESUME HERE (2026-11-22, M10.3 B2h2 earpiece audible; stock restored)
 - **Active ticket:** `tasks/M10.3-codec-amplifier.md`, in progress. Read latest log
   `log/2026-11-22-M10.3-tfa9872.md`. B1 codec and **B2a amplifier probes pass**. No speaker output or hardware
   DSP RPC exercised; M10.3 remains open. Owner policy: preserve existing amplifier calibration, stop if invalid;
@@ -24,6 +24,18 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
 - **Phone last verified:** automatic stock restore **2026-11-22 01:42:39 +06:00**, 4.14.194 boot **01:42:54**,
   live DTB/DTBO/BOOT hashes pass, fsck clean **7189/3440640 files, 1979154/13745152 blocks**, 100% Charging;
   home Wi-Fi SSH verified; post-restore calibration read matches. **No test active; no action needed.**
+- **B2h (2026-11-22 14:04, owner present):** first stream, earpiece: 6/6 tones ran (RDMA0 -> UAIF0, IPC 38 -> 268,
+  no faults), **owner heard nothing**. Candidate: mainline RT5665 lacks stock MX-7D=0x0101 init (IF1 DAC2 reads empty
+  slots 2/3). Also UAIF0 BCLK 1508502 Hz (-1.8%, AUD divider rounding; separate fix). Stock restored 14:12:30, pre-flight
+  pass, fsck clean 7188 files. `b2h-results.json`.
+- **B2h2 (2026-11-22 18:19, owner present): earpiece AUDIBLE.** B2a + clean 31e5ef26e (RT5665 MX-7D=0x0101 at UAIF0
+  link init; test a50-m10-b2h2-test 616b18207, BOOT 58013fd8…). Gate 07d: 0101, 113/113 controls, 6/6 tones, codec DAPM
+  IF1 DAC2 -> DAC L2 -> Mono MIX -> MONOOUT on, IPC 38 -> 268, no faults. 6.18 USB link re-enumerates repeatedly: run
+  collectors detached on the phone (`collect_b2h2r.sh` rerun in the same boot). `b2h2-results.json`.
+- **Phone last verified (B2h2):** stock restore 18:27:18, 4.14.194 up 18:27:32, pre-flight passed, fsck clean 7196 files.
+  **No test active.**
+- **Open before B2b:** carry 31e5ef26e to Codex WIP `a50-m10-b2-wip`; AUD divider rounding (UAIF0 BCLK 1508502 Hz,
+  -1.8%; CLK_DIVIDER_ROUND_CLOSEST on the AUD dividers) as its own test.
 - **Next B2b:** enforce existing-calibration validation at startup, review/exercise DSP transport and select stock
   routes for a supervised low-volume tone. Do not merely disable probe_only before that review/gate. Fresh owner
   presence and pre-flight required for the next flash. Temporary CMGP fixed providers are prototype only;
