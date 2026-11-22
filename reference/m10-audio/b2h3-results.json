@@ -1,0 +1,24 @@
+{
+ "test": "M10.3 B2h3: B2h2 image + CLK_DIVIDER_ROUND_CLOSEST on the AUDIF, UAIF0-2 and DSIF dividers; same earpiece tone",
+ "owner": "present; did not notice the six scheduled tones, asked for a replay, heard the replay (\"i hear it\")",
+ "result": "PASS: audio interface clocks now use stock's dividers (/16 AUDIF, /48 UAIF0 BCLK); earpiece tone audible",
+ "images": "BOOT src/m10/boot-b2h3.img cff96b51ee0eda4f (test a50-m10-b2h3-test ea1b92041 = B2h2 616b18207 + clean cd4991938); config, cpio, DTB and DT image identical to B2h2; 27 hashes b2h3-inputs.json matched before flash",
+ "flash": "2026-11-22 18:45:31",
+ "collector": "run detached on the phone (collector_started=0); completed (collection=0) although the USB link dropped (10 host USB disconnects during the test boot; late capture and kernel stream lost)",
+ "gate": "ok (TFA probe_only=Y, rSK1, ABOX SysMMU IRQs 0, /dev/snd unused, no kernel fault, 07d: 0101)",
+ "clocks": {
+  "boot_audif": "24576001 Hz (B2h2: 24074450 = /49; now /48)",
+  "stream_audif": "73728003 Hz (B2h2: 69391062 = /17; now /16)",
+  "uaif0_bclk": "1536001 Hz (B2h2: 1508502 = /46; now /48)",
+  "stock_4_14": "73728002 / 1536000 Hz",
+  "verdict_line": "B2H3_CLOCKS FAIL: the collector demanded the stock strings exactly; the 6.18 divider recalc rounds up (1179648040/16 = 73728002.5 -> 73728003, /48 -> 1536001) where the 4.14 driver truncated. Same divider values as stock; the criterion was too strict, not the clock",
+  "all_streams": "9/9 UAIF0 hw_params (6 scheduled + 3 replay) printed audif 73728003, bclk 1536001"
+ },
+ "mixer": "113/113 controls set and read back, 0 failures; restore rc=0 after the tones and after the replay",
+ "tones": "6/6 aplay rc=0 at uptime 180.5, 200.4, 220.7, 240.1, 260.5, 280.8, each ~4.15 s (B2h2 ~4.3 s); owner did not notice them",
+ "replay": "owner request at uptime ~350 s, same boot: tools/m10/replay_b2h3.sh re-applied the mixer list, 3 tones at 355.7, 361.9, 368.2 s, rc=0 each, mixer restored rc=0; owner heard them",
+ "abox": "DSP IPC IRQs 38 -> 267, SysMMU IRQs 0",
+ "regressions": "systemd running / 0 failed units, wlan0 present (not joined), hci0 present, kernel fault count 0 (live and 420 s dump)",
+ "restore": "Download 18:53:11, stock DT/baseline BOOT 18:53:28, 4.14.194 up 18:53:42, pre-flight passed, fsck clean 7193/3440640 files 1985979/13745152 blocks",
+ "evidence": "b2h3-run.txt, b2h3-live.txt, b2h3-replay.txt, b2h3-dump.txt, b2h3-kernel-follow.txt, b2h3-baseline-fsck.txt"
+}

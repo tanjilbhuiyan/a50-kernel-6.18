@@ -7,7 +7,17 @@ the container and exposes all four stock TFA control names, with sound disabled.
 
 Patch six produces `bedf87ffc`: it retains the ID already read in probe for
 the status attribute (B2a printed an unset field as zero). This fix compiles
-but is not in the phone-tested image. Clean `a50-audio` still remains at B1.
+but is not in the phone-tested image.
+
+Patch seven produces `8af341da3`: the B2h2 RT5665 slot fix (MX-7D = 0x0101
+at UAIF0 link init), the same change as clean `a50-audio` `31e5ef26e`
+(`../b2h2-clean-patches/`). B2h2 tested it on the B2a image and the owner heard
+the earpiece tone; the WIP card file is byte-identical to that test.
+
+Patch eight produces `4b59459bd`: the B2h3 audio divider rounding
+(CLK_DIVIDER_ROUND_CLOSEST on AUDIF/UAIF0-2/DSIF), the same change as clean
+`cd4991938` (`../b2h3-clean-patches/`). Tested on the B2h2 image in B2h3; the
+WIP clock file is byte-identical to that test.
 
 Import is verbatim from baseline Halium `4f37ef397`, including its firmware
 retry adaptation; not pristine upstream Samsung source. Subsequent patches
@@ -21,5 +31,5 @@ CMGP fixed providers need native integration or explicit disposition.
 
 Owner policy: preserve existing amplifier calibration, stop if invalid;
 no EFS or recalibration. Post-restore calibration reading matched stock's
-pre-test value privately. No playback/capture or hardware DSP RPC exercised.
+pre-test value privately. Earpiece playback verified in B2h2 (RT5665 only); no amplifier playback, capture or hardware DSP RPC exercised.
 See `../b2a-results.json` and the current log/STATUS before the next boot.

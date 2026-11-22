@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-22 (B2h2: earpiece tone audible on 6.18 after the RT5665 TDM slot fix; stock restored)
+Updated: 2026-11-22 (B2h3: earpiece audible with stock audio dividers; both fixes on WIP; stock restored; next B2b)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -8,7 +8,7 @@ Read this file, then the active ticket and its log. Before trusting anything her
 branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and on the phone. At the end of a session, update
 **RESUME HERE** with commits, branch, image hashes, last test and rollback result, and the next action.
 
-## RESUME HERE (2026-11-22, M10.3 B2h2 earpiece audible; stock restored)
+## RESUME HERE (2026-11-22, M10.3 B2h3 earpiece at stock clocks; stock restored)
 - **Active ticket:** `tasks/M10.3-codec-amplifier.md`, in progress. Read latest log
   `log/2026-11-22-M10.3-tfa9872.md`. B1 codec and **B2a amplifier probes pass**. No speaker output or hardware
   DSP RPC exercised; M10.3 remains open. Owner policy: preserve existing amplifier calibration, stop if invalid;
@@ -21,7 +21,7 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
   200 and 390 s, userdata rw, input/wlan0/hci0 present (Wi-Fi not joined, BT traffic untested), direct DMA
   1139/1488 frames, no copy/fallback/acquire-timeout increments. Stream and complete dump through sync
   **431.081767 s**, no oops/panic/SError/BUG/IOMMU faults. Existing boot-protocol + two iommu.c:612 WARNs remain.
-- **Phone last verified:** automatic stock restore **2026-11-22 01:42:39 +06:00**, 4.14.194 boot **01:42:54**,
+- **Phone verified after B2a:** automatic stock restore **2026-11-22 01:42:39 +06:00**, 4.14.194 boot **01:42:54**,
   live DTB/DTBO/BOOT hashes pass, fsck clean **7189/3440640 files, 1979154/13745152 blocks**, 100% Charging;
   home Wi-Fi SSH verified; post-restore calibration read matches. **No test active; no action needed.**
 - **B2h (2026-11-22 14:04, owner present):** first stream, earpiece: 6/6 tones ran (RDMA0 -> UAIF0, IPC 38 -> 268,
@@ -32,10 +32,14 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
   link init; test a50-m10-b2h2-test 616b18207, BOOT 58013fd8…). Gate 07d: 0101, 113/113 controls, 6/6 tones, codec DAPM
   IF1 DAC2 -> DAC L2 -> Mono MIX -> MONOOUT on, IPC 38 -> 268, no faults. 6.18 USB link re-enumerates repeatedly: run
   collectors detached on the phone (`collect_b2h2r.sh` rerun in the same boot). `b2h2-results.json`.
-- **Phone last verified (B2h2):** stock restore 18:27:18, 4.14.194 up 18:27:32, pre-flight passed, fsck clean 7196 files.
+- **B2h3 (2026-11-22 18:45, owner present):** + clean `cd4991938` (CLK_DIVIDER_ROUND_CLOSEST on AUDIF/UAIF0-2/DSIF;
+  test `ea1b92041`). AUDIF 73728003 / UAIF0 BCLK 1536001 Hz = stock dividers /16, /48 (was 69391062/1508502). Owner
+  missed the six scheduled tones, heard a same-boot replay. No faults. Detached collector survived USB drops.
+  `b2h3-results.json`.
+- **WIP `a50-m10-b2-wip`** now carries both fixes: `8af341da3` (MX-7D) and `4b59459bd` (dividers); `b2-wip-patches/0007-0008`.
+  Clean `a50-audio` head `cd4991938`.
+- **Phone last verified (B2h3):** stock restore 18:53:28, 4.14.194 up 18:53:42, pre-flight passed, fsck clean 7193 files.
   **No test active.**
-- **Open before B2b:** carry 31e5ef26e to Codex WIP `a50-m10-b2-wip`; AUD divider rounding (UAIF0 BCLK 1508502 Hz,
-  -1.8%; CLK_DIVIDER_ROUND_CLOSEST on the AUD dividers) as its own test.
 - **Next B2b:** enforce existing-calibration validation at startup, review/exercise DSP transport and select stock
   routes for a supervised low-volume tone. Do not merely disable probe_only before that review/gate. Fresh owner
   presence and pre-flight required for the next flash. Temporary CMGP fixed providers are prototype only;

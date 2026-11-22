@@ -1,0 +1,76 @@
+From cd4991938e880d5220fb6beec044d5acb6eb6ef5 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Sun, 22 Nov 2026 18:34:57 +0600
+Subject: [PATCH] clk: samsung: exynos9610: round the audio interface dividers
+ to closest
+
+fout_aud_pll is 1179648040 Hz, 40 Hz above 48 kHz * 24576. Every exact
+audio rate is therefore a fraction of a Hz below what the right divider
+produces: /16 gives 73728002 Hz for AUDIF and /48 gives 1536000 Hz for
+BCLK. The default divider rounding never exceeds the requested rate, so
+it drops one step. On the Galaxy A50 the ABOX got AUDIF 69391062 Hz (/17)
+and UAIF0 BCLK 1508502 Hz (/46), 1.8% slow. The boot-time AUDIF request
+for 24576000 Hz landed at 24074450 Hz (/49).
+
+Set CLK_DIVIDER_ROUND_CLOSEST on the AUDIF divider and its interface
+children (UAIF0-2, DSIF). The stock 4.14 kernel on the same phone reports
+AUDIF 73728002 Hz and BCLK 1536000 Hz, which these dividers now give.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: Ibddf2790fcca9214aa1ddc70199df28f79ec33c6
+---
+ drivers/clk/samsung/clk-exynos9610.c | 26 ++++++++++++++++----------
+ 1 file changed, 16 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos9610.c b/drivers/clk/samsung/clk-exynos9610.c
+index 2a05d5fc0..0b01abf73 100644
+--- a/drivers/clk/samsung/clk-exynos9610.c
++++ b/drivers/clk/samsung/clk-exynos9610.c
+@@ -2893,9 +2893,15 @@ static const struct samsung_mux_clock dispaud_mux_clks[] __initconst = {
+ 	    CLK_CON_MUX_MUX_CLK_AUD_UAIF2, 0, 1),
+ };
+ 
++/*
++ * fout_aud_pll runs 40 Hz above 48 kHz * 24576 (1179648040 Hz), so every exact
++ * audio rate (73.728 MHz AUDIF, 1.536 MHz BCLK) sits a fraction of a Hz below
++ * the true divider output. Round to the closest divider, as the vendor kernel
++ * does, instead of dropping one step (about 2% slow audio clocks).
++ */
+ static const struct samsung_div_clock dispaud_div_clks[] __initconst = {
+-	DIV(CLK_DOUT_CLK_AUD_AUDIF, "dout_clk_aud_audif", "fout_aud_pll",
+-	    CLK_CON_DIV_DIV_CLK_AUD_AUDIF, 0, 9),
++	DIV_F(CLK_DOUT_CLK_AUD_AUDIF, "dout_clk_aud_audif", "fout_aud_pll",
++	      CLK_CON_DIV_DIV_CLK_AUD_AUDIF, 0, 9, 0, CLK_DIVIDER_ROUND_CLOSEST),
+ 	DIV(CLK_DOUT_CLK_AUD_BUS, "dout_clk_aud_bus", "fout_aud_pll",
+ 	    CLK_CON_DIV_DIV_CLK_AUD_BUS, 0, 3),
+ 	DIV(CLK_DOUT_CLK_AUD_CPU, "dout_clk_aud_cpu", "fout_aud_pll",
+@@ -2904,18 +2910,18 @@ static const struct samsung_div_clock dispaud_div_clks[] __initconst = {
+ 	    CLK_CON_DIV_DIV_CLK_AUD_CPU_ACLK, 0, 3),
+ 	DIV(CLK_DOUT_CLK_AUD_CPU_PCLKDBG, "dout_clk_aud_cpu_pclkdbg", "mout_clk_aud_cpu_hch",
+ 	    CLK_CON_DIV_DIV_CLK_AUD_CPU_PCLKDBG, 0, 3),
+-	DIV(CLK_DOUT_CLK_AUD_DSIF, "dout_clk_aud_dsif", "dout_clk_aud_audif",
+-	    CLK_CON_DIV_DIV_CLK_AUD_DSIF, 0, 9),
++	DIV_F(CLK_DOUT_CLK_AUD_DSIF, "dout_clk_aud_dsif", "dout_clk_aud_audif",
++	      CLK_CON_DIV_DIV_CLK_AUD_DSIF, 0, 9, 0, CLK_DIVIDER_ROUND_CLOSEST),
+ 	DIV(CLK_DOUT_CLK_AUD_FM, "dout_clk_aud_fm", "mout_clk_aud_fm",
+ 	    CLK_CON_DIV_DIV_CLK_AUD_FM, 0, 9),
+ 	DIV(CLK_DOUT_CLK_AUD_FM_SPDY, "dout_clk_aud_fm_spdy", "tick_usb",
+ 	    CLK_CON_DIV_DIV_CLK_AUD_FM_SPDY, 0, 9),
+-	DIV(CLK_DOUT_CLK_AUD_UAIF0, "dout_clk_aud_uaif0", "dout_clk_aud_audif",
+-	    CLK_CON_DIV_DIV_CLK_AUD_UAIF0, 0, 9),
+-	DIV(CLK_DOUT_CLK_AUD_UAIF1, "dout_clk_aud_uaif1", "dout_clk_aud_audif",
+-	    CLK_CON_DIV_DIV_CLK_AUD_UAIF1, 0, 9),
+-	DIV(CLK_DOUT_CLK_AUD_UAIF2, "dout_clk_aud_uaif2", "dout_clk_aud_audif",
+-	    CLK_CON_DIV_DIV_CLK_AUD_UAIF2, 0, 9),
++	DIV_F(CLK_DOUT_CLK_AUD_UAIF0, "dout_clk_aud_uaif0", "dout_clk_aud_audif",
++	      CLK_CON_DIV_DIV_CLK_AUD_UAIF0, 0, 9, 0, CLK_DIVIDER_ROUND_CLOSEST),
++	DIV_F(CLK_DOUT_CLK_AUD_UAIF1, "dout_clk_aud_uaif1", "dout_clk_aud_audif",
++	      CLK_CON_DIV_DIV_CLK_AUD_UAIF1, 0, 9, 0, CLK_DIVIDER_ROUND_CLOSEST),
++	DIV_F(CLK_DOUT_CLK_AUD_UAIF2, "dout_clk_aud_uaif2", "dout_clk_aud_audif",
++	      CLK_CON_DIV_DIV_CLK_AUD_UAIF2, 0, 9, 0, CLK_DIVIDER_ROUND_CLOSEST),
+ 	DIV(CLK_DOUT_CLK_DISPAUD_BUSP, "dout_clk_dispaud_busp", "mout_pll_dispaud_disp_user",
+ 	    CLK_CON_DIV_DIV_CLK_DISPAUD_BUSP, 0, 3),
+ };
+-- 
+2.56.1
+
