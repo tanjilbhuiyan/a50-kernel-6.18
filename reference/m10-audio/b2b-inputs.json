@@ -1,0 +1,129 @@
+{
+  "test": "M10.3 B2b: first supervised loudspeaker tone. B2h3 image + Codex status fix bedf87ffc + TFA9872 calibration gate (playback only with MTPOTC=1, MTPEX=1, Re25 4-12 ohm; no calibration, MTP write, raw/debug endpoints; TFA Calibration control read-only). Stock media-speaker mixer; per tone RDMA7 + WDMA3/WDMA4 side streams as the stock HAL, then RDMA0 4 s 1 kHz -36 dBFS; five tones at uptime 180-260 s",
+  "source_branch": "a50-m10-b2b-test",
+  "source_commit": "6f14a1e2264795990275fac4e7ed0da893b971bb",
+  "source_compared_to_B2h3": "a50-m10-b2h3-test ea1b92041 + 53f30e948 (= WIP bedf87ffc, status revision field) + 6f14a1e22 (= WIP f1e420c5b, calibration gate); sound/soc/codecs/tfa9872 only",
+  "wip_commit": "f1e420c5b ASoC: tfa9872: gate playback on the preserved factory calibration",
+  "config_same_as_B2h3": true,
+  "runtime_cpio_same_as_B2h3": true,
+  "dtb_same_as_B2h3": true,
+  "dt_img_same_as_B2h3": true,
+  "stock_reference": "stock HAL speaker playback observed read-only 2026-11-22 19:03: mixer changes DSM On 1, NSRC2 UAIF4, NSRC3 UAIF2, SIFS1 SPUS OUT7, UAIF2 SPK SIFS1; PCMs RDMA7, WDMA3, WDMA4, RDMA0 started in that order (S16_LE 2ch 48 kHz; side streams period 480 / buffer 1920)",
+  "calibration_policy": "stock reading compared with the private record before the flash and after the restore (runner); on 6.18 compared before any sound and after the tones (collector); value never printed or published",
+  "pass_criteria": "gate ok (playback_gate=1, calibration matches), owner hears the loudspeaker tones, calibration still matches after, no faults, standard restore",
+  "owner_presence": "required: ask \"present, flash B2b\" right before the run; owner listens at the loudspeaker (bottom) about 3-4 min after the flash",
+  "files": {
+    "src/m10/boot-b2b.img": {
+      "size": 33269760,
+      "sha256": "9434cf3f148783a68f4f5ca30ba158f844c424c76015326c6f264facb3a360ae"
+    },
+    "src/m10/dt-b2b.img": {
+      "size": 8388608,
+      "sha256": "4a3aadafc2eccca395f4efa92029cea6f45ceec6d690b8e669cb91802f4d0cb7"
+    },
+    "src/m10/b2b-as-built/.config": {
+      "size": 126405,
+      "sha256": "fa9749f04ab9a2eb5be87fd08423a883c234a56e5d1927c9fba4ca8fd8780fd0"
+    },
+    "src/m10/b2b-as-built/Image": {
+      "size": 33263624,
+      "sha256": "375db00583e1374810989ce86a0448fe7fd481b3c1c65232f4046d1449ee875d"
+    },
+    "src/m10/b2b-as-built/exynos9610-a50-gpu.dtb": {
+      "size": 31157,
+      "sha256": "2a7ebc2003e1d39575754f0ace5b2482773434713108f7896560d0a067dad2d4"
+    },
+    "src/m10/b2b-as-built/initramfs_data.cpio": {
+      "size": 25968640,
+      "sha256": "aded41aa0cd365dd211ff3971b674698d5bf77cd855711920957124ba7c80718"
+    },
+    "src/m10/b2b-as-built/System.map": {
+      "size": 3489602,
+      "sha256": "1c1f5c6f992ce522c32cab5e0586e2105bdcbdea284cecf4f7a26d411e14290b"
+    },
+    "tools/m10/build_b2.py": {
+      "size": 856,
+      "sha256": "ce275191f71461a036f7820a5c43281be5a9b833f67c6ac1d3e497c3d654ac92"
+    },
+    "tools/m10/build_a1.py": {
+      "size": 5437,
+      "sha256": "4140ec532655656e70ba4d0f7da25ac57452c5e51c1d5eedd19b66f65d594365"
+    },
+    "tools/m10/run_b2b.sh": {
+      "size": 6849,
+      "sha256": "d85638895945707a66aa258b9595da0c9909a3154bdbff3ad3fb4245d7c1c801"
+    },
+    "tools/m10/collect_b2b.sh": {
+      "size": 11662,
+      "sha256": "de093fa90c964dc10c1ab57478056af73e86447a2000413a07283f17b1471aea"
+    },
+    "tools/m10/make_b2h_mixer.py": {
+      "size": 2759,
+      "sha256": "cd71006b6ddfc178aa4db43090c46029952f7230bc7f2da5091a9777bfc8229c"
+    },
+    "tools/m32_run_test.sh": {
+      "size": 4701,
+      "sha256": "fb03aa8a9411f6d5a4292a23342a18b24a0b597ba568c7c9def703d44bfc7235"
+    },
+    "tools/m32_read_618.sh": {
+      "size": 1238,
+      "sha256": "e750045b3417db5a9f9a6aad25e96cf85f1367aef897c45f039e8e440ac765c7"
+    },
+    "tools/m24_preflight.sh": {
+      "size": 4118,
+      "sha256": "6beca4aa8634c3e1b687e4242d700a311c89f2f18322398ef7a9d08a3fc13d8e"
+    },
+    "tools/m54/watch_ssh.py": {
+      "size": 4321,
+      "sha256": "f656a6f1092266c2214ba0f3afee37ac81b0b62620b7feb57cadf6a71db52bfd"
+    },
+    "tools/m22_pack.sh": {
+      "size": 1098,
+      "sha256": "08212aa1743ed07df3447dc8414d634e775a4bc224e945b570a86be1c3757097"
+    },
+    "tools/dt_table.py": {
+      "size": 7313,
+      "sha256": "f601fa4f6fb98ed558cdad2617ab9c01e9353a6bb59691c5367860358d1fd10d"
+    },
+    "reference/stock-images/dt.img": {
+      "size": 8388608,
+      "sha256": "59209aa52dc3b35e2c7cc025c465ed1cdb48dadaa13cf5d1f50324b3bf503547"
+    },
+    "reference/stock-images/dtbo.img": {
+      "size": 8388608,
+      "sha256": "40e47ed1477a8ffb6cbb34e5cb59a1af786c2552544f3b556373f3c553d40d21"
+    },
+    "reference/dt-6.18/images/dtbo.img": {
+      "size": 8388608,
+      "sha256": "6d81cce87faca914d75f024f36e183ae6592e61adc786bbb6c7c47cdd3a151fe"
+    },
+    "baseline/ut-26.04-2026-10-19-aa17rf2/boot.img": {
+      "size": 53624832,
+      "sha256": "7d5855efd34e01f09659c7d47ecb0773c30f2acc7443ee87181a0536804086c5"
+    },
+    "reference/m10-audio/vendor-etc/mixer_paths.xml": {
+      "size": 74877,
+      "sha256": "0334e8f540ce4258892453cd12719aaa9f61709c88ebc84f2ff5e995f5e4eabd"
+    },
+    "reference/m10-audio/vendor-etc/mixer_gains.xml": {
+      "size": 43154,
+      "sha256": "baa3d701e7a6689f1e0f9dd10225fb091f52aed130113e354d7b1d0a597e2c92"
+    },
+    "reference/m10-audio/b2b-build-results.json": {
+      "size": 17912,
+      "sha256": "683f0302e08acf1955279c77e655f7fed2899cb02b762191a466bfb92aa4e4d5"
+    },
+    "reference/m10-audio/b2a-results.json": {
+      "size": 4243,
+      "sha256": "6f2ae0dcf676d81bfbab5a3666415219e71bad15813e0d51e89c205aa1eafe99"
+    },
+    "reference/m10-audio/b2h3-results.json": {
+      "size": 2476,
+      "sha256": "5083f9c370fd194a6d31f6b7971bceca531c0ecb34304fb92a53c91958a71a60"
+    },
+    "reference/m10-audio/b2b-host-checks.txt": {
+      "size": 914,
+      "sha256": "ae7f173155072fc73f76cc3e28e09d81b0e298fccb7cee495d448366a3070ee9"
+    }
+  }
+}

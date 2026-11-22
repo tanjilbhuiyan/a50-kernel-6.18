@@ -1,0 +1,19 @@
+# B2b host checks on src/m10/b2b-out/vmlinux (test a50-m10-b2b-test 6f14a1e22)
+ffff800080888780 <tfa98xx_set_mtp>:
+ffff800080888780: 52800de0     	mov	w0, #0x6f       // =111
+ffff800080888784: d65f03c0     	ret
+ffff80008088f628 <tfa_mtp_set_calibration>:
+ffff80008088f628: 52800de0     	mov	w0, #0x6f       // =111
+ffff80008088f62c: d65f03c0     	ret
+ffff800080881de0 <tfa98xx_set_cal_ctl>:
+ffff800080881de0: 12800000     	mov	w0, #-0x1       // =-1
+ffff800080881de4: d65f03c0     	ret
+# symbols
+ffff80008206fd64 b tfa98xx_cal_gate_ok
+ffff80008087ebd0 T tfa98xx_playback_allowed
+ffff80008206fd60 B tfa98xx_probe_only
+# tfa98xx_debug_init absent above = compiled out; probe_only in .bss (B) = default 0
+# device_create_bin_file calls in the first 4000 bytes of tfa98xx_i2c_probe: 0
+# gate message strings
+calibration gate: MTP unreadable, playback refused
+calibration gate: %s (mtpotc=%u mtpex=%u re25_in_range=%u)

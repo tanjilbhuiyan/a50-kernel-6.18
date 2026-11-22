@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""M10.3 B2h: the stock mixer settings for the earpiece (handset) tone, from the vendor XMLs.
+"""M10.3 B2h/B2b: the stock mixer settings for one HAL use case, from the vendor XMLs.
 
+Usage: make_b2h_mixer.py [USECASE]   (default media-handset; B2b uses media-speaker)
 Output (stdout): one 'NAME<TAB>VALUE' line per control, in apply order:
   1. the top-level defaults of vendor mixer_paths.xml (what the HAL sets at start),
-  2. path "media-handset" (dev-handset + route-sifs0-to-uaif0), expanded,
-  3. path "gain-media-handset" of mixer_gains.xml.
+  2. path USECASE (e.g. "media-handset" = dev-handset + route-sifs0-to-uaif0), expanded,
+  3. path "gain-USECASE" of mixer_gains.xml (may be empty).
 Changes from the XML, each listed in EXCEPTIONS with its reason. Controls the 6.18 card lacks are skipped on the
 phone and logged. No amplifier (TFA) control is written: TFA stays probe-only and UAIF2 is not routed.
 """
@@ -49,9 +50,10 @@ def main():
     mg = ET.parse(VENDOR / 'mixer_gains.xml').getroot()
     table = paths(mp)
     gains = paths(mg)
+    usecase = sys.argv[1] if len(sys.argv) > 1 else 'media-handset'
     out = [(c.get('name'), c.get('value')) for c in mp.findall('ctl')]
-    expand(table['media-handset'], table, out)
-    expand(gains['gain-media-handset'], gains, out)
+    expand(table[usecase], table, out)
+    expand(gains['gain-' + usecase], gains, out)
     for name, value in out:
         if name in EXCEPTIONS:
             value = EXCEPTIONS[name]

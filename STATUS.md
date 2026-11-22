@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-22 (B2h3: earpiece audible with stock audio dividers; both fixes on WIP; stock restored; next B2b)
+Updated: 2026-11-22 (B2b: calibration gate passes, ABOX firmware crashed on first TFA DSP message, no speaker sound; stock restored)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -8,7 +8,7 @@ Read this file, then the active ticket and its log. Before trusting anything her
 branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and on the phone. At the end of a session, update
 **RESUME HERE** with commits, branch, image hashes, last test and rollback result, and the next action.
 
-## RESUME HERE (2026-11-22, M10.3 B2h3 earpiece at stock clocks; stock restored)
+## RESUME HERE (2026-11-22, M10.3 B2b firmware crash on TFA message; stock restored)
 - **Active ticket:** `tasks/M10.3-codec-amplifier.md`, in progress. Read latest log
   `log/2026-11-22-M10.3-tfa9872.md`. B1 codec and **B2a amplifier probes pass**. No speaker output or hardware
   DSP RPC exercised; M10.3 remains open. Owner policy: preserve existing amplifier calibration, stop if invalid;
@@ -40,6 +40,15 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
   Clean `a50-audio` head `cd4991938`.
 - **Phone last verified (B2h3):** stock restore 18:53:28, 4.14.194 up 18:53:42, pre-flight passed, fsck clean 7193 files.
   **No test active.**
+- **B2b (2026-11-22 19:18, owner present): no speaker sound.** Gate passes (mtpotc/mtpex/Re25 in range), calibration
+  equal to the private stock record before/after on both kernels; 114 stock speaker controls; side streams start. First
+  TFA DSP write crashed the ABOX firmware (`data abort ... from calliope`, PC=0, R14 in the 0x80582000 window), then all
+  IPC timed out. Collector bug (stale probe-only gate) needed a same-boot rerun (`collect_b2br.sh`). `b2b-results.json`.
+- **Phone last verified (B2b):** stock 19:26:22, pre-flight passed, fsck clean 7205 files, calibration matches.
+  **No test active.**
+- **Next (host first):** capture the exact TFA message stock sends (firmware window after a stock beep, read-only if
+  possible) and the 6.18 one; then align the transport with stock (realtime CPU gear 0x7007 around transfers, atomic=1)
+  as one variable. Uncommitted: B2b tools/evidence; WIP head `f1e420c5b`.
 - **Next B2b:** enforce existing-calibration validation at startup, review/exercise DSP transport and select stock
   routes for a supervised low-volume tone. Do not merely disable probe_only before that review/gate. Fresh owner
   presence and pre-flight required for the next flash. Temporary CMGP fixed providers are prototype only;

@@ -1,0 +1,290 @@
+From f1e420c5ba5d5094fd9b7a7723f964515e7c82b9 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Sun, 22 Nov 2026 19:09:14 +0600
+Subject: [PATCH] ASoC: tfa9872: gate playback on the preserved factory
+ calibration
+
+Replace the blanket probe-only default with a calibration gate. Playback
+is allowed only when the amplifier already holds its factory calibration:
+MTPOTC and MTPEX set, and Re25 (MTP 0xF5) between 4 and 12 ohm, which
+brackets an 8-ohm-class microspeaker. The gate is evaluated once the
+container is loaded. When it fails, the driver keeps the probe-only
+behaviour, and tfa_start refuses. tfa_start also refuses instead of
+switching to the calibration profile when MTPEX reads 0. The probe_only
+parameter still forces enumeration only.
+
+The port never calibrates or programs the MTP. The TFA Calibration
+control is read-only (-EPERM). The climax rw/reg files and debugfs are no
+longer created in any mode. Messages that printed the per-unit Re25 value
+now omit it or are demoted to debug. The bring-up status reports the gate.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I25b0eccb55c2fa12472fcce4f98c031fafea9470
+---
+ sound/soc/codecs/tfa9872/inc/tfa_internal.h |  1 +
+ sound/soc/codecs/tfa9872/tfa98xx.c          | 94 +++++++++++----------
+ sound/soc/codecs/tfa9872/tfa_dsp.c          | 32 ++++---
+ 3 files changed, 71 insertions(+), 56 deletions(-)
+
+diff --git a/sound/soc/codecs/tfa9872/inc/tfa_internal.h b/sound/soc/codecs/tfa9872/inc/tfa_internal.h
+index 59da35c59..12aa1b299 100644
+--- a/sound/soc/codecs/tfa9872/inc/tfa_internal.h
++++ b/sound/soc/codecs/tfa9872/inc/tfa_internal.h
+@@ -216,6 +216,7 @@ TFA_INTERNAL int tfa98xx_buffer_pool_access
+ #endif
+ /* Internal vendor-library entry points. */
+ extern bool tfa98xx_probe_only;
++bool tfa98xx_playback_allowed(void);
+ void get_all_features_from_cnt(tfa98xx_handle_t dev_idx,
+ 	int *hw_feature_register, int sw_feature_register[2]);
+ int get_manager_state(tfa98xx_handle_t handle);
+diff --git a/sound/soc/codecs/tfa9872/tfa98xx.c b/sound/soc/codecs/tfa9872/tfa98xx.c
+index dce272eda..87bf92bb0 100644
+--- a/sound/soc/codecs/tfa9872/tfa98xx.c
++++ b/sound/soc/codecs/tfa9872/tfa98xx.c
+@@ -131,11 +131,46 @@ static DEFINE_MUTEX(probe_lock);
+ static char *dflt_prof_name = "";
+ module_param(dflt_prof_name, charp, 0444);
+ 
+-/* Enumeration only until playback/calibration policy is verified. */
+-bool tfa98xx_probe_only = true;
++/* Force enumeration only (no amplifier start), whatever the calibration gate says. */
++bool tfa98xx_probe_only;
+ module_param_named(probe_only, tfa98xx_probe_only, bool, 0444);
+ MODULE_PARM_DESC(probe_only, "Only probe/parse firmware; no speaker playback");
+ 
++/*
++ * Playback needs the factory calibration already stored in the amplifier:
++ * MTPOTC and MTPEX set and Re25 (MTP 0xF5, mOhm) plausible for the A50's
++ * 8-ohm-class speaker. The driver never calibrates or programs the MTP; when
++ * the gate fails it stays in probe-only behaviour. The value is never logged.
++ */
++#define TFA98XX_A50_RE25_MIN_MOHM	4000
++#define TFA98XX_A50_RE25_MAX_MOHM	12000
++static bool tfa98xx_cal_gate_ok;
++
++bool tfa98xx_playback_allowed(void)
++{
++	return !tfa98xx_probe_only && READ_ONCE(tfa98xx_cal_gate_ok);
++}
++
++static bool tfa98xx_check_calibration_gate(struct tfa98xx *tfa98xx)
++{
++	unsigned int mtp, re25;
++	bool otc, mtpex, in_range;
++
++	if (regmap_read(tfa98xx->regmap, TFA98XX_KEY2_PROTECTED_MTP0, &mtp) ||
++	    regmap_read(tfa98xx->regmap, 0xf5, &re25)) {
++		dev_err(tfa98xx->dev, "calibration gate: MTP unreadable, playback refused\n");
++		return false;
++	}
++	otc = mtp & TFA98XX_KEY2_PROTECTED_MTP0_MTPOTC_MSK;
++	mtpex = mtp & TFA98XX_KEY2_PROTECTED_MTP0_MTPEX_MSK;
++	in_range = re25 >= TFA98XX_A50_RE25_MIN_MOHM &&
++		   re25 <= TFA98XX_A50_RE25_MAX_MOHM;
++	dev_info(tfa98xx->dev, "calibration gate: %s (mtpotc=%u mtpex=%u re25_in_range=%u)\n",
++		 otc && mtpex && in_range ? "pass" : "playback refused",
++		 otc, mtpex, in_range);
++	return otc && mtpex && in_range;
++}
++
+ static int no_start;
+ module_param(no_start, int, 0444);
+ MODULE_PARM_DESC(no_start, "do not start the work queue; for debugging via user\n");
+@@ -1703,7 +1738,7 @@ static const struct file_operations tfa98xx_dbgfs_spkr_damaged_fops = {
+ 	.llseek = default_llseek,
+ };
+ 
+-static void tfa98xx_debug_init(struct tfa98xx *tfa98xx, struct i2c_client *i2c)
++static void __maybe_unused tfa98xx_debug_init(struct tfa98xx *tfa98xx, struct i2c_client *i2c)
+ {
+ 	char name[50];
+ 	struct dentry *dbg_reg_dir;
+@@ -2166,29 +2201,8 @@ static int tfa98xx_info_cal_ctl(struct snd_kcontrol *kcontrol,
+ static int tfa98xx_set_cal_ctl(struct snd_kcontrol *kcontrol,
+ 	struct snd_ctl_elem_value *ucontrol)
+ {
+-	struct snd_soc_component *codec = snd_soc_kcontrol_component(kcontrol);
+-	struct tfa98xx *tfa98xx = snd_soc_component_get_drvdata(codec);
+-	enum tfa98xx_error err;
+-	int status = 0;
+-
+-	tfa98xx->cal_data = (uint16_t)ucontrol->value.integer.value[0];
+-
+-	tfa98xx_open(tfa98xx->handle);
+-	tfa98xx_dsp_system_stable(tfa98xx->handle, &status);
+-	if (status)
+-		err = tfa_mtp_set_calibration
+-			(tfa98xx->handle, tfa98xx->cal_data);
+-	else
+-		err = TFA98XX_ERROR_NO_CLOCK;
+-	tfa98xx_close(tfa98xx->handle);
+-
+-	tfa98xx->set_mtp_cal = (err != TFA98XX_ERROR_OK);
+-	if (tfa98xx->set_mtp_cal == false) {
+-		pr_info("Calibration value (%d) set in mtp\n",
+-			tfa98xx->cal_data);
+-	}
+-
+-	return 1;
++	/* The factory calibration is read-only on this port. */
++	return -EPERM;
+ }
+ 
+ static int tfa98xx_get_cal_ctl(struct snd_kcontrol *kcontrol,
+@@ -3086,7 +3100,10 @@ tfa98xx_container_loaded_body(const struct firmware *cont,	void *context)
+ 
+ 	tfa98xx_inputdev_check_register(tfa98xx);
+ 
+-	if (tfa98xx_probe_only) {
++	if (tfa98xx->handle == 0)
++		WRITE_ONCE(tfa98xx_cal_gate_ok,
++			   tfa98xx_check_calibration_gate(tfa98xx));
++	if (!tfa98xx_playback_allowed()) {
+ 		dev_info(tfa98xx->dev, "probe-only: container ready, no amplifier start\n");
+ 		mutex_unlock(&probe_lock);
+ 		return;
+@@ -3485,7 +3502,7 @@ static void tfa98xx_interrupt(struct work_struct *work)
+ 						err);
+ 				} else {
+ 					tfa98xx->set_mtp_cal = false;
+-					pr_info("Calibration value (%d) set in mtp\n",
++					pr_debug("Calibration value (%d) set in mtp\n",
+ 						tfa98xx->cal_data);
+ 				}
+ 			}
+@@ -4240,8 +4257,8 @@ static ssize_t bringup_status_show(struct device *dev,
+ 	mutex_unlock(&tfa->dsp_lock);
+ 	if (ret)
+ 		return ret;
+-	return sysfs_emit(buf, "probe_only=%u revision=0x%04x firmware_ready=%u mtpex=%u rdc_present=%u\n",
+-		tfa98xx_probe_only, tfa->rev,
++	return sysfs_emit(buf, "probe_only=%u playback_gate=%u revision=0x%04x firmware_ready=%u mtpex=%u rdc_present=%u\n",
++		tfa98xx_probe_only, READ_ONCE(tfa98xx_cal_gate_ok), tfa->rev,
+ 		tfa->dsp_fw_state == TFA98XX_DSP_FW_OK, !!(mtp & BIT(1)),
+ 		rdc != 0 && rdc != 0xffff);
+ }
+@@ -4460,19 +4477,10 @@ static int tfa98xx_i2c_probe(struct i2c_client *i2c)
+ 		tfa98xx->flags |= TFA98XX_FLAG_SKIP_INTERRUPTS;
+ 	}
+ 
+-	/* Raw register and calibration/debug endpoints stay absent in probe-only mode. */
+-	if (!tfa98xx_probe_only) {
+-	#ifdef CONFIG_DEBUG_FS
+-		tfa98xx_debug_init(tfa98xx, i2c);
+-	#endif
+-		/* Register the sysfs files for climax backdoor access */
+-		ret = device_create_bin_file(&i2c->dev, &dev_attr_rw);
+-		if (ret)
+-			dev_info(&i2c->dev, "error creating sysfs files\n");
+-		ret = device_create_bin_file(&i2c->dev, &dev_attr_reg);
+-		if (ret)
+-			dev_info(&i2c->dev, "error creating sysfs files\n");
+-	}
++	/*
++	 * Raw register, calibration and debug endpoints (debugfs, climax "rw"/"reg")
++	 * are never created: they can trigger calibration or bypass the gate.
++	 */
+ 	ret = device_create_file(&i2c->dev, &dev_attr_bringup_status);
+ 	if (ret)
+ 		dev_warn(&i2c->dev, "cannot create read-only bringup status: %d\n", ret);
+diff --git a/sound/soc/codecs/tfa9872/tfa_dsp.c b/sound/soc/codecs/tfa9872/tfa_dsp.c
+index 1553e3ac8..597d9aada 100644
+--- a/sound/soc/codecs/tfa9872/tfa_dsp.c
++++ b/sound/soc/codecs/tfa9872/tfa_dsp.c
+@@ -3853,10 +3853,10 @@ tfa_run_speaker_calibration(tfa98xx_handle_t handle, int profile)
+ 		err = tfa98xx_supported_speakers(handle, &spkr_count);
+ 
+ 		if (spkr_count == 1)
+-			pr_info("P: %d mOhms\n",
++			pr_debug("P: %d mOhms\n",
+ 				handles_local[handle].mohm[0]);
+ 		else
+-			pr_info("P: %d mOhms, S:%d mOhms\n",
++			pr_debug("P: %d mOhms, S:%d mOhms\n",
+ 						handles_local[0].mohm[0],
+ 						handles_local[1].mohm[0]);
+ 	}
+@@ -3932,8 +3932,8 @@ enum tfa98xx_error tfa_set_calibration_values(tfa98xx_handle_t handle)
+ 		if (devcount == 1) { /* mono */
+ 			err = reg_read(handle, 0xF5, &value);
+ 			dsp_cal_value_prim = (value * 65536) / 1000;
+-			pr_info("%s: calibration data: %d\n",
+-				__func__, value);
++			pr_info("%s: calibration data loaded from MTP\n",
++				__func__);
+ 			dsp_cal_value_scnd = dsp_cal_value_prim;
+ 		} else if (devcount == 2) { /* stereo */
+ 			/* For now use quick hack
+@@ -3946,13 +3946,13 @@ enum tfa98xx_error tfa_set_calibration_values(tfa98xx_handle_t handle)
+ 				if (channel == 0) {
+ 					dsp_cal_value_prim =
+ 						(value * 65536) / 1000;
+-					pr_info("%s: dev %d - calibration data[prim]: %d\n",
+-						__func__, i, value);
++					pr_info("%s: dev %d - calibration data[prim] loaded\n",
++						__func__, i);
+ 				} else if (channel == 1) {
+ 					dsp_cal_value_scnd =
+ 						(value * 65536) / 1000;
+-					pr_info("%s: dev %d - calibration data[scnd]: %d\n",
+-						__func__, i, value);
++					pr_info("%s: dev %d - calibration data[scnd] loaded\n",
++						__func__, i);
+ 				}
+ 			}
+ 		} else {
+@@ -4372,7 +4372,8 @@ enum tfa_error tfa_start(int next_profile, int *vstep)
+ 	uint8_t kernel_sleep_timeout = 0;
+ #endif
+ 
+-	if (tfa98xx_probe_only)
++	/* Calibration gate (tfa98xx.c): never start without stored calibration. */
++	if (!tfa98xx_playback_allowed())
+ 		return tfa_error_device;
+ 
+ 	tfa98xx_log_start_cnt++;
+@@ -4408,6 +4409,11 @@ enum tfa_error tfa_start(int next_profile, int *vstep)
+ 		if (TFA_GET_BF(dev, MTPEX) == 0) {
+ 			int cal_prof_idx = -2;
+ 
++			/* No calibration run on this port: refuse instead. */
++			pr_err("%s: MTPEX cleared, playback refused\n", __func__);
++			err = TFA98XX_ERROR_NOT_SUPPORTED;
++			goto error_exit;
++
+ 			cal_prof_idx = tfa_cont_get_cal_profile(dev);
+ 
+ 			if (cal_prof_idx >= 0) {
+@@ -5901,7 +5907,7 @@ tfa_tfadsp_wait_calibrate_done(tfa98xx_handle_t handle)
+ 			}
+ 
+ 			/* write again if readback is out of range */
+-			pr_info("%s: calibaration data %d, readback from MTP, device %d\n",
++			pr_debug("%s: calibaration data %d, readback from MTP, device %d\n",
+ 				__func__, readback, i);
+ #if defined(CHECK_CALIBRATION_DATA_RANGE)
+ 			channel = tfa98xx_get_profile_tdmspks(i,
+@@ -5968,7 +5974,7 @@ tfa_tfadsp_wait_calibrate_done(tfa98xx_handle_t handle)
+ 			}
+ 
+ 			/* panic if readback is out of range */
+-			pr_info("%s: calibaration data %d readback from MTP (2nd), device %d\n",
++			pr_debug("%s: calibaration data %d readback from MTP (2nd), device %d\n",
+ 				__func__, readback, i);
+ #if defined(CHECK_CALIBRATION_DATA_RANGE)
+ 			channel = tfa98xx_get_profile_tdmspks(i,
+@@ -6044,8 +6050,8 @@ tfa_calibration_range_check(tfa98xx_handle_t handle,
+ 		upper_limit_cal = TFA_CAL_RANGE(devcount, channel, UPPER, N1A);
+ 	}
+ 
+-	pr_info("%s: channel [%d] - calibration range check [%d, %d] with %d\n",
+-		__func__, channel, lower_limit_cal, upper_limit_cal, mohm);
++	pr_info("%s: channel [%d] - calibration range check [%d, %d]\n",
++		__func__, channel, lower_limit_cal, upper_limit_cal);
+ 	if (mohm < lower_limit_cal || mohm > upper_limit_cal)
+ 		err = TFA98XX_ERROR_BAD_PARAMETER;
+ 
+-- 
+2.56.1
+

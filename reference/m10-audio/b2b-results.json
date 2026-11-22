@@ -1,0 +1,22 @@
+{
+ "test": "M10.3 B2b: first supervised loudspeaker tone (B2h3 image + TFA9872 calibration gate; stock media-speaker mixer, RDMA7/WDMA3/WDMA4 side streams, RDMA0 -36 dBFS tones)",
+ "owner": "present; no sound expected after the firmware crash (owner not asked to confirm)",
+ "result": "FAIL (no sound): calibration gate and stock routes worked; the ABOX firmware crashed on the first TFA DSP message",
+ "images": "BOOT src/m10/boot-b2b.img 9434cf3f148783a6 (test a50-m10-b2b-test 6f14a1e22 = B2h3 + bedf87ffc + gate f1e420c5b); 28 hashes b2b-inputs.json matched",
+ "calibration": "stock reading matched the private record before the flash; on 6.18 matched before the tones and after; post-restore stock reading matched; value never printed or published (published files scanned: 0 occurrences)",
+ "flash": "2026-11-22 19:18:11",
+ "collection_passes": {
+  "pass1_b2b-live.txt": "gate stopped before any sound: 'tfa not probe-only' - a stale B2h gate line (probe_only must be Y) kept in collect_b2b.sh; all real checks passed",
+  "pass2_b2b-live2.txt": "tools/m10/collect_b2br.sh (that line removed) started detached at uptime 142 s, same boot and images"
+ },
+ "gate": "ok: bringup_status probe_only=0 playback_gate=1 revision=0x3b72 firmware_ready=1 mtpex=1 rdc_present=1; kernel 'calibration gate: pass (mtpotc=1 mtpex=1 re25_in_range=1)' at 22.28 s; calibration equals stock record",
+ "mixer": "114/114 stock media-speaker controls set and read back, 0 failures; restore rc=0",
+ "sequence_tone1": "RDMA7, WDMA3, UAIF4 capture, UAIF2 playback+capture, WDMA4 triggered; TFA unmute -> tfa_start cold boot ext_dsp=1 profile 0 'music'; container files written over I2C; SetRe25C path read calibration from MTP; first external DSP write (IPC_ERAP REALTIME_EXTRA, window 0x80582000)",
+ "failure": "180.776536 'data abort(00000001, 00000805, FFFFFFFF) is reported from calliope': A-Box CPU PC=0x00000000, R14=0x80582006 (inside the TFA write window), R0=0xffffffff -> firmware followed a NULL handler while parsing the message; then 'Transaction timeout' for every IPC (100+ in the dump), tfa_start err 103, all PCMs EIO; tones 2-5 same (start refused / I/O error)",
+ "ruled_out": "vendor.audio-hal SIGSEGV at 180.747 is its normal ~5 s crash loop on 6.18 (present from 30 s in every run, B2h2/B2h3 too); window addresses, message format flags (TFADSP_32BITS etc.) and abox_addr_to_kernel_addr identical to stock; Codex callback wrappers do not alter the bytes",
+ "differences_vs_stock_transport": "stock raises the ABOX CPU gear (abox_request_cpu_gear REALTIME_GEAR_ID 0x7007 -> 4) before each transfer and drops it (12) after; stock passes atomic=1 to abox_start_ipc_transaction; stock builds tfa_cal.o/tfa_log.o (blackbox logging) - not yet shown to matter",
+ "regressions": "systemd running / 0 failed units; kernel fault count 0 (Linux side); ABOX firmware crashed (audio unusable for the rest of the boot)",
+ "restore": "Download 19:25:50, stock DT/baseline BOOT 19:26:08, 4.14.194 up 19:26:22, pre-flight passed, fsck clean 7205/3440640 files 1988552/13745152 blocks",
+ "next": "evidence before another speaker boot: capture the exact TFA message blob stock sends (stock firmware DRAM window after a stock beep, read-only if a debug interface allows it) and the blob 6.18 sends; then match the stock transport (realtime gear, atomic) as one variable",
+ "evidence": "b2b-run.txt, b2b-live.txt, b2b-live2.txt, b2b-dmesg-manual.txt, b2b-dump.txt, b2b-kernel-follow.txt, b2b-baseline-fsck.txt"
+}

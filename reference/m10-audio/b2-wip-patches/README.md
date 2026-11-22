@@ -19,6 +19,12 @@ Patch eight produces `4b59459bd`: the B2h3 audio divider rounding
 `cd4991938` (`../b2h3-clean-patches/`). Tested on the B2h2 image in B2h3; the
 WIP clock file is byte-identical to that test.
 
+Patch nine produces `f1e420c5b`: the calibration gate (playback only with
+MTPOTC/MTPEX set and Re25 4-12 ohm; calibration control read-only; raw/debug
+endpoints and per-unit value prints removed). B2b tested it: the gate passed and
+the calibration stayed unchanged, but the ABOX firmware crashed on the first TFA
+DSP message, so no speaker sound yet (`../b2b-results.json`).
+
 Import is verbatim from baseline Halium `4f37ef397`, including its firmware
 retry adaptation; not pristine upstream Samsung source. Subsequent patches
 port the API/probe-only path, block calibration programming, bound/serialize
