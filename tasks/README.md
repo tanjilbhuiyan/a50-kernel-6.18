@@ -69,5 +69,5 @@ later milestones get tickets when we reach them (evidence first, Rule 1).
 | M9.4 | Bluetooth, bluebinder and M9 integration (S8) | yes | M9.2, M9.3 | done (log/2026-11-20-M9.4-bluetooth.md; S8 via native BlueZ, ADR-0008/0009) |
 | M10.1 | Audio source, firmware and consumer contract | yes (read-only) | M9 | done (log/2026-11-20-M10.1-audio-contract.md) |
 | M10.2 | ABOX audio DSP core on 6.18 | build no / test yes | M10.1 | done (log/2026-11-20-M10.2-abox-core.md; A2b card = stock, A2c Wi-Fi with ABOX; publication refresh → M10.4) |
-| M10.3 | RT5665 codec, TFA9872 amplifier and the A50 machine driver | yes | M10.2 | in-progress (earpiece B2h2, speaker B2b5 audible; headset/mic recorded vs stock B2m; CMGP clocks remain; stock restored) |
-| M10.4 | Audio integration and M10 DoD (S6) | yes | M10.3 | todo |
+| M10.3 | RT5665 codec, TFA9872 amplifier and the A50 machine driver | yes | M10.2 | done (log/2026-11-22-M10.3-tfa9872.md; earpiece B2h2, speaker B2b5 audible, headset/mic vs stock B2m, ADR-0010) |
+| M10.4 | Audio integration and M10 DoD (S6) | yes | M10.3 | in-progress (host prep) |

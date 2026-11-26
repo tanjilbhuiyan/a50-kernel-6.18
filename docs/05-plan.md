@@ -204,7 +204,8 @@ none of the four M5 HAL masks remains in the built-in command line (the power ma
 DoD: S5, S9; 10 suspend/resume cycles; charge state correct. The runtime masks of `repowerd.service`,
 `a50-enable-autosuspend.service` and `sleep.target` are removed with automatic suspend working, and
 no `systemd.mask=` remains in the built-in command line. CMU_PERI is registered (validated mode) and the ADR-0007 fixed
-PERI clocks are replaced by real clocks. The touch controller is powered down while the panel is blanked and resumes on
+PERI clocks are replaced by real clocks. CMU_CMGP is registered (validated mode) and the ADR-0010 fixed HSI2C3
+clocks are replaced by real clocks. The touch controller is powered down while the panel is blanked and resumes on
 unblank, and its start-up empty-interrupt storm is handled (or measured to match stock).
 Moved from M8 (2026-11-19): hall SW_LID/SW_MACHINE_COVER transitions verified with a magnet or cover; the intermittent
 USB re-enumeration (M8.3, M8.5 S1 trace) diagnosed and fixed or dispositioned under S5; a controlled app open/close

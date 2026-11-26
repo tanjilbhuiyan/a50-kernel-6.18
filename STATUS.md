@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-26 (B2m: headset/mic paths recorded vs stock: settings 112/117 applied on both, mic path identical, ambient capture comparable; stock restored. Remaining M10.3: CMGP clock disposition)
+Updated: 2026-11-26 (M10.3 closed: earpiece and speaker audible, headset/mic recorded vs stock, ADR-0010; M10.4 audio integration started, host only)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -8,7 +8,26 @@ Read this file, then the active ticket and its log. Before trusting anything her
 branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and on the phone. At the end of a session, update
 **RESUME HERE** with commits, branch, image hashes, last test and rollback result, and the next action.
 
-## RESUME HERE (2026-11-22, M10.3 B2b firmware crash on TFA message; stock restored)
+## RESUME HERE (2026-11-26, M10.3 closed; M10.4 started)
+- **Active ticket:** `tasks/M10.4-audio-integration.md` (host-side preparation; no phone test yet).
+- **M10.3 closed 2026-11-26** (`log/2026-11-22-M10.3-tfa9872.md`):
+  - Earpiece audible (B2h2), loudspeaker audible through TFA9872 + ABOX speaker protection (B2b5).
+  - Headset/mic paths recorded against stock (B2m).
+  - CMGP clocks: ADR-0010.
+- **Kernel source for audio:**
+  - WIP `src/m10/b2-kernel` `a50-m10-b2-wip` at `5f22a49c5` (TFA series, high-res timers, tfadsp.bin node).
+  - Last phone-tested images: B2b5/B2m (= B2b4 build, branch `a50-m10-b2b4-test`).
+  - Clean `src/m10/clean-kernel` `a50-audio` at `332858bf8` (no TFA series yet).
+- **Facts M10.4 needs:**
+  - The speaker needs the ABOX realtime streams RDMA7/WDMA3/WDMA4 started like the stock HAL (stop_threshold =
+    boundary, never read/written) alongside RDMA0. 6.18 ALSA returns EIO after 100 ms if a reader/writer waits on
+    them.
+  - Direct ALSA mic capture gives room sound on both kernels (UD2 hiss was seen through PulseAudio/HAL in M0.4).
+  - vendor.audio-hal crash-loops on 6.18 (SIGSEGV every ~5 s, seen in B2b).
+- **Phone:** stock, verified after B2m (pre-flight passed, fsck clean, calibration matches). Office Wi-Fi
+  192.168.180.35 (same host keys). **No test active.**
+
+## M10.3 handoff (2026-11-22 to 2026-11-26, closed)
 - **Active ticket:** `tasks/M10.3-codec-amplifier.md`, in progress. Read latest log
   `log/2026-11-22-M10.3-tfa9872.md`. B1 codec and **B2a amplifier probes pass**. No speaker output or hardware
   DSP RPC exercised; M10.3 remains open. Owner policy: preserve existing amplifier calibration, stop if invalid;
@@ -62,7 +81,8 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
   `099037655` (tfadsp.bin DT node); clean `a50-audio` has `332858bf8` (high-res timers; tfadsp node waits for the TFA
   series). **B2m** (owner: no headset, ambient mic): headset 112/112 and mic 117/117 stock settings applied on
   both kernels; mic-path codec registers and DAPM identical; ambient WDMA1 capture -50.4 dBFS stock vs -55.9 dBFS
-  6.18, same character. Stock restored, fsck clean. **Remaining M10.3:** CMGP temporary clocks disposition.
+  6.18, same character. Stock restored, fsck clean. **CMGP clocks:** ADR-0010 (Accepted) keeps the measured fixed clocks until M12.
+  **M10.3 closed 2026-11-26.**
 - **Next B2b:** enforce existing-calibration validation at startup, review/exercise DSP transport and select stock
   routes for a supervised low-volume tone. Do not merely disable probe_only before that review/gate. Fresh owner
   presence and pre-flight required for the next flash. Temporary CMGP fixed providers are prototype only;

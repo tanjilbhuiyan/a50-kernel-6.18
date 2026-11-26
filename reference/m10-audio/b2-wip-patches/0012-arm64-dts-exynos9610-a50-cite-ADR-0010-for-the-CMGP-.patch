@@ -1,0 +1,38 @@
+From 5f22a49c5fc966992a5c9b501ef24e1c8b999ea6 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Thu, 26 Nov 2026 15:13:57 +0600
+Subject: [PATCH] arm64: dts: exynos9610-a50: cite ADR-0010 for the CMGP HSI2C3
+ fixed clocks
+
+The two fixed clocks for HSI2C3 are no longer a bring-up prototype:
+ADR-0010 leaves CMU_CMGP to the bootloader until M12, as ADR-0007 does
+for CMU_PERI. Comment only; the compiled DTB is unchanged.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I7b3806dc422fb681d70bcb56f6f3671f70649a07
+---
+ arch/arm64/boot/dts/exynos/exynos9610-a50-sysmmu.dts | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610-a50-sysmmu.dts b/arch/arm64/boot/dts/exynos/exynos9610-a50-sysmmu.dts
+index 901fecd9f..a71b96367 100644
+--- a/arch/arm64/boot/dts/exynos/exynos9610-a50-sysmmu.dts
++++ b/arch/arm64/boot/dts/exynos/exynos9610-a50-sysmmu.dts
+@@ -528,9 +528,11 @@ cpu {
+ 	};
+ };
+ 
+-/* B2 prototype: preserve the clock state measured in B2C, without registering
+- * another shared CMU during audio bring-up. Native CMGP clock control remains
+- * an integration item before these temporary fixed clocks are finalized.
++/*
++ * HSI2C3 (TFA9872) clocks: CMU_CMGP stays as the bootloader configures it and
++ * no 6.18 code writes it (ADR-0010, like ADR-0007 for CMU_PERI). These fixed
++ * clocks describe the rates measured read-only in M10.3 B2C (CMGP I2C mux 1,
++ * div /2 from the 199.875 MHz APM bus). M12 replaces them with a real CMU_CMGP.
+  */
+ / {
+ 	cmgp_i2c_bootclk: clock-cmgp-i2c-boot {
+-- 
+2.56.1
+
