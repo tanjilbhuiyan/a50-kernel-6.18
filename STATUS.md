@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-22 (B2b: calibration gate passes, ABOX firmware crashed on first TFA DSP message, no speaker sound; stock restored)
+Updated: 2026-11-26 (B2b2: firmware reached speaker-library start, still faulted; IPC handled one per 4 ms tick. B2b3 = CONFIG_HIGH_RES_TIMERS=y, built, awaiting "present, flash B2b3")
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -46,9 +46,14 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
   IPC timed out. Collector bug (stale probe-only gate) needed a same-boot rerun (`collect_b2br.sh`). `b2b-results.json`.
 - **Phone last verified (B2b):** stock 19:26:22, pre-flight passed, fsck clean 7205 files, calibration matches.
   **No test active.**
-- **Next (host first):** capture the exact TFA message stock sends (firmware window after a stock beep, read-only if
-  possible) and the 6.18 one; then align the transport with stock (realtime CPU gear 0x7007 around transfers, atomic=1)
-  as one variable. Uncommitted: B2b tools/evidence; WIP head `f1e420c5b`.
+- **Comparison:** stock firmware log shows REALTIME_START -> `TFADSP_init` before the 1646-byte TFA blob is accepted
+  (private stock window/DRAM/log in `src/m10/b2c2-stock/`). **B2b2** (stock stream timing, same images): the firmware
+  reached `ERAP out channel start - SPK_Lib_On: 1` but faulted again before `TFADSP_init` (PC=0); its log shows IPC
+  messages handled one per 4 ms tick, ~75 ms behind (stock: ~0.2 ms apart). 6.18 config lacks
+  `CONFIG_HIGH_RES_TIMERS`, so `abox_process_ipc()`'s `usleep_range(10, 100)` lasts a tick. Stock restored, fsck clean,
+  calibration unchanged. **Prepared B2b3:** `CONFIG_HIGH_RES_TIMERS=y` only (branch `a50-m10-b2b3-test`,
+  `tools/m10/build_b2b3.py`); `tools/m10/run_b2b3.sh 192.168.180.35` after "present, flash B2b3". Next suspect if it
+  still faults: ABOX CPU fixed at 393 MHz (no AUD DVFS) vs stock 800 MHz.
 - **Next B2b:** enforce existing-calibration validation at startup, review/exercise DSP transport and select stock
   routes for a supervised low-volume tone. Do not merely disable probe_only before that review/gate. Fresh owner
   presence and pre-flight required for the next flash. Temporary CMGP fixed providers are prototype only;
