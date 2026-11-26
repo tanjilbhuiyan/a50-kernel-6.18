@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-26 (B2b3: high-res timers fixed the firmware IPC lag, still faulted; cause: 6.18 DT lacks the tfadsp.bin ext_bin. B2b4 = DT node only, built, awaiting "present, flash B2b4")
+Updated: 2026-11-26 (B2b4: tfadsp.bin loaded, NXP library initialised, amp configured, no crash; test side streams hit ALSA 100 ms EIO. B2b5 = same images, stock-like stream start; awaiting "present, flash B2b5")
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -54,8 +54,11 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
   calibration unchanged. **B2b3** (`CONFIG_HIGH_RES_TIMERS=y`): the firmware now keeps pace with the
   kernel but still never ran `TFADSP_init` and faulted on the first TFA message. Cause: the stock DT loads `tfadsp.bin`
   (NXP speaker-protection library) into ABOX DRAM (`abox/ext_bin@0`, area 1, offset 0x502000); the 6.18 DT did not.
-  **Prepared B2b4:** that DT node only, boot image = B2b3 (branch `a50-m10-b2b4-test`);
-  `tools/m10/run_b2b4.sh 192.168.180.35` after "present, flash B2b4".
+  **B2b4** (DT loads `tfadsp.bin`): `TFADSP_init` done, TFA blob executed,
+  `tfadsp_is_configured()=1`, amp cold-started, no crash. The test's aplay/arecord side streams got EIO after 100 ms
+  (6.18 ALSA no-progress timeout; ABOX consumes them, stock pointers stay 0), so the speaker path stopped. **Prepared
+  B2b5:** same images; harness starts the realtime streams like the stock HAL (`rtplay.py`); `tools/m10/run_b2b5.sh
+  192.168.180.35` after "present, flash B2b5".
 - **Next B2b:** enforce existing-calibration validation at startup, review/exercise DSP transport and select stock
   routes for a supervised low-volume tone. Do not merely disable probe_only before that review/gate. Fresh owner
   presence and pre-flight required for the next flash. Temporary CMGP fixed providers are prototype only;
