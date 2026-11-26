@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-26 (M10.3 closed: earpiece and speaker audible, headset/mic recorded vs stock, ADR-0010; M10.4 audio integration started, host only)
+Updated: 2026-11-26 (M10.4 started: C1 read-only capture of the vendor.audio-hal crash on 6.18 prepared; awaiting "present, flash C1")
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -9,7 +9,9 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
 **RESUME HERE** with commits, branch, image hashes, last test and rollback result, and the next action.
 
 ## RESUME HERE (2026-11-26, M10.3 closed; M10.4 started)
-- **Active ticket:** `tasks/M10.4-audio-integration.md` (host-side preparation; no phone test yet).
+- **Active ticket:** `tasks/M10.4-audio-integration.md`, log `log/2026-11-26-M10.4-audio-integration.md`. **Prepared C1:**
+  read-only capture of the vendor.audio-hal crash (B2b5 images); `tools/m10/run_m104c1.sh 192.168.180.35` after
+  "present, flash C1".
 - **M10.3 closed 2026-11-26** (`log/2026-11-22-M10.3-tfa9872.md`):
   - Earpiece audible (B2h2), loudspeaker audible through TFA9872 + ABOX speaker protection (B2b5).
   - Headset/mic paths recorded against stock (B2m).
