@@ -1,0 +1,34 @@
+From 332858bf8d1687c6a0c485e1b47ce910979856cc Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Thu, 26 Nov 2026 13:01:53 +0600
+Subject: [PATCH] arm64: configs: a50_firstlight: enable high-resolution timers
+
+The ABOX driver sleeps usleep_range(10, 100) after each queued IPC
+message. Without CONFIG_HIGH_RES_TIMERS the sleep rounds up to a full
+tick (4 ms at HZ=250), so the audio DSP firmware received a burst of
+stream-start messages ~75 ms late, one per tick (M10.3 B2b2 firmware
+log), and the TFA9872 speaker-protection message raced the firmware's
+library start. The stock 4.14 kernel and gki_defconfig both enable
+high-resolution timers; CPU idle is disabled, so the arch timer never
+stops.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I2ad26968c65e279ac08ce7856b18ce8ac0d5502c
+---
+ arch/arm64/configs/a50_firstlight_defconfig | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm64/configs/a50_firstlight_defconfig b/arch/arm64/configs/a50_firstlight_defconfig
+index f590b0e58..9eb967afc 100644
+--- a/arch/arm64/configs/a50_firstlight_defconfig
++++ b/arch/arm64/configs/a50_firstlight_defconfig
+@@ -141,3 +141,6 @@ CONFIG_KEYBOARD_GPIO=y
+ CONFIG_LEDS_GPIO=y
+ CONFIG_LEDS_TRIGGER_TRANSIENT=y
+ CONFIG_SCSC_CORE=y
++# ABOX IPC queue sleeps usleep_range(10, 100) between messages; without high-resolution timers each
++# sleep lasts a full tick (4 ms at HZ=250), delaying the audio DSP by tens of ms (stock and GKI: y).
++CONFIG_HIGH_RES_TIMERS=y
+-- 
+2.56.1
+

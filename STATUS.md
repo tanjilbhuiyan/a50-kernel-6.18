@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-26 (B2b4: tfadsp.bin loaded, NXP library initialised, amp configured, no crash; test side streams hit ALSA 100 ms EIO. B2b5 = same images, stock-like stream start; awaiting "present, flash B2b5")
+Updated: 2026-11-26 (B2b5: speaker tone audible (owner) through TFA9872 + ABOX speaker protection; stock restored, fsck clean; fixes carried to WIP/clean. Next: headset/microphone paths vs stock)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -56,9 +56,11 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
   (NXP speaker-protection library) into ABOX DRAM (`abox/ext_bin@0`, area 1, offset 0x502000); the 6.18 DT did not.
   **B2b4** (DT loads `tfadsp.bin`): `TFADSP_init` done, TFA blob executed,
   `tfadsp_is_configured()=1`, amp cold-started, no crash. The test's aplay/arecord side streams got EIO after 100 ms
-  (6.18 ALSA no-progress timeout; ABOX consumes them, stock pointers stay 0), so the speaker path stopped. **Prepared
-  B2b5:** same images; harness starts the realtime streams like the stock HAL (`rtplay.py`); `tools/m10/run_b2b5.sh
-  192.168.180.35` after "present, flash B2b5".
+  (6.18 ALSA no-progress timeout; ABOX consumes them, stock pointers stay 0), so the speaker path stopped. **B2b5** (same images; realtime streams started like the stock HAL): **speaker
+  tone audible (owner)**; NXP library initialised, amp configured with the preserved calibration, speaker path held
+  for the whole tone, no kernel errors. Stock restored, fsck clean. WIP has `a0cd8b066` (high-res timers) and
+  `099037655` (tfadsp.bin DT node); clean `a50-audio` has `332858bf8` (high-res timers; tfadsp node waits for the TFA
+  series). **Next:** headset/microphone paths recorded against stock, then CMGP clock disposition.
 - **Next B2b:** enforce existing-calibration validation at startup, review/exercise DSP transport and select stock
   routes for a supervised low-volume tone. Do not merely disable probe_only before that review/gate. Fresh owner
   presence and pre-flight required for the next flash. Temporary CMGP fixed providers are prototype only;

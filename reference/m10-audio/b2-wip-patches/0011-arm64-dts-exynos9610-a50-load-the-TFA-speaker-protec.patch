@@ -1,0 +1,45 @@
+From 0990376557cf394172135f351104368b9975aa06 Mon Sep 17 00:00:00 2001
+From: tanjilbhuiyan <tanjilbhuiyan@gmail.com>
+Date: Thu, 26 Nov 2026 13:15:53 +0600
+Subject: [PATCH 11/11] arm64: dts: exynos9610-a50: load the TFA
+ speaker-protection library into ABOX
+
+The ABOX firmware runs the NXP TFA9872 speaker-protection algorithm
+from tfadsp.bin, which the kernel copies into the firmware DRAM before
+each start (stock DT abox/ext_bin@0: area 1, offset 0x502000). Without
+it the firmware starts the speaker channel but never initialises the
+library, and the first TFA DSP message faults the ABOX CPU (M10.3
+B2b/B2b2/B2b3). The driver already parses these children.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: Ibf03a8564f12a340d18b62254dc803a23476c7de
+---
+ arch/arm64/boot/dts/exynos/exynos9610-a50-sysmmu.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos9610-a50-sysmmu.dts b/arch/arm64/boot/dts/exynos/exynos9610-a50-sysmmu.dts
+index c55b758ca..901fecd9f 100644
+--- a/arch/arm64/boot/dts/exynos/exynos9610-a50-sysmmu.dts
++++ b/arch/arm64/boot/dts/exynos/exynos9610-a50-sysmmu.dts
+@@ -72,6 +72,18 @@ abox: abox@14a50000 {
+ 		#size-cells = <1>;
+ 		ranges;
+ 
++		/*
++		 * NXP TFA speaker-protection library for the ABOX firmware
++		 * (vendor firmware, 76 972 B), copied into the firmware DRAM
++		 * before each start; the TFA9872 driver's DSP messages go to
++		 * it. Stock: abox/ext_bin@0, area 1 (DRAM), offset 0x502000.
++		 */
++		ext-bin-0 {
++			samsung,name = "tfadsp.bin";
++			samsung,area = <1>;
++			samsung,offset = <0x502000>;
++		};
++
+ 		abox_rdma_0: abox-rdma@14a51000 {
+ 			compatible = "samsung,abox-rdma";
+ 			reg = <0x14a51000 0x100>;
+-- 
+2.56.1
+
