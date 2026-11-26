@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-26 (B2b5: speaker tone audible (owner) through TFA9872 + ABOX speaker protection; stock restored, fsck clean; fixes carried to WIP/clean. Next: headset/microphone paths vs stock)
+Updated: 2026-11-26 (B2m: headset/mic paths recorded vs stock: settings 112/117 applied on both, mic path identical, ambient capture comparable; stock restored. Remaining M10.3: CMGP clock disposition)
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -60,7 +60,9 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
   tone audible (owner)**; NXP library initialised, amp configured with the preserved calibration, speaker path held
   for the whole tone, no kernel errors. Stock restored, fsck clean. WIP has `a0cd8b066` (high-res timers) and
   `099037655` (tfadsp.bin DT node); clean `a50-audio` has `332858bf8` (high-res timers; tfadsp node waits for the TFA
-  series). **Next:** headset/microphone paths recorded against stock, then CMGP clock disposition.
+  series). **B2m** (owner: no headset, ambient mic): headset 112/112 and mic 117/117 stock settings applied on
+  both kernels; mic-path codec registers and DAPM identical; ambient WDMA1 capture -50.4 dBFS stock vs -55.9 dBFS
+  6.18, same character. Stock restored, fsck clean. **Remaining M10.3:** CMGP temporary clocks disposition.
 - **Next B2b:** enforce existing-calibration validation at startup, review/exercise DSP transport and select stock
   routes for a supervised low-volume tone. Do not merely disable probe_only before that review/gate. Fresh owner
   presence and pre-flight required for the next flash. Temporary CMGP fixed providers are prototype only;

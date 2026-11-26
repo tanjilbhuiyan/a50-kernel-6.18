@@ -1,0 +1,705 @@
+B2M_MODE stock
+
+CMD: uname -r
+4.14.194 - Mint-user 1763150940
+RC=0
+
+CMD: cat /proc/uptime
+553.60 4224.80
+RC=0
+
+B2M_PRE
+
+CMD: sh -c cat /proc/asound/cards; amixer -c 0 controls | wc -l; ls -l /proc/*/fd 2>/dev/null | grep /dev/snd | sed "s/.*-> //" | sort | uniq -c
+ 0 [Exynos9610Audio]: Exynos9610-Audi - Exynos9610-Audio
+                      Exynos9610-Audio
+ 1 [aboxdump       ]: abox_dump - abox_dump
+                      abox_dump
+367
+      2 /dev/snd/controlC0
+RC=0
+
+CMD: sh -c for n in 'MAINMIC Switch' 'SUBMIC Switch' 'HEADSETMIC Switch' 'HEADPHONE Switch' 'Main Mic Switch'; do printf '%s: ' "$n"; amixer -c 0 cget "name=$n" 2>&1 | sed -n 's/^ *: values=//p;/Cannot find/p' | head -n 1; done
+MAINMIC Switch: on
+SUBMIC Switch: on
+HEADSETMIC Switch: on
+HEADPHONE Switch: off
+Main Mic Switch: amixer: Cannot find the given element from control sysdefault:0
+RC=0
+
+B2M_GATE ok
+B2M_SAVED rc=0
+
+B2M_HEADSET
+SET rc=0 name=ABOX Sampling Rate Mixer Min want=48000 before=48000 after=48000
+SET rc=0 name=ABOX Sampling Rate Out1 Min want=8000 before=8000 after=8000
+SET rc=0 name=ABOX Sampling Rate Out2 Min want=8000 before=8000 after=8000
+SET rc=0 name=ABOX Sampling Rate Recp Min want=8000 before=8000 after=8000
+SET rc=0 name=ABOX Sampling Rate Inmux0 Min want=8000 before=8000 after=8000
+SET rc=0 name=ABOX Sampling Rate Inmux1 Min want=8000 before=8000 after=8000
+SET rc=0 name=ABOX Sampling Rate Inmux2 Min want=8000 before=8000 after=8000
+SET rc=0 name=ABOX Sampling Rate Inmux3 Min want=8000 before=8000 after=8000
+SET rc=0 name=ABOX Sampling Rate Inmux4 Min want=8000 before=8000 after=8000
+SET rc=0 name=ABOX UAIF0 width want=16 before=16 after=16
+SET rc=0 name=ABOX UAIF0 channel want=2 before=2 after=2
+SET rc=0 name=ABOX UAIF0 rate want=48000 before=48000 after=48000
+SET rc=0 name=ABOX UAIF1 width want=16 before=16 after=16
+SET rc=0 name=ABOX UAIF1 channel want=2 before=2 after=2
+SET rc=0 name=ABOX UAIF1 rate want=48000 before=48000 after=48000
+SET rc=0 name=ABOX UAIF2 width want=16 before=16 after=16
+SET rc=0 name=ABOX UAIF2 channel want=2 before=2 after=2
+SET rc=0 name=ABOX UAIF2 rate want=48000 before=48000 after=48000
+SET rc=0 name=ABOX UAIF4 width want=16 before=16 after=16
+SET rc=0 name=ABOX UAIF4 channel want=2 before=2 after=2
+SET rc=0 name=ABOX UAIF4 rate want=48000 before=48000 after=48000
+SET rc=0 name=ABOX SPDY width want=16 before=16 after=16
+SET rc=0 name=ABOX SPDY channel want=2 before=2 after=2
+SET rc=0 name=ABOX SPDY rate want=40000 before=40000 after=40000
+SET rc=0 name=ABOX SPUS ASRC0 want=On before=0 after=1
+SET rc=0 name=ABOX SPUS ASRC1 want=On before=1 after=1
+SET rc=0 name=ABOX SPUS ASRC2 want=On before=0 after=1
+SET rc=0 name=ABOX SPUS ASRC3 want=On before=1 after=1
+SET rc=0 name=ABOX SPUS ASRC4 want=On before=1 after=1
+SET rc=0 name=ABOX SPUS ASRC5 want=On before=1 after=1
+SET rc=0 name=ABOX SPUS ASRC6 want=On before=1 after=1
+SET rc=0 name=ABOX SPUS ASRC7 want=On before=0 after=1
+SET rc=0 name=ABOX SPUS OUT0 want=SIFS0 before=1 after=1
+SET rc=0 name=ABOX SPUS OUT1 want=SIFS0 before=1 after=1
+SET rc=0 name=ABOX SPUS OUT2 want=SIFS0 before=1 after=1
+SET rc=0 name=ABOX SPUS OUT3 want=SIFS0 before=1 after=1
+SET rc=0 name=ABOX SPUS OUT4 want=SIFS0 before=1 after=1
+SET rc=0 name=ABOX SPUS OUT5 want=SIFS0 before=1 after=1
+SET rc=0 name=ABOX SPUS OUT6 want=SIFS2 before=2 after=2
+SET rc=0 name=ABOX SPUS OUT7 want=SIFS1 before=0 after=0
+SET rc=0 name=ABOX UAIF0 SPK want=RESERVED before=0 after=0
+SET rc=0 name=ABOX UAIF1 SPK want=RESERVED before=0 after=0
+SET rc=0 name=ABOX UAIF2 SPK want=RESERVED before=0 after=0
+SET rc=0 name=ABOX SPUM ASRC0 want=On before=1 after=1
+SET rc=0 name=ABOX SPUM ASRC1 want=On before=1 after=1
+SET rc=0 name=ABOX SPUM ASRC2 want=On before=1 after=1
+SET rc=0 name=ABOX SPUM ASRC3 want=On before=0 after=1
+SET rc=0 name=ABOX RECP PIFS0 want=0 before=off after=off
+SET rc=0 name=ABOX RECP PIFS1 want=0 before=off after=off
+SET rc=0 name=ABOX SIFM0 want=WDMA before=0 after=0
+SET rc=0 name=ABOX SIFM1 want=WDMA before=0 after=0
+SET rc=0 name=ABOX SIFM2 want=WDMA before=0 after=0
+SET rc=0 name=ABOX SIFM3 want=WDMA before=0 after=0
+SET rc=0 name=ABOX NSRC0 want=RESERVED before=0 after=0
+SET rc=0 name=ABOX NSRC1 want=RESERVED before=0 after=0
+SET rc=0 name=ABOX NSRC2 want=RESERVED before=0 after=0
+SET rc=0 name=ABOX NSRC3 want=RESERVED before=0 after=0
+SET rc=0 name=ABOX ERAP info DSM On want=0 before=0 after=0
+SET rc=0 name=ABOX ERAP info Bypass On want=0 before=0 after=0
+SET rc=0 name=ABOX ERAP info USB Rx On want=0 before=0 after=0
+SET rc=0 name=ABOX ERAP info USB Tx On want=0 before=0 after=0
+SET rc=0 name=ABOX Audio Mode want=NORMAL before=0 after=0
+SET rc=0 name=DAC L1 Source want=Stereo1 DAC Mixer before=0 after=0
+SET rc=0 name=DAC R1 Source want=Stereo1 DAC Mixer before=0 after=0
+SET rc=0 name=DAC L2 Source want=Mono DAC Mixer before=0 after=0
+SET rc=0 name=DAC R2 Source want=Mono DAC Mixer before=0 after=0
+SET rc=0 name=Stereo1 DAC MIXL DAC L1 Switch want=0 before=off after=off
+SET rc=0 name=Stereo1 DAC MIXL DAC R1 Switch want=0 before=off after=off
+SET rc=0 name=Stereo1 DAC MIXL DAC L2 Switch want=0 before=off after=off
+SET rc=0 name=Stereo1 DAC MIXL DAC R2 Switch want=0 before=off after=off
+SET rc=0 name=Stereo1 DAC MIXR DAC R1 Switch want=0 before=off after=off
+SET rc=0 name=Stereo1 DAC MIXR DAC L1 Switch want=0 before=off after=off
+SET rc=0 name=Stereo1 DAC MIXR DAC L2 Switch want=0 before=off after=off
+SET rc=0 name=Stereo1 DAC MIXR DAC R2 Switch want=0 before=off after=off
+SET rc=0 name=Mono DAC MIXL DAC L1 Switch want=0 before=off after=off
+SET rc=0 name=Mono DAC MIXL DAC R1 Switch want=0 before=off after=off
+SET rc=0 name=Mono DAC MIXL DAC L2 Switch want=0 before=off after=off
+SET rc=0 name=Mono DAC MIXL DAC R2 Switch want=0 before=off after=off
+SET rc=0 name=Mono DAC MIXR DAC L1 Switch want=0 before=off after=off
+SET rc=0 name=Mono DAC MIXR DAC R1 Switch want=0 before=off after=off
+SET rc=0 name=Mono DAC MIXR DAC L2 Switch want=0 before=off after=off
+SET rc=0 name=Mono DAC MIXR DAC R2 Switch want=0 before=off after=off
+SET rc=0 name=RECMIX1L BST1 Switch want=0 before=off after=off
+SET rc=0 name=RECMIX1R BST1 Switch want=0 before=off after=off
+SET rc=0 name=RECMIX1L BST3 Switch want=0 before=off after=off
+SET rc=0 name=RECMIX1R BST3 Switch want=0 before=off after=off
+SET rc=0 name=RECMIX1L BST4 Switch want=0 before=off after=off
+SET rc=0 name=RECMIX1R BST4 Switch want=0 before=off after=off
+SET rc=0 name=HEADPHONE Switch want=0 before=off after=off
+SET rc=0 name=RECEIVER Switch want=0 before=off after=off
+SET rc=0 name=Mono Playback Switch want=0 before=off after=off
+SET rc=0 name=HPO Playback Switch want=0 before=off after=off
+SET rc=0 name=Mono MIX DAC L2 Switch want=0 before=off after=off
+SET rc=0 name=DAC L1 Mux want=IF1 DAC1 before=0 after=0
+SET rc=0 name=DAC R1 Mux want=IF1 DAC1 before=0 after=0
+SET rc=0 name=DAC1 MIXL DAC1 Switch want=1 before=on after=on
+SET rc=0 name=DAC1 MIXR DAC1 Switch want=1 before=on after=on
+SET rc=0 name=DAC L2 Mux want=IF1 DAC2 before=0 after=0
+SET rc=0 name=Stereo1 ADC L Mux want=ADC1 L before=0 after=0
+SET rc=0 name=Stereo1 ADC R Mux want=ADC1 R before=1 after=1
+SET rc=0 name=Stereo1 ADC L1 Mux want=ADC before=1 after=1
+SET rc=0 name=Stereo1 ADC R1 Mux want=ADC before=1 after=1
+SET rc=0 name=Stereo1 ADC MIXL ADC1 Switch want=1 before=on after=on
+SET rc=0 name=Stereo1 ADC MIXR ADC1 Switch want=1 before=on after=on
+SET rc=0 name=ABOX Wakelock want=0 before=off after=off
+SET rc=0 name=ABOX UAIF0 SPK want=SIFS0 before=0 after=1
+SET rc=0 name=Stereo1 DAC MIXL DAC L1 Switch want=1 before=off after=on
+SET rc=0 name=Stereo1 DAC MIXR DAC R1 Switch want=1 before=off after=on
+SET rc=0 name=HEADPHONE Switch want=1 before=off after=on
+SET rc=0 name=DAC1 Playback Volume want=174 before=0,0 after=174,174
+SET rc=0 name=Headphone Playback Volume want=28 before=15,15 after=15,15
+SET rc=0 name=HPO Playback Switch want=1 before=off after=on
+B2M_HEADSET_SUMMARY controls=112 failed=0
+B2M_HEADSET_DAPM (no stream)
+alsa-lib parser.c:3554:(load_toplevel_config) [error.ucm] Unable to find the top-level configuration file '/usr/share/alsa/ucm2/ucm.conf'.
+alsa-lib main.c:1804:(snd_use_case_mgr_open) [error.ucm] failed to import hw:0 use case configuration -2
+B2M_HEADSET_RESTORED rc=0
+
+B2M_MIC
+SET rc=0 name=ABOX Sampling Rate Mixer Min want=48000 before=48000 after=48000
+SET rc=0 name=ABOX Sampling Rate Out1 Min want=8000 before=8000 after=8000
+SET rc=0 name=ABOX Sampling Rate Out2 Min want=8000 before=8000 after=8000
+SET rc=0 name=ABOX Sampling Rate Recp Min want=8000 before=8000 after=8000
+SET rc=0 name=ABOX Sampling Rate Inmux0 Min want=8000 before=8000 after=8000
+SET rc=0 name=ABOX Sampling Rate Inmux1 Min want=8000 before=8000 after=8000
+SET rc=0 name=ABOX Sampling Rate Inmux2 Min want=8000 before=8000 after=8000
+SET rc=0 name=ABOX Sampling Rate Inmux3 Min want=8000 before=8000 after=8000
+SET rc=0 name=ABOX Sampling Rate Inmux4 Min want=8000 before=8000 after=8000
+SET rc=0 name=ABOX UAIF0 width want=16 before=16 after=16
+SET rc=0 name=ABOX UAIF0 channel want=2 before=2 after=2
+SET rc=0 name=ABOX UAIF0 rate want=48000 before=48000 after=48000
+SET rc=0 name=ABOX UAIF1 width want=16 before=16 after=16
+SET rc=0 name=ABOX UAIF1 channel want=2 before=2 after=2
+SET rc=0 name=ABOX UAIF1 rate want=48000 before=48000 after=48000
+SET rc=0 name=ABOX UAIF2 width want=16 before=16 after=16
+SET rc=0 name=ABOX UAIF2 channel want=2 before=2 after=2
+SET rc=0 name=ABOX UAIF2 rate want=48000 before=48000 after=48000
+SET rc=0 name=ABOX UAIF4 width want=16 before=16 after=16
+SET rc=0 name=ABOX UAIF4 channel want=2 before=2 after=2
+SET rc=0 name=ABOX UAIF4 rate want=48000 before=48000 after=48000
+SET rc=0 name=ABOX SPDY width want=16 before=16 after=16
+SET rc=0 name=ABOX SPDY channel want=2 before=2 after=2
+SET rc=0 name=ABOX SPDY rate want=40000 before=40000 after=40000
+SET rc=0 name=ABOX SPUS ASRC0 want=On before=0 after=1
+SET rc=0 name=ABOX SPUS ASRC1 want=On before=1 after=1
+SET rc=0 name=ABOX SPUS ASRC2 want=On before=0 after=1
+SET rc=0 name=ABOX SPUS ASRC3 want=On before=1 after=1
+SET rc=0 name=ABOX SPUS ASRC4 want=On before=1 after=1
+SET rc=0 name=ABOX SPUS ASRC5 want=On before=1 after=1
+SET rc=0 name=ABOX SPUS ASRC6 want=On before=1 after=1
+SET rc=0 name=ABOX SPUS ASRC7 want=On before=0 after=1
+SET rc=0 name=ABOX SPUS OUT0 want=SIFS0 before=1 after=1
+SET rc=0 name=ABOX SPUS OUT1 want=SIFS0 before=1 after=1
+SET rc=0 name=ABOX SPUS OUT2 want=SIFS0 before=1 after=1
+SET rc=0 name=ABOX SPUS OUT3 want=SIFS0 before=1 after=1
+SET rc=0 name=ABOX SPUS OUT4 want=SIFS0 before=1 after=1
+SET rc=0 name=ABOX SPUS OUT5 want=SIFS0 before=1 after=1
+SET rc=0 name=ABOX SPUS OUT6 want=SIFS2 before=2 after=2
+SET rc=0 name=ABOX SPUS OUT7 want=SIFS1 before=0 after=0
+SET rc=0 name=ABOX UAIF0 SPK want=RESERVED before=0 after=0
+SET rc=0 name=ABOX UAIF1 SPK want=RESERVED before=0 after=0
+SET rc=0 name=ABOX UAIF2 SPK want=RESERVED before=0 after=0
+SET rc=0 name=ABOX SPUM ASRC0 want=On before=1 after=1
+SET rc=0 name=ABOX SPUM ASRC1 want=On before=1 after=1
+SET rc=0 name=ABOX SPUM ASRC2 want=On before=1 after=1
+SET rc=0 name=ABOX SPUM ASRC3 want=On before=0 after=1
+SET rc=0 name=ABOX RECP PIFS0 want=0 before=off after=off
+SET rc=0 name=ABOX RECP PIFS1 want=0 before=off after=off
+SET rc=0 name=ABOX SIFM0 want=WDMA before=0 after=0
+SET rc=0 name=ABOX SIFM1 want=WDMA before=0 after=0
+SET rc=0 name=ABOX SIFM2 want=WDMA before=0 after=0
+SET rc=0 name=ABOX SIFM3 want=WDMA before=0 after=0
+SET rc=0 name=ABOX NSRC0 want=RESERVED before=0 after=0
+SET rc=0 name=ABOX NSRC1 want=RESERVED before=0 after=0
+SET rc=0 name=ABOX NSRC2 want=RESERVED before=0 after=0
+SET rc=0 name=ABOX NSRC3 want=RESERVED before=0 after=0
+SET rc=0 name=ABOX ERAP info DSM On want=0 before=0 after=0
+SET rc=0 name=ABOX ERAP info Bypass On want=0 before=0 after=0
+SET rc=0 name=ABOX ERAP info USB Rx On want=0 before=0 after=0
+SET rc=0 name=ABOX ERAP info USB Tx On want=0 before=0 after=0
+SET rc=0 name=ABOX Audio Mode want=NORMAL before=0 after=0
+SET rc=0 name=DAC L1 Source want=Stereo1 DAC Mixer before=0 after=0
+SET rc=0 name=DAC R1 Source want=Stereo1 DAC Mixer before=0 after=0
+SET rc=0 name=DAC L2 Source want=Mono DAC Mixer before=0 after=0
+SET rc=0 name=DAC R2 Source want=Mono DAC Mixer before=0 after=0
+SET rc=0 name=Stereo1 DAC MIXL DAC L1 Switch want=0 before=off after=off
+SET rc=0 name=Stereo1 DAC MIXL DAC R1 Switch want=0 before=off after=off
+SET rc=0 name=Stereo1 DAC MIXL DAC L2 Switch want=0 before=off after=off
+SET rc=0 name=Stereo1 DAC MIXL DAC R2 Switch want=0 before=off after=off
+SET rc=0 name=Stereo1 DAC MIXR DAC R1 Switch want=0 before=off after=off
+SET rc=0 name=Stereo1 DAC MIXR DAC L1 Switch want=0 before=off after=off
+SET rc=0 name=Stereo1 DAC MIXR DAC L2 Switch want=0 before=off after=off
+SET rc=0 name=Stereo1 DAC MIXR DAC R2 Switch want=0 before=off after=off
+SET rc=0 name=Mono DAC MIXL DAC L1 Switch want=0 before=off after=off
+SET rc=0 name=Mono DAC MIXL DAC R1 Switch want=0 before=off after=off
+SET rc=0 name=Mono DAC MIXL DAC L2 Switch want=0 before=off after=off
+SET rc=0 name=Mono DAC MIXL DAC R2 Switch want=0 before=off after=off
+SET rc=0 name=Mono DAC MIXR DAC L1 Switch want=0 before=off after=off
+SET rc=0 name=Mono DAC MIXR DAC R1 Switch want=0 before=off after=off
+SET rc=0 name=Mono DAC MIXR DAC L2 Switch want=0 before=off after=off
+SET rc=0 name=Mono DAC MIXR DAC R2 Switch want=0 before=off after=off
+SET rc=0 name=RECMIX1L BST1 Switch want=0 before=off after=off
+SET rc=0 name=RECMIX1R BST1 Switch want=0 before=off after=off
+SET rc=0 name=RECMIX1L BST3 Switch want=0 before=off after=off
+SET rc=0 name=RECMIX1R BST3 Switch want=0 before=off after=off
+SET rc=0 name=RECMIX1L BST4 Switch want=0 before=off after=off
+SET rc=0 name=RECMIX1R BST4 Switch want=0 before=off after=off
+SET rc=0 name=HEADPHONE Switch want=0 before=off after=off
+SET rc=0 name=RECEIVER Switch want=0 before=off after=off
+SET rc=0 name=Mono Playback Switch want=0 before=off after=off
+SET rc=0 name=HPO Playback Switch want=0 before=off after=off
+SET rc=0 name=Mono MIX DAC L2 Switch want=0 before=off after=off
+SET rc=0 name=DAC L1 Mux want=IF1 DAC1 before=0 after=0
+SET rc=0 name=DAC R1 Mux want=IF1 DAC1 before=0 after=0
+SET rc=0 name=DAC1 MIXL DAC1 Switch want=1 before=on after=on
+SET rc=0 name=DAC1 MIXR DAC1 Switch want=1 before=on after=on
+SET rc=0 name=DAC L2 Mux want=IF1 DAC2 before=0 after=0
+SET rc=0 name=Stereo1 ADC L Mux want=ADC1 L before=0 after=0
+SET rc=0 name=Stereo1 ADC R Mux want=ADC1 R before=1 after=1
+SET rc=0 name=Stereo1 ADC L1 Mux want=ADC before=1 after=1
+SET rc=0 name=Stereo1 ADC R1 Mux want=ADC before=1 after=1
+SET rc=0 name=Stereo1 ADC MIXL ADC1 Switch want=1 before=on after=on
+SET rc=0 name=Stereo1 ADC MIXR ADC1 Switch want=1 before=on after=on
+SET rc=0 name=ABOX Wakelock want=0 before=off after=off
+SET rc=0 name=ABOX NSRC0 want=UAIF0 before=0 after=8
+SET rc=0 name=ABOX SIFM0 want=WDMA before=0 after=0
+SET rc=0 name=RECMIX1L BST3 Switch want=1 before=off after=on
+SET rc=0 name=RECMIX1R BST3 Switch want=1 before=off after=on
+SET rc=0 name=Stereo1 ADC L Mux want=ADC1 L before=0 after=0
+SET rc=0 name=Stereo1 ADC R Mux want=ADC1 R before=1 after=1
+SET rc=0 name=Stereo1 ADC L1 Mux want=ADC before=1 after=1
+SET rc=0 name=Stereo1 ADC R1 Mux want=ADC before=1 after=1
+SET rc=0 name=Stereo1 ADC MIXL ADC1 Switch want=1 before=on after=on
+SET rc=0 name=Stereo1 ADC MIXR ADC1 Switch want=1 before=on after=on
+SET rc=0 name=IN3 Boost Volume want=37 before=0 after=37
+SET rc=0 name=STO1 ADC Capture Volume want=38 before=47,47 after=38,38
+B2M_MIC_SUMMARY controls=117 failed=0
+mic capture start uptime=588.41
+mic capture end rc=0 uptime=596.82
+Recording WAVE '/run/b2m-stock/mic.wav' : Signed 16 bit Little Endian, Rate 48000 Hz, Stereo
+B2M_MIC_FRAMES 240000 rate 48000 channels 2
+B2M_MIC_CH0 rms_dbfs=-50.4 peak_dbfs=-33.0 dc=-0.8 hf_ratio=0.01 zero_frac=0.005
+B2M_MIC_CH1 rms_dbfs=-50.4 peak_dbfs=-33.0 dc=-0.7 hf_ratio=0.01 zero_frac=0.006
+(hf_ratio = mean squared first difference / variance: ~2 for white hiss, ~0.02 for a 1 kHz tone, lower for room/voice)
+
+B2M_MIC_SNAPSHOT uptime=590.44
+ON 14a50000.abox/dapm ABOX NSRC0: On  in 16 out 1
+ON 14a50000.abox/dapm ABOX SIFM0: On  in 16 out 1
+ON 14a50000.abox/dapm ABOX SPUM ASRC1: On  in 16 out 1
+ON 14a50000.abox/dapm ABOX WDMA1 Capture: On  in 16 out 1
+ON 14a50500.abox_uaif/dapm ABOX UAIF0 Capture: On  in 16 out 1
+ON codec:rt5665.6-001b/dapm ADC Stereo1 Filter: On  in 0 out 0 - R98(0x62) mask 0x8000
+ON codec:rt5665.6-001b/dapm ADC1 L: On  in 2 out 4
+ON codec:rt5665.6-001b/dapm ADC1 L Power: On  in 0 out 0 - R97(0x61) mask 0x10
+ON codec:rt5665.6-001b/dapm ADC1 R: On  in 2 out 4
+ON codec:rt5665.6-001b/dapm ADC1 R Power: On  in 0 out 0 - R97(0x61) mask 0x8
+ON codec:rt5665.6-001b/dapm ADC1 clock: On  in 0 out 0 - R315(0x13b) mask 0x1000
+ON codec:rt5665.6-001b/dapm AIF1_1 Capture: On  in 16 out 1
+ON codec:rt5665.6-001b/dapm AIF1_1TX: On  in 16 out 1
+ON codec:rt5665.6-001b/dapm BST3: On  in 2 out 8
+ON codec:rt5665.6-001b/dapm BST3 Power: On  in 0 out 0 - R100(0x64) mask 0x2000
+ON codec:rt5665.6-001b/dapm BST3P Power: On  in 0 out 0 - R100(0x64) mask 0x20
+closed
+B2M_CODEC_REGS
+000: 0003
+001: c8c8
+002: 8080
+003: 8000
+004: c80a
+005: 0000
+006: 0000
+007: 0000
+00a: 0000
+00b: 0000
+00c: 8000
+00d: a580
+00f: 0808
+010: 6040
+011: 0000
+012: 1404
+013: c000
+014: a60a
+015: 0404
+016: 0404
+017: 0001
+018: afaf
+019: 0000
+01a: afaf
+01b: 0011
+01c: a6a6
+01d: afaf
+01e: afaf
+01f: 0000
+020: 0000
+021: 0000
+022: 5757
+023: 0039
+026: 6064
+027: c0c0
+028: c0c0
+029: 8080
+02a: aaaa
+02b: aaaa
+02c: aba8
+02d: 0000
+02e: 0000
+02f: 0000
+030: 0000
+031: 5000
+032: 0000
+033: 0000
+034: 0000
+035: 0000
+03a: 0000
+03b: 0000
+03c: 00f7
+03d: 0000
+03e: 00f7
+03f: 0000
+040: 0000
+041: 00ff
+042: 0000
+043: 00ff
+044: 0c0c
+049: c00b
+04a: 0000
+04b: 031f
+04d: 0000
+04e: 001f
+04f: 0000
+050: 001f
+052: f000
+061: 0000
+062: 0000
+063: 503e
+064: 000c
+065: 0000
+066: 003f
+067: 0000
+06b: 0000
+06d: ff00
+06e: 2a08
+06f: 000a
+070: 8000
+071: 8000
+072: 8000
+073: 1000
+074: 7770
+075: 0002
+076: 0001
+078: 00f0
+079: 0000
+07a: 0000
+07b: 0000
+07c: 0000
+07d: 0101
+07e: 4500
+07f: 8003
+080: 4100
+081: 1f02
+082: 0800
+083: 0000
+084: 0000
+085: 0000
+086: 0008
+087: 0000
+088: 0000
+089: 0000
+08a: 0120
+08b: 0000
+08c: 0003
+08e: 0060
+08f: 1000
+091: 0026
+092: 0073
+093: 0000
+094: 0080
+098: 0000
+099: 0000
+09a: 0007
+09f: e000
+0a0: 0000
+0a1: 0002
+0a2: 0001
+0a3: 0002
+0a4: 0001
+0ae: 2040
+0af: 0000
+0b6: 000b
+0b7: c800
+0b8: 0000
+0b9: 0000
+0ba: 0002
+0bb: 2000
+0be: 1002
+0c0: 8000
+0c1: 8aaa
+0c2: 8a80
+0c3: 0003
+0c4: 0104
+0d0: 0000
+0d1: 2244
+0d3: 3300
+0d4: 2200
+0d9: 0809
+0da: 0000
+0db: 0008
+0dc: 00c0
+0dd: 6724
+0de: 3131
+0df: 0008
+0e0: 4000
+0e1: 3131
+0e2: 602c
+0ea: b320
+0eb: 0000
+0ec: b300
+0ed: 0000
+0ee: b320
+0ef: 0000
+0f0: 0211
+0f1: 0dcd
+0f2: 0ddd
+0f6: 0000
+0f7: 0000
+0f8: 0000
+0fa: 0000
+0fb: 0000
+0fc: 0000
+0fd: 0000
+0fe: 10ec
+0ff: 6451
+100: aaaa
+101: 000a
+10a: aaaa
+10b: a0a3
+10c: aeae
+10d: aaaa
+10e: aaaa
+10f: aaaa
+110: e002
+111: a602
+112: aaaa
+113: 2000
+117: 0f00
+125: 0730
+132: 0000
+133: 0000
+136: 5555
+137: 5540
+138: 3700
+139: 79a1
+13a: 2020
+13b: 2020
+13c: 2005
+13f: 0000
+145: 0002
+146: 0015
+147: 0000
+148: 0000
+150: 0000
+160: 4eff
+161: 0041
+162: 040c
+163: 0800
+164: 0000
+165: 0000
+166: 0000
+167: 000f
+170: 4e87
+171: 0041
+172: 040c
+173: 0800
+174: 00ff
+175: 0000
+190: 412d
+191: 4139
+192: 4135
+193: 413d
+194: 0000
+195: 0000
+196: 0000
+197: 0000
+198: 0000
+199: 0000
+1a0: 1e64
+1a1: 06a3
+1a2: 0000
+1a3: 0000
+1a4: 0000
+1a5: 0000
+1a6: 0000
+1a7: 0000
+1a8: 025e
+1a9: 0000
+1aa: 0063
+1ab: ff70
+1b5: 0000
+1b6: 01c3
+1b7: 02a0
+1b8: 03e9
+1b9: 1389
+1ba: c351
+1bb: 0009
+1bc: 0018
+1bd: 002a
+1be: 004c
+1bf: 0097
+1c0: 433d
+1c1: 0000
+1c2: 0000
+1c3: 0000
+1c4: 0000
+1c5: 0000
+1c6: 0000
+1c7: 0000
+1c8: 40af
+1c9: 0702
+1ca: 0000
+1cb: 0000
+1cc: 5757
+1cd: 5757
+1ce: 5757
+1cf: 5757
+1d0: 5757
+1d1: 5757
+1d2: 5757
+1d3: 5757
+1d4: 5757
+1d5: 5757
+1d6: 003c
+1da: 0000
+1db: 0003
+1dc: 0000
+1de: 7c00
+1df: 0320
+1e0: 06a1
+1e1: 0000
+1e2: 0000
+1e3: 0000
+1e4: 0000
+1e6: 0001
+1e7: 0000
+1e8: 0000
+1ea: 0103
+1eb: 0000
+1ec: 005a
+1ed: 0000
+1ee: 0332
+1ef: 001f
+1f0: fb50
+1f1: 001f
+1f2: fae4
+1f3: 00c1
+1f4: 0157
+200: 0000
+201: 0000
+202: 0000
+203: 0000
+204: 0000
+205: 0000
+206: 0000
+207: 0000
+208: 0000
+210: 2291
+211: a005
+212: 024c
+213: f7ff
+214: 0244
+215: 00f6
+216: 008b
+217: 005f
+218: a0c0
+219: 0400
+21a: 00c8
+21b: 00c0
+2ff: 0110
+300: 001f
+301: 032c
+302: 5f21
+303: 4000
+304: 4000
+305: 06d5
+306: 8000
+307: 0700
+310: 4560
+311: a4a8
+312: 7418
+313: 0000
+314: 0006
+315: ffff
+316: c400
+317: 0000
+330: 00a6
+331: 04c3
+332: 27c8
+333: bf50
+334: 0045
+335: 0007
+336: 7418
+337: 0501
+338: 0000
+339: 0010
+33a: 1010
+3c0: 7e00
+3c1: 8000
+3c2: 8000
+3c3: 8000
+3c4: 8000
+3c5: 8000
+3c6: 8000
+3c7: 8000
+3c8: 8000
+3c9: 8000
+3ca: 8000
+3cb: 8000
+3cc: 8000
+3d0: 0000
+3d1: 0000
+3d2: 0000
+3d3: 0000
+3d4: 2000
+3d5: 2000
+3d6: 0000
+3d7: 0000
+3d8: 2000
+3d9: 2000
+3da: 2000
+3db: 2000
+3dc: 0000
+3dd: 0000
+3de: 0000
+3df: 2000
+3e0: 0000
+3e1: 0000
+3e2: 0000
+3e3: 0000
+3e4: 0000
+3e5: 0000
+3e6: 0000
+3e7: 0000
+3e8: 0000
+3e9: 0000
+3ea: 0000
+3eb: 0000
+3ec: 0000
+3ed: 0000
+3ee: 0000
+3ef: 0000
+3f0: 0800
+3f1: 0800
+3f2: 0800
+3f3: 0800
+3ff: 0002
+7f0: 0000
+7fa: 0000
+B2M_SNAPSHOT_END
+alsa-lib parser.c:3554:(load_toplevel_config) [error.ucm] Unable to find the top-level configuration file '/usr/share/alsa/ucm2/ucm.conf'.
+alsa-lib main.c:1804:(snd_use_case_mgr_open) [error.ucm] failed to import hw:0 use case configuration -2
+B2M_MIC_RESTORED rc=0
+
+B2M_AFTER
+
+CMD: sh -c ls -l /proc/*/fd 2>/dev/null | grep -c /dev/snd/pcm
+0
+RC=1
+
+CMD: sh -c dmesg | grep -c -E 'Unable to handle|SError|Internal error|BUG:'
+0
+RC=1
+
+B2M_DONE
