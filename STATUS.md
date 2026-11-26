@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-26 (B2b2: firmware reached speaker-library start, still faulted; IPC handled one per 4 ms tick. B2b3 = CONFIG_HIGH_RES_TIMERS=y, built, awaiting "present, flash B2b3")
+Updated: 2026-11-26 (B2b3: high-res timers fixed the firmware IPC lag, still faulted; cause: 6.18 DT lacks the tfadsp.bin ext_bin. B2b4 = DT node only, built, awaiting "present, flash B2b4")
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -51,9 +51,11 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
   reached `ERAP out channel start - SPK_Lib_On: 1` but faulted again before `TFADSP_init` (PC=0); its log shows IPC
   messages handled one per 4 ms tick, ~75 ms behind (stock: ~0.2 ms apart). 6.18 config lacks
   `CONFIG_HIGH_RES_TIMERS`, so `abox_process_ipc()`'s `usleep_range(10, 100)` lasts a tick. Stock restored, fsck clean,
-  calibration unchanged. **Prepared B2b3:** `CONFIG_HIGH_RES_TIMERS=y` only (branch `a50-m10-b2b3-test`,
-  `tools/m10/build_b2b3.py`); `tools/m10/run_b2b3.sh 192.168.180.35` after "present, flash B2b3". Next suspect if it
-  still faults: ABOX CPU fixed at 393 MHz (no AUD DVFS) vs stock 800 MHz.
+  calibration unchanged. **B2b3** (`CONFIG_HIGH_RES_TIMERS=y`): the firmware now keeps pace with the
+  kernel but still never ran `TFADSP_init` and faulted on the first TFA message. Cause: the stock DT loads `tfadsp.bin`
+  (NXP speaker-protection library) into ABOX DRAM (`abox/ext_bin@0`, area 1, offset 0x502000); the 6.18 DT did not.
+  **Prepared B2b4:** that DT node only, boot image = B2b3 (branch `a50-m10-b2b4-test`);
+  `tools/m10/run_b2b4.sh 192.168.180.35` after "present, flash B2b4".
 - **Next B2b:** enforce existing-calibration validation at startup, review/exercise DSP transport and select stock
   routes for a supervised low-volume tone. Do not merely disable probe_only before that review/gate. Fresh owner
   presence and pre-flight required for the next flash. Temporary CMGP fixed providers are prototype only;
