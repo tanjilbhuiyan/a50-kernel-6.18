@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-29 (M10.4 C1: six Android services incl. vendor.audio-hal crash-loop with SIGSEGV on 6.18, not audio-specific; C2 fault-trace capture prepared; awaiting "present, flash C2")
+Updated: 2026-11-29 (M10.4 C2: the crash-looping services are exactly the 32-bit hwbinder ones; C3 strace capture prepared; awaiting "present, flash C3")
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -11,8 +11,9 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
 ## RESUME HERE (2026-11-26, M10.3 closed; M10.4 started)
 - **Active ticket:** `tasks/M10.4-audio-integration.md`, log `log/2026-11-26-M10.4-audio-integration.md`. **C1** (2026-11-29): vendor.audio-hal is one of six services (with cas,
   widevine, media.omx, camera provider, camera_service) dying ~0.5 s after start with SIGSEGV/SEGV_MAPERR in the
-  main thread; no tombstones. **Prepared C2:** service states + ELF classes on stock and 6.18, kernel exception trace
-  on 6.18; `tools/m10/run_m104c2.sh 192.168.0.171` after "present, flash C2".
+  main thread; no tombstones. **C2:** the six crash-looping services are exactly the 32-bit hwbinder
+  ones (32-bit plain-binder drmserver runs; 64-bit services fine). **Prepared C3:** audio and CAS HALs run once under
+  strace to place the fault address; `tools/m10/run_m104c3.sh 192.168.0.171` after "present, flash C3".
 - **M10.3 closed 2026-11-26** (`log/2026-11-22-M10.3-tfa9872.md`):
   - Earpiece audible (B2h2), loudspeaker audible through TFA9872 + ABOX speaker protection (B2b5).
   - Headset/mic paths recorded against stock (B2m).

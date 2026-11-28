@@ -1,0 +1,117 @@
+M104C2_MODE stock
+
+CMD: uname -r
+4.14.194 - Mint-user 1763150940
+RC=0
+
+CMD: cat /proc/uptime
+181.44 1309.57
+RC=0
+
+M104C2_SERVICES
+
+CMD: lxc-attach -n android -- /system/bin/sh -c
+for kv in $(getprop | sed -n "s/^\[init\.svc\.\([^]]*\)\]: \[\([^]]*\)\]$/\1=\2/p"); do
+  n=${kv%%=*}; s=${kv#*=}
+  p=$(grep -h "^service $n " /system/etc/init/*.rc /vendor/etc/init/*.rc /odm/etc/init/*.rc /system_ext/etc/init/*.rc 2>/dev/null | head -n 1 | cut -d" " -f3)
+  c=$( [ -n "$p" ] && [ -r "$p" ] && od -An -tx1 -j4 -N1 "$p" | tr -d " ")
+  echo "SVC $n state=$s class=${c:-?} bin=${p:-?}"
+done
+SVC ExynosHWCConfigs state=running class=02 bin=/vendor/bin/hw/vendor.samsung_slsi.hardware.configstore@1.0-service
+SVC ExynosHWCServiceTW state=running class=02 bin=/vendor/bin/hw/vendor.samsung_slsi.hardware.ExynosHWCServiceTW@1.0-service
+SVC android-hardware-media-c2-hal-1-1 state=running class=02 bin=/vendor/bin/hw/samsung.hardware.media.c2@1.1-default-service
+SVC ant_hal_service state=running class=02 bin=/vendor/bin/hw/com.dsi.ant@1.0-service
+SVC apexd state=stopped class=02 bin=/system/bin/apexd
+SVC apexd-bootstrap state=stopped class=02 bin=/system/bin/apexd
+SVC apexd-snapshotde state=stopped class=02 bin=/system/bin/apexd
+SVC bootanim state=stopped class=? bin=?
+SVC boringssl_self_test32 state=stopped class=? bin=?
+SVC boringssl_self_test32_vendor state=stopped class=01 bin=/vendor/bin/boringssl_self_test32
+SVC boringssl_self_test64 state=stopped class=? bin=?
+SVC boringssl_self_test64_vendor state=stopped class=02 bin=/vendor/bin/boringssl_self_test64
+SVC boringssl_self_test_apex32 state=stopped class=? bin=?
+SVC boringssl_self_test_apex64 state=stopped class=? bin=?
+SVC bpfloader state=stopped class=02 bin=/system/bin/bpfloader
+SVC camera_service state=running class=01 bin=/system/bin/camera_service
+SVC cpboot-daemon state=running class=02 bin=/vendor/bin/cbd
+SVC credstore state=running class=02 bin=/system/bin/credstore
+SVC derive_sdk state=stopped class=? bin=?
+SVC drk_hal state=running class=02 bin=/vendor/bin/hw/vendor.samsung.hardware.security.drk@2.0-service
+SVC drm state=running class=01 bin=/system/bin/drmserver
+SVC engmode_hal state=running class=02 bin=/vendor/bin/vendor.samsung.hardware.security.engmode@1.0-service
+SVC gatekeeperd state=running class=02 bin=/system/bin/gatekeeperd
+SVC gpsd state=running class=76 bin=/vendor/bin/hw/gps.sh
+SVC gpu state=running class=02 bin=/system/bin/gpuservice
+SVC health-hal-2-1-samsung state=running class=02 bin=/vendor/bin/hw/android.hardware.health@2.1-service-samsung
+SVC healthd state=running class=02 bin=/system/bin/healthd
+SVC heapprofd state=stopped class=02 bin=/system/bin/heapprofd
+SVC hidl_memory state=running class=02 bin=/system/bin/hw/android.hidl.allocator@1.0-service
+SVC hwservicemanager state=running class=02 bin=/system/bin/hwservicemanager
+SVC idmap2d state=running class=02 bin=/system/bin/idmap2d
+SVC incidentd state=running class=02 bin=/system/bin/incidentd
+SVC installd state=running class=02 bin=/system/bin/installd
+SVC iof_vendor state=stopped class=02 bin=/vendor/bin/iof_vendor
+SVC keystore state=running class=02 bin=/system/bin/keystore
+SVC logd state=running class=02 bin=/system/bin/logd
+SVC logd-auditctl state=stopped class=02 bin=/system/bin/auditctl
+SVC logd-reinit state=stopped class=02 bin=/system/bin/logd
+SVC macloader state=stopped class=02 bin=/vendor/bin/hw/macloader
+SVC media.swcodec state=running class=? bin=?
+SVC mediaextractor state=running class=02 bin=/system/bin/mediaextractor
+SVC mediametrics state=running class=02 bin=/system/bin/mediametrics
+SVC minimedia state=running class=02 bin=/system/bin/minimediaservice
+SVC netd-hal-1-1-stub state=running class=02 bin=/system/bin/hw/android.system.net.netd@1.1-service.stub
+SVC network_config state=stopped class=02 bin=/vendor/bin/secril_config_svc
+SVC proca state=running class=02 bin=/vendor/bin/vendor.samsung.hardware.security.proca@2.0-service
+SVC ril-daemon state=running class=02 bin=/vendor/bin/hw/rild
+SVC ril-daemon1 state=running class=02 bin=/vendor/bin/hw/rild
+SVC sec-camera-provider-4-0 state=running class=01 bin=/vendor/bin/hw/vendor.samsung.hardware.camera.provider@4.0-service
+SVC sec-miscpower-2-0 state=running class=02 bin=/vendor/bin/hw/vendor.samsung.hardware.miscpower@2.0-service
+SVC sec-sysinput-1-1 state=running class=02 bin=/vendor/bin/hw/vendor.samsung.hardware.sysinput@1.1-service
+SVC sec-thermal-1-0 state=running class=02 bin=/vendor/bin/hw/vendor.samsung.hardware.thermal@1.0-service
+SVC sec-vibrator-2-2 state=running class=02 bin=/vendor/bin/hw/vendor.samsung.hardware.vibrator@2.2-service
+SVC sec_gnss_service state=running class=02 bin=/vendor/bin/hw/vendor.samsung.hardware.gnss@2.0-service
+SVC secure_storage state=running class=02 bin=/vendor/bin/secure_storage_daemon
+SVC servicemanager state=running class=02 bin=/system/bin/servicemanager
+SVC sim_config state=stopped class=02 bin=/vendor/bin/secril_config_svc
+SVC slsi-ofi-1-0 state=running class=02 bin=/vendor/bin/hw/vendor.samsung_slsi.hardware.ofi@1.0-service
+SVC snap_utility_64 state=stopped class=02 bin=/vendor/bin/snap_utility_64
+SVC snapserv state=running class=02 bin=/vendor/bin/hw/vendor.samsung.hardware.snap@1.2-service
+SVC statsd state=running class=? bin=?
+SVC storaged state=running class=02 bin=/system/bin/storaged
+SVC system_suspend state=running class=02 bin=/system/bin/hw/android.system.suspend@1.0-service
+SVC tombstoned state=running class=02 bin=/system/bin/tombstoned
+SVC traced state=running class=02 bin=/system/bin/traced
+SVC traced_perf state=stopped class=02 bin=/system/bin/traced_perf
+SVC traced_probes state=running class=02 bin=/system/bin/traced_probes
+SVC tz_service state=running class=02 bin=/vendor/bin/tzdaemon
+SVC tzts_service state=running class=02 bin=/vendor/bin/tzts_daemon
+SVC ueventd state=running class=? bin=?
+SVC vaultkeeper state=running class=02 bin=/vendor/bin/vaultkeeperd
+SVC vaultkeeper_hal state=running class=02 bin=/vendor/bin/vendor.samsung.hardware.security.vaultkeeper@2.0-service
+SVC vendor.audio-hal state=running class=01 bin=/vendor/bin/hw/android.hardware.audio.service
+SVC vendor.bluetooth-1-0 state=running class=02 bin=/vendor/bin/hw/android.hardware.bluetooth@1.0-service
+SVC vendor.cas-hal-1-2 state=running class=01 bin=/vendor/bin/hw/android.hardware.cas@1.2-service
+SVC vendor.configstore-hal state=running class=02 bin=/vendor/bin/hw/android.hardware.configstore@1.1-service
+SVC vendor.drm-clearkey-hal-1-3 state=running class=02 bin=/vendor/bin/hw/android.hardware.drm@1.3-service.clearkey
+SVC vendor.drm-widevine-hal-1-3 state=running class=01 bin=/vendor/bin/hw/android.hardware.drm@1.3-service.widevine
+SVC vendor.fps_hal state=running class=02 bin=/vendor/bin/hw/vendor.samsung.hardware.biometrics.fingerprint@3.0-service
+SVC vendor.gatekeeper-1-0 state=running class=02 bin=/vendor/bin/hw/android.hardware.gatekeeper@1.0-service
+SVC vendor.gralloc-2-0 state=running class=02 bin=/vendor/bin/hw/android.hardware.graphics.allocator@2.0-service
+SVC vendor.hwcomposer-2-1 state=running class=02 bin=/vendor/bin/hw/android.hardware.graphics.composer@2.1-service
+SVC vendor.keymaster-4-0 state=running class=02 bin=/vendor/bin/hw/android.hardware.keymaster@4.0-service
+SVC vendor.media.omx state=running class=01 bin=/vendor/bin/hw/android.hardware.media.omx@1.0-service
+SVC vendor.memtrack-hal-1-0 state=running class=02 bin=/vendor/bin/hw/android.hardware.memtrack@1.0-service
+SVC vendor.samsung.hardware.hyper-default state=running class=02 bin=/vendor/bin/hw/vendor.samsung.hardware.hyper-service
+SVC vendor.samsung.hardware.light-default state=running class=02 bin=/vendor/bin/hw/vendor.samsung.hardware.light-service
+SVC vendor.samsung.power-default state=running class=02 bin=/vendor/bin/hw/android.hardware.power.samsung-service
+SVC vendor.sensors-hal-2-0-multihal state=running class=02 bin=/vendor/bin/hw/android.hardware.sensors@2.0-service.multihal
+SVC vendor.wifi_hal_ext state=running class=02 bin=/vendor/bin/hw/vendor.samsung.hardware.wifi@2.0-service
+SVC vendor.wifi_hal_legacy state=running class=02 bin=/vendor/bin/hw/android.hardware.wifi@1.0-service
+SVC vndservicemanager state=running class=02 bin=/vendor/bin/vndservicemanager
+SVC vold state=running class=02 bin=/system/bin/vold
+SVC wificond state=running class=02 bin=/system/bin/wificond
+SVC wlbtd state=running class=02 bin=/vendor/bin/wlbtd
+RC=0
+
+M104C2_DONE
