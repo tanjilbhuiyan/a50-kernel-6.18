@@ -1,0 +1,800 @@
+
+CMD: uname -r
+6.18.33-a50-diag+
+RC=0
+
+CMD: cat /proc/uptime
+150.67 869.80
+RC=0
+
+M104C1_NODES
+
+CMD: sh -c ls -l /dev/snd; cat /proc/asound/devices; cat /proc/asound/pcm
+total 0
+drwxr-xr-x  2 root root       60 Apr 30  2026 by-path
+crw-rw----+ 1 root audio 116, 14 Apr 30  2026 comprC0D5
+crw-rw----+ 1 root audio 116, 15 Apr 30  2026 controlC0
+crw-rw----+ 1 root audio 116,  2 Apr 30  2026 pcmC0D0p
+crw-rw----+ 1 root audio 116, 11 Apr 30  2026 pcmC0D10c
+crw-rw----+ 1 root audio 116, 12 Apr 30  2026 pcmC0D11c
+crw-rw----+ 1 root audio 116, 13 Apr 30  2026 pcmC0D12c
+crw-rw----+ 1 root audio 116,  3 Apr 30  2026 pcmC0D1p
+crw-rw----+ 1 root audio 116,  4 Apr 30  2026 pcmC0D2p
+crw-rw----+ 1 root audio 116,  5 Apr 30  2026 pcmC0D3p
+crw-rw----+ 1 root audio 116,  6 Apr 30  2026 pcmC0D4p
+crw-rw----+ 1 root audio 116,  7 Apr 30  2026 pcmC0D6p
+crw-rw----+ 1 root audio 116,  8 Apr 30  2026 pcmC0D7p
+crw-rw----+ 1 root audio 116,  9 Apr 30  2026 pcmC0D8c
+crw-rw----+ 1 root audio 116, 10 Apr 30  2026 pcmC0D9c
+crw-rw----+ 1 root audio 116, 33 Apr 30  2026 timer
+  2: [ 0- 0]: digital audio playback
+  3: [ 0- 1]: digital audio playback
+  4: [ 0- 2]: digital audio playback
+  5: [ 0- 3]: digital audio playback
+  6: [ 0- 4]: digital audio playback
+  7: [ 0- 6]: digital audio playback
+  8: [ 0- 7]: digital audio playback
+  9: [ 0- 8]: digital audio capture
+ 10: [ 0- 9]: digital audio capture
+ 11: [ 0-10]: digital audio capture
+ 12: [ 0-11]: digital audio capture
+ 13: [ 0-12]: digital audio capture
+ 14: [ 0- 5]: compress
+ 15: [ 0]   : control
+ 33:        : timer
+00-00: RDMA0 (*) :  : playback 1
+00-01: RDMA1 (*) :  : playback 1
+00-02: RDMA2 (*) :  : playback 1
+00-03: RDMA3 (*) :  : playback 1
+00-04: RDMA4 (*) :  : playback 1
+00-06: RDMA6 (*) :  : playback 1
+00-07: RDMA7 (*) :  : playback 1
+00-08: WDMA0 (*) :  : capture 1
+00-09: WDMA1 (*) :  : capture 1
+00-10: WDMA2 (*) :  : capture 1
+00-11: WDMA3 (*) :  : capture 1
+00-12: WDMA4 (*) :  : capture 1
+RC=0
+
+CMD: sh -c ls /proc/asound/card0; ls -d /proc/asound/card0/pcm* /proc/asound/card0/compr* 2>/dev/null
+compr5
+id
+pcm0p
+pcm10c
+pcm11c
+pcm12c
+pcm1p
+pcm2p
+pcm3p
+pcm4p
+pcm6p
+pcm7p
+pcm8c
+pcm9c
+/proc/asound/card0/compr5
+/proc/asound/card0/pcm0p
+/proc/asound/card0/pcm10c
+/proc/asound/card0/pcm11c
+/proc/asound/card0/pcm12c
+/proc/asound/card0/pcm1p
+/proc/asound/card0/pcm2p
+/proc/asound/card0/pcm3p
+/proc/asound/card0/pcm4p
+/proc/asound/card0/pcm6p
+/proc/asound/card0/pcm7p
+/proc/asound/card0/pcm8c
+/proc/asound/card0/pcm9c
+RC=0
+
+M104C1_HAL
+
+CMD: lxc-attach -n android -- /system/bin/sh -c getprop init.svc.vendor.audio-hal; getprop init.svc_debug_pid.vendor.audio-hal; getprop | grep -i -E "audio|vendor.audio" | head -n 40
+restarting
+1370
+[aaudio.hw_burst_min_usec]: [2000]
+[aaudio.mmap_exclusive_policy]: [2]
+[aaudio.mmap_policy]: [2]
+[init.svc.vendor.audio-hal]: [restarting]
+[init.svc_debug_pid.vendor.audio-hal]: [1370]
+[ro.boottime.vendor.audio-hal]: [30850968130]
+[ro.config.systemaudiodebug]: [abox]
+RC=0
+
+CMD: lxc-attach -n android -- /system/bin/sh -c ps -A -o PID,PPID,USER,NAME | grep -i -E "audio|media"
+   154      1 media        android.hardware.drm@1.3-service.clearkey
+   171      1 mediacodec   samsung.hardware.media.c2@1.1-default-service
+   257      1 mediaex      media.extractor
+   258      1 media        media.metrics
+   259      1 media        minimediaservice
+   269      1 mediacodec   media.swcodec
+  1422      1 audioserver  android.hardware.audio.service
+  1426      1 media        android.hardware.cas@1.2-service
+  1427      1 media        android.hardware.drm@1.3-service.widevine
+RC=0
+
+CMD: lxc-attach -n android -- /system/bin/sh -c ls -l /dev/snd 2>&1 | head -n 40
+total 0
+crw-rw---- 1 system audio 116,  14 2026-04-29 20:16 comprC0D5
+crw-rw---- 1 system audio 116,  15 2026-04-29 20:16 controlC0
+crw-rw---- 1 system audio 116,   2 2026-04-29 20:16 pcmC0D0p
+crw-rw---- 1 system audio 116,  11 2026-04-29 20:16 pcmC0D10c
+crw-rw---- 1 system audio 116,  12 2026-04-29 20:16 pcmC0D11c
+crw-rw---- 1 system audio 116,  13 2026-04-29 20:16 pcmC0D12c
+crw-rw---- 1 system audio 116,   3 2026-04-29 20:16 pcmC0D1p
+crw-rw---- 1 system audio 116,   4 2026-04-29 20:16 pcmC0D2p
+crw-rw---- 1 system audio 116,   5 2026-04-29 20:16 pcmC0D3p
+crw-rw---- 1 system audio 116,   6 2026-04-29 20:16 pcmC0D4p
+crw-rw---- 1 system audio 116,   7 2026-04-29 20:16 pcmC0D6p
+crw-rw---- 1 system audio 116,   8 2026-04-29 20:16 pcmC0D7p
+crw-rw---- 1 system audio 116,   9 2026-04-29 20:16 pcmC0D8c
+crw-rw---- 1 system audio 116,  10 2026-04-29 20:16 pcmC0D9c
+crw-rw---- 1 system audio 116,  33 2026-04-29 20:16 timer
+RC=0
+
+CMD: lxc-attach -n android -- /system/bin/sh -c cat /vendor/etc/init/*audio*.rc 2>/dev/null | head -n 40
+service vendor.audio-hal /vendor/bin/hw/android.hardware.audio.service
+    class hal
+    user audioserver
+    # media gid needed for /dev/fm (radio) and for /data/misc/media (tee)
+    group audio camera drmrpc inet media mediadrm net_bt net_bt_admin net_bw_acct wakelock
+    capabilities BLOCK_SUSPEND
+    ioprio rt 4
+    task_profiles ProcessCapacityHigh HighPerformance
+    onrestart restart audioserver
+RC=0
+
+M104C1_CRASH
+
+CMD: lxc-attach -n android -- /system/bin/sh -c logcat -b crash -d | tail -n 300
+--------- beginning of crash
+01-01 00:00:00.000   148   148 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff3bdfe8 in tid 148 (android.hardwar), pid 148 (android.hardwar)
+01-01 00:00:00.000   146   146 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff2adc44 in tid 146 (android.hardwar), pid 146 (android.hardwar)
+01-01 00:00:00.000   157   157 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff541b24 in tid 157 (android.hardwar), pid 157 (android.hardwar)
+01-01 00:00:00.000   172   172 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff365ff8 in tid 172 (vendor.samsung.), pid 172 (vendor.samsung.)
+01-01 00:00:00.000   262   262 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff5e2fa4 in tid 262 (android.hardwar), pid 262 (android.hardwar)
+01-01 00:00:00.000   336   336 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff160fac in tid 336 (vendor.samsung.), pid 336 (vendor.samsung.)
+01-01 00:00:00.000   251   251 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff4d9d14 in tid 251 (camera_service), pid 251 (camera_service)
+01-01 00:00:00.000   361   361 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff7dcf1c in tid 361 (android.hardwar), pid 361 (android.hardwar)
+01-01 00:00:00.000   360   360 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff1b6ec4 in tid 360 (android.hardwar), pid 360 (android.hardwar)
+01-01 00:00:00.000   362   362 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff2c6f74 in tid 362 (android.hardwar), pid 362 (android.hardwar)
+01-01 00:00:00.000   372   372 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff0a3a04 in tid 372 (android.hardwar), pid 372 (android.hardwar)
+01-01 00:00:00.000   371   371 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff7a8fe8 in tid 371 (camera_service), pid 371 (camera_service)
+01-01 00:00:00.000   402   402 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff536cac in tid 402 (vendor.samsung.), pid 402 (vendor.samsung.)
+01-01 00:00:00.000   416   416 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff400cb4 in tid 416 (android.hardwar), pid 416 (android.hardwar)
+01-01 00:00:00.000   413   413 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff747ffc in tid 413 (android.hardwar), pid 413 (android.hardwar)
+01-01 00:00:00.000   412   412 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff1c1ff4 in tid 412 (android.hardwar), pid 412 (android.hardwar)
+01-01 00:00:00.000   423   423 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff1ddf14 in tid 423 (android.hardwar), pid 423 (android.hardwar)
+01-01 00:00:00.000   422   422 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff050ff8 in tid 422 (camera_service), pid 422 (camera_service)
+01-01 00:00:00.000   450   450 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff1befac in tid 450 (vendor.samsung.), pid 450 (vendor.samsung.)
+01-01 00:00:00.000   460   460 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff317fcc in tid 460 (android.hardwar), pid 460 (android.hardwar)
+01-01 00:00:00.000   461   461 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff5459d4 in tid 461 (android.hardwar), pid 461 (android.hardwar)
+01-01 00:00:00.000   457   457 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff1effd4 in tid 457 (android.hardwar), pid 457 (android.hardwar)
+01-01 00:00:00.000   467   467 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff0d7ae4 in tid 467 (camera_service), pid 467 (camera_service)
+01-01 00:00:00.000   468   468 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff671a04 in tid 468 (android.hardwar), pid 468 (android.hardwar)
+01-01 00:00:00.000   495   495 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff4f2eac in tid 495 (vendor.samsung.), pid 495 (vendor.samsung.)
+01-01 00:00:00.000   506   506 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff0aee1c in tid 506 (android.hardwar), pid 506 (android.hardwar)
+01-01 00:00:00.000   507   507 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff1aab44 in tid 507 (android.hardwar), pid 507 (android.hardwar)
+01-01 00:00:00.000   503   503 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff277a04 in tid 503 (android.hardwar), pid 503 (android.hardwar)
+01-01 00:00:00.000   514   514 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff448ff4 in tid 514 (android.hardwar), pid 514 (android.hardwar)
+01-01 00:00:00.000   513   513 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff2a4ff0 in tid 513 (camera_service), pid 513 (camera_service)
+01-01 00:00:00.000   541   541 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff7a2c3c in tid 541 (vendor.samsung.), pid 541 (vendor.samsung.)
+01-01 00:00:00.000   551   551 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff20af8c in tid 551 (android.hardwar), pid 551 (android.hardwar)
+01-01 00:00:00.000   548   548 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff1e0f54 in tid 548 (android.hardwar), pid 548 (android.hardwar)
+01-01 00:00:00.000   552   552 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff159ea4 in tid 552 (android.hardwar), pid 552 (android.hardwar)
+01-01 00:00:00.000   558   558 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff1c0cd4 in tid 558 (camera_service), pid 558 (camera_service)
+01-01 00:00:00.000   559   559 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff19cfdc in tid 559 (android.hardwar), pid 559 (android.hardwar)
+01-01 00:00:00.000   586   586 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff5d9fe0 in tid 586 (vendor.samsung.), pid 586 (vendor.samsung.)
+01-01 00:00:00.000   598   598 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff02ac54 in tid 598 (android.hardwar), pid 598 (android.hardwar)
+01-01 00:00:00.000   595   595 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff5bdfec in tid 595 (android.hardwar), pid 595 (android.hardwar)
+01-01 00:00:00.000   594   594 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff3baed4 in tid 594 (android.hardwar), pid 594 (android.hardwar)
+01-01 00:00:00.000   606   606 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff120f74 in tid 606 (camera_service), pid 606 (camera_service)
+01-01 00:00:00.000   607   607 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff2b3d34 in tid 607 (android.hardwar), pid 607 (android.hardwar)
+01-01 00:00:00.000   634   634 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff04afec in tid 634 (vendor.samsung.), pid 634 (vendor.samsung.)
+01-01 00:00:00.000   644   644 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff139eec in tid 644 (android.hardwar), pid 644 (android.hardwar)
+01-01 00:00:00.000   645   645 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff216ac4 in tid 645 (android.hardwar), pid 645 (android.hardwar)
+01-01 00:00:00.000   641   641 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff12aee4 in tid 641 (android.hardwar), pid 641 (android.hardwar)
+01-01 00:00:00.000   652   652 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff17cd84 in tid 652 (android.hardwar), pid 652 (android.hardwar)
+01-01 00:00:00.000   651   651 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff40ea44 in tid 651 (camera_service), pid 651 (camera_service)
+01-01 00:00:00.000   679   679 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff690f7c in tid 679 (vendor.samsung.), pid 679 (vendor.samsung.)
+01-01 00:00:00.000   691   691 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff571be4 in tid 691 (android.hardwar), pid 691 (android.hardwar)
+01-01 00:00:00.000   688   688 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff170f7c in tid 688 (android.hardwar), pid 688 (android.hardwar)
+01-01 00:00:00.000   687   687 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff3eafe8 in tid 687 (android.hardwar), pid 687 (android.hardwar)
+01-01 00:00:00.000   697   697 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff2f4cf4 in tid 697 (camera_service), pid 697 (camera_service)
+01-01 00:00:00.000   698   698 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff057ff8 in tid 698 (android.hardwar), pid 698 (android.hardwar)
+01-01 00:00:00.000   725   725 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff029e3c in tid 725 (vendor.samsung.), pid 725 (vendor.samsung.)
+01-01 00:00:00.000   733   733 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff6f4e8c in tid 733 (android.hardwar), pid 733 (android.hardwar)
+01-01 00:00:00.000   736   736 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff294cb4 in tid 736 (android.hardwar), pid 736 (android.hardwar)
+01-01 00:00:00.000   732   732 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff746ac4 in tid 732 (android.hardwar), pid 732 (android.hardwar)
+01-01 00:00:00.000   742   742 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff6f8e74 in tid 742 (camera_service), pid 742 (camera_service)
+01-01 00:00:00.000   743   743 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff3c4e74 in tid 743 (android.hardwar), pid 743 (android.hardwar)
+01-01 00:00:00.000   770   770 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff221f3c in tid 770 (vendor.samsung.), pid 770 (vendor.samsung.)
+01-01 00:00:00.000   778   778 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff3a8ce4 in tid 778 (android.hardwar), pid 778 (android.hardwar)
+01-01 00:00:00.000   781   781 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff1f4c9c in tid 781 (android.hardwar), pid 781 (android.hardwar)
+01-01 00:00:00.000   782   782 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff5e8fd4 in tid 782 (android.hardwar), pid 782 (android.hardwar)
+01-01 00:00:00.000   789   789 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff476e74 in tid 789 (android.hardwar), pid 789 (android.hardwar)
+01-01 00:00:00.000   788   788 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff545fe8 in tid 788 (camera_service), pid 788 (camera_service)
+01-01 00:00:00.000   816   816 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff499f2c in tid 816 (vendor.samsung.), pid 816 (vendor.samsung.)
+01-01 00:00:00.000   824   824 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff662f0c in tid 824 (android.hardwar), pid 824 (android.hardwar)
+01-01 00:00:00.000   827   827 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff4ddb14 in tid 827 (android.hardwar), pid 827 (android.hardwar)
+01-01 00:00:00.000   823   823 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff254ec4 in tid 823 (android.hardwar), pid 823 (android.hardwar)
+01-01 00:00:00.000   833   833 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff1b2ff4 in tid 833 (camera_service), pid 833 (camera_service)
+01-01 00:00:00.000   834   834 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff77cd44 in tid 834 (android.hardwar), pid 834 (android.hardwar)
+01-01 00:00:00.000   861   861 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff5daff4 in tid 861 (vendor.samsung.), pid 861 (vendor.samsung.)
+01-01 00:00:00.000   873   873 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff0f9c94 in tid 873 (android.hardwar), pid 873 (android.hardwar)
+01-01 00:00:00.000   870   870 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff2fceec in tid 870 (android.hardwar), pid 870 (android.hardwar)
+01-01 00:00:00.000   869   869 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff435b64 in tid 869 (android.hardwar), pid 869 (android.hardwar)
+01-01 00:00:00.000   880   880 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff4d1fec in tid 880 (android.hardwar), pid 880 (android.hardwar)
+01-01 00:00:00.000   879   879 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff329e74 in tid 879 (camera_service), pid 879 (camera_service)
+01-01 00:00:00.000   907   907 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff389fec in tid 907 (vendor.samsung.), pid 907 (vendor.samsung.)
+01-01 00:00:00.000   914   914 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff2eefd8 in tid 914 (android.hardwar), pid 914 (android.hardwar)
+01-01 00:00:00.000   917   917 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff5dcffc in tid 917 (android.hardwar), pid 917 (android.hardwar)
+01-01 00:00:00.000   918   918 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff15fd44 in tid 918 (android.hardwar), pid 918 (android.hardwar)
+01-01 00:00:00.000   925   925 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff7eeffc in tid 925 (android.hardwar), pid 925 (android.hardwar)
+01-01 00:00:00.000   924   924 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff67ab34 in tid 924 (camera_service), pid 924 (camera_service)
+01-01 00:00:00.000   952   952 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff4d1fe8 in tid 952 (vendor.samsung.), pid 952 (vendor.samsung.)
+01-01 00:00:00.000   964   964 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff676f34 in tid 964 (android.hardwar), pid 964 (android.hardwar)
+01-01 00:00:00.000   960   960 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff5f8bb4 in tid 960 (android.hardwar), pid 960 (android.hardwar)
+01-01 00:00:00.000   963   963 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff1edb2c in tid 963 (android.hardwar), pid 963 (android.hardwar)
+01-01 00:00:00.000   971   971 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff01fff8 in tid 971 (android.hardwar), pid 971 (android.hardwar)
+01-01 00:00:00.000   970   970 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff69bf94 in tid 970 (camera_service), pid 970 (camera_service)
+01-01 00:00:00.000   998   998 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff1e7d9c in tid 998 (vendor.samsung.), pid 998 (vendor.samsung.)
+01-01 00:00:00.000  1005  1005 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff091ff4 in tid 1005 (android.hardwar), pid 1005 (android.hardwar)
+01-01 00:00:00.000  1009  1009 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff5ecab4 in tid 1009 (android.hardwar), pid 1009 (android.hardwar)
+01-01 00:00:00.000  1008  1008 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff7a4cfc in tid 1008 (android.hardwar), pid 1008 (android.hardwar)
+01-01 00:00:00.000  1015  1015 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff675ffc in tid 1015 (camera_service), pid 1015 (camera_service)
+01-01 00:00:00.000  1016  1016 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff07dfec in tid 1016 (android.hardwar), pid 1016 (android.hardwar)
+01-01 00:00:00.000  1043  1043 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff040f4c in tid 1043 (vendor.samsung.), pid 1043 (vendor.samsung.)
+01-01 00:00:00.000  1052  1052 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff438ebc in tid 1052 (android.hardwar), pid 1052 (android.hardwar)
+01-01 00:00:00.000  1051  1051 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff414f54 in tid 1051 (android.hardwar), pid 1051 (android.hardwar)
+01-01 00:00:00.000  1055  1055 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff035f84 in tid 1055 (android.hardwar), pid 1055 (android.hardwar)
+01-01 00:00:00.000  1062  1062 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff539ca4 in tid 1062 (android.hardwar), pid 1062 (android.hardwar)
+01-01 00:00:00.000  1061  1061 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff0f1a24 in tid 1061 (camera_service), pid 1061 (camera_service)
+01-01 00:00:00.000  1089  1089 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff7b3d9c in tid 1089 (vendor.samsung.), pid 1089 (vendor.samsung.)
+01-01 00:00:00.000  1097  1097 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff69aff0 in tid 1097 (android.hardwar), pid 1097 (android.hardwar)
+01-01 00:00:00.000  1100  1100 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff5eaff8 in tid 1100 (android.hardwar), pid 1100 (android.hardwar)
+01-01 00:00:00.000  1096  1096 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff0a3d34 in tid 1096 (android.hardwar), pid 1096 (android.hardwar)
+01-01 00:00:00.000  1107  1107 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff525fc8 in tid 1107 (android.hardwar), pid 1107 (android.hardwar)
+01-01 00:00:00.000  1106  1106 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff4f0c34 in tid 1106 (camera_service), pid 1106 (camera_service)
+01-01 00:00:00.000  1134  1134 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff480fe8 in tid 1134 (vendor.samsung.), pid 1134 (vendor.samsung.)
+01-01 00:00:00.000  1148  1148 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff584fd0 in tid 1148 (android.hardwar), pid 1148 (android.hardwar)
+01-01 00:00:00.000  1145  1145 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff4eeffc in tid 1145 (android.hardwar), pid 1145 (android.hardwar)
+01-01 00:00:00.000  1143  1143 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff39ce64 in tid 1143 (android.hardwar), pid 1143 (android.hardwar)
+01-01 00:00:00.000  1155  1155 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff06bf54 in tid 1155 (android.hardwar), pid 1155 (android.hardwar)
+01-01 00:00:00.000  1154  1154 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff48ab54 in tid 1154 (camera_service), pid 1154 (camera_service)
+01-01 00:00:00.000  1182  1182 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff1c5a5c in tid 1182 (vendor.samsung.), pid 1182 (vendor.samsung.)
+01-01 00:00:00.000  1192  1192 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff445ecc in tid 1192 (android.hardwar), pid 1192 (android.hardwar)
+01-01 00:00:00.000  1193  1193 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff4cbaf4 in tid 1193 (android.hardwar), pid 1193 (android.hardwar)
+01-01 00:00:00.000  1189  1189 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff5c9f24 in tid 1189 (android.hardwar), pid 1189 (android.hardwar)
+01-01 00:00:00.000  1199  1199 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff204fe4 in tid 1199 (camera_service), pid 1199 (camera_service)
+01-01 00:00:00.000  1200  1200 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff3dbffc in tid 1200 (android.hardwar), pid 1200 (android.hardwar)
+01-01 00:00:00.000  1227  1227 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff29cb2c in tid 1227 (vendor.samsung.), pid 1227 (vendor.samsung.)
+01-01 00:00:00.000  1239  1239 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff6b9e54 in tid 1239 (android.hardwar), pid 1239 (android.hardwar)
+01-01 00:00:00.000  1235  1235 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff501bf4 in tid 1235 (android.hardwar), pid 1235 (android.hardwar)
+01-01 00:00:00.000  1238  1238 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff0a8bec in tid 1238 (android.hardwar), pid 1238 (android.hardwar)
+01-01 00:00:00.000  1246  1246 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff2e9a14 in tid 1246 (android.hardwar), pid 1246 (android.hardwar)
+01-01 00:00:00.000  1245  1245 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff124fb8 in tid 1245 (camera_service), pid 1245 (camera_service)
+01-01 00:00:00.000  1273  1273 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff0a1ffc in tid 1273 (vendor.samsung.), pid 1273 (vendor.samsung.)
+01-01 00:00:00.000  1284  1284 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff5b6ff8 in tid 1284 (android.hardwar), pid 1284 (android.hardwar)
+01-01 00:00:00.000  1279  1279 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff5b0d34 in tid 1279 (android.hardwar), pid 1279 (android.hardwar)
+01-01 00:00:00.000  1283  1283 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff102fd0 in tid 1283 (android.hardwar), pid 1283 (android.hardwar)
+01-01 00:00:00.000  1291  1291 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff188d84 in tid 1291 (android.hardwar), pid 1291 (android.hardwar)
+01-01 00:00:00.000  1290  1290 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff129c14 in tid 1290 (camera_service), pid 1290 (camera_service)
+01-01 00:00:00.000  1318  1318 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff379b5c in tid 1318 (vendor.samsung.), pid 1318 (vendor.samsung.)
+01-01 00:00:00.000  1327  1327 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff1e6aac in tid 1327 (android.hardwar), pid 1327 (android.hardwar)
+01-01 00:00:00.000  1330  1330 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff462fe0 in tid 1330 (android.hardwar), pid 1330 (android.hardwar)
+01-01 00:00:00.000  1325  1325 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff49fd14 in tid 1325 (android.hardwar), pid 1325 (android.hardwar)
+01-01 00:00:00.000  1337  1337 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff1c0ed4 in tid 1337 (android.hardwar), pid 1337 (android.hardwar)
+01-01 00:00:00.000  1336  1336 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff2b6ec4 in tid 1336 (camera_service), pid 1336 (camera_service)
+01-01 00:00:00.000  1364  1364 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff3aeebc in tid 1364 (vendor.samsung.), pid 1364 (vendor.samsung.)
+01-01 00:00:00.000  1372  1372 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff04bfec in tid 1372 (android.hardwar), pid 1372 (android.hardwar)
+01-01 00:00:00.000  1370  1370 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff15dff0 in tid 1370 (android.hardwar), pid 1370 (android.hardwar)
+01-01 00:00:00.000  1375  1375 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff06aa64 in tid 1375 (android.hardwar), pid 1375 (android.hardwar)
+01-01 00:00:00.000  1382  1382 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff06bfd4 in tid 1382 (android.hardwar), pid 1382 (android.hardwar)
+01-01 00:00:00.000  1381  1381 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff7d3e04 in tid 1381 (camera_service), pid 1381 (camera_service)
+01-01 00:00:00.000  1409  1409 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff622c9c in tid 1409 (vendor.samsung.), pid 1409 (vendor.samsung.)
+01-01 00:00:00.000  1422  1422 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff30afe8 in tid 1422 (android.hardwar), pid 1422 (android.hardwar)
+01-01 00:00:00.000  1427  1427 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0xff18a9c4 in tid 1427 (android.hardwar), pid 1427 (android.hardwar)
+RC=0
+
+M104C1_TOMBSTONE
+
+CMD: lxc-attach -n android -- /system/bin/sh -c ls -lt /data/tombstones 2>&1 | head -n 12; t=$(ls -t /data/tombstones/tombstone_* 2>/dev/null | grep -v "\.pb$" | head -n 1); echo "newest=$t"; [ -n "$t" ] && head -n 160 "$t"
+total 0
+newest=
+RC=1
+
+M104C1_LOGCAT
+
+CMD: lxc-attach -n android -- /system/bin/sh -c logcat -d -b main,system -v threadtime | grep -i -E "audio|primary|tinyalsa|mixer|abox|AudioHAL|DEBUG  |libc    " | head -n 400
+11-28 18:03:36.292    23    23 W libc    : Unable to set property "ro.radio.noril" to "no": error code: 0xb
+11-28 18:03:36.832   258   258 I libc    : malloc_limit: Allocation limit enabled, max size 134217728 bytes
+11-28 18:03:36.851   258   258 D AudioPowerUsage: AudioPowerUsage
+11-28 18:03:36.851   258   258 D AudioAnalytics: AudioAnalytics
+11-28 18:03:37.359   265   265 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:03:37.361   265   265 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:03:37.375   264   264 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:03:37.376   264   264 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:03:37.408   265   265 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:03:37.411   265   265 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:03:37.627   257   257 I libc    : malloc_limit: Allocation limit enabled, max size 724511120 bytes
+11-28 18:03:41.725   374   374 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:03:41.726   374   374 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:03:41.732   374   374 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:03:41.732   374   374 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:03:41.790   373   373 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:03:41.790   373   373 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:03:41.803   373   373 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:03:41.804   373   373 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:03:44.173   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:44.238   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:44.256   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:44.271   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:44.295   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:44.361   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:44.374   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:44.390   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:44.455   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:44.471   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:44.555   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:44.571   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:44.654   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:44.671   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:44.688   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:44.754   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:44.772   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:44.788   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:44.805   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:44.838   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:44.855   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:44.871   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:44.889   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:44.971   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:44.988   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:45.071   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:45.088   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:45.171   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:45.188   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:45.271   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:45.288   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:45.488   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:45.504   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:45.671   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:45.688   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:45.788   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:45.805   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:46.244   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:46.268   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:46.300   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:46.541   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:46.554   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:46.569   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:46.597   160   217 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:46.664   160   217 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:46.682   160   217 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:46.697   160   217 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:46.730   160   217 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:46.747   160   217 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:46.794   160   217 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:46.818   425   425 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:03:46.818   425   425 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:03:46.824   160   217 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:46.827   425   425 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:03:46.827   425   425 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:03:46.839   160   217 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:46.991   160   217 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:47.014   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:47.020   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:47.021   424   424 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:03:47.021   424   424 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:03:47.033   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:47.043   424   424 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:03:47.043   424   424 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:03:47.050   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:47.287   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:47.299   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:47.381   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:47.398   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:47.488   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:47.504   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:47.679   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:47.695   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:47.795   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:47.811   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:48.163   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:48.178   160   217 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:48.292   160   217 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:48.310   160   217 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:48.672   160   217 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:48.688   160   217 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:48.704   160   217 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:48.788   160   217 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:48.806   160   217 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:49.291   160   217 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:49.304   160   217 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:49.323   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:49.491   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:49.508   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:49.574   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:49.593   160   217 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:49.607   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:49.623   160   217 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:49.639   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:49.657   160   217 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:49.673   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:49.690   160   217 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:49.708   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:49.788   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:49.804   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:49.854   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:49.870   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:50.287   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:50.303   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:50.370   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:50.387   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:50.675   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:50.690   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:50.707   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:50.794   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:50.813   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:51.286   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:51.302   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:51.385   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:51.404   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:51.453   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:51.469   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:51.485   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:51.501   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:51.676   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:51.707   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:51.726   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:51.737   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:51.752   469   469 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:03:51.752   469   469 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:03:51.754   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:51.760   469   469 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:03:51.760   469   469 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:03:51.767   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:51.805   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:51.807   470   470 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:03:51.807   470   470 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:03:51.815   470   470 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:03:51.816   470   470 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:03:51.819   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:52.065   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:52.082   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:52.296   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:52.313   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:52.676   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:52.694   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:52.710   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:52.793   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:52.810   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:52.826   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:52.842   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:52.872   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:52.880   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:52.909   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:53.291   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:53.308   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:53.372   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:53.388   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:53.488   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:53.504   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:53.672   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:53.688   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:53.704   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:53.805   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:53.823   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:54.287   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:54.304   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:54.338   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:54.354   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:54.673   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:54.690   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:54.706   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:54.798   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:54.813   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:54.832   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:55.324   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:55.346   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:55.490   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:55.513   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:55.687   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:55.709   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:55.807   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:55.837   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:56.251   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:56.267   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:56.334   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:56.352   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:56.383   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:56.405   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:56.485   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:56.500   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:56.691   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:56.703   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:56.719   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:56.804   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:56.813   515   515 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:03:56.813   515   515 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:03:56.821   515   515 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:03:56.821   515   515 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:03:56.822   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:57.001   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:57.004   516   516 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:03:57.004   516   516 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:03:57.011   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:57.035   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:57.045   516   516 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:03:57.045   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:57.046   516   516 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:03:57.068   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:57.183   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:57.207   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:57.334   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:57.348   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:57.363   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:57.383   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:57.411   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:57.499   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:57.646   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:57.810   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:57.818   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:57.849   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:58.259   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:58.894   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:59.328   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:59.345   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:59.378   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:59.394   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:59.511   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:59.529   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:59.668   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:59.919   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:03:59.975   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:04:00.417   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:04:01.229   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:04:01.327   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:04:01.425   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:04:01.477   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:04:01.493   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:04:01.510   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:04:01.528   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:04:01.753   561   561 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:01.753   561   561 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:01.759   561   561 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:01.759   561   561 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:01.820   560   560 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:01.821   560   560 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:01.835   560   560 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:01.835   560   560 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:04.252   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:04:04.343   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:04:04.361   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:04:04.376   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:04:04.527   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:04:06.754   609   609 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:06.755   609   609 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:06.761   609   609 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:06.761   609   609 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:06.889   608   608 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:06.889   608   608 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:06.909   608   608 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:06.909   608   608 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:11.762   654   654 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:11.762   654   654 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:11.768   654   654 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:11.769   654   654 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:11.843   653   653 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:11.844   653   653 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:11.858   653   653 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:11.858   653   653 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:16.769   700   700 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:16.769   700   700 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:16.775   700   700 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:16.775   700   700 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:16.831   699   699 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:16.831   699   699 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:16.846   699   699 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:16.846   699   699 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:21.773   744   744 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:21.773   744   744 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:21.780   744   744 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:21.780   744   744 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:21.864   745   745 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:21.865   745   745 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:21.881   745   745 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:21.882   745   745 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:26.771   791   791 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:26.772   791   791 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:26.778   791   791 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:26.778   791   791 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:26.881   790   790 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:26.882   790   790 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:26.901   790   790 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:26.901   790   790 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:31.784   835   835 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:31.784   835   835 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:31.791   835   835 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:31.791   835   835 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:31.797   836   836 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:31.804   836   836 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:31.810   836   836 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:31.818   836   836 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:36.784   882   882 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:36.784   882   882 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:36.790   882   882 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:36.790   882   882 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:36.894   881   881 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:36.894   881   881 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:36.912   881   881 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:36.913   881   881 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:41.788   927   927 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:41.788   927   927 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:41.794   927   927 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:41.794   927   927 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:41.865   926   926 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:41.865   926   926 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:41.880   926   926 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:41.880   926   926 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:45.745    42   959 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.media.c2@1.0::IComponentStore/default": error code: 0x20
+11-28 18:04:46.747    42   975 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.media.c2@1.0::IComponentStore/default": error code: 0x20
+11-28 18:04:46.788   972   972 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:46.788   972   972 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:46.795   972   972 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:46.795   972   972 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:46.874   973   973 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:46.874   973   973 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:46.891   973   973 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:46.894   973   973 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:47.748    42   996 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.media.c2@1.0::IComponentStore/default": error code: 0x20
+11-28 18:04:48.749    42  1000 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.media.c2@1.0::IComponentStore/default": error code: 0x20
+11-28 18:04:49.749    42  1002 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.media.c2@1.0::IComponentStore/default": error code: 0x20
+11-28 18:04:50.750    42  1004 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.media.c2@1.0::IComponentStore/default": error code: 0x20
+11-28 18:04:51.752    42  1020 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.media.c2@1.0::IComponentStore/default": error code: 0x20
+11-28 18:04:51.794  1017  1017 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:51.794  1017  1017 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:51.795  1018  1018 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:51.795  1018  1018 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:51.800  1017  1017 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:51.800  1017  1017 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:51.806  1018  1018 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:51.811  1018  1018 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:52.754    42  1041 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.media.c2@1.0::IComponentStore/default": error code: 0x20
+11-28 18:04:53.755    42  1045 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.media.c2@1.0::IComponentStore/default": error code: 0x20
+11-28 18:04:54.756    42  1048 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.media.c2@1.0::IComponentStore/default": error code: 0x20
+11-28 18:04:55.757    42  1050 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.media.c2@1.0::IComponentStore/default": error code: 0x20
+11-28 18:04:56.759    42  1066 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.media.c2@1.0::IComponentStore/default": error code: 0x20
+11-28 18:04:56.796  1063  1063 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:56.796  1063  1063 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:56.801  1063  1063 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:56.802  1063  1063 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:56.878  1064  1064 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:56.879  1064  1064 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:56.893  1064  1064 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:04:56.893  1064  1064 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:04:57.760    42  1087 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.media.c2@1.0::IComponentStore/default": error code: 0x20
+11-28 18:04:58.760    42  1091 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.media.c2@1.0::IComponentStore/default": error code: 0x20
+11-28 18:04:59.761    42  1093 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.media.c2@1.0::IComponentStore/default": error code: 0x20
+11-28 18:05:00.067   160   397 I hwcomposer: PrimaryDisplay:: acceptDisplayChanges was not called
+11-28 18:05:00.762    42  1095 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.media.c2@1.0::IComponentStore/default": error code: 0x20
+11-28 18:05:01.764    42  1111 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.media.c2@1.0::IComponentStore/default": error code: 0x20
+11-28 18:05:01.799  1108  1108 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:05:01.800  1108  1108 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:05:01.804  1109  1109 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:05:01.804  1109  1109 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:05:01.806  1108  1108 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:05:01.806  1108  1108 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:05:01.811  1109  1109 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:05:01.811  1109  1109 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:05:02.765    42  1132 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.media.c2@1.0::IComponentStore/default": error code: 0x20
+11-28 18:05:03.766    42  1136 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.media.c2@1.0::IComponentStore/default": error code: 0x20
+11-28 18:05:04.767    42  1139 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.media.c2@1.0::IComponentStore/default": error code: 0x20
+11-28 18:05:05.768    42  1142 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.media.c2@1.0::IComponentStore/default": error code: 0x20
+11-28 18:05:06.769    42  1159 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.media.c2@1.0::IComponentStore/default": error code: 0x20
+11-28 18:05:06.811  1157  1157 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:05:06.811  1157  1157 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:05:06.817  1157  1157 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:05:06.817  1157  1157 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:05:06.913  1156  1156 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:05:06.913  1156  1156 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:05:06.932  1156  1156 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+11-28 18:05:06.932  1156  1156 W libc    : Unable to set property "ro.ril.svdo" to "false": error code: 0xb
+11-28 18:05:07.769    42  1180 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.media.c2@1.0::IComponentStore/default": error code: 0x20
+11-28 18:05:08.770    42  1184 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.media.c2@1.0::IComponentStore/default": error code: 0x20
+11-28 18:05:09.771    42  1186 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.media.c2@1.0::IComponentStore/default": error code: 0x20
+11-28 18:05:10.772    42  1188 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.media.c2@1.0::IComponentStore/default": error code: 0x20
+11-28 18:05:11.776    42  1204 W libc    : Unable to set property "ctl.interface_start" to "android.hardware.media.c2@1.0::IComponentStore/default": error code: 0x20
+11-28 18:05:11.892  1202  1202 W libc    : Unable to set property "ro.ril.svlte1x" to "false": error code: 0xb
+RC=0
+
+M104C1_KERNEL
+
+CMD: sh -c dmesg | grep -a -E 'audio-hal|vendor.audio|signal 11|abox|rt5665|tfa98xx' | grep -v -i mali | tail -n 80
+[  113.232494] init: Service 'sec-camera-provider-4-0' (pid 1089) received signal 11
+[  115.909657] init: starting service 'vendor.audio-hal'...
+[  115.913766] init: createProcessGroup(1041, 1096) failed for service 'vendor.audio-hal': Read-only file system
+[  116.060682] init: Service 'vendor.cas-hal-1-2' (pid 1097) received signal 11
+[  116.117837] init: Service 'vendor.drm-widevine-hal-1-3' (pid 1100) received signal 11
+[  116.409425] init: Service 'vendor.audio-hal' (pid 1096) received signal 11
+[  116.409479] init: Sending signal 9 to service 'vendor.audio-hal' (pid 1096) process group...
+[  116.409906] init: Command 'restart audioserver' action=onrestart (<Service 'vendor.audio-hal' onrestart>:1) took 0ms and failed: service audioserver not found
+[  117.249072] init: Service 'vendor.media.omx' (pid 1107) received signal 11
+[  117.424551] init: Service 'camera_service' (pid 1106) received signal 11
+[  118.239829] init: Service 'sec-camera-provider-4-0' (pid 1134) received signal 11
+[  120.913232] init: starting service 'vendor.audio-hal'...
+[  120.916762] init: createProcessGroup(1041, 1143) failed for service 'vendor.audio-hal': Read-only file system
+[  121.129777] init: Service 'vendor.drm-widevine-hal-1-3' (pid 1148) received signal 11
+[  121.342127] init: Service 'vendor.cas-hal-1-2' (pid 1145) received signal 11
+[  121.371546] init: Service 'vendor.audio-hal' (pid 1143) received signal 11
+[  121.371600] init: Sending signal 9 to service 'vendor.audio-hal' (pid 1143) process group...
+[  121.372213] init: Command 'restart audioserver' action=onrestart (<Service 'vendor.audio-hal' onrestart>:1) took 0ms and failed: service audioserver not found
+[  122.012035] init: Service 'vendor.media.omx' (pid 1155) received signal 11
+[  122.277987] init: Service 'camera_service' (pid 1154) received signal 11
+[  123.238766] init: Service 'sec-camera-provider-4-0' (pid 1182) received signal 11
+[  125.917316] init: starting service 'vendor.audio-hal'...
+[  125.920629] init: createProcessGroup(1041, 1189) failed for service 'vendor.audio-hal': Read-only file system
+[  126.071018] init: Service 'vendor.cas-hal-1-2' (pid 1192) received signal 11
+[  126.125337] init: Service 'vendor.drm-widevine-hal-1-3' (pid 1193) received signal 11
+[  126.216287] init: Service 'vendor.audio-hal' (pid 1189) received signal 11
+[  126.216345] init: Sending signal 9 to service 'vendor.audio-hal' (pid 1189) process group...
+[  126.216918] init: Command 'restart audioserver' action=onrestart (<Service 'vendor.audio-hal' onrestart>:1) took 0ms and failed: service audioserver not found
+[  127.018037] init: Service 'camera_service' (pid 1199) received signal 11
+[  127.025868] init: Service 'vendor.media.omx' (pid 1200) received signal 11
+[  128.237838] init: Service 'sec-camera-provider-4-0' (pid 1227) received signal 11
+[  130.920997] init: starting service 'vendor.audio-hal'...
+[  130.922518] init: createProcessGroup(1041, 1235) failed for service 'vendor.audio-hal': Read-only file system
+[  131.155673] init: Service 'vendor.drm-widevine-hal-1-3' (pid 1239) received signal 11
+[  131.177641] init: Service 'vendor.audio-hal' (pid 1235) received signal 11
+[  131.177667] init: Sending signal 9 to service 'vendor.audio-hal' (pid 1235) process group...
+[  131.178010] init: Command 'restart audioserver' action=onrestart (<Service 'vendor.audio-hal' onrestart>:1) took 0ms and failed: service audioserver not found
+[  131.210294] init: Service 'vendor.cas-hal-1-2' (pid 1238) received signal 11
+[  132.013936] init: Service 'vendor.media.omx' (pid 1246) received signal 11
+[  132.442941] init: Service 'camera_service' (pid 1245) received signal 11
+[  133.238880] init: Service 'sec-camera-provider-4-0' (pid 1273) received signal 11
+[  135.923680] init: starting service 'vendor.audio-hal'...
+[  135.925753] init: createProcessGroup(1041, 1279) failed for service 'vendor.audio-hal': Read-only file system
+[  136.131729] init: Service 'vendor.drm-widevine-hal-1-3' (pid 1284) received signal 11
+[  136.181721] init: Service 'vendor.audio-hal' (pid 1279) received signal 11
+[  136.181755] init: Sending signal 9 to service 'vendor.audio-hal' (pid 1279) process group...
+[  136.182006] init: Command 'restart audioserver' action=onrestart (<Service 'vendor.audio-hal' onrestart>:1) took 0ms and failed: service audioserver not found
+[  136.326300] init: Service 'vendor.cas-hal-1-2' (pid 1283) received signal 11
+[  137.015785] init: Service 'vendor.media.omx' (pid 1291) received signal 11
+[  137.458115] init: Service 'camera_service' (pid 1290) received signal 11
+[  138.243358] init: Service 'sec-camera-provider-4-0' (pid 1318) received signal 11
+[  140.926276] init: starting service 'vendor.audio-hal'...
+[  140.927846] init: createProcessGroup(1041, 1325) failed for service 'vendor.audio-hal': Read-only file system
+[  141.074877] init: Service 'vendor.cas-hal-1-2' (pid 1327) received signal 11
+[  141.298824] init: Service 'vendor.drm-widevine-hal-1-3' (pid 1330) received signal 11
+[  141.450266] init: Service 'vendor.audio-hal' (pid 1325) received signal 11
+[  141.450299] init: Sending signal 9 to service 'vendor.audio-hal' (pid 1325) process group...
+[  141.450549] init: Command 'restart audioserver' action=onrestart (<Service 'vendor.audio-hal' onrestart>:1) took 0ms and failed: service audioserver not found
+[  142.019801] init: Service 'vendor.media.omx' (pid 1337) received signal 11
+[  142.450766] init: Service 'camera_service' (pid 1336) received signal 11
+[  143.242699] init: Service 'sec-camera-provider-4-0' (pid 1364) received signal 11
+[  145.928963] init: starting service 'vendor.audio-hal'...
+[  145.930627] init: createProcessGroup(1041, 1370) failed for service 'vendor.audio-hal': Read-only file system
+[  146.077124] init: Service 'vendor.cas-hal-1-2' (pid 1372) received signal 11
+[  146.383866] init: Service 'vendor.audio-hal' (pid 1370) received signal 11
+[  146.383896] init: Sending signal 9 to service 'vendor.audio-hal' (pid 1370) process group...
+[  146.384131] init: Command 'restart audioserver' action=onrestart (<Service 'vendor.audio-hal' onrestart>:1) took 0ms and failed: service audioserver not found
+[  146.431495] init: Service 'vendor.drm-widevine-hal-1-3' (pid 1375) received signal 11
+[  147.032749] init: Service 'vendor.media.omx' (pid 1382) received signal 11
+[  147.452866] init: Service 'camera_service' (pid 1381) received signal 11
+[  148.546447] init: Service 'sec-camera-provider-4-0' (pid 1409) received signal 11
+[  150.932082] init: starting service 'vendor.audio-hal'...
+[  150.933649] init: createProcessGroup(1041, 1422) failed for service 'vendor.audio-hal': Read-only file system
+[  151.216098] init: Service 'vendor.audio-hal' (pid 1422) received signal 11
+[  151.216122] init: Sending signal 9 to service 'vendor.audio-hal' (pid 1422) process group...
+[  151.216939] init: Command 'restart audioserver' action=onrestart (<Service 'vendor.audio-hal' onrestart>:1) took 0ms and failed: service audioserver not found
+[  151.301214] init: Service 'vendor.drm-widevine-hal-1-3' (pid 1427) received signal 11
+[  151.348680] init: Service 'vendor.cas-hal-1-2' (pid 1426) received signal 11
+[  152.055406] init: Service 'vendor.media.omx' (pid 1458) received signal 11
+[  152.313237] init: Service 'camera_service' (pid 1457) received signal 11
+RC=0
+
+CMD: sh -c dmesg | grep -c -E 'Unable to handle|SError|Internal error|BUG:'
+0
+RC=1
+
+M104C1_DONE

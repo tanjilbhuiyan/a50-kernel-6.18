@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-11-26 (M10.4 started: C1 read-only capture of the vendor.audio-hal crash on 6.18 prepared; awaiting "present, flash C1")
+Updated: 2026-11-29 (M10.4 C1: six Android services incl. vendor.audio-hal crash-loop with SIGSEGV on 6.18, not audio-specific; C2 fault-trace capture prepared; awaiting "present, flash C2")
 
 ## How to use this file (Claude Code and Codex)
 Both tools work on this project. Claude Code reads `CLAUDE.md`; Codex enters through `AGENTS.md`, which defers to `CLAUDE.md`.
@@ -9,9 +9,10 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
 **RESUME HERE** with commits, branch, image hashes, last test and rollback result, and the next action.
 
 ## RESUME HERE (2026-11-26, M10.3 closed; M10.4 started)
-- **Active ticket:** `tasks/M10.4-audio-integration.md`, log `log/2026-11-26-M10.4-audio-integration.md`. **Prepared C1:**
-  read-only capture of the vendor.audio-hal crash (B2b5 images); `tools/m10/run_m104c1.sh 192.168.180.35` after
-  "present, flash C1".
+- **Active ticket:** `tasks/M10.4-audio-integration.md`, log `log/2026-11-26-M10.4-audio-integration.md`. **C1** (2026-11-29): vendor.audio-hal is one of six services (with cas,
+  widevine, media.omx, camera provider, camera_service) dying ~0.5 s after start with SIGSEGV/SEGV_MAPERR in the
+  main thread; no tombstones. **Prepared C2:** service states + ELF classes on stock and 6.18, kernel exception trace
+  on 6.18; `tools/m10/run_m104c2.sh 192.168.0.171` after "present, flash C2".
 - **M10.3 closed 2026-11-26** (`log/2026-11-22-M10.3-tfa9872.md`):
   - Earpiece audible (B2h2), loudspeaker audible through TFA9872 + ABOX speaker protection (B2b5).
   - Headset/mic paths recorded against stock (B2m).
@@ -26,8 +27,8 @@ branch in `src/ack-6.18/common`. One tool at a time on the kernel checkout and o
     them.
   - Direct ALSA mic capture gives room sound on both kernels (UD2 hiss was seen through PulseAudio/HAL in M0.4).
   - vendor.audio-hal crash-loops on 6.18 (SIGSEGV every ~5 s, seen in B2b).
-- **Phone:** stock, verified after B2m (pre-flight passed, fsck clean, calibration matches). Office Wi-Fi
-  192.168.180.35 (same host keys). **No test active.**
+- **Phone:** stock, verified after B2m (pre-flight passed, fsck clean, calibration matches). Home Wi-Fi 192.168.0.171 (office
+  192.168.180.35; same host keys). **No test active.**
 
 ## M10.3 handoff (2026-11-22 to 2026-11-26, closed)
 - **Active ticket:** `tasks/M10.3-codec-amplifier.md`, in progress. Read latest log
